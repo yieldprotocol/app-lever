@@ -1,0 +1,63 @@
+{
+  "name": "yieldspace-ui",
+  "version": "0.0.1",
+  "description": "Frontend for YieldSpace",
+  "private": true,
+  "author": {
+    "name": "Yield, Inc."
+  },
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start",
+    "type-check": "tsc",
+    "type-contracts": "typechain --target=ethers-v5 './contracts/abis/*.json' --out-dir './contracts/types/'",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@ethersproject/providers": "^5.5.3",
+    "@headlessui/react": "^1.4.3",
+    "@heroicons/react": "^1.0.5",
+    "@typechain/ethers-v5": "^9.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.10.2",
+    "@typescript-eslint/parser": "^5.10.2",
+    "@walletconnect/ethereum-provider": "^1.7.1",
+    "@web3-react/core": "^8.0.6-beta.0",
+    "@web3-react/metamask": "^8.0.3-beta.0",
+    "@web3-react/network": "^8.0.2-beta.0",
+    "@web3-react/walletconnect": "^8.0.4-beta.0",
+    "date-fns": "^2.28.0",
+    "decimal.js": "^10.3.1",
+    "eslint-config-airbnb-typescript": "^16.1.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-config-react-app": "^7.0.0",
+    "eslint-plugin-flowtype": "^8.0.3",
+    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-jsx-a11y": "^6.5.1",
+    "eslint-plugin-react": "^7.28.0",
+    "eslint-plugin-react-hooks": "^4.3.0",
+    "eth-permit": "^0.2.1",
+    "ethers": "^5.5.3",
+    "next": "latest",
+    "react": "^18.0.0-beta-24dd07bd2-20211208",
+    "react-dom": "^18.0.0-beta-24dd07bd2-20211208",
+    "react-toastify": "^8.1.1",
+    "sharp": "^0.30.0",
+    "swr": "^1.2.0",
+    "tailwind-styled-components": "^2.1.2",
+    "typechain": "^7.0.0",
+    "typescript": "^4.5.5",
+    "use-sync-external-store": "^1.0.0-beta-96ca8d915-20211115",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "^12.12.21",
+    "@types/react": "^17.0.39",
+    "@types/uuid": "^8.3.4",
+    "autoprefixer": "^10.4.2",
+    "eslint": "^8.8.0",
+    "eslint-config-next": "12.0.10",
+    "postcss": "^8.4.5",
+    "tailwindcss": "^3.0.18"
+  }
+}
