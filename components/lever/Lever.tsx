@@ -12,10 +12,7 @@ const Grid = tw.div`grid my-5 auto-rows-auto gap-2`;
 const TopRow = tw.div`flex justify-between align-middle text-center items-center`;
 const ClearButton = tw.button`text-sm`;
 
-const LeverView = () => {
-
-  // const [] = useContext()
-
+const Lever = () => {
   return (
     <div className='flex flex-row'>
         <LeverWidget />
@@ -24,4 +21,4 @@ const LeverView = () => {
   );
 };
 
-export default LeverView;
+export default Lever;

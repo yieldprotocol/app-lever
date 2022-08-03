@@ -17,7 +17,6 @@ const EstPositionWidget = () => {
           <div >
             <h3> Estimated Position Information</h3> 
           </div>
-
           <div>Principle Investment: </div>
           <div>Position value: </div>
           <div>PnL (pos/prin - 1): </div>

@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic';
 
-const DynamicLever = dynamic(() => import('../components/lever/LeverView'), { ssr: false });
+const DynamicLever = dynamic(() => import('../components/lever/Lever'), { ssr: false });
 
 const Lever = () => <DynamicLever />;
 

@@ -20,7 +20,6 @@ const Inner = tw.div`grow-0 w-auto ml-3 text-center text-lg align-middle my-1 it
 /** A class used to let the user input a decimally interpreted BigNumber value.
  *
  */
-
 interface Props {
   onValueChange(value: BigNumber): unknown;
   defaultValue: BigNumber;
@@ -83,7 +82,6 @@ export const ValueInput = ({
   const valid = prettyValue !== undefined;
 
   return (
-
     <Container $unFocused={false}>
     <Inner>
     <Input

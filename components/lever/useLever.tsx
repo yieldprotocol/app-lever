@@ -88,7 +88,6 @@ export const useLever = () => {
     }
   };
 
-
   const OPTIONS: { value: number; label: string }[] = [
     { value: 1, label: "0.1%" },
     { value: 5, label: "0.5%" },

@@ -1,10 +1,9 @@
-import { MutableRefObject, useEffect, useMemo, useState } from 'react';
-import { BigNumber, ethers, Signer } from 'ethers';
+import { MutableRefObject, useContext, useEffect, useMemo, useState } from 'react';
+import { BigNumber, Signer } from 'ethers';
 import tw from 'tailwind-styled-components';
 import Button from '../common/Button';
 
 import { BorderWrap, Header } from '../styles';
-import InputWrap from './InputWrap';
 
 import ShortSelect from '../selectors/ShortSelect';
 import LongSelect from '../selectors/LongSelect';
@@ -17,6 +16,7 @@ import { useLever } from './useLever';
 import { FYToken } from '../../contracts/types';
 import { ValueInput } from './ValueInput';
 import EstPositionWidget from './EstPositionWidget';
+import { LeverContext } from '../../context/LeverContext';
 
 const Inner = tw.div`m-4 text-center`;
 const Grid = tw.div`grid my-5 auto-rows-auto gap-2`;
@@ -45,7 +45,12 @@ enum ApprovalState {
   Transacting,
 }
 
-const LeverWidget = (contracts: any, account: any, strategy: any, balances: any) => {
+const LeverWidget = ( contracts: any) => {
+
+  /* Bring in lever context - instead of passing them as props */ 
+  const [leverState, leverActions ] = useContext(LeverContext); 
+
+  const { account, selectedStrategy, balances } = leverState;
   
   /* all levereaging functions have been moved into this hooko */
   const {
@@ -71,6 +76,7 @@ const LeverWidget = (contracts: any, account: any, strategy: any, balances: any)
 
   /** The currently selected series id. */
   const [seriesId, setSeriesId] = useState<string>();
+
   // useEffect(() => setSeriesId(series.length === 0 ? undefined : series[0].seriesId), [series]);
 
   // Use `useMemo` here because every BigNumber will be different while having
@@ -112,10 +118,10 @@ const LeverWidget = (contracts: any, account: any, strategy: any, balances: any)
   useEffect(() => {
     if (seriesId === undefined) setInvestToken(undefined);
     else
-      void resolveInvestToken(strategy.investToken, seriesId, contracts, account).then((token: any) =>
+      void resolveInvestToken(selectedStrategy.investToken, seriesId, contracts, account).then((token: any) =>
         setInvestToken(token)
       );
-  }, [strategy, seriesId, contracts, account]);
+  }, [selectedStrategy, seriesId, contracts, account]);
 
   /**
    * The approval state represents whether it is currently possible to
@@ -140,12 +146,12 @@ const LeverWidget = (contracts: any, account: any, strategy: any, balances: any)
       // First check if the debt is too low
       if (totalToInvest.eq(0)) return ApprovalState.DebtTooLow;
 
-      const debt = await getCauldronDebt(contracts, account, strategy);
+      const debt = await getCauldronDebt(contracts, account, selectedStrategy);
       const minDebt = BigNumber.from(debt.min).mul(BigNumber.from(10).pow(debt.dec));
       if (stEthCollateral.lt(minDebt)) return ApprovalState.DebtTooLow;
 
       // Now check collateralization ratio
-      const level = await vaultLevel(totalToInvest, toBorrow, contracts, account, strategy);
+      const level = await vaultLevel(totalToInvest, toBorrow, contracts, account, selectedStrategy);
       if (level.lt(0)) return ApprovalState.Undercollateralized;
 
       // Check balance
@@ -153,12 +159,12 @@ const LeverWidget = (contracts: any, account: any, strategy: any, balances: any)
       if (balanceInput.gt(balance)) return ApprovalState.NotEnoughFunds;
 
       // Now check for approval
-      const approval = await investToken.allowance(account.getAddress(), strategy.lever);
+      const approval = await investToken.allowance(account.getAddress(), selectedStrategy.lever);
       if (approval.lt(totalToInvest)) return ApprovalState.ApprovalRequired;
 
       // Finally, use callStatic to assert that the transaction will work
-      if (strategy.lever === YIELD_ST_ETH_LEVER) {
-        const lever = getContract(strategy.lever, contracts, account);
+      if (selectedStrategy.lever === YIELD_ST_ETH_LEVER) {
+        const lever = getContract(selectedStrategy.lever, contracts, account);
         try {
           console.log(
             lever.interface.encodeFunctionData('invest', [seriesId, balanceInput, toBorrow, BigNumber.from(0)])
@@ -190,7 +196,7 @@ const LeverWidget = (contracts: any, account: any, strategy: any, balances: any)
     };
   }, [
     account,
-    strategy,
+    selectedStrategy,
     toBorrow,
     totalToInvest,
     stEthCollateral,
@@ -205,8 +211,8 @@ const LeverWidget = (contracts: any, account: any, strategy: any, balances: any)
   const approve = async () => {
     if (investToken === undefined) return; // Loading
     setApprovalState(ApprovalState.Approving);
-    const gasLimit = (await investToken.estimateGas.approve(strategy.lever, totalToInvest)).mul(2);
-    const tx = await investToken.approve(strategy.lever, totalToInvest);
+    const gasLimit = (await investToken.estimateGas.approve(selectedStrategy.lever, totalToInvest)).mul(2);
+    const tx = await investToken.approve(selectedStrategy.lever, totalToInvest);
     await tx.wait();
     setApprovalStateInvalidator((v) => v + 1);
   };
@@ -214,8 +220,8 @@ const LeverWidget = (contracts: any, account: any, strategy: any, balances: any)
   const transact = async () => {
     if (stEthMinCollateral === undefined || seriesId === undefined) return; // Not yet loaded!
     setApprovalState(ApprovalState.Transacting);
-    if (strategy.lever === YIELD_ST_ETH_LEVER) {
-      const lever = getContract(strategy.lever, contracts, account);
+    if (selectedStrategy.lever === YIELD_ST_ETH_LEVER) {
+      const lever = getContract(selectedStrategy.lever, contracts, account);
       const gasLimit = (await lever.estimateGas.invest(seriesId, balanceInput, toBorrow, stEthMinCollateral)).mul(2);
       const invextTx = await lever.invest(seriesId, balanceInput, toBorrow, stEthMinCollateral, { gasLimit });
       await invextTx.wait();

@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic';
 
-const DynamicPositions = dynamic(() => import('../components/position/positionView'), { ssr: false });
+const DynamicPositions = dynamic(() => import('../components/position/PositionView'), { ssr: false });
 
 const Position = () => <DynamicPositions/>;
 

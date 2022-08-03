@@ -24,7 +24,6 @@ interface IDeposit {
   useMax?: () => void;
 }
 
-
 const InputWrap = ({ name, value, asset, balance, handleChange, disabled, unFocused, useMax }: IDeposit) => (
   <Container $unFocused={unFocused}>
     <Inner>
