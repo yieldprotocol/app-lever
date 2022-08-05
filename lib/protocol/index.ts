@@ -33,10 +33,8 @@ export const getPools = async (
   const Ladle = contractMap[LADLE];
   if (!Ladle) return undefined;
   console.log('fetching pools');
-
   const poolAddedEvents = await Ladle.queryFilter('PoolAdded' as ethers.EventFilter);
   const poolAddresses: string[] = poolAddedEvents.map((e: PoolAddedEvent) => e.args.pool);
-
 
    try {
     return poolAddresses.reduce(async (pools: any, x) => {
@@ -176,11 +174,8 @@ export const getAsset = async (
 ): Promise<IAsset> => {
   const ERC20 = ERC20Permit__factory.connect(tokenAddress, provider);
   const FYTOKEN = FYToken__factory.connect(tokenAddress, provider);
-
   const [symbol, decimals, name] = await Promise.all([ERC20.symbol(), ERC20.decimals(), ERC20.name()]);
-
   const balance = account ? await getBalance(provider, tokenAddress, account, isFyToken) : ethers.constants.Zero;
-
   return {
     address: tokenAddress,
     version: symbol === 'USDC' ? '2' : '1',
@@ -209,7 +204,6 @@ export const getBalance = (
   const contract = isFyToken
     ? FYToken__factory.connect(tokenAddress, provider)
     : ERC20Permit__factory.connect(tokenAddress, provider);
-
   try {
     return contract.balanceOf(account);
   } catch (e) {
