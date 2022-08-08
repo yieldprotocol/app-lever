@@ -45,8 +45,8 @@ export const ValueInput = ({
   decimals,
   max,
   onValueChange,
-
 }: Props) => {
+
   const defaultValueFormatted = format(defaultValue, decimals);
 
   /**

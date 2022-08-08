@@ -20,7 +20,9 @@ const InterestRateInput: FC<IInterestRateInput> = ({ rate, setRate, disabled = f
       disabled={disabled}
     />
     <div>%</div>
-    <div className="whitespace-nowrap px-2">Interest Rate</div>
+    <div className="whitespace-nowrap px-2">
+      Interest Rate
+    </div>
   </div>
 );
 

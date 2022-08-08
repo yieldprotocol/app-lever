@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { BigNumber } from 'ethers';
 import tw from 'tailwind-styled-components';
 import { BorderWrap, Header } from '../styles';
 
@@ -7,13 +7,14 @@ const Grid = tw.div`grid my-5 auto-rows-auto gap-2`;
 const TopRow = tw.div`flex justify-between align-middle text-center items-center`;
 const ClearButton = tw.button`text-sm`;
 
+const EstPositionWidget = (props: any) => {
 
-const EstPositionWidget = () => {
+  // calculate the required stuff here
 
   return (
     <BorderWrap>
-      <Inner>
-        
+      {props.input.toString()} 
+      <Inner>    
           <div >
             <h3> Estimated Position Information</h3> 
           </div>
@@ -23,7 +24,6 @@ const EstPositionWidget = () => {
           <div>Supplying : </div>
           <div>Borrowing : </div>
           <div>Net Native APRs : </div>
-
       </Inner>
     </BorderWrap>
   );

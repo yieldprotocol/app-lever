@@ -12,7 +12,6 @@ interface ILeverContextState {
   assets: Map<string, IAsset>;
   strategies: Map<string, ILeverStrategy>;
 
-  selectedStrategy?: ILeverStrategy;
   account?: string;
   appState: AppState;
 }
@@ -23,7 +22,7 @@ const initState: ILeverContextState = {
   contracts: {},
   assets: new Map(),
   strategies: new Map(),
-  selectedStrategy: undefined,
+  // selectedStrategy: undefined,
   account: undefined,
   appState: AppState.Loading,
 };
@@ -47,11 +46,6 @@ const leverReducer = (state: ILeverContextState, action: any) => {
       return {
         ...state,
         contracts: action.payload,
-      };
-    case 'SELECT_STRATEGY':
-      return {
-        ...state,
-        selectedStrategy: action.payload,
       };
 
     case 'UPDATE_ACCOUNT':
@@ -149,11 +143,10 @@ const LeverProvider = ({ children }: any) => {
   useEffect(() => {
     console.log(leverState);
   }, [leverState]);
-
+ 
   /* ACTIONS TO CHANGE CONTEXT  */
   const leverActions = {
-    selectStrategy: (strategy: ILeverStrategy) =>  updateState( {type: 'UPDATE_STRATEGY', payload: strategy}) ,
-    setAppState: (appState: AppState) => updateState( {type: 'UPDATE_APPSTATE', payload: appState}),
+    setAppState: (appState: AppState) => updateState({ type: 'UPDATE_APPSTATE', payload: appState }),
   };
 
   return <LeverContext.Provider value={[leverState, leverActions]}>{children}</LeverContext.Provider>;

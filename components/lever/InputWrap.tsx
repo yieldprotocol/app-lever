@@ -25,6 +25,8 @@ interface IDeposit {
 }
 
 const InputWrap = ({ name, value, asset, balance, handleChange, disabled, unFocused, useMax }: IDeposit) => (
+
+  
   <Container $unFocused={unFocused}>
     <Inner>
       <Input
@@ -40,9 +42,7 @@ const InputWrap = ({ name, value, asset, balance, handleChange, disabled, unFocu
     </Inner>
     <div className="grow min-w-fit">
       <div className="p-1">
-
         <AssetSelect item={asset} isFyToken={asset?.symbol.includes('FY') || false} />
-
       </div>
       {asset && (
         <button

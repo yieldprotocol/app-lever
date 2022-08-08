@@ -1,12 +1,12 @@
 import { FC } from 'react';
 import tw from 'tailwind-styled-components';
-import { IAsset, IPool } from '../../lib/protocol/types';
+import { IAsset } from '../../lib/protocol/types';
 import AssetLogo from '../common/AssetLogo';
 
 const Container = tw.div`p-2 dark:bg-gray-600 bg-gray-400 rounded-lg`;
 
 interface IItemSelect {
-  item: IAsset | IPool | undefined;
+  item: IAsset | undefined;
   isFyToken: boolean;
 }
 
