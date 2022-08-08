@@ -163,6 +163,7 @@ const LeverWidget = (contracts: any) => {
     return () => {
       shouldUseResult = false;
     };
+
   }, [
     account,
     selectedStrategy,
@@ -201,7 +202,6 @@ const LeverWidget = (contracts: any) => {
   };
 
   return (
-    <>
       <BorderWrap>
         <Inner>
           <TopRow>
@@ -226,10 +226,10 @@ const LeverWidget = (contracts: any) => {
           <div>
             Principle investment
             <ValueInput
-              max={BigNumber.from('1000000000000000000')}
-              defaultValue={BigNumber.from('130000000000000000')}
-              onValueChange={(v) => setBalanceInput(v)}
-              decimals={18}
+              // max={BigNumber.from('1000000000000000000')}
+              // defaultValue={BigNumber.from('130000000000000000')}
+              // onValueChange={(v) => setBalanceInput(v)}
+              // decimals={18}
             />
           </div>
 
@@ -247,8 +247,6 @@ const LeverWidget = (contracts: any) => {
           </Button>
         </Inner>
       </BorderWrap>
-      <EstPositionWidget />
-    </>
   );
 };
 

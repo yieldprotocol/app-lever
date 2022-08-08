@@ -13,10 +13,13 @@ const TopRow = tw.div`flex justify-between align-middle text-center items-center
 const ClearButton = tw.button`text-sm`;
 
 const Lever = () => {
+
   return (
     <div className='flex flex-row'>
+        <>
         <LeverWidget />
-        {/* <EstPositionWidget /> */}
+        <EstPositionWidget />
+        </>
     </div>
   );
 };

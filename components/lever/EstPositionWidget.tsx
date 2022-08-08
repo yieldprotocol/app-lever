@@ -1,5 +1,7 @@
 import { BigNumber } from 'ethers';
+import { useContext } from 'react';
 import tw from 'tailwind-styled-components';
+import { InputContext } from '../../context/InputContext';
 import { BorderWrap, Header } from '../styles';
 
 const Inner = tw.div`m-4 text-center`;
@@ -7,14 +9,20 @@ const Grid = tw.div`grid my-5 auto-rows-auto gap-2`;
 const TopRow = tw.div`flex justify-between align-middle text-center items-center`;
 const ClearButton = tw.button`text-sm`;
 
-const EstPositionWidget = (props: any) => {
+const EstPositionWidget = () => {
 
+  const [inputState, ] = useContext(InputContext);
   // calculate the required stuff here
+
 
   return (
     <BorderWrap>
-      {props.input.toString()} 
-      <Inner>    
+      <div>{inputState.input?.dsp.toString()}</div>
+      <div> {inputState.input?.hStr.toString()} </div>
+      <div> {inputState.input?.big.toString()}  </div>
+
+      <div>Leverage: {inputState.leverage} X</div>
+      <Inner>
           <div >
             <h3> Estimated Position Information</h3> 
           </div>

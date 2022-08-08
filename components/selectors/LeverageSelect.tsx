@@ -1,5 +1,6 @@
-import { FC, useState } from 'react';
+import { FC, useContext, useState } from 'react';
 import tw from 'tailwind-styled-components';
+import { InputContext } from '../../context/InputContext';
 
 const ButtonInner = tw.div`
   h-full w-full dark:bg-gray-900/80 bg-gray-100/80 dark:text-gray-50 text-gray-900 rounded-lg
@@ -13,13 +14,13 @@ rounded-lg gap-3 align-middle items-center hover:opacity-80
 const LeverageSelect = () => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
 
-  const [val, setVal] = useState<number>(3);
+  const [inputState, inputActions] = useContext(InputContext);
 
   return (
 <div className="relative pt-1 flex-row flex">
   {/*  <label className="form-label">Example range</label> */}
   <input
-    value={val}
+    value={inputState.leverage}
     type="range"
     className="
       form-range
@@ -34,9 +35,9 @@ const LeverageSelect = () => {
     min={0.1}
     max={5}
     step="0.01"
-    onChange={(x:any)=> setVal(x.target.value)}
+    onChange={(e) => inputActions.setLeverage(e.target.value)}
   />
-  {val}x  
+  {inputState.leverage}x  
 </div>
   );
 };
