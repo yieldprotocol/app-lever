@@ -16,6 +16,12 @@ export type Provider = Web3Provider | ethers.providers.JsonRpcProvider;
   ORACLE
 }
 
+interface W3bNumber {
+  dsp: number;
+  hStr: string;
+  big: BigNumber;
+}
+
 export enum AppState {
   Loading,
   ApprovalRequired,
@@ -33,31 +39,8 @@ export interface IAsset extends ISignable {
   address: string;
   symbol: string;
   decimals: number;
-  balance: BigNumber;
-  balance_: string;
+  balance: W3bNumber;
   contract: ERC20Permit | FYToken;
   getAllowance: (account: string, spender: string) => Promise<BigNumber>;
-}
-
-export interface ILeverStrategy {
-
-  id: string;
-  displayName: string;
-
-  investTokenType: GeneralTokenType;
-  investTokenAddress: string;
-  investTokenContract?: Contract;
-
-  marketContract?: Contract;
-
-  // outToken: [WETH, AssetId.WEth],
-  leverAddress: string;
-  leverContract?: Contract;
-
-  swapAddress: string;
-  swapContract?: Contract;
-
-  ilkId: string;
-  baseId: string;
-  seriesId: string;
+  checkBalance: () => Promise<W3bNumber>;
 }

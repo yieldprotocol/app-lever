@@ -15,7 +15,6 @@ const ShortSelect = () => {
 
   return (
     <div className="h-12">
-
         <ButtonOuter
           onClick={() => setModalOpen(true)}
           disabled={false}
@@ -24,7 +23,6 @@ const ShortSelect = () => {
           }}
         >
           <ButtonInner> wETH </ButtonInner>
-
         </ButtonOuter>
     </div>
   );

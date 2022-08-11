@@ -1,8 +1,25 @@
-import { GeneralTokenType, ILeverStrategy } from '../lib/protocol/types';
+import { GeneralTokenType } from '../lib/protocol/types';
 import { WETH, WSTETH } from './assets';
 import { STETH_LEVER, WETH_STETH_STABLESWAP } from './contractRegister';
 
-export const STRATEGIES = new Map<string, ILeverStrategy>();
+
+
+export interface ILeverStrategyRoot {
+  id: string;
+  displayName: string;
+
+  investTokenType: GeneralTokenType;
+  investTokenAddress: string;
+  // outToken: [WETH, AssetId.WEth],
+  leverAddress: string;
+  swapAddress: string; // marketAddress? 
+
+  ilkId: string;
+  baseId: string;
+  seriesId: string;
+}
+
+export const STRATEGIES = new Map<string, ILeverStrategyRoot>();
 
 STRATEGIES.set('StETH_01', {
   id: '001',

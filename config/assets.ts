@@ -1,17 +1,16 @@
-import { BigNumber, Contract, ethers } from 'ethers';
+import { ethers } from 'ethers';
+import { W3bNumber } from '../context/InputContext';
 import { ISignable } from '../lib/tx/types';
 
-export interface IAsset extends ISignable {
+export interface IAssetRoot extends ISignable {
   id: string;
   name: string;
   address: string;
   symbol: string;
   decimals: number;
+  displaySymbol: string;
+  displayDecimals: number;
   joinAddress: string|undefined; // undefined if no join
-  // balance?: BigNumber;
-  // contract?: Contract;
-  // joinContract?: Contract;
-  // getAllowance: (account: string, spender: string) => Promise<BigNumber>;
 }
 
 /* asset id's */
@@ -26,7 +25,7 @@ export const DAI_PERMIT_ASSETS = ['DAI', DAI];
 export const NON_PERMIT_ASSETS = ['ETH', 'WETH', WETH];
 
 /* ASSET MAP */
-export const ASSETS = new Map<string, IAsset>();
+export const ASSETS = new Map<string, IAssetRoot>();
 
 ASSETS.set(WETH, {
   id: WETH,
@@ -34,8 +33,10 @@ ASSETS.set(WETH, {
   address: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
   joinAddress: "0x3bDb887Dc46ec0E964Df89fFE2980db0121f0fD0", 
   symbol: 'WETH',
+  displaySymbol: 'ETH',
   decimals: 18,
   version: '1',
+  displayDecimals: 6,
 });
 
 ASSETS.set(WSTETH, {
@@ -44,7 +45,9 @@ ASSETS.set(WSTETH, {
   address: "0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0",
   joinAddress: undefined,
   symbol: 'WSTETH',
+  displaySymbol: 'WSTETH',
   decimals: 18,
+  displayDecimals: 6,
   version: '1'
 });
 
@@ -53,7 +56,9 @@ ASSETS.set(USDC, {
   name: 'USD Coin',
   address: "0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0",
   joinAddress: undefined,
-  symbol: 'WETH',
-  decimals: 18,
+  symbol: 'USDC',
+  displaySymbol: 'USDC',
+  decimals: 8,
+  displayDecimals: 2,
   version: '1'
 });

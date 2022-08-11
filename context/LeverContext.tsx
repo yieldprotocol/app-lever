@@ -1,19 +1,33 @@
-import { BigNumber } from 'ethers';
+import { BigNumber, Contract, ethers } from 'ethers';
 import React, { useEffect, useReducer } from 'react';
-import { ASSETS, IAsset } from '../config/assets';
+import { ASSETS, IAssetRoot, WETH } from '../config/assets';
 import { CAULDRON, contractFactories, LADLE, ORACLE } from '../config/contractRegister';
-import { STRATEGIES } from '../config/strategies';
+import { ILeverStrategyRoot, STRATEGIES } from '../config/strategies';
+import { ERC20Permit, FYToken } from '../contracts/types';
 import { ERC20 } from '../contracts/YieldStEthLever.sol';
 import useConnector from '../hooks/useConnector';
-import { AppState, GeneralTokenType, ILeverStrategy } from '../lib/protocol/types';
+import { AppState, GeneralTokenType } from '../lib/protocol/types';
+import { convertToW3bNumber } from '../lib/utils';
+import { W3bNumber } from './InputContext';
 
-interface ILeverContextState {
+export interface ILeverContextState {
   contracts: any;
   assets: Map<string, IAsset>;
   strategies: Map<string, ILeverStrategy>;
-
   account?: string;
   appState: AppState;
+}
+
+export interface IAsset extends IAssetRoot {
+  balance: W3bNumber;
+  assetContract: ERC20 | ERC20Permit | FYToken;
+}
+
+export interface ILeverStrategy extends ILeverStrategyRoot {
+  investTokenContract: Contract;
+  leverContract: Contract;
+  oracleContract: Contract;
+  marketContract: Contract;
 }
 
 const LeverContext = React.createContext<any>({});
@@ -85,10 +99,18 @@ const LeverProvider = ({ children }: any) => {
   /* Connect up asset contracts : updates on provider and account changes */
   useEffect(() => {
     if (provider) {
-      Array.from(ASSETS.values()).map(async (asset) => {
+      Array.from(ASSETS.values()).map(async (asset : IAssetRoot) => {
         const signer = account ? provider.getSigner(account) : provider;
         const assetContract = contractFactories[asset.address].connect(asset.address, signer) as ERC20;
-        const balance = account ? await assetContract.balanceOf(account) : BigNumber.from('0');
+
+        // const _bal = account ? await assetContract.balanceOf(account) : BigNumber.from('0');
+        const getBal = (asset: IAssetRoot) => {
+          if (account && asset.id !== WETH) return assetContract.balanceOf(account);
+          if (account && asset.id === WETH) return provider.getBalance(account);
+          return BigNumber.from('0');
+        };
+
+        const balance = convertToW3bNumber(await getBal(asset), asset.decimals, asset.displayDecimals);
         const connectedAsset = {
           ...asset,
           assetContract,
@@ -134,16 +156,13 @@ const LeverProvider = ({ children }: any) => {
           leverContract,
           oracleContract,
           marketContract,
+          // assetContract,
         };
         updateState({ type: 'UPDATE_STRATEGY', payload: connectedStrategy });
       });
     }
   }, [account, provider]);
 
-  useEffect(() => {
-    console.log(leverState);
-  }, [leverState]);
- 
   /* ACTIONS TO CHANGE CONTEXT  */
   const leverActions = {
     setAppState: (appState: AppState) => updateState({ type: 'UPDATE_APPSTATE', payload: appState }),
