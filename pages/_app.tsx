@@ -7,6 +7,7 @@ import { useColorTheme } from '../hooks/useColorTheme';
 import { XIcon } from '@heroicons/react/solid';
 import LeverProvider from '../context/LeverContext';
 import InputProvider from '../context/InputContext';
+import MarketProvider from '../context/MarketContext';
 
 const DynamicLayout = dynamic(() => import('../components/Layout'), { ssr: false });
 
@@ -17,14 +18,16 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
     <DynamicLayout>
       <LeverProvider>
         <InputProvider>
-          <ToastContainer
-            position="bottom-right"
-            pauseOnHover
-            closeOnClick
-            toastStyle={{ background: theme === 'light' ? '#e4e4e7' : '#18181b' }}
-            closeButton={<XIcon height="1rem" width="1rem" color={theme === 'dark' ? '#e4e4e7' : '#18181b'} />}
-          />
-          <Component {...pageProps} />
+          <MarketProvider>
+            <ToastContainer
+              position="bottom-right"
+              pauseOnHover
+              closeOnClick
+              toastStyle={{ background: theme === 'light' ? '#e4e4e7' : '#18181b' }}
+              closeButton={<XIcon height="1rem" width="1rem" color={theme === 'dark' ? '#e4e4e7' : '#18181b'} />}
+            />
+            <Component {...pageProps} />
+          </MarketProvider>
         </InputProvider>
       </LeverProvider>
     </DynamicLayout>

@@ -1,7 +1,6 @@
 import { BigNumber, ethers } from 'ethers';
 import React, { useContext, useEffect, useReducer } from 'react';
-import { useDebounce } from '../hooks/generalHooks';
-import { ILeverStrategy, LeverContext } from './LeverContext';
+import { LeverContext } from './LeverContext';
 
 export interface W3bNumber {
   dsp: number;
@@ -10,9 +9,9 @@ export interface W3bNumber {
 }
 
 export interface IInputContextState {
-  selectedStrategy: ILeverStrategy | undefined;
   input: W3bNumber;
   leverage: W3bNumber;
+  // selectedStrategy: ILeverStrategy|undefined;
 }
 
 /* Parse the input to W3BNumber based on the selected Strategy and base */
@@ -37,19 +36,14 @@ const inputToW3bNumber = (input: string, decimals: number = 18, displayDecimals?
 const InputContext = React.createContext<any>({});
 
 const initState: IInputContextState = {
-  selectedStrategy: undefined,
   input: inputToW3bNumber('0'),
   leverage: inputToW3bNumber('3', 2),
+  // selectedStrategy:undefined,
 };
 
 const inputReducer = (state: IInputContextState, action: any) => {
   /* Reducer switch */
   switch (action.type) {
-    case 'SET_STRATEGY':
-      return {
-        ...state,
-        selectedStrategy: action.payload,
-      };
 
     case 'SET_INPUT':
       return {
@@ -72,26 +66,18 @@ const InputProvider = ({ children }: any) => {
   /* LOCAL STATE */
   const [ inputState, updateState ] = useReducer(inputReducer, initState);
   const [ leverState ] = useContext(LeverContext);
-  const { assets } = leverState;
+  const { selectedStrategy } = leverState;
+
+
 
   /* Reset Input and leverage when selected strategy changes */
   useEffect(() => {
     updateState({ type: 'SET_INPUT', payload: initState.input });
     updateState({ type: 'SET_LEVERAGE', payload: initState.leverage });
-  }, [inputState.selectedStrategy]);
-
-  /* Set the initial selected Strategy if there is no strategy seelcted */
-  useEffect(() => {
-    !inputState.selectedStrategy &&
-      updateState({
-        type: 'SET_STRATEGY',
-        payload: Array.from(leverState.strategies.values())[0], // Take the first strategy as default
-      });
-  }, [leverState.strategies]);
+  }, [selectedStrategy]);
 
   /* ACTIONS TO CHANGE CONTEXT */
   const inputActions = {
-    selectStrategy: (strategy: ILeverStrategy) => updateState({ type: 'SET_STRATEGY', payload: strategy }),
     setInput: (input: number) => updateState({ type: 'SET_INPUT', payload: inputToW3bNumber(input.toString()) }),
     setLeverage: (leverage: number) =>
       updateState({ type: 'SET_LEVERAGE', payload: inputToW3bNumber(leverage.toString(), 2) }),

@@ -20,3 +20,5 @@ export const SECONDS_PER_YEAR: number = 365 * 24 * 60 * 60;
 export const ETH_BYTES = ethers.utils.formatBytes32String('ETH-A');
 
 export const BLANK_ADDRESS = ethers.constants.AddressZero;
+
+export const ZERO_W3N = { big: ethers.constants.Zero, dsp: 0, hStr: '0.0'};

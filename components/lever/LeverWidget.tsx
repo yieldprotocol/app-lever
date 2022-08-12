@@ -26,16 +26,12 @@ const LeverWidget = (contracts: any) => {
   const [leverState, leverActions] = useContext(LeverContext);
   const [inputState, inputActions] = useContext(InputContext);
 
-  const { account, balances, appState } = leverState;
+  const { account, selectedStrategy, balances, appState } = leverState;
   const { setAppState } = leverActions;
-  const { input, leverage, selectedStrategy } = inputState;
+  const { input, leverage } = inputState;
 
   /* All leveraging functionality has been moved into this hook */
   const {
-    // computeStEthCollateral,
-    // slippage,
-    // removeSlippage,
-
     transact,
     approve,
   } = useLever();

@@ -24,14 +24,14 @@ export const ValueInput = () => {
   const [asset, setAsset] = useState<IAsset>();
 
   useEffect(()=> {
-    const strat = inputState.selectedStrategy;
+    const strat = leverState.selectedStrategy;
     if (strat)  {
       console.log('strategy selected');
       const asset = leverState.assets.get(strat.baseId);
       console.log('asset', asset);
       setAsset(asset);
     }
-  },[inputState.selectedStrategy])
+  },[leverState.selectedStrategy])
 
   return (
     <Container $unFocused={false}>

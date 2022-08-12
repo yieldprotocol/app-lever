@@ -2,11 +2,14 @@ import { BigNumber, ethers, utils } from 'ethers';
 import { zeroPad } from 'ethers/lib/utils';
 import { useContext, useEffect, useMemo, useState } from 'react';
 import { WETH, WSTETH } from '../../config/assets';
-import { ZERO_BN } from '../../constants';
+import { ZERO_BN, ZERO_W3N } from '../../constants';
 import { IInputContextState, InputContext, W3bNumber } from '../../context/InputContext';
 import { LeverContext } from '../../context/LeverContext';
 import { AppState } from '../../lib/protocol/types';
-import { convertToW3bNumber } from '../../lib/utils';
+import { convertToW3bNumber, getTimeToMaturity } from '../../lib/utils';
+
+import { buyBase, sellBase, sellFYToken } from '@yield-protocol/ui-math';
+import { IPoolState, MarketContext } from '../../context/MarketContext';
 
 // const GAS_PRICE = ethers.utils.parseUnits('100', 'gwei');
 // const UNITS_LEVERAGE = 2;
@@ -23,9 +26,10 @@ export const useLever = () => {
   /* Bring in context*/
   const [leverState, leverActions] = useContext(LeverContext);
   const [inputState] = useContext(InputContext);
+  const [marketState]: [IPoolState] = useContext(MarketContext);
 
-  const { contracts, assets } = leverState;
-  const { input, leverage, selectedStrategy } = inputState as IInputContextState;
+  const { contracts, assets, selectedStrategy } = leverState;
+  const { input, leverage } = inputState as IInputContextState;
 
   const { setAppState } = leverActions;
 
@@ -40,59 +44,115 @@ export const useLever = () => {
     return convertToW3bNumber(value, selectedShortAsset?.decimals, selectedShortAsset?.displayDecimals);
   };
 
-  const [inputAsFyToken, setInputAsFyToken] = useState<W3bNumber>();
-  useEffect(() => {
-    if (input) {
-      setInputAsFyToken(input);
+  const inputAsFyToken: W3bNumber = useMemo(() => {
+    if (input.big.gt(ZERO_BN)) {
+      const fyTokens = sellBase(
+        marketState.sharesReserves,
+        marketState.fyTokenReserves,
+        input.big,
+        getTimeToMaturity(marketState.maturity), 
+        marketState.ts,
+        marketState.g1,
+        marketState.decimals,
+      );
+      return toW3bNumber(fyTokens);
     }
-  }, [input]);
+    return ZERO_W3N;
+  }, [input, marketState]);
 
-  /* calculate the total to invest, ( the amount of fyTokens ) and express it as a w3bnumber */
-  const [totalToInvest, setTotalToInvest] = useState<W3bNumber>(toW3bNumber(ethers.constants.Zero));
-  useEffect(() => {
-    if (inputAsFyToken) {
+  const totalToInvest: W3bNumber = useMemo(() => {
+    if (inputAsFyToken.big.gt(ZERO_BN)) {
       const total_ = inputAsFyToken.big.mul(leverage.big).div(100);
-      setTotalToInvest(toW3bNumber(total_)); /* set as w3bnumber ETH */
+      return toW3bNumber(total_); /* set as w3bnumber  */
     }
+    return ZERO_W3N;
   }, [inputAsFyToken, leverage]);
 
-  /* calculate the total to invest, and express it as a w3bnumber */
-  const [toBorrow, setToBorrow] = useState<W3bNumber>(toW3bNumber(ethers.constants.Zero));
-  useEffect(() => {
-    if (input) {
-      const toBorrow_ = totalToInvest.big.sub(input.big);
-      setToBorrow(toW3bNumber(toBorrow_)); /* set as w3bNumber */
+  const valueOfInvestment: W3bNumber = useMemo(()=>{
+    if (totalToInvest.big.gt(ZERO_BN) ) {
+    const baseValue = sellFYToken(
+      marketState.sharesReserves,
+      marketState.fyTokenReserves,
+      totalToInvest.big,
+      getTimeToMaturity(marketState.maturity), 
+      marketState.ts,
+      marketState.g1,
+      marketState.decimals,
+    );
+    return toW3bNumber(baseValue);
     }
+    return ZERO_W3N;
+  },[totalToInvest])
+
+  const toBorrow : W3bNumber = useMemo(() => {
+    if (inputAsFyToken) {
+      const toBorrow_ = totalToInvest.big.sub(inputAsFyToken.big);
+      return toW3bNumber(toBorrow_); /* set as w3bNumber */
+    }
+    return ZERO_W3N;
   }, [totalToInvest]);
+
+  const borrowAPR: W3bNumber = useMemo(()=>{
+    
+    return ZERO_W3N
+    
+  },[toBorrow]);
+
+  const investAPR: W3bNumber = useMemo(()=>{
+    
+    return ZERO_W3N
+    
+  },[toBorrow]);
+
+
+
+  /* calculate the total to invest, ( the amount of fyTokens ) and express it as a w3bnumber */
+  // const [totalToInvest, setTotalToInvest] = useState<W3bNumber>(toW3bNumber(ethers.constants.Zero));
+  // useEffect(() => {
+  //   if (inputAsFyToken) {
+  //     const total_ = inputAsFyToken.big.mul(leverage.big).div(100);
+  //     setTotalToInvest(toW3bNumber(total_)); /* set as w3bnumber ETH */
+  //   }
+  // }, [inputAsFyToken, leverage]);
+
+  /* calculate the total to invest, and express it as a w3bnumber */
+  // const [toBorrow, setToBorrow] = useState<W3bNumber>(toW3bNumber(ethers.constants.Zero));
+  // useEffect(() => {
+  //   if (inputAsFyToken) {
+  //     const toBorrow_ = totalToInvest.big.sub(inputAsFyToken.big);
+  //     setToBorrow(toW3bNumber(toBorrow_)); /* set as w3bNumber */
+  //   }
+  // }, [totalToInvest]);
 
   /**
    * Compute how much collateral would be generated by investing with these
    * parameters. TODO generalise for any collateral
    */
   const computeStEthCollateral = async (): Promise<BigNumber> => {
-
+    
     if (selectedStrategy) {
-    // const fyWeth = await getFyToken(seriesId, contracts, account);
-    const fyWeth = selectedStrategy.investTokenContract;
-    const fee = await fyWeth.flashFee(fyWeth.address, toBorrow);
-    const netInvestAmount = input.big.add(toBorrow.big).sub(fee); // - netInvestAmount = baseAmount + borrowAmount - fee
+      // const fyWeth = await getFyToken(seriesId, contracts, account);
+      const fyWeth = selectedStrategy.investTokenContract;
+      const fee = await fyWeth.flashFee(fyWeth.address, toBorrow);
+      const netInvestAmount = inputAsFyToken.big.add(toBorrow.big).sub(fee); // - netInvestAmount = baseAmount + borrowAmount - fee
 
-    // - sellFyWeth: FyWEth -> WEth
-    const obtainedWEth = await selectedStrategy.marketContract.sellFYTokenPreview(netInvestAmount);
+      // - sellFyWeth: FyWEth -> WEth
+      const obtainedWEth = await selectedStrategy.marketContract.sellFYTokenPreview(netInvestAmount);
 
-    // - stableSwap exchange: WEth -> StEth
-    // const stableswap = getContract(WETH_ST_ETH_STABLESWAP, contracts, account);
-    const stableswap = selectedStrategy.marketContract;
-    const boughtStEth = await stableswap.get_dy(0, 1, obtainedWEth);
+      // - stableSwap exchange: WEth -> StEth
+      // const stableswap = getContract(WETH_ST_ETH_STABLESWAP, contracts, account);
+      const stableswap = selectedStrategy.marketContract;
+      const boughtStEth = await stableswap.get_dy(0, 1, obtainedWEth);
 
-    // - Wrap: StEth -> WStEth
-    // const wStEth = getContract(WST_ETH, contracts, account);
-    const wStEth = assets.get(WSTETH).assetContract;
-    const wrapped = await wStEth.getWstETHByStETH(boughtStEth);
+      // - Wrap: StEth -> WStEth
+      // const wStEth = getContract(WST_ETH, contracts, account);
+      const wStEth = assets.get(WSTETH).assetContract;
+      const wrapped = await wStEth.getWstETHByStETH(boughtStEth);
 
-    return wrapped;
+      return wrapped;
     }
     return ZERO_BN;
+    
   };
 
   const getCauldronDebt = async () => {
@@ -130,7 +190,7 @@ export const useLever = () => {
       setStEthCollateral(undefined);
       return;
     }
-    if (input.big.eq(0)) {
+    if (inputAsFyToken.big.eq(0)) {
       setStEthCollateral(BigNumber.from(0));
       return;
     }
@@ -143,7 +203,7 @@ export const useLever = () => {
     return () => {
       shouldUseResult = false;
     };
-  }, [input, toBorrow, selectedStrategy]);
+  }, [inputAsFyToken, toBorrow, selectedStrategy]);
 
   /**
    * The minimum collateral that must be obtained when invested. The result of
@@ -237,10 +297,7 @@ export const useLever = () => {
     if (selectedStrategy?.investTokenContract) {
       setAppState(AppState.Approving);
       const gasLimit = (
-        await selectedStrategy.investTokenContract.estimateGas.approve(
-          selectedStrategy.leverAddress,
-          totalToInvest.big
-        )
+        await selectedStrategy.investTokenContract.estimateGas.approve(selectedStrategy.leverAddress, totalToInvest.big)
       ).mul(2);
       const tx = await selectedStrategy.investTokenContract.approve(selectedStrategy.leverAddress, totalToInvest.big);
       await tx.wait();
@@ -249,20 +306,13 @@ export const useLever = () => {
   };
 
   const transact = async () => {
-
     if (selectedStrategy?.leverContract) {
-
       setAppState(AppState.Transacting);
       const gasLimit = (
-        await selectedStrategy.leverContract.estimateGas.invest(
-          selectedStrategy.seriesId,
-          input.big,
-          toBorrow.big,
-          '0'
-        )
+        await selectedStrategy.leverContract.estimateGas.invest(selectedStrategy.seriesId, input.big, toBorrow.big, '0')
       ).mul(2);
 
-      const invextTx = await selectedStrategy.leverContract.invest(
+      const investTx = await selectedStrategy.leverContract.invest(
         selectedStrategy.seriesId,
         input.big,
         toBorrow.big,
@@ -272,8 +322,7 @@ export const useLever = () => {
           gasLimit,
         }
       );
-
-      await invextTx.wait();
+      await investTx.wait();
     }
   };
 
@@ -282,7 +331,12 @@ export const useLever = () => {
     transact,
 
     totalToInvest,
+    valueOfInvestment,
     toBorrow,
+    inputAsFyToken,
+
+    borrowAPR, 
+    investAPR,
 
     slippage,
     setSlippage,

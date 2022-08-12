@@ -13,9 +13,13 @@ import { W3bNumber } from './InputContext';
 export interface ILeverContextState {
   contracts: any;
   assets: Map<string, IAsset>;
+
   strategies: Map<string, ILeverStrategy>;
   account?: string;
   appState: AppState;
+
+  selectedStrategy: ILeverStrategy | undefined;
+  marketState: any;
 }
 
 export interface IAsset extends IAssetRoot {
@@ -27,7 +31,8 @@ export interface ILeverStrategy extends ILeverStrategyRoot {
   investTokenContract: Contract;
   leverContract: Contract;
   oracleContract: Contract;
-  marketContract: Contract;
+  poolContract: Contract;
+  poolAddress: string;
 }
 
 const LeverContext = React.createContext<any>({});
@@ -36,9 +41,14 @@ const initState: ILeverContextState = {
   contracts: {},
   assets: new Map(),
   strategies: new Map(),
+
   // selectedStrategy: undefined,
   account: undefined,
   appState: AppState.Loading,
+
+  marketState: undefined,
+
+  selectedStrategy: undefined,
 };
 
 const leverReducer = (state: ILeverContextState, action: any) => {
@@ -74,6 +84,12 @@ const leverReducer = (state: ILeverContextState, action: any) => {
         appState: action.payload,
       };
 
+    case 'SELECT_STRATEGY':
+      return {
+        ...state,
+        selectedStrategy: action.payload,
+      };
+
     default:
       return state;
   }
@@ -99,7 +115,7 @@ const LeverProvider = ({ children }: any) => {
   /* Connect up asset contracts : updates on provider and account changes */
   useEffect(() => {
     if (provider) {
-      Array.from(ASSETS.values()).map(async (asset : IAssetRoot) => {
+      Array.from(ASSETS.values()).map(async (asset: IAssetRoot) => {
         const signer = account ? provider.getSigner(account) : provider;
         const assetContract = contractFactories[asset.address].connect(asset.address, signer) as ERC20;
 
@@ -121,7 +137,7 @@ const LeverProvider = ({ children }: any) => {
     }
   }, [provider, account]);
 
-  /* connect up strategy contracts updates on accoutn change */
+  /* Connect up strategy contracts updates on account change */
   useEffect(() => {
     if (provider) {
       /* connect up relevant contracts */
@@ -141,12 +157,13 @@ const LeverProvider = ({ children }: any) => {
         /* instantiate a oracle contract */
         const oracleContract = contractFactories[ORACLE].connect(oracle, provider);
 
-        let marketContract;
+        let poolContract;
+        let poolAddress;
         /* if investTokenType is FYTOKEN , use the yield pool as the marketContract */
         if (strategy.investTokenType === GeneralTokenType.FYTOKEN) {
           const Ladle = contractFactories[LADLE].connect(LADLE, provider);
-          const poolAddr = await Ladle.pools(strategy.seriesId);
-          marketContract = contractFactories[GeneralTokenType.YIELD_POOL].connect(poolAddr, provider);
+          poolAddress = await Ladle.pools(strategy.seriesId);
+          poolContract = contractFactories[GeneralTokenType.YIELD_POOL].connect(poolAddress, provider);
         }
 
         // const balance = account ? await investTokenContract.balanceOf(account) : BigNumber.from('0');
@@ -155,7 +172,8 @@ const LeverProvider = ({ children }: any) => {
           investTokenContract,
           leverContract,
           oracleContract,
-          marketContract,
+          poolContract,
+          poolAddress,
           // assetContract,
         };
         updateState({ type: 'UPDATE_STRATEGY', payload: connectedStrategy });
@@ -163,8 +181,18 @@ const LeverProvider = ({ children }: any) => {
     }
   }, [account, provider]);
 
+  /* Set the initial selected Strategy if there is no strategy seelcted */
+  useEffect(() => {
+    !leverState.selectedStrategy &&
+      updateState({
+        type: 'SELECT_STRATEGY',
+        payload: Array.from(leverState.strategies.values())[0], // Take the first strategy as default
+      });
+  }, [leverState.strategies]);
+
   /* ACTIONS TO CHANGE CONTEXT  */
   const leverActions = {
+    selectStrategy: (strategy: ILeverStrategy) => updateState({ type: 'SELECT_STRATEGY', payload: strategy }),
     setAppState: (appState: AppState) => updateState({ type: 'UPDATE_APPSTATE', payload: appState }),
   };
 

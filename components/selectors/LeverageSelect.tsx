@@ -15,7 +15,7 @@ const LeverageSelect = () => {
           value={inputState.leverage.hStr}
           type="range"
           id="range1"
-          min={0.1}
+          min={1.1}
           max={5}
           step="0.1"
           onChange={(e) => inputActions.setLeverage(e.target.value)}
