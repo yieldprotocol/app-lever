@@ -3,6 +3,7 @@ import React, { useEffect, useReducer } from 'react';
 import { ASSETS, IAssetRoot, WETH } from '../config/assets';
 import { CAULDRON, contractFactories, LADLE, ORACLE } from '../config/contractRegister';
 import { ILeverStrategyRoot, STRATEGIES } from '../config/strategies';
+import { WETH_ST_ETH_STABLESWAP } from '../contracts';
 import { ERC20Permit, FYToken } from '../contracts/types';
 import { ERC20 } from '../contracts/YieldStEthLever.sol';
 import useConnector from '../hooks/useConnector';
@@ -20,6 +21,8 @@ export interface ILeverContextState {
 
   selectedStrategy: ILeverStrategy | undefined;
   marketState: any;
+
+  provider: any;
 }
 
 export interface IAsset extends IAssetRoot {
@@ -49,6 +52,7 @@ const initState: ILeverContextState = {
   marketState: undefined,
 
   selectedStrategy: undefined,
+  provider: undefined,
 };
 
 const leverReducer = (state: ILeverContextState, action: any) => {
@@ -90,6 +94,12 @@ const leverReducer = (state: ILeverContextState, action: any) => {
         selectedStrategy: action.payload,
       };
 
+    case 'UPDATE_PROVIDER':
+      return {
+        ...state,
+        provider: action.payload,
+      };
+
     default:
       return state;
   }
@@ -102,6 +112,8 @@ const LeverProvider = ({ children }: any) => {
 
   /* update account on change */
   useEffect(() => updateState({ type: 'UPDATE_ACCOUNT', payload: account }), [account]);
+  /* update account on change */
+  useEffect(() => updateState({ type: 'UPDATE_PROVIDER', payload: provider }), [provider]);
 
   /* Connect up Cauldron and Ladle contracts : updates on provider change */
   useEffect(() => {
@@ -154,11 +166,14 @@ const LeverProvider = ({ children }: any) => {
         /* get the oracle address from the cauldron  */
         const cauldron = contractFactories[CAULDRON].connect(CAULDRON, provider);
         const { oracle } = await cauldron.spotOracles(strategy.baseId, strategy.ilkId);
+
         /* instantiate a oracle contract */
         const oracleContract = contractFactories[ORACLE].connect(oracle, provider);
+        // const sawpContract = contractFactories[ORACLE].connect(oracle, provider);
 
         let poolContract;
         let poolAddress;
+
         /* if investTokenType is FYTOKEN , use the yield pool as the marketContract */
         if (strategy.investTokenType === GeneralTokenType.FYTOKEN) {
           const Ladle = contractFactories[LADLE].connect(LADLE, provider);
@@ -174,7 +189,6 @@ const LeverProvider = ({ children }: any) => {
           oracleContract,
           poolContract,
           poolAddress,
-          // assetContract,
         };
         updateState({ type: 'UPDATE_STRATEGY', payload: connectedStrategy });
       });
