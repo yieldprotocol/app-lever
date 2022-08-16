@@ -9,7 +9,7 @@ import ShortSelect from '../selectors/ShortSelect';
 import LongSelect from '../selectors/LongSelect';
 import LeverageSelect from '../selectors/LeverageSelect';
 
-import { useLever } from './useLever';
+import { useLever } from '../../hooks/useLever';
 import { ValueInput } from './ValueInput';
 
 import { LeverContext } from '../../context/LeverContext';

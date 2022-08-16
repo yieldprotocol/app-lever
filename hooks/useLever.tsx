@@ -1,17 +1,17 @@
 import { BigNumber, ethers, utils } from 'ethers';
 import { zeroPad } from 'ethers/lib/utils';
 import { useContext, useEffect, useMemo, useState } from 'react';
-import { WETH, WSTETH } from '../../config/assets';
-import { ZERO_BN, ZERO_W3N } from '../../constants';
-import { IInputContextState, InputContext, W3bNumber } from '../../context/InputContext';
-import { ILeverContextState, LeverContext } from '../../context/LeverContext';
-import { AppState } from '../../lib/protocol/types';
-import { calculateAPRs, convertToW3bNumber, getTimeToMaturity } from '../../lib/utils';
+import { WETH, WSTETH } from '../config/assets';
+import { ZERO_BN, ZERO_W3N } from '../constants';
+import { IInputContextState, InputContext, W3bNumber } from '../context/InputContext';
+import { ILeverContextState, LeverContext } from '../context/LeverContext';
+import { AppState } from '../lib/protocol/types';
+import { calculateAPRs, convertToW3bNumber, getTimeToMaturity } from '../lib/utils';
 
 import { sellBase, sellFYToken } from '@yield-protocol/ui-math';
-import { IPoolState, MarketContext } from '../../context/MarketContext';
-import { leverSimulation } from './EstPositionWidget';
-import { useStEthSim } from '../../hooks/leverHooks/useStEthSim';
+import { IPoolState, MarketContext } from '../context/MarketContext';
+import { leverSimulation } from '../components/lever/EstPositionWidget';
+import { useStEthSim } from './leverHooks/useStEthSim';
 
 
 

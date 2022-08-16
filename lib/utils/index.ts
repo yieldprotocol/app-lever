@@ -1,4 +1,3 @@
-import { calculateAPR } from '@yield-protocol/ui-math';
 import { BigNumber, ethers } from 'ethers';
 import { W3bNumber } from '../../context/InputContext';
 
@@ -24,7 +23,6 @@ export const getTimeToMaturity = (maturity: number, blocknumber?: number): strin
   return secs.toString();
 };
 
-
 export const calculateAPRs = (
   investPosition: W3bNumber,
   debtPosition: W3bNumber,
@@ -37,13 +35,24 @@ export const calculateAPRs = (
   borrowAPR: number;
   netAPR: number;
 } => {
-  const investRate = calculateAPR(investPosition.big, baseInvested.big, maturity);
-  const investAPR = investRate ? parseFloat(investRate) * 100 : 0;
 
-  const borrowRate = calculateAPR(baseBorrowed.big, debtPosition.big, maturity);
-  const borrowAPR = borrowRate ? parseFloat(borrowRate) * 100 : 0;
+  const now = Math.round(new Date().getTime() / 1000);
+  const secsToMaturity = maturity - now;
+  const yearProp = 1 / ( secsToMaturity / 31536000 );
+
+  // const investRate = calculateAPR(baseInvested.big, investPosition.big, maturity);
+  // const investAPR = investRate ? parseFloat(investRate) : 0;
+  const investRate = Math.pow(baseInvested.dsp/investPosition.dsp, yearProp) -1 
+  const investAPR = investRate;
+
+  // const borrowRate = calculateAPR(debtPosition.big, baseBorrowed.big, maturity);
+  // const borrowAPR = borrowRate ? parseFloat(borrowRate) : 0;
+  const borrowRate = Math.pow(debtPosition.dsp/baseBorrowed.dsp, yearProp) -1 
+  const borrowAPR = borrowRate;
 
   const netAPR = leverage * investAPR - (leverage - 1) * borrowAPR;
 
   return { investAPR, borrowAPR, netAPR };
 };
+
+// amount_.div(tradeValue_)

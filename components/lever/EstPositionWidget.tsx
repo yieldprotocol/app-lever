@@ -4,7 +4,7 @@ import tw from 'tailwind-styled-components';
 import { InputContext, W3bNumber } from '../../context/InputContext';
 import { useStEthSim } from '../../hooks/leverHooks/useStEthSim';
 import { BorderWrap, Header } from '../styles';
-import { useLever } from './useLever';
+import { useLever } from '../../hooks/useLever';
 
 const Inner = tw.div`m-4 gap-10`;
 const Grid = tw.div`grid my-5 auto-rows-auto gap-2`;
@@ -75,16 +75,15 @@ const EstPositionWidget = () => {
         <div> Current position value: {valueOfInvestment.dsp} </div>
         === CALCULATIONS ===
         <Label>13: (pos/prin - 1) </Label>
-        <div>PnL : </div>
-        <Label>14: ( investPosition/ baseInvesed ) ^ t%year - 1 </Label>
+        <div>PnL : {investPosition?.dsp!/shortInvested?.dsp! -1 } </div>
+        <Label>14: ( investPosition/ baseInvested ) ^ t%year - 1 </Label>
         <div>Invest rate ( APR): {investAPR} %APR</div>
         <Label>15: ( debtPosition / baseBorrowed ) ^ t%year -1 </Label>
         <div>Borrowing rate (APR): {borrowAPR} %APR </div>
         <Label>16: leverage*longAPR - (leverage - 1)*borrowAPR </Label>
         <div>Net rate: {netAPR} %APR </div>
-        <Label>16: Return in base ( ) </Label>
-        <div>Return in base: </div>
-        <div> </div>
+        <Label>16: ( investPostion - debtPosition - input ) </Label>
+        <div>Return in base: { investPosition?.dsp! - debtPosition?.dsp! - input.dsp }  </div>
       </Inner>
     </BorderWrap>
   );

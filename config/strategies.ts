@@ -25,7 +25,7 @@ export const STRATEGIES = new Map<string, ILeverStrategyRoot>();
 STRATEGIES.set('StETH_01', {
   id: '001',
   displayName: 'STETH SEP',
-  maturity: 12342134234,
+  maturity: 1664550000,
 
   investTokenType: GeneralTokenType.FYTOKEN,
   investTokenAddress: '0x53358d088d835399f1e97d2a01d79fc925c7d999',
@@ -41,7 +41,7 @@ STRATEGIES.set('StETH_01', {
 STRATEGIES.set('StETH_02', {
   id: '002',
   displayName: 'STETH DEC',
-  maturity: 123412341234,
+  maturity: 1672412400,
 
   investTokenType: GeneralTokenType.FYTOKEN,
   investTokenAddress: '0x828b154032950C8ff7CF8085D841723Db2696056',
