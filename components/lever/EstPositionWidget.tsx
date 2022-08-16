@@ -2,7 +2,7 @@ import { BigNumber } from 'ethers';
 import { useContext, useMemo } from 'react';
 import tw from 'tailwind-styled-components';
 import { InputContext, W3bNumber } from '../../context/InputContext';
-import { useStEth } from '../../hooks/leverHooks/useStEth';
+import { useStEthSim } from '../../hooks/leverHooks/useStEthSim';
 import { BorderWrap, Header } from '../styles';
 import { useLever } from './useLever';
 
@@ -12,87 +12,78 @@ const TopRow = tw.div`flex justify-between align-middle text-center items-center
 const ClearButton = tw.button`text-sm`;
 
 const Label = tw.div`text-[10px] text-[grey]`;
+const NotShown = tw.div` text-[pink]`;
 
-export interface leverDetails {
-  investPosition: W3bNumber|undefined;
-  debtPosition: W3bNumber|undefined;
-  baseInvested: W3bNumber|undefined;
-  baseBorrowed: W3bNumber|undefined;
-  flashFee: W3bNumber|undefined;
+export interface leverSimulation {
+  investPosition: W3bNumber | undefined;
+  debtPosition: W3bNumber | undefined;
+  baseInvested: W3bNumber | undefined;
+  baseBorrowed: W3bNumber | undefined;
+  flashFee: W3bNumber | undefined;
 }
 
 const EstPositionWidget = () => {
   const [inputState] = useContext(InputContext);
   const { input, leverage } = inputState;
 
-  const { totalToInvest, toBorrow, inputAsFyToken, valueOfInvestment } = useLever();
-
-  const stEthLever : leverDetails = useStEth(inputAsFyToken, toBorrow );
+  const {
+    totalToInvest,
+    toBorrow,
+    inputAsFyToken,
+    valueOfInvestment,
+    netAPR,
+    borrowAPR,
+    investAPR,
+    shortBorrowed,
+    shortInvested,
+    debtPosition,
+    investPosition,
+    flashFee
+  } = useLever();
 
   return (
     <BorderWrap>
-      <TopRow>
-        Estimated Position Information
-      </TopRow>
+      <TopRow>Estimated Position Information</TopRow>
 
-      {/* <div>{input?.dsp.toString()}</div>
-      <div> {input?.hStr.toString()} </div>
-      <div> {input?.big.toString()} </div> */}
-      
       <Inner>
-        
+        === INPUTS ===
         <Label>1: Input value (INPUT) </Label>
         <div> Input value (Short asset) : {input.dsp} ETH </div>
-
         <Label>2: Wrap if required (1:1)</Label>
-        <div> Wrapped input: {input.dsp} WETH </div>
-        
+        <NotShown> Wrapped input: {input.dsp} WETH </NotShown>
         <Label>3: Sell Short Asset for fyToken ( sellBase() ) </Label>
-        <div> Short asset investment as FyToken : {inputAsFyToken.dsp} (fyETH) </div>
-        
+        <NotShown> Short asset investment as FyToken : {inputAsFyToken.dsp} (fyETH) </NotShown>
         <Label>4: Input Leverage (INPUT):</Label>
         <div>Leverage: {leverage.dsp} X </div>
-        
-        <Label>5: Total to invest based on input and leverage </Label>
-        <div> Total Investment ( fyToken ): {totalToInvest.dsp} (fyETH)</div> 
-
-        ================================
-
-        <Label>5: Base Invested </Label>
-        <div> Total base  used to invest: {stEthLever.baseInvested?.dsp} </div>
-
-        <Label>6: Base Borrowed </Label>
-        <div> Base borrowed:  {stEthLever.baseBorrowed?.dsp} </div>
-
-        <Label>6: Debt Position (at Maturity) </Label>
-        <div> Debt owed at maturity: {stEthLever.debtPosition?.dsp} </div>
-
-        <Label>5: Investment position (long asset obtained) </Label>
-        <div>  Long position : {stEthLever.investPosition?.dsp} </div>
-
-        <Label>6: flashFee </Label>
-        <div> Flash borrow fee: {stEthLever.flashFee?.dsp} </div>
-
-        <Label>6: Current value </Label>
-        <div> Current position value: { valueOfInvestment.dsp } </div>
-
-        <Label>9: Value of debt at present </Label>
-        <div>Current Debt: {toBorrow.dsp} ETH </div>
-
-
-        ===========CALC'D========
-
-
-        <Label>7: </Label>
-        <div>PnL (pos/prin - 1): </div>
-
-        <Label>8: </Label>
-        <div>Long Rate ( APR): x %APR</div>
-
-
-        <Label>10: </Label>
-        <div>Borrowing rate (borrow APR): x %APR </div>
-
+        <Label>5: Total to invest based on input and leverage (fyToken input*leverage) </Label>
+        <NotShown> Total Investment ( fyToken ): {totalToInvest.dsp} (fyETH) </NotShown>
+        === SIMULATIONS ===
+        <Label>6: Base Invested ( baseInvested ) </Label>
+        <div> Short asset total invested : {shortInvested?.dsp} </div>
+        <Label>7: Base Borrowed ( baseBorrowed ) </Label>
+        <div> Short asset borrowed : {shortBorrowed?.dsp} </div>
+        <Label>8: Debt Position ( debtPosition ) </Label>
+        <div> Debt owed at maturity : {debtPosition?.dsp} </div>
+        <Label>9: Investment position ( long asset obtained ) ( investPosition ) </Label>
+        <div> Long position obtained : {investPosition?.dsp} </div>
+        {/* <Label>10: Amount borrowed </Label>
+        <div>Current Debt: {toBorrow.dsp} ETH </div> */}
+        <Label>11: flashFee </Label>
+        <div> Flash borrow fee: {flashFee?.dsp} </div>
+        === CURRENT VALUES ===
+        <Label>12: Current value </Label>
+        <div> Current position value: {valueOfInvestment.dsp} </div>
+        === CALCULATIONS ===
+        <Label>13: (pos/prin - 1) </Label>
+        <div>PnL : </div>
+        <Label>14: ( investPosition/ baseInvesed ) ^ t%year - 1 </Label>
+        <div>Invest rate ( APR): {investAPR} %APR</div>
+        <Label>15: ( debtPosition / baseBorrowed ) ^ t%year -1 </Label>
+        <div>Borrowing rate (APR): {borrowAPR} %APR </div>
+        <Label>16: leverage*longAPR - (leverage - 1)*borrowAPR </Label>
+        <div>Net rate: {netAPR} %APR </div>
+        <Label>16: Return in base ( ) </Label>
+        <div>Return in base: </div>
         <div> </div>
       </Inner>
     </BorderWrap>

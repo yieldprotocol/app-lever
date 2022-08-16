@@ -20,8 +20,10 @@ export interface ILeverContextState {
   appState: AppState;
 
   selectedStrategy: ILeverStrategy | undefined;
-  marketState: any;
+  shortAsset: IAsset | undefined;
+  longAsset: IAsset | undefined;
 
+  marketState: any;
   provider: any;
 }
 
@@ -52,6 +54,10 @@ const initState: ILeverContextState = {
   marketState: undefined,
 
   selectedStrategy: undefined,
+
+  shortAsset: undefined,
+  longAsset: undefined,
+
   provider: undefined,
 };
 
@@ -98,6 +104,13 @@ const leverReducer = (state: ILeverContextState, action: any) => {
       return {
         ...state,
         provider: action.payload,
+      };
+
+    case 'UPDATE_LONG_SHORT':
+      return {
+        ...state,
+        shortAsset: action.payload.shortAsset,
+        longAsset: action.payload.longAsset,
       };
 
     default:
@@ -203,6 +216,18 @@ const LeverProvider = ({ children }: any) => {
         payload: Array.from(leverState.strategies.values())[0], // Take the first strategy as default
       });
   }, [leverState.strategies]);
+
+  /* set the short and long assets when selected strategy changes */
+  useEffect(() => {
+    leverState.selectedStrategy &&
+      updateState({
+        type: 'UPDATE_LONG_SHORT',
+        payload: {
+          shortAsset: leverState.assets.get(leverState.selectedStrategy.baseId) ,
+          longAsset: leverState.assets.get(leverState.selectedStrategy.ilkId)  
+        },
+      });
+  }, [leverState.selectedStrategy, leverState.assets]);
 
   /* ACTIONS TO CHANGE CONTEXT  */
   const leverActions = {

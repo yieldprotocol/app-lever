@@ -8,12 +8,12 @@ import { IPoolState, MarketContext } from '../../context/MarketContext';
 import { convertToW3bNumber, getTimeToMaturity } from '../../lib/utils';
 import { LeverContext } from '../../context/LeverContext';
 import { WETH_ST_ETH_STABLESWAP, WST_ETH } from '../../contracts';
-import { leverDetails } from '../../components/lever/EstPositionWidget';
+import { leverSimulation } from '../../components/lever/EstPositionWidget';
 
-export const useStEth = (
+export const useNotionalSim = (
     inputAsFyToken: W3bNumber,
     toBorrow: W3bNumber
-) : leverDetails => {
+) : leverSimulation => {
 
   const [leverState] = useContext(LeverContext);
   const [marketState]: [IPoolState] = useContext(MarketContext);
@@ -38,7 +38,7 @@ export const useStEth = (
 
         if (selectedStrategy) {
           
-        // - netInvestAmount = baseAmount + borrowAmount - fee
+          // - netInvestAmount = baseAmount + borrowAmount - fee
           // const fyWeth = await getFyToken(seriesId, contracts, account);
           const fyContract= selectedStrategy.investTokenContract;
           const fee = await fyContract.flashFee(fyContract.address, toBorrow.big.toString());
