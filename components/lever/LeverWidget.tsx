@@ -1,5 +1,4 @@
-import { useContext, useEffect, useMemo, useState } from 'react';
-import { BigNumber } from 'ethers';
+import { useContext } from 'react';
 import tw from 'tailwind-styled-components';
 import Button from '../common/Button';
 
@@ -13,7 +12,6 @@ import { useLever } from '../../hooks/useLever';
 import { ValueInput } from './ValueInput';
 
 import { LeverContext } from '../../context/LeverContext';
-import { AppState } from '../../lib/protocol/types';
 import { InputContext } from '../../context/InputContext';
 
 const Inner = tw.div`m-4 text-center`;
@@ -23,12 +21,8 @@ const ClearButton = tw.button`text-sm`;
 
 const LeverWidget = (contracts: any) => {
   /* Bring in lever context - instead of passing them as props */
-  const [leverState, leverActions] = useContext(LeverContext);
-  const [inputState, inputActions] = useContext(InputContext);
-
-  const { account, selectedStrategy, balances, appState } = leverState;
-  const { setAppState } = leverActions;
-  const { input, leverage } = inputState;
+  const [leverState ] = useContext(LeverContext);
+  const { account, selectedStrategy} = leverState;
 
   /* All leveraging functionality has been moved into this hook */
   const {
@@ -59,12 +53,7 @@ const LeverWidget = (contracts: any) => {
           </div>
           <div>
             Principle investment
-            <ValueInput
-              // max={BigNumber.from('1000000000000000000')}
-              // defaultValue={BigNumber.from('130000000000000000')}
-              // onValueChange={(v) => setBalanceInput(v)}
-              // decimals={18}
-            />
+            <ValueInput />
           </div>
           <div>
             Leverage:

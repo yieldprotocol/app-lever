@@ -11,9 +11,7 @@ import { calculateAPRs, convertToW3bNumber, getTimeToMaturity } from '../lib/uti
 import { sellBase, sellFYToken } from '@yield-protocol/ui-math';
 import { IPoolState, MarketContext } from '../context/MarketContext';
 import { leverSimulation } from '../components/lever/EstPositionWidget';
-import { useStEthSim } from './leverHooks/useStEthSim';
-
-
+import { useStEthSim } from './LeverSims/useStEthSim';
 
 const OPTIONS: { value: number; label: string }[] = [
   { value: 1, label: '0.1%' },
@@ -102,7 +100,7 @@ export const useLever = () => {
   const [flashFee, setFlashFee] = useState<W3bNumber>();
 
   /* use STETH lever simulations */
-  const stEthSim: leverSimulation = useStEthSim(inputAsFyToken, toBorrow);
+  const stEthSim: leverSimulation = useStEthSim(inputAsFyToken, totalToInvest, toBorrow);
   useEffect(() => {
     if (
       // add in check here for if stratgey is steth
@@ -130,9 +128,9 @@ export const useLever = () => {
       setBorrowAPR(borrowAPR);
       setInvestAPR(investAPR);
     }
-  }, [stEthSim]);
+  }, [stEthSim, leverage, selectedStrategy]);
 
-  
+
   const approve = async () => {
     if (selectedStrategy?.investTokenContract) {
       setAppState(AppState.Approving);
@@ -156,13 +154,13 @@ export const useLever = () => {
         selectedStrategy.seriesId,
         input.big,
         toBorrow.big,
-        '0',
-        // stEthMinCollateral,
+        '0',// removeSlippage( investPosition.big),
         {
           value: shortAsset?.id === WETH ? input.big : ZERO_BN, // value is set as input if using ETH
           gasLimit,
         }
       );
+
       await investTx.wait();
     }
   };

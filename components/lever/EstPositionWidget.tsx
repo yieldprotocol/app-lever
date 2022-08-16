@@ -1,10 +1,10 @@
 import { BigNumber } from 'ethers';
-import { useContext, useMemo } from 'react';
+import { useContext } from 'react';
 import tw from 'tailwind-styled-components';
 import { InputContext, W3bNumber } from '../../context/InputContext';
-import { useStEthSim } from '../../hooks/leverHooks/useStEthSim';
-import { BorderWrap, Header } from '../styles';
+import { BorderWrap } from '../styles';
 import { useLever } from '../../hooks/useLever';
+import { LeverContext } from '../../context/LeverContext';
 
 const Inner = tw.div`m-4 gap-10`;
 const Grid = tw.div`grid my-5 auto-rows-auto gap-2`;
@@ -25,6 +25,9 @@ export interface leverSimulation {
 const EstPositionWidget = () => {
   const [inputState] = useContext(InputContext);
   const { input, leverage } = inputState;
+
+  const [leverState] = useContext(LeverContext);
+  const   {selectedStrategy} = leverState;
 
   const {
     totalToInvest,
@@ -65,15 +68,20 @@ const EstPositionWidget = () => {
         <Label>8: Debt Position ( debtPosition ) </Label>
         <div> Debt owed at maturity : {debtPosition?.dsp} </div>
         <Label>9: Investment position ( long asset obtained ) ( investPosition ) </Label>
-        <div> Long position obtained : {investPosition?.dsp} </div>
+        <div> Long asset obtained : {investPosition?.dsp} </div>
         {/* <Label>10: Amount borrowed </Label>
         <div>Current Debt: {toBorrow.dsp} ETH </div> */}
         <Label>11: flashFee </Label>
         <div> Flash borrow fee: {flashFee?.dsp} </div>
         === CURRENT VALUES ===
         <Label>12: Current value </Label>
-        <div> Current position value: {valueOfInvestment.dsp} </div>
+        <NotShown> Current position value: {valueOfInvestment.dsp} </NotShown>
+        
         === CALCULATIONS ===
+
+        <Label>13: (debtPosition/investPosition * LTV ) </Label>
+        <NotShown> Borrow Limit: {debtPosition?.dsp!/investPosition?.dsp! * selectedStrategy?.LTV*100 } % </NotShown> 
+
         <Label>13: (pos/prin - 1) </Label>
         <div>PnL : {investPosition?.dsp!/shortInvested?.dsp! -1 } </div>
         <Label>14: ( investPosition/ baseInvested ) ^ t%year - 1 </Label>

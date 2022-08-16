@@ -3,7 +3,6 @@ import tw from 'tailwind-styled-components';
 import { InputContext } from "../../context/InputContext";
 import { IAsset, LeverContext } from "../../context/LeverContext";
 
-
 type DivProps = {
   $unFocused?: boolean;
 };

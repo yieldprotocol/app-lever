@@ -38,6 +38,8 @@ export interface ILeverStrategy extends ILeverStrategyRoot {
   oracleContract: Contract;
   poolContract: Contract;
   poolAddress: string;
+  minRatio: number;
+  LTV: number;
 }
 
 const LeverContext = React.createContext<any>({});
@@ -178,7 +180,12 @@ const LeverProvider = ({ children }: any) => {
 
         /* get the oracle address from the cauldron  */
         const cauldron = contractFactories[CAULDRON].connect(CAULDRON, provider);
-        const { oracle } = await cauldron.spotOracles(strategy.baseId, strategy.ilkId);
+        const [{ oracle, ratio }, debt] = await Promise.all([
+          cauldron.spotOracles(strategy.baseId, strategy.ilkId),
+          cauldron.debt(strategy.baseId, strategy.ilkId)
+        ])
+
+        // console.log(debt);
 
         /* instantiate a oracle contract */
         const oracleContract = contractFactories[ORACLE].connect(oracle, provider);
@@ -194,6 +201,12 @@ const LeverProvider = ({ children }: any) => {
           poolContract = contractFactories[GeneralTokenType.YIELD_POOL].connect(poolAddress, provider);
         }
 
+        const minRatio = parseFloat(ethers.utils.formatUnits(ratio, 6))
+
+        const LTV = 1/minRatio;
+
+        console.log(minRatio);
+
         // const balance = account ? await investTokenContract.balanceOf(account) : BigNumber.from('0');
         const connectedStrategy = {
           ...strategy,
@@ -202,6 +215,8 @@ const LeverProvider = ({ children }: any) => {
           oracleContract,
           poolContract,
           poolAddress,
+          minRatio,
+          LTV,
         };
         updateState({ type: 'UPDATE_STRATEGY', payload: connectedStrategy });
       });
