@@ -40,8 +40,8 @@ export const useLever = () => {
     return convertToW3bNumber(value, shortAsset?.decimals, shortAsset?.displayDecimals);
   };
 
-  const inputAsFyToken: W3bNumber = useMemo(() => {
-    if (input.big.gt(ZERO_BN)) {
+  const inputAsFyToken: W3bNumber = useMemo( () => {
+    if (input && input.big.gt(ZERO_BN)) {
       const fyTokens = sellBase(
         marketState.sharesReserves,
         marketState.fyTokenReserves,
@@ -64,21 +64,21 @@ export const useLever = () => {
     return ZERO_W3N;
   }, [inputAsFyToken, leverage]);
 
-  const valueOfInvestment: W3bNumber = useMemo(() => {
-    if (totalToInvest.big.gt(ZERO_BN)) {
-      const baseValue = sellFYToken(
-        marketState.sharesReserves,
-        marketState.fyTokenReserves,
-        totalToInvest.big,
-        getTimeToMaturity(marketState.maturity),
-        marketState.ts,
-        marketState.g1,
-        marketState.decimals
-      );
-      return toW3bNumber(baseValue);
-    }
-    return ZERO_W3N;
-  }, [totalToInvest]);
+  // const valueOfInvestment: W3bNumber = useMemo(() => {
+  //   if (totalToInvest.big.gt(ZERO_BN)) {
+  //     const baseValue = sellFYToken(
+  //       marketState.sharesReserves,
+  //       marketState.fyTokenReserves,
+  //       totalToInvest.big,
+  //       getTimeToMaturity(marketState.maturity),
+  //       marketState.ts,
+  //       marketState.g1,
+  //       marketState.decimals
+  //     );
+  //     return toW3bNumber(baseValue);
+  //   }
+  //   return ZERO_W3N;
+  // }, [totalToInvest]);
 
   const toBorrow: W3bNumber = useMemo(() => {
     if (inputAsFyToken) {
@@ -87,6 +87,7 @@ export const useLever = () => {
     }
     return ZERO_W3N;
   }, [totalToInvest]);
+
 
   const [investAPR, setInvestAPR] = useState<number>();
   const [borrowAPR, setBorrowAPR] = useState<number>();
@@ -138,7 +139,7 @@ export const useLever = () => {
 
 
   const approve = async () => {
-    if (selectedStrategy?.investTokenContract) {
+    if (input && selectedStrategy?.investTokenContract) {
       setAppState(AppState.Approving);
       const gasLimit = (
         await selectedStrategy.investTokenContract.estimateGas.approve(selectedStrategy.leverAddress, totalToInvest.big)
@@ -150,7 +151,7 @@ export const useLever = () => {
   };
 
   const transact = async () => {
-    if (selectedStrategy?.leverContract) {
+    if (input && selectedStrategy?.leverContract) {
       setAppState(AppState.Transacting);
       const gasLimit = (
         await selectedStrategy.leverContract.estimateGas.invest(selectedStrategy.seriesId, input.big, toBorrow.big, '0')
@@ -177,7 +178,7 @@ export const useLever = () => {
 
     // inputs
     totalToInvest,
-    valueOfInvestment,
+    // valueOfInvestment,
     toBorrow,
     inputAsFyToken,
 

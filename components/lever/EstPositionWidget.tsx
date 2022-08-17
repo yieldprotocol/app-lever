@@ -38,9 +38,9 @@ const EstPositionWidget = () => {
 
   const {
     totalToInvest,
-    toBorrow,
+    // toBorrow,
     inputAsFyToken,
-    valueOfInvestment,
+    // valueOfInvestment,
     netAPR,
     borrowAPR,
     investAPR,
@@ -59,15 +59,16 @@ const EstPositionWidget = () => {
       <Inner>
         === INPUTS ===
         <Label>1: Input value (INPUT) </Label>
-        <div> Input value (Short asset) : {input.dsp} ETH </div>
+        <div> Input value (Short asset) : {input?.dsp} ETH </div>
         <Label>2: Wrap if required (1:1)</Label>
-        <NotShown> Wrapped input: {input.dsp} WETH </NotShown>
+        <NotShown> Wrapped input: {input?.dsp} WETH </NotShown>
         <Label>3: Sell Short Asset for fyToken ( sellBase() ) </Label>
         <NotShown> Short asset investment as FyToken : {inputAsFyToken.dsp} (fyETH) </NotShown>
         <Label>4: Input Leverage (INPUT):</Label>
         <div>Leverage: {leverage.dsp} X </div>
         <Label>5: Total to invest based on input and leverage (fyToken input*leverage) </Label>
         <NotShown> Total Investment ( fyToken ): {totalToInvest.dsp} (fyETH) </NotShown>
+        
         === SIMULATIONS ===
         <Label>6: Base Invested ( baseInvested ) </Label>
         <div> Short asset total invested : {shortInvested?.dsp} FYETH</div>
@@ -78,15 +79,19 @@ const EstPositionWidget = () => {
         <Label>9: Investment position ( long asset obtained ) ( investPosition ) </Label>
         <div> Long asset obtained : {investPosition?.dsp} StETH</div>
 
-        <Label>9: Investment value( ) ( investPosition ) </Label>
-        <div> Short value of long asset: {investValue?.dsp} WETH </div>
+
         {/* <Label>10: Amount borrowed </Label>
         <div>Current Debt: {toBorrow.dsp} ETH </div> */}
         <Label>11: flashFee </Label>
         <div> Flash borrow fee: {flashFee?.dsp} </div>
+        
         === CURRENT VALUES ===
-        <Label>12: Current value </Label>
-        <NotShown> Current position value: {valueOfInvestment.dsp} </NotShown>
+
+        <Label>9: Investment value( ) ( investPosition ) </Label>
+        <div> Short value of long asset: {investValue?.dsp} WETH </div>
+
+        {/* <Label>12: Current value </Label>
+        <NotShown> Current position value: {valueOfInvestment.dsp} </NotShown> */}
         
         === CALCULATIONS ===
 
@@ -102,7 +107,7 @@ const EstPositionWidget = () => {
         <Label>16: leverage*longAPR - (leverage - 1)*borrowAPR </Label>
         <div>Net rate: {netAPR} %APR </div>
         <Label>16: ( investPostion - debtPosition - input ) </Label>
-        <div>Return in base: { investPosition?.dsp! - debtPosition?.dsp! - input.dsp }  </div>
+        <div>Return in base: { investPosition?.dsp! - debtPosition?.dsp! - input?.dsp }  </div>
       </Inner>
     </BorderWrap>
   );

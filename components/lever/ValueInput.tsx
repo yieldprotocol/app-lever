@@ -39,8 +39,8 @@ export const ValueInput = () => {
       name="invest_amount"
       type="number"
       min="0"
-      max={asset?.balance.hStr}
-      value={inputState.input?.dsp}
+      max={100}
+      value={inputState.input?.dsp || '' }
       onChange={(el)=>inputActions.setInput(el.target.value)}
       onFocus={() => setFocus(true)}
       onBlur={() => setFocus(false)}

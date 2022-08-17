@@ -47,14 +47,12 @@ export const calculateAPRs = (
   // const investAPR = investRate ? parseFloat(investRate) : 0;
   const investRate = Math.pow(investValue.dsp / shortInvested.dsp, oneOverYearProp) - 1;
   const investAPR = investRate * 100;
-
   // console.log('invest rate: ',   investValue.dsp, shortInvested.dsp , investAPR )
 
   // const borrowRate = calculateAPR(debtPosition.big, baseBorrowed.big, maturity);
   // const borrowAPR = borrowRate ? parseFloat(borrowRate) : 0;
   const borrowRate = Math.pow(debtPosition.dsp / shortBorrowed.dsp, oneOverYearProp) - 1;
   const borrowAPR = borrowRate * 100;
-
   // console.log('borrow rate: ', debtPosition.dsp, borrowed.dsp , borrowAPR )
 
   const netAPR = leverage * investAPR - (leverage - 1) * borrowAPR;

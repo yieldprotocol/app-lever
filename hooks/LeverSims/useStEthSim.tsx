@@ -42,7 +42,7 @@ export const useStEthSim = (
      */
      const computeStEthCollateral = async (): Promise<void> => {
 
-        if (selectedStrategy) {        
+        if (selectedStrategy && inputAsFyToken.big.gt(ZERO_BN) ) {        
           // - netInvestAmount = baseAmount + borrowAmount - fee
           // const fyWeth = await getFyToken(seriesId, contracts, account);
           const fyContract= selectedStrategy.investTokenContract;

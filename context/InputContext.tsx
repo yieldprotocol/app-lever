@@ -1,5 +1,7 @@
+import { ZERO_BN } from '@yield-protocol/ui-math';
 import { BigNumber, ethers } from 'ethers';
 import React, { useContext, useEffect, useReducer } from 'react';
+import { ZERO_W3N } from '../constants';
 import { LeverContext } from './LeverContext';
 
 export interface W3bNumber {
@@ -9,34 +11,38 @@ export interface W3bNumber {
 }
 
 export interface IInputContextState {
-  input: W3bNumber;
-  leverage: W3bNumber;
+  input: W3bNumber| undefined;
+  leverage: W3bNumber| undefined;
   // selectedStrategy: ILeverStrategy|undefined;
 }
 
 /* Parse the input to W3BNumber based on the selected Strategy and base */
-const inputToW3bNumber = (input: string, decimals: number = 18, displayDecimals?: number ): W3bNumber => {
-  const input_bn = input ? ethers.utils.parseUnits(input.toString(), decimals) : ethers.constants.Zero;
-  const input_hstr = ethers.utils.formatUnits(input_bn, decimals); // hStr wil be the same as dsp because it is what the user is entereing.
-  const input_dsp = displayDecimals
-    ? Number(
-        Math.round(Number(parseFloat(input_hstr) + 'e' + displayDecimals.toString())) +
-          'e-' +
-          displayDecimals.toString()
-      )
-    : parseFloat(input);
+const inputToW3bNumber = (input: string, decimals: number = 18, displayDecimals?: number): W3bNumber|undefined => {
 
-  return {
-    dsp: input_dsp,
-    hStr: input_hstr,
-    big: input_bn,
-  };
+  if (input) {
+    const input_bn = input ? ethers.utils.parseUnits(input, decimals) : ZERO_BN;
+    const input_hstr = ethers.utils.formatUnits(input_bn, decimals); // hStr wil be the same as dsp because it is what the user is entereing.
+    const input_dsp = displayDecimals
+      ? Number(
+          Math.round(Number(parseFloat(input_hstr) + 'e' + displayDecimals.toString())) +
+            'e-' +
+            displayDecimals.toString()
+        )
+      : parseFloat(input);
+
+    return {
+      dsp: input_dsp,
+      hStr: input_hstr,
+      big: input_bn,
+    };
+    
+  }
+  return undefined
 };
 
 const InputContext = React.createContext<any>({});
-
 const initState: IInputContextState = {
-  input: inputToW3bNumber('0'),
+  input: undefined,
   leverage: inputToW3bNumber('3', 2),
   // selectedStrategy:undefined,
 };
@@ -44,7 +50,6 @@ const initState: IInputContextState = {
 const inputReducer = (state: IInputContextState, action: any) => {
   /* Reducer switch */
   switch (action.type) {
-
     case 'SET_INPUT':
       return {
         ...state,
@@ -64,11 +69,9 @@ const inputReducer = (state: IInputContextState, action: any) => {
 
 const InputProvider = ({ children }: any) => {
   /* LOCAL STATE */
-  const [ inputState, updateState ] = useReducer(inputReducer, initState);
-  const [ leverState ] = useContext(LeverContext);
+  const [inputState, updateState] = useReducer(inputReducer, initState);
+  const [leverState] = useContext(LeverContext);
   const { selectedStrategy } = leverState;
-
-
 
   /* Reset Input and leverage when selected strategy changes */
   useEffect(() => {
