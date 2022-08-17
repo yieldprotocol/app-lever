@@ -14,16 +14,16 @@ const ClearButton = tw.button`text-sm`;
 const Label = tw.div`text-[10px] text-[grey]`;
 const NotShown = tw.div` text-[pink]`;
 
-export interface leverSimulation {
+export interface LeverSimulation {
 
-  investPosition: W3bNumber | undefined; // long asset obtained
-  investValue: W3bNumber | undefined; // current value of long asset (in terms of short)
+  investPosition: W3bNumber; // long asset obtained
+  investValue: W3bNumber; // current value of long asset (in terms of short)
 
-  debtPosition: W3bNumber | undefined; // debt at maturity
-  debtValue: W3bNumber | undefined; // current Value if settling debt now
+  debtPosition: W3bNumber;// debt at maturity
+  debtValue: W3bNumber; // current Value if settling debt now
 
-  shortInvested: W3bNumber | undefined; // total short asset 
-  shortBorrowed: W3bNumber | undefined; // amount of short asset borrowed
+  shortInvested: W3bNumber; // total short asset 
+  shortBorrowed: W3bNumber; // amount of short asset borrowed
 
   flashFee?: W3bNumber;
   swapFee?: W3bNumber;

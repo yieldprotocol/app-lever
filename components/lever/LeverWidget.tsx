@@ -25,11 +25,11 @@ const LeverWidget = (contracts: any) => {
   const { account, selectedStrategy} = leverState;
 
   /* All leveraging functionality has been moved into this hook */
-  const {
-    transact,
-    approve,
-  } = useLever();
 
+  // const {
+  //   transact,
+  //   approve,
+  // } = useLever();
 
   return (
       <BorderWrap>
@@ -61,7 +61,7 @@ const LeverWidget = (contracts: any) => {
           </div>
 
           <Button
-            action={() => transact()}
+            action={() => console.log('transact now')}
             disabled={!account || !selectedStrategy} // add in isTransacting check
             loading={false}
             // loading={isTransacting} 

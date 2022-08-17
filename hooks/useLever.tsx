@@ -10,8 +10,9 @@ import { calculateAPRs, convertToW3bNumber, getTimeToMaturity } from '../lib/uti
 
 import { sellBase, sellFYToken } from '@yield-protocol/ui-math';
 import { IPoolState, MarketContext } from '../context/MarketContext';
-import { leverSimulation } from '../components/lever/EstPositionWidget';
+import { LeverSimulation } from '../components/lever/EstPositionWidget';
 import { useStEthSim } from './LeverSims/useStEthSim';
+import { useDebounce } from './generalHooks';
 
 const OPTIONS: { value: number; label: string }[] = [
   { value: 1, label: '0.1%' },
@@ -29,6 +30,22 @@ export const useLever = () => {
   const { selectedStrategy, shortAsset, longAsset } = leverState;
   const { input, leverage } = inputState as IInputContextState;
 
+  /* add in debounced leverage when using slider - to prevent excessive calcs */ 
+  const debouncedLeverage = useDebounce(leverage, 500);
+
+  const [investAPR, setInvestAPR] = useState<number>();
+  const [borrowAPR, setBorrowAPR] = useState<number>();
+  const [netAPR, setNetAPR] = useState<number>();
+
+  const [investPosition, setInvestPosition] = useState<W3bNumber>(ZERO_W3N);
+  const [investValue, setInvestValue] = useState<W3bNumber>(ZERO_W3N);
+  const [debtPosition, setDebtPosition] = useState<W3bNumber>(ZERO_W3N);
+  const [shortInvested, setShortInvested] = useState<W3bNumber>(ZERO_W3N);
+  const [shortBorrowed, setShortBorrowed] = useState<W3bNumber>(ZERO_W3N);
+
+  const [flashFee, setFlashFee] = useState<W3bNumber>();
+  
+
   const { setAppState } = leverActions;
 
   const [slippage, setSlippage] = useState(OPTIONS[1].value);
@@ -40,7 +57,7 @@ export const useLever = () => {
     return convertToW3bNumber(value, shortAsset?.decimals, shortAsset?.displayDecimals);
   };
 
-  const inputAsFyToken: W3bNumber = useMemo( () => {
+  const inputAsFyToken: W3bNumber = useMemo(() => {
     if (input && input.big.gt(ZERO_BN)) {
       const fyTokens = sellBase(
         marketState.sharesReserves,
@@ -58,27 +75,11 @@ export const useLever = () => {
 
   const totalToInvest: W3bNumber = useMemo(() => {
     if (inputAsFyToken.big.gt(ZERO_BN)) {
-      const total_ = inputAsFyToken.big.mul(leverage.big).div(100);
+      const total_ = inputAsFyToken.big.mul(leverage!.big).div(100);
       return toW3bNumber(total_); /* set as w3bnumber  */
     }
     return ZERO_W3N;
   }, [inputAsFyToken, leverage]);
-
-  // const valueOfInvestment: W3bNumber = useMemo(() => {
-  //   if (totalToInvest.big.gt(ZERO_BN)) {
-  //     const baseValue = sellFYToken(
-  //       marketState.sharesReserves,
-  //       marketState.fyTokenReserves,
-  //       totalToInvest.big,
-  //       getTimeToMaturity(marketState.maturity),
-  //       marketState.ts,
-  //       marketState.g1,
-  //       marketState.decimals
-  //     );
-  //     return toW3bNumber(baseValue);
-  //   }
-  //   return ZERO_W3N;
-  // }, [totalToInvest]);
 
   const toBorrow: W3bNumber = useMemo(() => {
     if (inputAsFyToken) {
@@ -88,55 +89,35 @@ export const useLever = () => {
     return ZERO_W3N;
   }, [totalToInvest]);
 
+    /* use STETH lever simulations */
+    const { simulateLever } = useStEthSim(inputAsFyToken, toBorrow);
 
-  const [investAPR, setInvestAPR] = useState<number>();
-  const [borrowAPR, setBorrowAPR] = useState<number>();
-  const [netAPR, setNetAPR] = useState<number>();
-
-  const [investPosition, setInvestPosition] = useState<W3bNumber>();
-  const [investValue, setInvestValue] = useState<W3bNumber>();
-  const [debtPosition, setDebtPosition] = useState<W3bNumber>();
-  const [shortInvested, setShortInvested] = useState<W3bNumber>();
-  const [shortBorrowed, setShortBorrowed] = useState<W3bNumber>();
-
-  const [flashFee, setFlashFee] = useState<W3bNumber>();
-
-  /* use STETH lever simulations */
-  const stEthSim: leverSimulation = useStEthSim(inputAsFyToken, totalToInvest, toBorrow);
   useEffect(() => {
-    if (
-      // add in check here for if stratgey is steth
-      stEthSim.investPosition &&
-      stEthSim.investValue && 
-      stEthSim.debtPosition &&
-      stEthSim.shortInvested &&
-      stEthSim.shortBorrowed &&
-      leverage.dsp &&
-      selectedStrategy?.maturity
-    ) {
-      setInvestPosition(stEthSim.investPosition);
-      setInvestValue(stEthSim.investValue);
+    (async () => {
+      if (selectedStrategy && inputAsFyToken.big.gt(ZERO_BN) && debouncedLeverage) {
+        const stEthSim = await simulateLever();
+        setInvestPosition(stEthSim.investPosition);
+        setInvestValue(stEthSim.investValue);
+        setShortBorrowed(stEthSim.shortBorrowed);
+        setShortInvested(stEthSim.shortInvested);
+        setDebtPosition(stEthSim.debtPosition);
+        // setDebtValue(stEthSim.debtValue);
+        // console.log(stEthSim);
+        const { netAPR, borrowAPR, investAPR } = calculateAPRs(
+          investValue,
+          debtPosition,
+          shortInvested,
+          shortBorrowed,
+          debouncedLeverage.dsp,
+          selectedStrategy.maturity
+        );
+        setNetAPR(netAPR);
+        setBorrowAPR(borrowAPR);
+        setInvestAPR(investAPR);
+      }
+    })();
 
-      setShortBorrowed(stEthSim.shortBorrowed);
-      setShortInvested(stEthSim.shortInvested);
-
-      setDebtPosition(stEthSim.debtPosition);
-      // setDebtValue(stEthSim.debtValue);
-
-      const { netAPR, borrowAPR, investAPR } = calculateAPRs(
-        stEthSim.investValue,
-        stEthSim.debtPosition,
-        stEthSim.shortInvested,
-        stEthSim.shortBorrowed,
-        leverage.dsp,
-        selectedStrategy?.maturity
-      );
-      setNetAPR(netAPR);
-      setBorrowAPR(borrowAPR);
-      setInvestAPR(investAPR);
-    }
-  }, [stEthSim, leverage, selectedStrategy]);
-
+  }, [selectedStrategy, inputAsFyToken, debouncedLeverage]);
 
   const approve = async () => {
     if (input && selectedStrategy?.investTokenContract) {
@@ -161,7 +142,7 @@ export const useLever = () => {
         selectedStrategy.seriesId,
         input.big,
         toBorrow.big,
-        '0',// removeSlippage( investPosition.big),
+        '0', // removeSlippage( investPosition.big),
         {
           value: shortAsset?.id === WETH ? input.big : ZERO_BN, // value is set as input if using ETH
           gasLimit,
