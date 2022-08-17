@@ -13,7 +13,7 @@ import { ZERO_W3N } from '../../constants';
 export const useStEthSim = (
   inputAsFyToken: W3bNumber,
   toBorrow: W3bNumber
-): { simulateLever : () => Promise<LeverSimulation>, simulating:boolean } => {
+): { simulateLever : () => Promise<LeverSimulation>, isSimulating:boolean } => {
   const [ leverState ] = useContext(LeverContext);
   const [ marketState ]: [IPoolState] = useContext(MarketContext);
   const { selectedStrategy, provider } = leverState;
