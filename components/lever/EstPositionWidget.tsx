@@ -29,7 +29,7 @@ export interface LeverSimulation {
   swapFee?: W3bNumber;
 }
 
-const EstPositionWidget = () => {
+const EstPositionWidget = (props:any) => {
   const [inputState] = useContext(InputContext);
   const { input, leverage } = inputState;
 
@@ -38,9 +38,7 @@ const EstPositionWidget = () => {
 
   const {
     totalToInvest,
-    // toBorrow,
     inputAsFyToken,
-    // valueOfInvestment,
     netAPR,
     borrowAPR,
     investAPR,
@@ -50,7 +48,7 @@ const EstPositionWidget = () => {
     investPosition,
     investValue,
     flashFee
-  } = useLever();
+  } = props.lever;
 
   return (
     <BorderWrap>

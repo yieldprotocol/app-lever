@@ -34,7 +34,7 @@ export const useStEthSim = (
    * parameters.
    */
   const simulateLever =  async (): Promise<LeverSimulation> => {
-
+    
     const shortBorrowed = toBorrow;
     let investPosition = ZERO_W3N;
     let investValue= ZERO_W3N;

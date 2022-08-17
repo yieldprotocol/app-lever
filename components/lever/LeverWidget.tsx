@@ -19,17 +19,15 @@ const Grid = tw.div`grid my-5 auto-rows-auto gap-2`;
 const TopRow = tw.div`flex justify-between align-middle text-center items-center`;
 const ClearButton = tw.button`text-sm`;
 
-const LeverWidget = (contracts: any) => {
+const LeverWidget = (props: any) => {
   /* Bring in lever context - instead of passing them as props */
   const [leverState ] = useContext(LeverContext);
   const { account, selectedStrategy} = leverState;
 
-  /* All leveraging functionality has been moved into this hook */
-
-  // const {
-  //   transact,
-  //   approve,
-  // } = useLever();
+  const {
+    transact,
+    approve,
+  } = props.lever;
 
   return (
       <BorderWrap>

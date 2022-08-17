@@ -8,9 +8,8 @@ import { ILeverContextState, LeverContext } from '../context/LeverContext';
 import { AppState } from '../lib/protocol/types';
 import { calculateAPRs, convertToW3bNumber, getTimeToMaturity } from '../lib/utils';
 
-import { sellBase, sellFYToken } from '@yield-protocol/ui-math';
+import { sellBase } from '@yield-protocol/ui-math';
 import { IPoolState, MarketContext } from '../context/MarketContext';
-import { LeverSimulation } from '../components/lever/EstPositionWidget';
 import { useStEthSim } from './LeverSims/useStEthSim';
 import { useDebounce } from './generalHooks';
 
@@ -45,7 +44,6 @@ export const useLever = () => {
 
   const [flashFee, setFlashFee] = useState<W3bNumber>();
   
-
   const { setAppState } = leverActions;
 
   const [slippage, setSlippage] = useState(OPTIONS[1].value);
@@ -89,8 +87,8 @@ export const useLever = () => {
     return ZERO_W3N;
   }, [totalToInvest]);
 
-    /* use STETH lever simulations */
-    const { simulateLever } = useStEthSim(inputAsFyToken, toBorrow);
+  /* use STETH lever simulations */
+  const { simulateLever } = useStEthSim(inputAsFyToken, toBorrow);
 
   useEffect(() => {
     (async () => {
