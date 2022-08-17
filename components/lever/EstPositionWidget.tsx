@@ -15,11 +15,18 @@ const Label = tw.div`text-[10px] text-[grey]`;
 const NotShown = tw.div` text-[pink]`;
 
 export interface leverSimulation {
-  investPosition: W3bNumber | undefined;
-  debtPosition: W3bNumber | undefined;
-  baseInvested: W3bNumber | undefined;
-  baseBorrowed: W3bNumber | undefined;
-  flashFee: W3bNumber | undefined;
+
+  investPosition: W3bNumber | undefined; // long asset obtained
+  investValue: W3bNumber | undefined; // current value of long asset (in terms of short)
+
+  debtPosition: W3bNumber | undefined; // debt at maturity
+  debtValue: W3bNumber | undefined; // current Value if settling debt now
+
+  shortInvested: W3bNumber | undefined; // total short asset 
+  shortBorrowed: W3bNumber | undefined; // amount of short asset borrowed
+
+  flashFee?: W3bNumber;
+  swapFee?: W3bNumber;
 }
 
 const EstPositionWidget = () => {
@@ -41,6 +48,7 @@ const EstPositionWidget = () => {
     shortInvested,
     debtPosition,
     investPosition,
+    investValue,
     flashFee
   } = useLever();
 
@@ -62,13 +70,16 @@ const EstPositionWidget = () => {
         <NotShown> Total Investment ( fyToken ): {totalToInvest.dsp} (fyETH) </NotShown>
         === SIMULATIONS ===
         <Label>6: Base Invested ( baseInvested ) </Label>
-        <div> Short asset total invested : {shortInvested?.dsp} </div>
+        <div> Short asset total invested : {shortInvested?.dsp} FYETH</div>
         <Label>7: Base Borrowed ( baseBorrowed ) </Label>
-        <div> Short asset borrowed : {shortBorrowed?.dsp} </div>
+        <div> Short asset borrowed : {shortBorrowed?.dsp} ETH </div>
         <Label>8: Debt Position ( debtPosition ) </Label>
-        <div> Debt owed at maturity : {debtPosition?.dsp} </div>
+        <div> Debt owed at maturity : {debtPosition?.dsp} FYETH==ETH</div>
         <Label>9: Investment position ( long asset obtained ) ( investPosition ) </Label>
-        <div> Long asset obtained : {investPosition?.dsp} </div>
+        <div> Long asset obtained : {investPosition?.dsp} StETH</div>
+
+        <Label>9: Investment value( ) ( investPosition ) </Label>
+        <div> Short value of long asset: {investValue?.dsp} WETH </div>
         {/* <Label>10: Amount borrowed </Label>
         <div>Current Debt: {toBorrow.dsp} ETH </div> */}
         <Label>11: flashFee </Label>

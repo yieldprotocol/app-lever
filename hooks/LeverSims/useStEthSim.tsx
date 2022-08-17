@@ -21,10 +21,15 @@ export const useStEthSim = (
   const { selectedStrategy, provider } = leverState;
 
   const [ investPosition, setInvestPosition] = useState<W3bNumber>();
-  const [ baseInvested, setBaseInvested] = useState<W3bNumber>();
-  const [ baseBorrowed, setBaseBorrowed] = useState<W3bNumber>();
+  const [ investValue, setInvestValue] = useState<W3bNumber>(); 
+  const [ shortInvested, setShortInvested] = useState<W3bNumber>();
+  const [ shortBorrowed, setShortBorrowed] = useState<W3bNumber>();
   const [ debtPosition, setDebtPosition] = useState<W3bNumber>();
+  const [ debtValue, setDebtValue] = useState<W3bNumber>();
+
   const [ flashFee, setFlashFee] = useState<W3bNumber>();
+
+  const [ swapFee, setSwapFee] = useState<W3bNumber>();
 
   useEffect(()=>{
     // setCollateralGenerated(inputAsFyToken ); 
@@ -46,8 +51,9 @@ export const useStEthSim = (
 
           const netInvestAmount = inputAsFyToken.big.add(toBorrow.big).sub(fee); // - netInvestAmount = baseAmount + borrowAmount - fee
 
-          setBaseBorrowed( toBorrow );
+          setShortBorrowed( toBorrow );
 
+          /* calculate the resulting debt */ 
           const debt_= sellBase (
             marketState.sharesReserves,
             marketState.fyTokenReserves,
@@ -56,10 +62,9 @@ export const useStEthSim = (
             marketState.ts,
             marketState.g1,
             marketState.decimals
-          ) 
-          
+          )      
           setDebtPosition( convertToW3bNumber( debt_,18,6 ))
-           
+
           // - sellFyWeth: FyWEth -> WEth
           // const obtainedWEth = await selectedStrategy.marketContract.sellFYTokenPreview(netInvestAmount);
           const wethObtained = sellFYToken(
@@ -72,21 +77,25 @@ export const useStEthSim = (
             marketState.decimals
           );
 
-          setBaseInvested( convertToW3bNumber( wethObtained,18,6 ) );
+          setShortInvested( convertToW3bNumber( wethObtained,18,6 ) );
 
           // stableSwap exchange: WEth -> StEth
           const stableSwap = contractFactories[WETH_ST_ETH_STABLESWAP].connect(WETH_ST_ETH_STABLESWAP, provider);
           const boughtStEth = await stableSwap.get_dy(0, 1, wethObtained );
     
           // - Wrap: StEth -> WStEth
-          const wStEth = contractFactories[WST_ETH].connect(WST_ETH, provider)
-          const resultWrapped = await wStEth.getWstETHByStETH(boughtStEth);
+          const wStEthContract = contractFactories[WST_ETH].connect(WST_ETH, provider)
+          const investPosition_ = await wStEthContract.getWstETHByStETH(boughtStEth);
+          setInvestPosition( convertToW3bNumber( investPosition_,18,6 )  );
 
-          setInvestPosition( convertToW3bNumber( resultWrapped,18,6 )  );
-          // return wrapped;
+          // TODO check if there is a fee/cost for unwrapping */
+
+          /* Calculate the value of the investPosition in short terms : via swap */
+          const investValue_ = await stableSwap.get_dy(1, 0, boughtStEth )
+          setInvestValue( convertToW3bNumber( investValue_,18,6 ) )
 
         }
       };
 
-      return { investPosition, debtPosition, baseInvested, baseBorrowed, flashFee };
+      return { investPosition, investValue, debtPosition, shortInvested, shortBorrowed, debtValue, flashFee };
 }

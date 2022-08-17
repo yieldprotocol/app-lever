@@ -93,6 +93,7 @@ export const useLever = () => {
   const [netAPR, setNetAPR] = useState<number>();
 
   const [investPosition, setInvestPosition] = useState<W3bNumber>();
+  const [investValue, setInvestValue] = useState<W3bNumber>();
   const [debtPosition, setDebtPosition] = useState<W3bNumber>();
   const [shortInvested, setShortInvested] = useState<W3bNumber>();
   const [shortBorrowed, setShortBorrowed] = useState<W3bNumber>();
@@ -105,22 +106,27 @@ export const useLever = () => {
     if (
       // add in check here for if stratgey is steth
       stEthSim.investPosition &&
+      stEthSim.investValue && 
       stEthSim.debtPosition &&
-      stEthSim.baseInvested &&
-      stEthSim.baseBorrowed &&
+      stEthSim.shortInvested &&
+      stEthSim.shortBorrowed &&
       leverage.dsp &&
       selectedStrategy?.maturity
     ) {
       setInvestPosition(stEthSim.investPosition);
+      setInvestValue(stEthSim.investValue);
+
+      setShortBorrowed(stEthSim.shortBorrowed);
+      setShortInvested(stEthSim.shortInvested);
+
       setDebtPosition(stEthSim.debtPosition);
-      setShortBorrowed(stEthSim.baseBorrowed);
-      setShortInvested(stEthSim.baseInvested);
+      // setDebtValue(stEthSim.debtValue);
 
       const { netAPR, borrowAPR, investAPR } = calculateAPRs(
-        stEthSim.investPosition,
+        stEthSim.investValue,
         stEthSim.debtPosition,
-        stEthSim.baseInvested,
-        stEthSim.baseBorrowed,
+        stEthSim.shortInvested,
+        stEthSim.shortBorrowed,
         leverage.dsp,
         selectedStrategy?.maturity
       );
@@ -177,6 +183,7 @@ export const useLever = () => {
 
     // simulations
     investPosition,
+    investValue,
     debtPosition,
     shortBorrowed,
     shortInvested,

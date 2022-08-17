@@ -39,7 +39,7 @@ export interface ILeverStrategy extends ILeverStrategyRoot {
   poolContract: Contract;
   poolAddress: string;
   minRatio: number;
-  LTV: number;
+  loanToValue: number;
 }
 
 const LeverContext = React.createContext<any>({});
@@ -202,10 +202,7 @@ const LeverProvider = ({ children }: any) => {
         }
 
         const minRatio = parseFloat(ethers.utils.formatUnits(ratio, 6))
-
-        const LTV = 1/minRatio;
-
-        console.log(minRatio);
+        const loanToValue = 1/minRatio;
 
         // const balance = account ? await investTokenContract.balanceOf(account) : BigNumber.from('0');
         const connectedStrategy = {
@@ -216,7 +213,7 @@ const LeverProvider = ({ children }: any) => {
           poolContract,
           poolAddress,
           minRatio,
-          LTV,
+          loanToValue,
         };
         updateState({ type: 'UPDATE_STRATEGY', payload: connectedStrategy });
       });
