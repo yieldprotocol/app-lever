@@ -6,6 +6,8 @@ import LeverWidget from './LeverWidget';
 const Lever = () => {
   /* lever is abstracted up here in the top level to save a re-render */
   const lever = useLever()
+
+  console.log(lever)
   
   return (
     <div className="flex flex-row">

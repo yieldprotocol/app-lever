@@ -102,7 +102,7 @@ export const useLever = () => {
   // }, [totalToInvest]);
 
   /* use STETH lever simulations */
-  const { simulateLever } = useStEthSim();
+  const { simulateLever, isSimulating } = useStEthSim();
 
 
   useEffect(() => {
@@ -182,7 +182,9 @@ export const useLever = () => {
     borrowAPR,
     investAPR,
     netAPR,
-
+    
+    isSimulating,
+    
     slippage,
     setSlippage,
     changeSlippage,

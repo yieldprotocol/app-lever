@@ -8,11 +8,8 @@ import ShortSelect from '../selectors/ShortSelect';
 import LongSelect from '../selectors/LongSelect';
 import LeverageSelect from '../selectors/LeverageSelect';
 
-import { useLever } from '../../hooks/useLever';
-import { ValueInput } from './ValueInput';
-
+import { ValueInput } from '../selectors/ValueInput';
 import { LeverContext } from '../../context/LeverContext';
-import { InputContext } from '../../context/InputContext';
 
 const Inner = tw.div`m-4 text-center`;
 const Grid = tw.div`grid my-5 auto-rows-auto gap-2`;
@@ -27,6 +24,7 @@ const LeverWidget = (props: any) => {
   const {
     transact,
     approve,
+    isSimulating
   } = props.lever;
 
   return (
@@ -68,6 +66,7 @@ const LeverWidget = (props: any) => {
             {!account ? 'Connect Wallet' : 'Action'}
           </Button>
         </Inner>
+        is simulatin? {isSimulating.toString() }
       </BorderWrap>
   );
 };
