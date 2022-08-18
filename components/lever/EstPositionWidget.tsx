@@ -4,7 +4,7 @@ import tw from 'tailwind-styled-components';
 import { InputContext, W3bNumber } from '../../context/InputContext';
 import { BorderWrap } from '../styles';
 import { useLever } from '../../hooks/useLever';
-import { LeverContext } from '../../context/LeverContext';
+import { ILeverStrategy, LeverContext } from '../../context/LeverContext';
 
 const Inner = tw.div`m-4 gap-10`;
 const Grid = tw.div`grid my-5 auto-rows-auto gap-2`;
@@ -19,11 +19,9 @@ const EstPositionWidget = (props:any) => {
   const { input, leverage } = inputState;
 
   const [leverState] = useContext(LeverContext);
-  const   {selectedStrategy} = leverState;
+  const { selectedStrategy } = leverState;
 
   const {
-    // totalToInvest,
-    // inputAsFyToken,
     netAPR,
     borrowAPR,
     investAPR,
@@ -76,7 +74,7 @@ const EstPositionWidget = (props:any) => {
         === CURRENT VALUES ===
 
         <Label>9: Investment value( ) ( investPosition ) </Label>
-        <div> Short value of long asset: {investValue?.dsp} WETH </div>
+        <div> Value of long asset (in short terms): {investValue?.dsp} WETH </div>
 
         {/* <Label>12: Current value </Label>
         <NotShown> Current position value: {valueOfInvestment.dsp} </NotShown> */}
@@ -84,7 +82,7 @@ const EstPositionWidget = (props:any) => {
         === CALCULATIONS ===
 
         <Label>13: (debtPosition/investPosition * LTV ) </Label>
-        <NotShown> Borrow Limit: {debtPosition?.dsp!/investPosition?.dsp! * selectedStrategy?.LTV*100 } % </NotShown> 
+        <NotShown> Borrow Limit: {debtPosition?.dsp!/investPosition?.dsp! * selectedStrategy?.LoanToValue*100 } % </NotShown> 
 
         <Label>13: (pos/prin - 1) </Label>
         <div>PnL : {Math.round(((investPosition?.dsp!/shortInvested?.dsp! -1) + Number.EPSILON) * 100) / 100} </div>

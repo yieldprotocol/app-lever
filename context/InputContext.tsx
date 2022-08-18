@@ -11,14 +11,21 @@ export interface W3bNumber {
 }
 
 export interface IInputContextState {
-  input: W3bNumber| undefined;
-  leverage: W3bNumber| undefined;
+  input: W3bNumber | undefined;
+  leverage: W3bNumber | undefined;
+  slippage: number;
   // selectedStrategy: ILeverStrategy|undefined;
 }
 
-/* Parse the input to W3BNumber based on the selected Strategy and base */
-const inputToW3bNumber = (input: string, decimals: number = 18, displayDecimals?: number): W3bNumber|undefined => {
+// const OPTIONS: { value: number; label: string }[] = [
+//   { value: 1, label: '0.1%' },
+//   { value: 5, label: '0.5%' },
+//   { value: 10, label: '1%' },
+//   { value: 50, label: '5%' },
+// ];
 
+/* Parse the input to W3BNumber based on the selected Strategy and base */
+const inputToW3bNumber = (input: string, decimals: number = 18, displayDecimals?: number): W3bNumber | undefined => {
   if (input) {
     const input_bn = input ? ethers.utils.parseUnits(input, decimals) : ZERO_BN;
     const input_hstr = ethers.utils.formatUnits(input_bn, decimals); // hStr wil be the same as dsp because it is what the user is entereing.
@@ -35,15 +42,15 @@ const inputToW3bNumber = (input: string, decimals: number = 18, displayDecimals?
       hStr: input_hstr,
       big: input_bn,
     };
-    
   }
-  return undefined
+  return undefined;
 };
 
 const InputContext = React.createContext<any>({});
 const initState: IInputContextState = {
   input: undefined,
   leverage: inputToW3bNumber('3', 2),
+  slippage: 0.001,
   // selectedStrategy:undefined,
 };
 
@@ -55,12 +62,18 @@ const inputReducer = (state: IInputContextState, action: any) => {
         ...state,
         input: action.payload,
       };
-    
-      // case 'SELECT_STRATEGY':
-      //   return {
-      //     ...state,
-      //     selectedStrategy: action.payload,
-      //   };
+
+    // case 'SELECT_STRATEGY':
+    //   return {
+    //     ...state,
+    //     selectedStrategy: action.payload,
+    //   };
+
+    case 'SET_SLIPPAGE':
+      return {
+        ...state,
+        slippage: action.payload,
+      };
 
     case 'SET_LEVERAGE':
       return {
@@ -90,6 +103,7 @@ const InputProvider = ({ children }: any) => {
     setInput: (input: number) => updateState({ type: 'SET_INPUT', payload: inputToW3bNumber(input.toString()) }),
     setLeverage: (leverage: number) =>
       updateState({ type: 'SET_LEVERAGE', payload: inputToW3bNumber(leverage.toString(), 2) }),
+    setSlippage: (slippagePercent: number) => updateState({ type: 'SET_SLIPPAGE', payload: slippagePercent / 100 }),
   };
 
   return <InputContext.Provider value={[inputState, inputActions]}>{children}</InputContext.Provider>;

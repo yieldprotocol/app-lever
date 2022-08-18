@@ -1,24 +1,17 @@
 import { BigNumber, ethers, utils } from 'ethers';
 import { zeroPad } from 'ethers/lib/utils';
-import { useContext, useEffect, useMemo, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { WETH, WSTETH } from '../config/assets';
 import { ZERO_BN, ZERO_W3N } from '../constants';
 import { IInputContextState, InputContext, W3bNumber } from '../context/InputContext';
 import { ILeverContextState, LeverContext } from '../context/LeverContext';
 import { AppState } from '../lib/protocol/types';
-import { calculateAPRs, convertToW3bNumber, getTimeToMaturity } from '../lib/utils';
+import { calculateAPRs } from '../lib/utils';
 
-import { sellBase } from '@yield-protocol/ui-math';
 import { IPoolState, MarketContext } from '../context/MarketContext';
 import { useStEthSim } from './LeverSims/useStEthSim';
 import { useDebounce } from './generalHooks';
 
-const OPTIONS: { value: number; label: string }[] = [
-  { value: 1, label: '0.1%' },
-  { value: 5, label: '0.5%' },
-  { value: 10, label: '1%' },
-  { value: 50, label: '5%' },
-];
 
 export interface LeverSimulation {
   investPosition: W3bNumber; // long asset obtained
@@ -48,9 +41,8 @@ export const useLever = () => {
   /* Bring in context*/
   const [leverState, leverActions]: [ILeverContextState, any] = useContext(LeverContext);
   const [inputState] = useContext(InputContext);
-  const [marketState]: [IPoolState] = useContext(MarketContext);
 
-  const { selectedStrategy, shortAsset, longAsset } = leverState;
+  const { selectedStrategy, shortAsset } = leverState;
   const { input, leverage } = inputState as IInputContextState;
 
   /* add in debounced leverage when using slider - to prevent excessive calcs */
@@ -65,47 +57,9 @@ export const useLever = () => {
   const [debtPosition, setDebtPosition] = useState<W3bNumber>(ZERO_W3N);
   const [shortInvested, setShortInvested] = useState<W3bNumber>(ZERO_W3N);
   const [shortBorrowed, setShortBorrowed] = useState<W3bNumber>(ZERO_W3N);
-
   const [flashFee, setFlashFee] = useState<W3bNumber>();
 
   const { setAppState } = leverActions;
-
-  const [slippage, setSlippage] = useState(OPTIONS[1].value);
-  const changeSlippage = (value: number) => setSlippage(value * 10); // check
-  const addSlippage = (num: BigNumber, slippage: number) => num.mul(1000 + slippage).div(1000);
-  const removeSlippage = (num: BigNumber, slippage: number) => num.mul(1000 - slippage).div(1000);
-
-  // const inputAsFyToken: W3bNumber = useMemo(() => {
-  //   if (input && input.big.gt(ZERO_BN)) {
-  //     const fyTokens = sellBase(
-  //       marketState.sharesReserves,
-  //       marketState.fyTokenReserves,
-  //       input.big,
-  //       getTimeToMaturity(marketState.maturity),
-  //       marketState.ts,
-  //       marketState.g1,
-  //       marketState.decimals
-  //     );
-  //     return toW3bNumber(fyTokens);
-  //   }
-  //   return ZERO_W3N;
-  // }, [input, marketState]);
-
-  // const totalToInvest: W3bNumber = useMemo(() => {
-  //   if (inputAsFyToken.big.gt(ZERO_BN)) {
-  //     const total_ = inputAsFyToken.big.mul(leverage!.big).div(100);
-  //     return toW3bNumber(total_); /* set as w3bnumber  */
-  //   }
-  //   return ZERO_W3N;
-  // }, [inputAsFyToken, leverage]);
-
-  // const toBorrow: W3bNumber = useMemo(() => {
-  //   if (inputAsFyToken) {
-  //     const toBorrow_ = totalToInvest.big.sub(inputAsFyToken.big);
-  //     return toW3bNumber(toBorrow_); /* set as w3bNumber */
-  //   }
-  //   return ZERO_W3N;
-  // }, [totalToInvest]);
 
   /* use STETH lever simulations */
   const { simulateLever, isSimulating } = useStEthSim();
@@ -156,7 +110,7 @@ export const useLever = () => {
           selectedStrategy.seriesId,
           input.big,
           shortBorrowed.big,
-          '0'
+          '0' // removeSlippage( investPosition.big),
         )
       ).mul(2);
 
@@ -194,10 +148,5 @@ export const useLever = () => {
 
     isSimulating,
 
-    slippage,
-    setSlippage,
-    changeSlippage,
-    addSlippage,
-    removeSlippage,
   };
 };
