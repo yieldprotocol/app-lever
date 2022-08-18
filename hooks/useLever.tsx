@@ -21,22 +21,28 @@ const OPTIONS: { value: number; label: string }[] = [
 ];
 
 export interface LeverSimulation {
-
   investPosition: W3bNumber; // long asset obtained
   investValue: W3bNumber; // current value of long asset (in terms of short)
 
-  debtPosition: W3bNumber;// debt at maturity
+  debtPosition: W3bNumber; // debt at maturity
   debtValue: W3bNumber; // current Value if settling debt now
 
-  shortInvested: W3bNumber; // total short asset 
+  shortInvested: W3bNumber; // total short asset
   shortBorrowed: W3bNumber; // amount of short asset borrowed
 
   flashFee?: W3bNumber;
   swapFee?: W3bNumber;
 }
-export interface simOutput { simulateLever : () => Promise<LeverSimulation>, isSimulating:boolean }
 
+export enum NotificationType { INFO, WARN, ERROR }
+export interface Notification { type: NotificationType, msg: string }
 
+export interface simOutput {
+  simulateLever: () => Promise<LeverSimulation>;
+  isSimulating: boolean;
+  notification: Notification[];
+  extraBucket: any[];
+}
 
 export const useLever = () => {
   /* Bring in context*/
@@ -47,7 +53,7 @@ export const useLever = () => {
   const { selectedStrategy, shortAsset, longAsset } = leverState;
   const { input, leverage } = inputState as IInputContextState;
 
-  /* add in debounced leverage when using slider - to prevent excessive calcs */ 
+  /* add in debounced leverage when using slider - to prevent excessive calcs */
   const debouncedLeverage = useDebounce(leverage, 500);
 
   const [investAPR, setInvestAPR] = useState<number>();
@@ -61,7 +67,7 @@ export const useLever = () => {
   const [shortBorrowed, setShortBorrowed] = useState<W3bNumber>(ZERO_W3N);
 
   const [flashFee, setFlashFee] = useState<W3bNumber>();
-  
+
   const { setAppState } = leverActions;
 
   const [slippage, setSlippage] = useState(OPTIONS[1].value);
@@ -104,7 +110,6 @@ export const useLever = () => {
   /* use STETH lever simulations */
   const { simulateLever, isSimulating } = useStEthSim();
 
-
   useEffect(() => {
     (async () => {
       if (selectedStrategy && input?.big.gt(ZERO_BN) && debouncedLeverage) {
@@ -129,7 +134,6 @@ export const useLever = () => {
         setInvestAPR(investAPR);
       }
     })();
-
   }, [selectedStrategy, input, debouncedLeverage]);
 
   const approve = async () => {
@@ -148,7 +152,12 @@ export const useLever = () => {
     if (input && selectedStrategy?.leverContract) {
       setAppState(AppState.Transacting);
       const gasLimit = (
-        await selectedStrategy.leverContract.estimateGas.invest(selectedStrategy.seriesId, input.big, shortBorrowed.big, '0')
+        await selectedStrategy.leverContract.estimateGas.invest(
+          selectedStrategy.seriesId,
+          input.big,
+          shortBorrowed.big,
+          '0'
+        )
       ).mul(2);
 
       const investTx = await selectedStrategy.leverContract.invest(
@@ -182,9 +191,9 @@ export const useLever = () => {
     borrowAPR,
     investAPR,
     netAPR,
-    
+
     isSimulating,
-    
+
     slippage,
     setSlippage,
     changeSlippage,

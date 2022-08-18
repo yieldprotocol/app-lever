@@ -10,9 +10,6 @@ import { WETH_ST_ETH_STABLESWAP, WST_ETH } from '../../contracts';
 import { ZERO_W3N } from '../../constants';
 import { LeverSimulation, simOutput } from '../useLever';
 
-
-
-
 export const useStEthSim = ( ): simOutput => {
   const [ leverState ] = useContext(LeverContext);
   const [ marketState ]: [IPoolState] = useContext(MarketContext);
@@ -22,15 +19,6 @@ export const useStEthSim = ( ): simOutput => {
   const { input, leverage } = inputState
 
   const [isSimulating, setIsSimulating] = useState<boolean>(false);
-
-  // const [investPosition, setInvestPosition] = useState<W3bNumber>();
-  // const [investValue, setInvestValue] = useState<W3bNumber>();
-  // const [shortInvested, setShortInvested] = useState<W3bNumber>();
-  // const [shortBorrowed, setShortBorrowed] = useState<W3bNumber>();
-  // const [debtPosition, setDebtPosition] = useState<W3bNumber>();
-  // const [debtValue, setDebtValue] = useState<W3bNumber>();
-  // const [flashFee, setFlashFee] = useState<W3bNumber>();
-  // const [swapFee, setSwapFee] = useState<W3bNumber>();
 
   const inputAsFyToken: W3bNumber = useMemo(() => {
     if (input && input.big.gt(ZERO_BN)) {
@@ -82,7 +70,7 @@ export const useStEthSim = ( ): simOutput => {
     if (selectedStrategy && inputAsFyToken.big.gt(ZERO_BN) ) {
 
       setIsSimulating(true);
-
+ 
       // - netInvestAmount = baseAmount + borrowAmount - fee
       // const fyWeth = await getFyToken(seriesId, contracts, account);
       const fyContract = selectedStrategy.investTokenContract;
@@ -139,10 +127,10 @@ export const useStEthSim = ( ): simOutput => {
       shortInvested,
       flashFee,
       debtPosition,
-      debtValue
+      debtValue,
     }
   };
 
-  return { simulateLever, isSimulating }
+  return { simulateLever, isSimulating, notification:[], extraBucket:[] }
 
 };
