@@ -14,21 +14,6 @@ const ClearButton = tw.button`text-sm`;
 const Label = tw.div`text-[10px] text-[grey]`;
 const NotShown = tw.div` text-[pink]`;
 
-export interface LeverSimulation {
-
-  investPosition: W3bNumber; // long asset obtained
-  investValue: W3bNumber; // current value of long asset (in terms of short)
-
-  debtPosition: W3bNumber;// debt at maturity
-  debtValue: W3bNumber; // current Value if settling debt now
-
-  shortInvested: W3bNumber; // total short asset 
-  shortBorrowed: W3bNumber; // amount of short asset borrowed
-
-  flashFee?: W3bNumber;
-  swapFee?: W3bNumber;
-}
-
 const EstPositionWidget = (props:any) => {
   const [inputState] = useContext(InputContext);
   const { input, leverage } = inputState;
