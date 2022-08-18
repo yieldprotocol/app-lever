@@ -3,11 +3,10 @@ import React, { useEffect, useReducer } from 'react';
 import { ASSETS, IAssetRoot, WETH } from '../config/assets';
 import { CAULDRON, contractFactories, LADLE, ORACLE } from '../config/contractRegister';
 import { ILeverStrategyRoot, STRATEGIES } from '../config/strategies';
-import { WETH_ST_ETH_STABLESWAP } from '../contracts';
 import { ERC20Permit, FYToken } from '../contracts/types';
 import { ERC20 } from '../contracts/YieldStEthLever.sol';
 import useConnector from '../hooks/useConnector';
-import { AppState, GeneralTokenType } from '../lib/protocol/types';
+import { AppState, TokenType } from '../lib/types';
 import { convertToW3bNumber } from '../lib/utils';
 import { W3bNumber } from './InputContext';
 
@@ -194,10 +193,10 @@ const LeverProvider = ({ children }: any) => {
         let poolAddress;
 
         /* if investTokenType is FYTOKEN , use the yield pool as the marketContract */
-        if (strategy.investTokenType === GeneralTokenType.FYTOKEN) {
+        if (strategy.investTokenType === TokenType.FYTOKEN) {
           const Ladle = contractFactories[LADLE].connect(LADLE, provider);
           poolAddress = await Ladle.pools(strategy.seriesId);
-          poolContract = contractFactories[GeneralTokenType.YIELD_POOL].connect(poolAddress, provider);
+          poolContract = contractFactories[TokenType.YIELD_POOL].connect(poolAddress, provider);
         }
 
         const minRatio = parseFloat(ethers.utils.formatUnits(ratio, 6))

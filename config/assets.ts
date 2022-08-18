@@ -1,12 +1,9 @@
 import { ethers } from 'ethers';
 import { W3bNumber } from '../context/InputContext';
-import { ISignable } from '../lib/tx/types';
+import { ISignable, TokenType } from '../lib/types';
 
 export interface IAssetRoot extends ISignable {
   id: string;
-  name: string;
-  address: string;
-  symbol: string;
   decimals: number;
   displaySymbol: string;
   displayDecimals: number;
@@ -37,6 +34,7 @@ ASSETS.set(WETH, {
   decimals: 18,
   version: '1',
   displayDecimals: 6,
+  tokenType: TokenType.ERC20
 });
 
 ASSETS.set(WSTETH, {
@@ -45,10 +43,11 @@ ASSETS.set(WSTETH, {
   address: "0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0",
   joinAddress: undefined,
   symbol: 'WSTETH',
-  displaySymbol: 'WSTETH',
+  displaySymbol: 'stETH',
   decimals: 18,
   displayDecimals: 6,
-  version: '1'
+  version: '1',
+  tokenType:TokenType.ERC20
 });
 
 ASSETS.set(USDC, {
@@ -60,5 +59,6 @@ ASSETS.set(USDC, {
   displaySymbol: 'USDC',
   decimals: 8,
   displayDecimals: 2,
-  version: '1'
+  version: '1',
+  tokenType: TokenType.ERC20_PERMIT
 });

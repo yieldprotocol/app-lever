@@ -21,7 +21,7 @@ import {
   IOracle__factory,
   IOracle
 } from '../contracts/YieldStEthLever.sol';
-import { GeneralTokenType } from '../lib/protocol/types';
+import { TokenType } from '../lib/types';
 
 /**
  * Specific Contract addresses
@@ -46,12 +46,12 @@ export const WETH_STETH_STABLESWAP = '0x828b154032950C8ff7CF8085D841723Db2696056
 
 
 /* general contract type */ 
-export const ERC20_PERMIT = GeneralTokenType.ERC20_PERMIT;
-export const ERC20 = GeneralTokenType.ERC20_PERMIT;
-export const FYTOKEN = GeneralTokenType.FYTOKEN;
-export const YIELD_POOL = GeneralTokenType.YIELD_POOL; 
+export const ERC20_PERMIT = TokenType.ERC20_PERMIT;
+export const ERC20 = TokenType.ERC20_PERMIT;
+export const FYTOKEN = TokenType.FYTOKEN;
+export const YIELD_POOL = TokenType.YIELD_POOL; 
 
-export const ORACLE = GeneralTokenType.ORACLE;
+export const ORACLE = TokenType.ORACLE;
 
 type DefinitelyContracts = {
   [CAULDRON]: Cauldron;

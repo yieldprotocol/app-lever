@@ -10,6 +10,7 @@ import LeverageSelect from '../selectors/LeverageSelect';
 
 import { ValueInput } from '../selectors/ValueInput';
 import { LeverContext } from '../../context/LeverContext';
+import StrategySelect from '../selectors/StrategySelect';
 
 const Inner = tw.div`m-4 text-center`;
 const Grid = tw.div`grid my-5 auto-rows-auto gap-2`;
@@ -38,14 +39,7 @@ const LeverWidget = (props: any) => {
           </TopRow>
 
           <div className="flex flex-row gap-1 my-5">
-            <div>
-              long
-              <LongSelect />
-            </div>
-            <div>
-              short
-              <ShortSelect />
-            </div>
+            <StrategySelect />
           </div>
           <div>
             Principle investment
