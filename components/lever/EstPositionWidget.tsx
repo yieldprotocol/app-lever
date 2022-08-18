@@ -32,8 +32,8 @@ const EstPositionWidget = (props:any) => {
     debtPosition,
     investPosition,
     investValue,
-    flashFee
-    
+    flashFee,
+    swapFee
   } = props.lever;
 
   return (
@@ -68,6 +68,8 @@ const EstPositionWidget = (props:any) => {
         <div>Current Debt: {toBorrow.dsp} ETH </div> */}
         <Label>11: flashFee </Label>
         <div> Flash borrow fee: {flashFee?.dsp} </div>
+
+        <div> Swap Back fee : {swapFee?.dsp} </div>
         
         === CURRENT VALUES ===
 
@@ -83,13 +85,13 @@ const EstPositionWidget = (props:any) => {
         <NotShown> Borrow Limit: {debtPosition?.dsp!/investPosition?.dsp! * selectedStrategy?.LTV*100 } % </NotShown> 
 
         <Label>13: (pos/prin - 1) </Label>
-        <div>PnL : {investPosition?.dsp!/shortInvested?.dsp! -1 } </div>
+        <div>PnL : {Math.round(((investPosition?.dsp!/shortInvested?.dsp! -1) + Number.EPSILON) * 100) / 100} </div>
         <Label>14: ( investPosition/ baseInvested ) ^ t%year - 1 </Label>
-        <div>Invest rate ( APR): {investAPR} %APR</div>
+        <div>Invest rate ( APR): {Math.round((investAPR + Number.EPSILON) * 100) / 100} %APR</div>
         <Label>15: ( debtPosition / baseBorrowed ) ^ t%year -1 </Label>
-        <div>Borrowing rate (APR): {borrowAPR} %APR </div>
+        <div>Borrowing rate (APR): {Math.round((borrowAPR + Number.EPSILON) * 100) / 100} %APR </div>
         <Label>16: leverage*longAPR - (leverage - 1)*borrowAPR </Label>
-        <div>Net rate: {netAPR} %APR </div>
+        <div>Net rate: {Math.round((netAPR + Number.EPSILON) * 100) / 100} %APR </div>
         <Label>16: ( investPostion - debtPosition - input ) </Label>
         <div>Return in base: { investPosition?.dsp! - debtPosition?.dsp! - input?.dsp }  </div>
       </Inner>

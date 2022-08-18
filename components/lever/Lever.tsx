@@ -4,10 +4,8 @@ import EstPositionWidget from './EstPositionWidget';
 import LeverWidget from './LeverWidget';
 
 const Lever = () => {
-  /* lever is abstracted up here in the top level to save a re-render */
+  /* lever is abstracted up here in the top level to save a few re-renders/calcs */
   const lever = useLever()
-
-  console.log(lever)
   
   return (
     <div className="flex flex-row">
