@@ -18,19 +18,10 @@ const Button = tw.button`float-right flex items-center gap-1 my-[1px] text-xs mr
 export const ValueInput = () => {
   
   const [leverState ] = useContext(LeverContext);
+  const {shortAsset, selectedStrategy } = leverState;
   const [inputState, inputActions ] = useContext(InputContext);
   const [focus, setFocus] = useState(false);
-  const [asset, setAsset] = useState<IAsset>();
-
-  useEffect(()=> {
-    const strat = leverState.selectedStrategy;
-    if (strat)  {
-      console.log('strategy selected');
-      const asset = leverState.assets.get(strat.baseId);
-      console.log('asset', asset);
-      setAsset(asset);
-    }
-  },[leverState.selectedStrategy])
+  // const [asset, setAsset] = useState<IAsset>();
 
   return (
     <Container $unFocused={false}>
@@ -48,13 +39,13 @@ export const ValueInput = () => {
     </Inner>
     <div className="grow min-w-fit">
       <div className="p-1">
-        {asset?.displaySymbol}
+        {shortAsset?.displaySymbol}
       </div>
         <Button
-          onClick={()=>inputActions.setInput(asset?.balance.hStr)}
+          onClick={()=>inputActions.setInput(shortAsset?.balance.hStr)}
         >
           <div> Use max balance</div>
-          <div> {asset?.balance.dsp} </div>
+          <div> {shortAsset?.balance.dsp} </div>
         </Button>
     </div>
     </Container>

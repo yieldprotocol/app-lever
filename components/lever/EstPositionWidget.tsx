@@ -33,6 +33,7 @@ const EstPositionWidget = (props:any) => {
     investPosition,
     investValue,
     flashFee
+    
   } = props.lever;
 
   return (
