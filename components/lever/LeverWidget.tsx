@@ -25,7 +25,7 @@ const LeverWidget = (props: any) => {
   const {
     transact,
     approve,
-    isSimulating
+    isSimulating,
   } = props.lever;
 
   return (
@@ -34,7 +34,7 @@ const LeverWidget = (props: any) => {
           <TopRow>
             <Header>Lever</Header>
             <ClearButton onClick={() => console.log('actually, this might not do anything? settings?')}>
-              Clear All
+                ...
             </ClearButton>
           </TopRow>
 

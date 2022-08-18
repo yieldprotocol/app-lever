@@ -38,6 +38,11 @@ const GraphProvider = ({ children }: any) => {
   const [leverState]: [ILeverContextState] = useContext(LeverContext);
   const { selectedStrategy, longAsset, shortAsset } = leverState;
 
+  var func = async() => {
+    // console.log(CoinGeckoClient.coins.fetch('bitcoin', {}));
+  };
+  func();
+
   /* ACTIONS TO CHANGE CONTEXT */
   const graphActions = {
     // getPoolInfo: async (strategy: ILeverStrategy): Promise<IPoolState> => await getGraphInfo(strategy),

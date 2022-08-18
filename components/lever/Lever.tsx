@@ -1,4 +1,5 @@
 import tw from 'tailwind-styled-components';
+import GraphProvider from '../../context/GraphContext';
 import { useLever } from '../../hooks/useLever';
 import EstPositionWidget from './EstPositionWidget';
 import LeverWidget from './LeverWidget';
@@ -11,6 +12,9 @@ const Lever = () => {
     <div className="flex flex-row">
         <LeverWidget lever={lever} />
         <EstPositionWidget lever={lever} />
+        {/* <GraphProvider >
+            <div> graph here. </div>
+        </GraphProvider> */}
     </div>
   );
 };
