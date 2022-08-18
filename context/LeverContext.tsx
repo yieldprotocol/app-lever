@@ -122,7 +122,7 @@ const leverReducer = (state: ILeverContextState, action: any) => {
 const LeverProvider = ({ children }: any) => {
   /* LOCAL STATE */
   const [leverState, updateState] = useReducer(leverReducer, initState);
-  const { account, provider } = useConnector();
+  const { account, provider} = useConnector();
 
   /* update account on change */
   useEffect(() => updateState({ type: 'UPDATE_ACCOUNT', payload: account }), [account]);

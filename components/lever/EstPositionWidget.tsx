@@ -22,8 +22,8 @@ const EstPositionWidget = (props:any) => {
   const   {selectedStrategy} = leverState;
 
   const {
-    totalToInvest,
-    inputAsFyToken,
+    // totalToInvest,
+    // inputAsFyToken,
     netAPR,
     borrowAPR,
     investAPR,
@@ -46,11 +46,11 @@ const EstPositionWidget = (props:any) => {
         <Label>2: Wrap if required (1:1)</Label>
         <NotShown> Wrapped input: {input?.dsp} WETH </NotShown>
         <Label>3: Sell Short Asset for fyToken ( sellBase() ) </Label>
-        <NotShown> Short asset investment as FyToken : {inputAsFyToken.dsp} (fyETH) </NotShown>
+        {/* <NotShown> Short asset investment as FyToken : {inputAsFyToken.dsp} (fyETH) </NotShown>
         <Label>4: Input Leverage (INPUT):</Label>
         <div>Leverage: {leverage.dsp} X </div>
         <Label>5: Total to invest based on input and leverage (fyToken input*leverage) </Label>
-        <NotShown> Total Investment ( fyToken ): {totalToInvest.dsp} (fyETH) </NotShown>
+        <NotShown> Total Investment ( fyToken ): {totalToInvest.dsp} (fyETH) </NotShown> */}
         
         === SIMULATIONS ===
         <Label>6: Base Invested ( baseInvested ) </Label>

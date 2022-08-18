@@ -2,7 +2,7 @@ import { ZERO_BN } from '@yield-protocol/ui-math';
 import { BigNumber, ethers } from 'ethers';
 import React, { useContext, useEffect, useReducer } from 'react';
 import { ZERO_W3N } from '../constants';
-import { LeverContext } from './LeverContext';
+import { ILeverStrategy, LeverContext } from './LeverContext';
 
 export interface W3bNumber {
   dsp: number;
@@ -55,6 +55,12 @@ const inputReducer = (state: IInputContextState, action: any) => {
         ...state,
         input: action.payload,
       };
+    
+      // case 'SELECT_STRATEGY':
+      //   return {
+      //     ...state,
+      //     selectedStrategy: action.payload,
+      //   };
 
     case 'SET_LEVERAGE':
       return {
