@@ -1,5 +1,4 @@
 import { BigNumber, ethers } from 'ethers';
-import { rawListeners } from 'process';
 import { W3bNumber } from '../../context/InputContext';
 
 /* Parse the input to W3BNumber based on the selected Strategy and base */
@@ -40,19 +39,19 @@ export const calculateAPRs = (
 } => {
   const now = Math.round(new Date().getTime() / 1000);
   const secsToMaturity = maturity - now;
-  console.log(maturity, secsToMaturity, now);
+  // console.log(maturity, secsToMaturity, now);
 
   const oneOverYearProp = 1 / (secsToMaturity / 31536000);
 
   // const investRate = calculateAPR(baseInvested.big, investPosition.big, maturity);
   // const investAPR = investRate ? parseFloat(investRate) : 0;
-  const investRate = Math.pow(investValue.dsp / shortInvested.dsp, oneOverYearProp) - 1;
+  const investRate = shortInvested.dsp > 0 ? Math.pow(investValue.dsp / shortInvested.dsp, oneOverYearProp) - 1 : 0;
   const investAPR = investRate * 100;
   // console.log('invest rate: ',   investValue.dsp, shortInvested.dsp , investAPR )
 
   // const borrowRate = calculateAPR(debtPosition.big, baseBorrowed.big, maturity);
   // const borrowAPR = borrowRate ? parseFloat(borrowRate) : 0;
-  const borrowRate = Math.pow(debtPosition.dsp / shortBorrowed.dsp, oneOverYearProp) - 1;
+  const borrowRate = shortBorrowed.dsp > 0 ? Math.pow(debtPosition.dsp / shortBorrowed.dsp, oneOverYearProp) - 1 : 0;
   const borrowAPR = borrowRate * 100;
   // console.log('borrow rate: ', debtPosition.dsp, borrowed.dsp , borrowAPR )
 

@@ -5,7 +5,7 @@ import { WETH, WSTETH } from '../config/assets';
 import { ZERO_BN, ZERO_W3N } from '../constants';
 import { IInputContextState, InputContext, W3bNumber } from '../context/InputContext';
 import { ILeverContextState, LeverContext } from '../context/LeverContext';
-import { AppState } from '../lib/protocol/types';
+import { AppState } from '../lib/types';
 import { calculateAPRs } from '../lib/utils';
 
 import { IPoolState, MarketContext } from '../context/MarketContext';
@@ -48,9 +48,9 @@ export const useLever = () => {
   /* add in debounced leverage when using slider - to prevent excessive calcs */
   const debouncedLeverage = useDebounce(leverage, 500);
 
-  const [investAPR, setInvestAPR] = useState<number>();
-  const [borrowAPR, setBorrowAPR] = useState<number>();
-  const [netAPR, setNetAPR] = useState<number>();
+  const [investAPR, setInvestAPR] = useState<number>(0);
+  const [borrowAPR, setBorrowAPR] = useState<number>(0);
+  const [netAPR, setNetAPR] = useState<number>(0);
 
   const [investPosition, setInvestPosition] = useState<W3bNumber>(ZERO_W3N);
   const [investValue, setInvestValue] = useState<W3bNumber>(ZERO_W3N);
@@ -88,6 +88,22 @@ export const useLever = () => {
         setInvestAPR(investAPR);
       }
     })();
+  }, [selectedStrategy, input, debouncedLeverage]);
+
+  useEffect(() => {
+      if (selectedStrategy && input?.big.gt(ZERO_BN) && debouncedLeverage) {
+        const { netAPR, borrowAPR, investAPR } = calculateAPRs(
+          investValue,
+          debtPosition,
+          shortInvested,
+          shortBorrowed,
+          debouncedLeverage.dsp,
+          selectedStrategy.maturity
+        );
+        setNetAPR(netAPR);
+        setBorrowAPR(borrowAPR);
+        setInvestAPR(investAPR);
+      }
   }, [selectedStrategy, input, debouncedLeverage]);
 
   const approve = async () => {

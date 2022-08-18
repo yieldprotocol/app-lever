@@ -1,16 +1,17 @@
 import { Web3Provider } from '@ethersproject/providers';
 import { BigNumber, Contract, ethers } from 'ethers';
-import { ERC20Permit, FYToken, Pool } from '../../contracts/types';
-import { ISignable } from '../tx/types';
 
 export type Provider = Web3Provider | ethers.providers.JsonRpcProvider;
 
 /** 
  * General Token types > could have multiple addresses 
  * */
- export enum GeneralTokenType {
-  ERC20_PERMIT,
+ export enum TokenType {
   ERC20,
+  ERC20_PERMIT,
+  ERC20_DAI_PERMIT,
+  ERC720,
+  ERC1155,
   FYTOKEN,
   YIELD_POOL,
   ORACLE
@@ -34,13 +35,18 @@ export enum AppState {
   Transacting,
 }
 
-export interface IAsset extends ISignable {
+export interface ISignable {
   name: string;
+  version: string;
   address: string;
   symbol: string;
-  decimals: number;
-  balance: W3bNumber;
-  contract: ERC20Permit | FYToken;
-  getAllowance: (account: string, spender: string) => Promise<BigNumber>;
-  checkBalance: () => Promise<W3bNumber>;
+  tokenType: TokenType;
 }
+
+// export interface IAsset extends ISignable {
+//   decimals: number;
+//   balance: W3bNumber;
+//   contract: ERC20Permit | FYToken;
+//   getAllowance: (account: string, spender: string) => Promise<BigNumber>;
+//   checkBalance: () => Promise<W3bNumber>;
+// }
