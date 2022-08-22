@@ -71,6 +71,7 @@ const EstPositionWidget = (props:any) => {
         <div> Swap Back fee : {swapFee?.dsp} </div>
         
         <br/>
+        
         === CURRENT VALUES ===
 
         <Label>9: Investment value( ) ( investPosition ) </Label>

@@ -9,15 +9,15 @@ import { LeverContext } from '../../context/LeverContext';
 import { WETH_ST_ETH_STABLESWAP, WST_ETH } from '../../contracts';
 import { ZERO_W3N } from '../../constants';
 import { LeverSimulation, simOutput } from '../useLever';
+import { ethers } from 'ethers';
 
 export const useStEthSim = ( ): simOutput => {
   const [ leverState ] = useContext(LeverContext);
   const [ marketState ]: [IPoolState] = useContext(MarketContext);
   const { selectedStrategy, provider } = leverState;
-
   const [ inputState ] = useContext(InputContext);
   const { input, leverage } = inputState
-
+  
   const [isSimulating, setIsSimulating] = useState<boolean>(false);
 
   const inputAsFyToken: W3bNumber = useMemo(() => {
@@ -112,14 +112,21 @@ export const useStEthSim = ( ): simOutput => {
       const investPosition_ = await wStEthContract.getWstETHByStETH(boughtStEth);
       investPosition = convertToW3bNumber(investPosition_, 18, 6);
 
-      // TODO check if there is a fee/cost for unwrapping */
+      // check unwrapping  */
+      const oneStEth = ethers.utils.parseUnits('1')
+      const stEthPerWrapped = await wStEthContract.getStETHByWstETH( oneStEth )
+      const unwrappedStEthValue = investPosition_.mul(stEthPerWrapped).div(oneStEth);
 
+      // console.log(  investPosition_.mul(stEthPerWrapped).div(oneStEth).toString()  )
+      
+      /* check for anywswapping cost */
       /* Calculate the value of the investPosition in short terms : via swap */
-      const investValue_ = await stableSwap.get_dy(1, 0, boughtStEth);
+      const investValue_ = await stableSwap.get_dy(1, 0, unwrappedStEthValue);
       investValue = convertToW3bNumber(investValue_, 18, 6)
     }
 
     setIsSimulating(false);
+
     return {
       investPosition,
       investValue,

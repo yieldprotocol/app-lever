@@ -29,6 +29,8 @@ export const useNotionalSim = ( ): simOutput => {
 
     setIsSimulating(true);
 
+    console.log( 'Using Notional lever');
+    
     // sim logic
     const simulation = {
       investPosition: ZERO_W3N,
