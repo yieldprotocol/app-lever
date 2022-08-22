@@ -13,7 +13,11 @@ import { LeverContext } from '../../context/LeverContext';
 import StrategySelect from '../selectors/StrategySelect';
 
 const Inner = tw.div`m-4 text-center`;
-const TopRow = tw.div`flex justify-between align-middle text-center items-center`;
+const TopRow = tw.div` p-8 flex justify-between align-middle text-center items-center rounded-t-lg dark:bg-gray-900 
+bg-gray-100
+bg-opacity-25
+dark:text-gray-50 
+dark:bg-opacity-25 `;
 const ClearButton = tw.button`text-sm`;
 
 const Section = tw.div`
@@ -43,13 +47,13 @@ const LeverWidget = (props: any) => {
 
   return (
       <BorderWrap>
-        <Inner>
-          <TopRow >
-            New Position
+        <TopRow >
+              <div className='text-lg'> Open Position </div>
             <ClearButton onClick={() => console.log('actually, this might not do anything? settings?')}>
-                ...
+                [settings]
             </ClearButton>
           </TopRow>
+        <Inner>
 
           <Section>
             <SectionHead>Strategy </SectionHead>

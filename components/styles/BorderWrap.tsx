@@ -8,9 +8,10 @@ export const Wrap = tw.div`
     rounded-xl 
     dark:bg-gray-900 
     bg-gray-100
-    bg-opacity-50
+    bg-opacity-25
     dark:text-gray-50 
-    dark:bg-opacity-50
+    dark:bg-opacity-25
+    text-gray
 `;
 
 const BorderWrap: FC = ({ children }) => <Wrap>{children}</Wrap>;
