@@ -13,9 +13,21 @@ import { LeverContext } from '../../context/LeverContext';
 import StrategySelect from '../selectors/StrategySelect';
 
 const Inner = tw.div`m-4 text-center`;
-const Grid = tw.div`grid my-5 auto-rows-auto gap-2`;
 const TopRow = tw.div`flex justify-between align-middle text-center items-center`;
 const ClearButton = tw.button`text-sm`;
+
+const Section = tw.div`
+my-2
+p-2
+rounded-lg 
+dark:bg-gray-900 
+bg-gray-100
+bg-opacity-25
+dark:text-gray-50 
+dark:bg-opacity-25
+`;
+
+const SectionHead = tw.div`text-left m-2`
 
 const LeverWidget = (props: any) => {
   /* Bring in lever context - instead of passing them as props */
@@ -29,26 +41,32 @@ const LeverWidget = (props: any) => {
   } = props.lever;
 
   return (
+
       <BorderWrap>
         <Inner>
-          <TopRow>
-            <Header>Lever</Header>
+          <TopRow >
+            New Position
             <ClearButton onClick={() => console.log('actually, this might not do anything? settings?')}>
                 ...
             </ClearButton>
           </TopRow>
 
+          <Section>
           <div className="flex flex-row gap-1 my-5">
             <StrategySelect />
           </div>
-          <div>
-            Principle investment
+          </Section>
+
+          <Section>
+            <SectionHead>Principle investment </SectionHead>
+            
             <ValueInput />
-          </div>
-          <div>
-            Leverage:
+            </Section>
+
+          <Section>
+          <SectionHead> Leverage:</SectionHead>
             <LeverageSelect  />
-          </div>
+          </Section>
 
           <Button
             action={() => console.log('transact now')}

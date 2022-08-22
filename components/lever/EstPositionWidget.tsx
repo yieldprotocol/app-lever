@@ -12,7 +12,6 @@ const Grid = tw.div`grid my-5 auto-rows-auto gap-2`;
 const TopRow = tw.div`flex justify-between align-middle text-center items-center`;
 const ClearButton = tw.button`text-sm`;
 
-
 const InfoBlock = tw.div`grid grid-cols-2 gap-4 my-8`;
 const Label = tw.div`text-[grey] text-left`;
 const Value = tw.div`text-[white] text-right`;
@@ -42,10 +41,11 @@ const EstPositionWidget = (props:any) => {
 
   return (
     <BorderWrap>
+      <Inner>
       <TopRow>Estimated Position Information</TopRow>
 
       <InfoBlock>
-        <Label> Input value (Short asset) :  </Label>
+        <Label>Input value (Short asset):</Label>
         <Value>  {input?.dsp} { shortAsset?.displaySymbol } </Value>  
         {/* <NotShown> Wrapped input: {input?.dsp} WETH </NotShown>
         <NotShown> Short asset investment as FyToken : {inputAsFyToken.dsp} (fyETH) </NotShown>
@@ -58,7 +58,7 @@ const EstPositionWidget = (props:any) => {
       <Divider />
 
       <InfoBlock>
-        <Label>Short asset total invested:</Label>
+        <Label>Short asset invested:</Label>
         <Value>{shortInvested?.dsp} FYETH</Value>
 
         <Label>Short asset borrowed:</Label>
@@ -85,7 +85,7 @@ const EstPositionWidget = (props:any) => {
 
       <InfoBlock>
         {/* <NotShown> (debtPosition/investPosition * LTV )</NotShown> */}
-        <Label> Borrow Limit :</Label>
+        <Label>Borrow Limit :</Label>
         <Value> {debtPosition?.dsp!/investPosition?.dsp! * selectedStrategy?.LoanToValue*100 } %</Value>
 
         {/* <NotShown>(pos/prin - 1)</NotShown> */}
@@ -109,6 +109,7 @@ const EstPositionWidget = (props:any) => {
         <Value>{ investPosition?.dsp! - debtPosition?.dsp! - input?.dsp } { shortAsset?.displaySymbol }</Value>
 
       </InfoBlock>
+      </Inner>
 
     </BorderWrap>
   );
