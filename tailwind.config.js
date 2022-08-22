@@ -5,12 +5,21 @@ module.exports = {
   darkMode: 'class',
   theme: {
     fontFamily: { sans: ['Inter', 'sans-serif'], serif: ['Inter', 'sans-serif'] },
-    colors: {
-      gray: colors.zinc,
-      green: colors.emerald,
-      primary: colors.teal,
-      secondary: colors.teal,
-    },
+    
+    extend: {
+      colors: {
+        transparent: 'transparent',
+        current: 'currentColor',
+        gray: colors.zinc,
+        green: colors.emerald,
+        primary: colors.teal,
+        secondary: colors.teal,
+      },
+      borderWidth: { '0.5':'0.5px' },
+    }
+
   },
+
+  
   plugins: [],
 };
