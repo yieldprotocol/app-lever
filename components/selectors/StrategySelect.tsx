@@ -6,16 +6,9 @@ import AssetLogo from '../common/AssetLogo';
 import Modal from '../common/Modal';
 import { BorderWrap } from '../styles';
 
-const Container = tw.div`p-2 dark:bg-gray-600 bg-gray-400 rounded-lg`;
-
-const ButtonInner = tw.div`
-  h-full w-full dark:bg-gray-900/80 bg-gray-100/80 dark:text-gray-50 text-gray-900 rounded-lg
-  flex p-3 gap-3 justify-center
-`;
-
-const ButtonOuter = tw.button`w-full flex p-[1px]
-rounded-lg gap-3 align-middle items-center hover:opacity-80
-`;
+const InfoBlock = tw.div`grid grid-cols-2 gap-2 p-4`;
+const Label = tw.div`text-[grey] text-left`;
+const Value = tw.div`text-[white] text-right`;
 
 const StrategySelect = () => {
   const [leverState, leverActions] = useContext(LeverContext);
@@ -29,7 +22,7 @@ const StrategySelect = () => {
       {Array.from(strategies.values()).map((strat: ILeverStrategy) => {
         return (
           <BorderWrap>
-              <div>{strat.displayName}</div> 
+              <div onClick={()=>{leverActions.selectStrategy(strat); setModalOpen(false)}  }>{strat.displayName}</div> 
           </BorderWrap>
        )
       })}
@@ -39,25 +32,27 @@ const StrategySelect = () => {
 
   return (
     <>
-      <ButtonOuter
-        onClick={() => setModalOpen(!modalOpen)}
-        disabled={false}
-        style={{
-          background: `linear-gradient(135deg, #f7953380, #f3705580, #ef4e7b80, #a166ab80, #5073b880, #1098ad80, #07b39b80, #6fba8280)`,
-        }}
-      >
-        <ButtonInner> Short: {shortAsset?.displaySymbol} </ButtonInner>
-      </ButtonOuter>
 
-      <ButtonOuter
-        onClick={() => setModalOpen(!modalOpen)}
-        disabled={false}
-        style={{
+    <div onClick={() => setModalOpen(!modalOpen)} className='rounded-lg' style={{
           background: `linear-gradient(135deg, #f7953380, #f3705580, #ef4e7b80, #a166ab80, #5073b880, #1098ad80, #07b39b80, #6fba8280)`,
-        }}
-      >
-        <ButtonInner> Long: {longAsset?.displaySymbol}</ButtonInner>
-      </ButtonOuter>
+        }}  >
+
+    <InfoBlock>
+        <Label>Maturity</Label>
+        <Value> {selectedStrategy?.displayName} </Value>
+        
+        <Label>Short</Label>
+        <Value> {shortAsset?.displaySymbol} </Value>       
+        
+         <Label>Long </Label>
+        <Value>{longAsset?.displaySymbol} </Value>
+
+        <Label>  </Label>
+        <Value> </Value>
+
+    </InfoBlock>
+
+    </div>
 
       {modalOpen && <SelectModal />}
     </>
