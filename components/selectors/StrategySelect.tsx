@@ -3,6 +3,8 @@ import { FC, useContext, useState } from 'react';
 import tw from 'tailwind-styled-components';
 import { IAsset, ILeverStrategy, LeverContext } from '../../context/LeverContext';
 import AssetLogo from '../common/AssetLogo';
+import Modal from '../common/Modal';
+import { BorderWrap } from '../styles';
 
 const Container = tw.div`p-2 dark:bg-gray-600 bg-gray-400 rounded-lg`;
 
@@ -22,69 +24,43 @@ const StrategySelect = () => {
 
   const [modalOpen, setModalOpen] = useState<boolean>(false);
 
+  const SelectModal = () => (
+    <Modal isOpen={modalOpen} setIsOpen={(isOpen) => setModalOpen(!modalOpen)}>
+      {Array.from(strategies.values()).map((strat: ILeverStrategy) => {
+        return (
+          <BorderWrap>
+              <div>{strat.displayName}</div> 
+          </BorderWrap>
+       )
+      })}
+      <div></div>
+    </Modal>
+  );
+
   return (
-    <Container>
+    <>
+      <ButtonOuter
+        onClick={() => setModalOpen(!modalOpen)}
+        disabled={false}
+        style={{
+          background: `linear-gradient(135deg, #f7953380, #f3705580, #ef4e7b80, #a166ab80, #5073b880, #1098ad80, #07b39b80, #6fba8280)`,
+        }}
+      >
+        <ButtonInner> Short: {shortAsset?.displaySymbol} </ButtonInner>
+      </ButtonOuter>
 
-      {selectedStrategy?.displayName}
+      <ButtonOuter
+        onClick={() => setModalOpen(!modalOpen)}
+        disabled={false}
+        style={{
+          background: `linear-gradient(135deg, #f7953380, #f3705580, #ef4e7b80, #a166ab80, #5073b880, #1098ad80, #07b39b80, #6fba8280)`,
+        }}
+      >
+        <ButtonInner> Long: {longAsset?.displaySymbol}</ButtonInner>
+      </ButtonOuter>
 
-      <div className="flex flex-row gap-[10]">
-        <div className="h-12">
-          <ButtonOuter
-            onClick={() => setModalOpen(!modalOpen)}
-            disabled={false}
-            style={{
-              background: `linear-gradient(135deg, #f7953380, #f3705580, #ef4e7b80, #a166ab80, #5073b880, #1098ad80, #07b39b80, #6fba8280)`,
-            }}
-          >
-            <ButtonInner> Short: {shortAsset?.displaySymbol} </ButtonInner>
-          </ButtonOuter>
-        </div>
-
-        <div className="h-12">
-          <ButtonOuter
-            onClick={() => setModalOpen(!modalOpen)}
-            disabled={false}
-            style={{
-              background: `linear-gradient(135deg, #f7953380, #f3705580, #ef4e7b80, #a166ab80, #5073b880, #1098ad80, #07b39b80, #6fba8280)`,
-            }}
-          >
-            <ButtonInner> Long: {longAsset?.displaySymbol}</ButtonInner>
-          </ButtonOuter>
-        </div>
-      </div>
-
-      {/* <div className="h-12">
-        <ButtonOuter
-          onClick={() => setModalOpen(!modalOpen)}
-          disabled={false}
-          style={{
-            background: `linear-gradient(135deg, #f7953380, #f3705580, #ef4e7b80, #a166ab80, #5073b880, #1098ad80, #07b39b80, #6fba8280)`,
-          }}
-        >
-          <ButtonInner> ♻︎ </ButtonInner>
-        </ButtonOuter>
-      </div> */}
-
-      {modalOpen && (
-        <>
-          {Array.from(strategies.values()).map((s: ILeverStrategy) => {
-            return (
-              <div key={s.id} className='gap-["10px"]'>
-                <ButtonOuter
-                  onClick={() => { leverActions.selectStrategy(s); setModalOpen(false);} }
-                  disabled={false}
-                  style={{
-                    background: `linear-gradient(135deg, #f7953380, #f3705580, #ef4e7b80, #a166ab80, #5073b880, #1098ad80, #07b39b80, #6fba8280)`,
-                  }}
-                >
-                  {s.displayName}
-                </ButtonOuter>
-              </div>
-            );
-          })}
-        </>
-      )}
-    </Container>
+      {modalOpen && <SelectModal />}
+    </>
   );
 };
 

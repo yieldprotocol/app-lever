@@ -3,7 +3,7 @@ import { Fragment, FC, ReactNode } from 'react';
 
 export interface IModal {
   isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
+  setIsOpen: (isOpen:boolean) => void;
   children: ReactNode;
 }
 

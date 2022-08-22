@@ -17,6 +17,7 @@ const TopRow = tw.div`flex justify-between align-middle text-center items-center
 const ClearButton = tw.button`text-sm`;
 
 const Section = tw.div`
+w-full
 my-2
 p-2
 rounded-lg 
@@ -41,7 +42,6 @@ const LeverWidget = (props: any) => {
   } = props.lever;
 
   return (
-
       <BorderWrap>
         <Inner>
           <TopRow >
@@ -52,9 +52,8 @@ const LeverWidget = (props: any) => {
           </TopRow>
 
           <Section>
-          <div className="flex flex-row gap-1 my-5">
+            <SectionHead>Strategy </SectionHead>
             <StrategySelect />
-          </div>
           </Section>
 
           <Section>

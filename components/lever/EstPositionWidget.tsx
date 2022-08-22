@@ -5,7 +5,6 @@ import { InputContext, W3bNumber } from '../../context/InputContext';
 import { BorderWrap } from '../styles';
 import { useLever } from '../../hooks/useLever';
 import { ILeverStrategy, LeverContext } from '../../context/LeverContext';
-import { VaultCreatedStateTest__factory } from '../../contracts/YieldStEthLever.sol';
 
 const Inner = tw.div`m-4 gap-10`;
 const Grid = tw.div`grid my-5 auto-rows-auto gap-2`;
@@ -36,11 +35,12 @@ const EstPositionWidget = (props:any) => {
     investPosition,
     investValue,
     flashFee,
-    swapFee
+    swapFee,
+    isSimulating
   } = props.lever;
 
   return (
-    <BorderWrap>
+    <BorderWrap >
       <Inner>
       <TopRow>Estimated Position Information</TopRow>
 
@@ -51,7 +51,7 @@ const EstPositionWidget = (props:any) => {
         <NotShown> Short asset investment as FyToken : {inputAsFyToken.dsp} (fyETH) </NotShown>
         <NotShown> Total Investment ( fyToken ): {totalToInvest.dsp} (fyETH) </NotShown>  */}
         <Label> Leverage (INPUT):</Label>
-        <Value> {leverage.dsp} X </Value>
+        <Value> {leverage?.dsp || 0} X </Value>
       
       </InfoBlock>
 

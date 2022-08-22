@@ -163,6 +163,7 @@ export const useLever = () => {
     netAPR,
 
     isSimulating,
+    // simNotification,
 
   };
 };
