@@ -39,18 +39,18 @@ STRATEGIES.set('StETH_01', {
   seriesId: '0x303030370000',
 });
 
-STRATEGIES.set('StETH_02', {
-  id: '002',
-  displayName: 'STETH DEC',
-  maturity: 1672412400,
+// STRATEGIES.set('NOTIONAL_01', {
+//   id: '002',
+//   displayName: 'NOTIONAL DEC',
+//   maturity: 1672412400,
 
-  investTokenType: TokenType.FYTOKEN,
-  investTokenAddress: '0x53358d088d835399f1e97d2a01d79fc925c7d999',
+//   investTokenType: TokenType.FYTOKEN,
+//   investTokenAddress: '0x53358d088d835399f1e97d2a01d79fc925c7d999',
 
-  leverAddress: NOTIONAL_LEVER, // '0x700814d8124430017094b397ebfb207bdb7b99f8'
-  swapAddress: NOTIONAL_SWAP, // 
+//   leverAddress: NOTIONAL_LEVER, // '0x700814d8124430017094b397ebfb207bdb7b99f8'
+//   swapAddress: NOTIONAL_SWAP, // 
 
-  ilkId: WSTETH,
-  baseId: WETH,
-  seriesId: '0x303030370000',
-});
+//   ilkId: WSTETH,
+//   baseId: WETH,
+//   seriesId: '0x303030370000',
+// });

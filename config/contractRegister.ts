@@ -1,26 +1,6 @@
 import { Provider } from '@ethersproject/providers';
 import { Signer } from 'ethers';
-import { Cauldron, Cauldron__factory } from '../contracts/Cauldron.sol';
-import {
-  FYToken,
-  YieldStEthLever,
-  FYToken__factory,
-  YieldStEthLever__factory,
-  YieldLadle,
-  YieldLadle__factory,
-  IPool,
-  IPool__factory,
-  IStableSwap,
-  IStableSwap__factory,
-  WstEth,
-  WstEth__factory,
-  FlashJoin,
-  FlashJoin__factory,
-  Weth__factory,
-  Weth,
-  IOracle__factory,
-  IOracle
-} from '../contracts/YieldStEthLever.sol';
+import { Cauldron, Cauldron__factory, ERC20, ERC20__factory, FlashJoin, FlashJoin__factory, FYToken, FYToken__factory, IOracle, IOracle__factory, Ladle, Ladle__factory, Pool, Pool__factory, StableSwap, StableSwap__factory, StEthLever, StEthLever__factory, WStEth, WStEth__factory } from '../contracts/types';
 import { TokenType } from '../lib/types';
 
 /**
@@ -47,7 +27,7 @@ export const WETH_STETH_STABLESWAP = '0x828b154032950C8ff7CF8085D841723Db2696056
 
 /* general contract type */ 
 export const ERC20_PERMIT = TokenType.ERC20_PERMIT;
-export const ERC20 = TokenType.ERC20_PERMIT;
+export const ERC20_ = TokenType.ERC20_PERMIT;
 export const FYTOKEN = TokenType.FYTOKEN;
 export const YIELD_POOL = TokenType.YIELD_POOL; 
 
@@ -55,14 +35,14 @@ export const ORACLE = TokenType.ORACLE;
 
 type DefinitelyContracts = {
   [CAULDRON]: Cauldron;
-  [WETH]: Weth;
-  [STETH_LEVER]: YieldStEthLever;
-  [LADLE]: YieldLadle;
-  [WETH_STETH_STABLESWAP]: IStableSwap;
-  [WSTETH]: WstEth;
+  [WETH]: ERC20;
+  [STETH_LEVER]: StEthLever;
+  [LADLE]: Ladle;
+  [WETH_STETH_STABLESWAP]: StableSwap;
+  [WSTETH]: WStEth;
   [WETH_JOIN]: FlashJoin;
   [FYTOKEN]: FYToken;
-  [YIELD_POOL]: IPool;
+  [YIELD_POOL]: Pool;
   [ORACLE]: IOracle;
 };
 
@@ -79,14 +59,14 @@ type ContractFactories = Readonly<{
 /* assign contract factories to addresses */
 export const contractFactories: ContractFactories = {
   [CAULDRON]: Cauldron__factory,
-  [WETH]: Weth__factory,
-  [STETH_LEVER]: YieldStEthLever__factory,
-  [LADLE]: YieldLadle__factory,
-  [WETH_STETH_STABLESWAP]: IStableSwap__factory,
-  [WSTETH]: WstEth__factory,
+  [WETH]: ERC20__factory,
+  [STETH_LEVER]: StEthLever__factory,
+  [LADLE]: Ladle__factory,
+  [WETH_STETH_STABLESWAP]: StableSwap__factory,
+  [WSTETH]: WStEth__factory,
   [WETH_JOIN]: FlashJoin__factory,
   [FYTOKEN]: FYToken__factory,
-  [YIELD_POOL]: IPool__factory,
+  [YIELD_POOL]: Pool__factory,
   
   [ORACLE]: IOracle__factory,
 };

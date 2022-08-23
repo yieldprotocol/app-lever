@@ -6,7 +6,7 @@ import {  InputContext, W3bNumber } from '../../context/InputContext';
 import { IPoolState, MarketContext } from '../../context/MarketContext';
 import { convertToW3bNumber, getTimeToMaturity } from '../../lib/utils';
 import { LeverContext } from '../../context/LeverContext';
-import { WETH_ST_ETH_STABLESWAP, WST_ETH } from '../../contracts';
+import { WETH_STETH_STABLESWAP, WST_ETH } from '../../contracts';
 import { ZERO_W3N } from '../../constants';
 import { LeverSimulation, simOutput } from '../useLever';
 import { ethers } from 'ethers';
@@ -104,7 +104,7 @@ export const useStEthSim = ( ): simOutput => {
       shortInvested = convertToW3bNumber(wethObtained, 18, 6);
 
       // stableSwap exchange: WEth -> StEth
-      const stableSwap = contractFactories[WETH_ST_ETH_STABLESWAP].connect(WETH_ST_ETH_STABLESWAP, provider);
+      const stableSwap = contractFactories[WETH_STETH_STABLESWAP].connect(WETH_STETH_STABLESWAP, provider);
       const boughtStEth = await stableSwap.get_dy(0, 1, wethObtained);
 
       // - Wrap: StEth -> WStEth

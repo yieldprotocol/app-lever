@@ -3,8 +3,7 @@ import React, { useEffect, useReducer } from 'react';
 import { ASSETS, IAssetRoot, WETH } from '../config/assets';
 import { CAULDRON, contractFactories, LADLE, ORACLE } from '../config/contractRegister';
 import { ILeverStrategyRoot, STRATEGIES } from '../config/strategies';
-import { ERC20Permit, FYToken } from '../contracts/types';
-import { ERC20 } from '../contracts/YieldStEthLever.sol';
+import { ERC20, ERC20Permit, FYToken } from '../contracts/types';
 import useConnector from '../hooks/useConnector';
 import { AppState, TokenType } from '../lib/types';
 import { convertToW3bNumber } from '../lib/utils';
@@ -168,6 +167,8 @@ const LeverProvider = ({ children }: any) => {
       /* connect up relevant contracts */
       Array.from(STRATEGIES.values()).map(async (strategy) => {
         const signer = account ? provider.getSigner(account) : provider;
+
+        console.log( strategy)
         const leverContract = contractFactories[strategy.leverAddress].connect(strategy.leverAddress, signer);
 
         /* Connect the investToken based on investTokenType */
