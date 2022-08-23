@@ -1,6 +1,5 @@
 import { Signer } from "ethers";
 import { MutableRefObject } from "react";
-import { SeriesId } from "./balances";
 import { Cauldron, Cauldron__factory } from "./contracts/Cauldron.sol";
 import {
   FYToken,
@@ -22,21 +21,32 @@ import {
 } from "./contracts/YieldStEthLever.sol";
 
 export const CAULDRON = "0xc88191F8cb8e6D4a668B047c1C8503432c3Ca867";
-export const YIELD_ST_ETH_LEVER = "0x58b9b4708aa91bde104ae2354c5e63d94784f2dd" //  "0x0cf17d5dcda9cf25889cec9ae5610b0fb9725f65";
 export const YIELD_LADLE = "0x6cB18fF2A33e981D1e38A663Ca056c0a5265066A";
 export const WETH = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2";
-export const WETH_ST_ETH_STABLESWAP = "0x828b154032950C8ff7CF8085D841723Db2696056";
 export const WST_ETH = "0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0";
 export const WETH_JOIN = "0x3bDb887Dc46ec0E964Df89fFE2980db0121f0fD0";
+
+export const YIELD_ST_ETH_LEVER = "0x2ed8e1c1439576aede07e585de0fd2e9bedacf2f" // "0x58b9b4708aa91bde104ae2354c5e63d94784f2dd" //  "0x0cf17d5dcda9cf25889cec9ae5610b0fb9725f65";
+export const WETH_ST_ETH_STABLESWAP = "0x828b154032950C8ff7CF8085D841723Db2696056";
+
+export const NOTIONAL_LEVER = '0x700814d8124430017094b397ebfb207bdb7b99f8';
+export const NOTIONAL_SWAP = '0x700814d8124430017094b397ebfb207bdb7b99f8';
 
 type DefinitelyContracts = {
   [CAULDRON]: Cauldron;
   [WETH]: Weth;
-  [YIELD_ST_ETH_LEVER]: YieldStEthLever;
+  
   [YIELD_LADLE]: YieldLadle;
-  [WETH_ST_ETH_STABLESWAP]: IStableSwap;
+  
   [WST_ETH]: WstEth;
   [WETH_JOIN]: FlashJoin;
+
+  [WETH_ST_ETH_STABLESWAP]: IStableSwap;
+  [YIELD_ST_ETH_LEVER]: YieldStEthLever;
+
+  // [NOTIONAL_LEVER]: '';
+  // [NOTIONAL_SWAP]: '';
+
 };
 
 export type Contracts = {
@@ -61,7 +71,7 @@ const contractFactories: ContractFactories = {
   [YIELD_LADLE]: YieldLadle__factory,
   [WETH_ST_ETH_STABLESWAP]: IStableSwap__factory,
   [WST_ETH]: WstEth__factory,
-  [WETH_JOIN]: FlashJoin__factory
+  [WETH_JOIN]: FlashJoin__factory,
 };
 
 /** Get a (typed) contract instance. */
@@ -76,7 +86,7 @@ export const getContract = <T extends keyof DefinitelyContracts>(
 };
 
 export const getFyTokenAddress = async(
-  seriesId: SeriesId,
+  seriesId: string,
   contracts: MutableRefObject<Contracts>,
   signer: Signer
 ): Promise<string> => {
@@ -85,7 +95,7 @@ export const getFyTokenAddress = async(
 }
 
 export const getFyToken = async(
-  seriesId: SeriesId,
+  seriesId: string,
   contracts: MutableRefObject<Contracts>,
   signer: Signer
 ): Promise<FYToken> => {
@@ -94,7 +104,7 @@ export const getFyToken = async(
 }
 
 export const getPool = async (
-  seriesId: SeriesId,
+  seriesId: string,
   contracts: MutableRefObject<Contracts>,
   signer: Signer
 ): Promise<IPool> => {
