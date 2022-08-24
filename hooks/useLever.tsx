@@ -67,7 +67,9 @@ export const useLever = () => {
   useEffect(() => {
     (async () => {
       if (selectedStrategy && input?.big.gt(ZERO_BN) && debouncedLeverage) {
+
         const stEthSim = await simulateLever();
+        console.log( stEthSim ); 
         setInvestPosition(stEthSim.investPosition);
         setInvestValue(stEthSim.investValue);
         setShortBorrowed(stEthSim.shortBorrowed);

@@ -167,8 +167,6 @@ const LeverProvider = ({ children }: any) => {
       /* connect up relevant contracts */
       Array.from(STRATEGIES.values()).map(async (strategy) => {
         const signer = account ? provider.getSigner(account) : provider;
-
-        console.log( strategy)
         const leverContract = contractFactories[strategy.leverAddress].connect(strategy.leverAddress, signer);
 
         /* Connect the investToken based on investTokenType */

@@ -70,7 +70,6 @@ export const useStEthSim = ( ): simOutput => {
     if (selectedStrategy && inputAsFyToken.big.gt(ZERO_BN) ) {
 
       setIsSimulating(true);
- 
       // - netInvestAmount = baseAmount + borrowAmount - fee
       // const fyWeth = await getFyToken(seriesId, contracts, account);
       const fyContract = selectedStrategy.investTokenContract;
@@ -89,9 +88,11 @@ export const useStEthSim = ( ): simOutput => {
       );
       debtPosition = convertToW3bNumber(debt_, 18, 6)
 
+      // const debtValue = 
+
       // - sellFyWeth: FyWEth -> WEth
       // const obtainedWEth = await selectedStrategy.marketContract.sellFYTokenPreview(netInvestAmount);
-      const netInvestAmount = inputAsFyToken.big.add(toBorrow.big).sub(fee); // - netInvestAmount = baseAmount + borrowAmount - fee
+      const netInvestAmount = inputAsFyToken.big.add(toBorrow.big) // .sub(fee); // - netInvestAmount = baseAmount + borrowAmount - fee
       const wethObtained = sellFYToken(
         marketState.sharesReserves,
         marketState.fyTokenReserves,
@@ -103,26 +104,34 @@ export const useStEthSim = ( ): simOutput => {
       );
       shortInvested = convertToW3bNumber(wethObtained, 18, 6);
 
+
       // stableSwap exchange: WEth -> StEth
       const stableSwap = contractFactories[WETH_STETH_STABLESWAP].connect(WETH_STETH_STABLESWAP, provider);
       const boughtStEth = await stableSwap.get_dy(0, 1, wethObtained);
 
+      // investPosition (stEth held)
+      investPosition = convertToW3bNumber(boughtStEth, 18, 6);
+
       // - Wrap: StEth -> WStEth
       const wStEthContract = contractFactories[WST_ETH].connect(WST_ETH, provider);
-      const investPosition_ = await wStEthContract.getWstETHByStETH(boughtStEth);
-      investPosition = convertToW3bNumber(investPosition_, 18, 6);
+      // const investPosition_ = await wStEthContract.getWstETHByStETH(boughtStEth);
+      // console.log( 'WrappedStETH : ',  investPosition_.toString() )
+      // console.log( 'WrappedStETH : ',  investPosition_.toString() )
 
       // check unwrapping  */
       const oneStEth = ethers.utils.parseUnits('1')
       const stEthPerWrapped = await wStEthContract.getStETHByWstETH( oneStEth )
-      const unwrappedStEthValue = investPosition_.mul(stEthPerWrapped).div(oneStEth);
+      
+      const unwrappedStEthValue = boughtStEth.mul(stEthPerWrapped).div(oneStEth);
 
-      // console.log(  investPosition_.mul(stEthPerWrapped).div(oneStEth).toString()  )
+      console.log( stEthPerWrapped.toString()  )
+      console.log( 'UNWRAPEED STEEHT : ', unwrappedStEthValue.toString()  )
       
       /* check for anywswapping cost */
       /* Calculate the value of the investPosition in short terms : via swap */
-      const investValue_ = await stableSwap.get_dy(1, 0, unwrappedStEthValue);
+      const investValue_ = await stableSwap.get_dy(1, 0, boughtStEth);
       investValue = convertToW3bNumber(investValue_, 18, 6)
+
     }
 
     setIsSimulating(false);

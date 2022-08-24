@@ -40,7 +40,6 @@ export const calculateAPRs = (
   const now = Math.round(new Date().getTime() / 1000);
   const secsToMaturity = maturity - now;
   // console.log(maturity, secsToMaturity, now);
-
   const oneOverYearProp = 1 / (secsToMaturity / 31536000);
 
   // const investRate = calculateAPR(baseInvested.big, investPosition.big, maturity);
