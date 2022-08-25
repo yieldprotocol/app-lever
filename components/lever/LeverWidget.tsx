@@ -72,7 +72,7 @@ const LeverWidget = (props: any) => {
           </Section>
 
           <Button
-            action={() => console.log('transact now')}
+            action={() => transact() }
             disabled={!account || !selectedStrategy} // add in isTransacting check
             loading={false}
             // loading={isTransacting} 

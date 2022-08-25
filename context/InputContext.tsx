@@ -17,13 +17,6 @@ export interface IInputContextState {
   // selectedStrategy: ILeverStrategy|undefined;
 }
 
-// const OPTIONS: { value: number; label: string }[] = [
-//   { value: 1, label: '0.1%' },
-//   { value: 5, label: '0.5%' },
-//   { value: 10, label: '1%' },
-//   { value: 50, label: '5%' },
-// ];
-
 /* Parse the input to W3BNumber based on the selected Strategy and base */
 const inputToW3bNumber = (input: string, decimals: number = 18, displayDecimals?: number): W3bNumber | undefined => {
   if (input) {
@@ -51,7 +44,6 @@ const initState: IInputContextState = {
   input: undefined,
   leverage: inputToW3bNumber('3', 2),
   slippage: 0.001,
-  // selectedStrategy:undefined,
 };
 
 const inputReducer = (state: IInputContextState, action: any) => {

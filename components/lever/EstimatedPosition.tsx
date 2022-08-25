@@ -1,15 +1,11 @@
-import { BigNumber } from 'ethers';
 import { useContext } from 'react';
 import tw from 'tailwind-styled-components';
-import { InputContext, W3bNumber } from '../../context/InputContext';
+import { InputContext } from '../../context/InputContext';
 import { BorderWrap } from '../styles';
-import { useLever } from '../../hooks/useLever';
-import { ILeverStrategy, LeverContext } from '../../context/LeverContext';
+import { LeverContext } from '../../context/LeverContext';
 
 const Inner = tw.div`m-4 gap-10`;
-const Grid = tw.div`grid my-5 auto-rows-auto gap-2`;
 const TopRow = tw.div`flex justify-between align-middle text-center items-center`;
-const ClearButton = tw.button`text-sm`;
 
 const InfoBlock = tw.div`grid grid-cols-2 gap-4 my-8`;
 const Label = tw.div`text-[grey] text-left`;
@@ -18,7 +14,7 @@ const Value = tw.div`text-[white] text-right`;
 const Divider = tw.div`border-0.5 border-[indigo] border-t-[indigo]`;
 const NotShown = tw.div`invisible`;
 
-const EstPositionWidget = (props:any) => {
+const EstimatedPosition = (props:any) => {
   const [inputState] = useContext(InputContext);
   const { input, leverage } = inputState;
 
@@ -115,4 +111,4 @@ const EstPositionWidget = (props:any) => {
   );
 };
 
-export default EstPositionWidget;
+export default EstimatedPosition;

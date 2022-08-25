@@ -17,18 +17,18 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
   return (
     <DynamicLayout>
       <LeverProvider>
-        <InputProvider>
-          <MarketProvider>
-            <ToastContainer
-              position="bottom-right"
-              pauseOnHover
-              closeOnClick
-              toastStyle={{ background: theme === 'light' ? '#e4e4e7' : '#18181b' }}
-              closeButton={<XIcon height="1rem" width="1rem" color={theme === 'dark' ? '#e4e4e7' : '#18181b'} />}
-            />
-            <Component {...pageProps} />
-          </MarketProvider>
-        </InputProvider>
+        {/* <InputProvider>*/}
+        <MarketProvider>
+          <ToastContainer
+            position="bottom-right"
+            pauseOnHover
+            closeOnClick
+            toastStyle={{ background: theme === 'light' ? '#e4e4e7' : '#18181b' }}
+            closeButton={<XIcon height="1rem" width="1rem" color={theme === 'dark' ? '#e4e4e7' : '#18181b'} />}
+          />
+          <Component {...pageProps} />
+        </MarketProvider>
+        {/* </InputProvider> */}
       </LeverProvider>
     </DynamicLayout>
   );

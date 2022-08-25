@@ -11,6 +11,7 @@ import { calculateAPRs } from '../lib/utils';
 import { IPoolState, MarketContext } from '../context/MarketContext';
 import { useStEthSim } from './LeverSims/useStEthSim';
 import { useDebounce } from './generalHooks';
+import { MAX_256 } from '@yield-protocol/ui-math';
 
 
 export interface LeverSimulation {
@@ -112,9 +113,12 @@ export const useLever = () => {
     if (input && selectedStrategy?.investTokenContract) {
       setAppState(AppState.Approving);
       const gasLimit = (
-        await selectedStrategy.investTokenContract.estimateGas.approve(selectedStrategy.leverAddress, shortInvested.big)
+        // await selectedStrategy.investTokenContract.estimateGas.approve(selectedStrategy.leverAddress, shortInvested.big)
+        await selectedStrategy.investTokenContract.estimateGas.approve(selectedStrategy.leverAddress, MAX_256)
+
       ).mul(2);
-      const tx = await selectedStrategy.investTokenContract.approve(selectedStrategy.leverAddress, shortInvested.big);
+      // const tx = await selectedStrategy.investTokenContract.approve(selectedStrategy.leverAddress, shortInvested.big);
+      const tx = await selectedStrategy.investTokenContract.approve(selectedStrategy.leverAddress, MAX_256);
       await tx.wait();
       setAppState(AppState.Transactable);
     }
@@ -126,16 +130,16 @@ export const useLever = () => {
       const gasLimit = (
         await selectedStrategy.leverContract.estimateGas.invest(
           selectedStrategy.seriesId,
-          input.big,
-          shortBorrowed.big,
+          ethers.utils.parseUnits('1', 18),  // input.big,
+          // ethers.utils.parseUnits('1', 18), // shortBorrowed.big,
           '0' // removeSlippage( investPosition.big),
         )
       ).mul(2);
 
       const investTx = await selectedStrategy.leverContract.invest(
         selectedStrategy.seriesId,
-        input.big,
-        shortBorrowed.big,
+        ethers.utils.parseUnits('1', 18),  // input.big,
+        // ethers.utils.parseUnits('1', 18), // shortBorrowed.big,
         '0', // removeSlippage( investPosition.big),
         {
           value: shortAsset?.id === WETH ? input.big : ZERO_BN, // value is set as input if using ETH
