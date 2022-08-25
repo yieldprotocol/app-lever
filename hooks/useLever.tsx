@@ -32,7 +32,8 @@ export enum NotificationType { INFO, WARN, ERROR }
 export interface Notification { type: NotificationType, msg: string }
 
 export interface simOutput {
-  simulateLever: () => Promise<LeverSimulation>;
+  simulateInvest: () => Promise<LeverSimulation>;
+  simulateReturn: () => Promise<W3bNumber>;
   isSimulating: boolean;
   notification: Notification[];
   extraBucket: any[];
@@ -63,13 +64,13 @@ export const useLever = () => {
   const { setAppState } = leverActions;
 
   /* use STETH lever simulations */
-  const { simulateLever, isSimulating } = useStEthSim();
+  const { simulateInvest, isSimulating } = useStEthSim();
 
   useEffect(() => {
     (async () => {
       if (selectedStrategy && input?.big.gt(ZERO_BN) && debouncedLeverage) {
 
-        const stEthSim = await simulateLever();
+        const stEthSim = await simulateInvest();
         console.log( stEthSim ); 
         setInvestPosition(stEthSim.investPosition);
         setInvestValue(stEthSim.investValue);
@@ -125,16 +126,18 @@ export const useLever = () => {
   };
 
   const transact = async () => {
+
+    // await approve();
+
     if (input && selectedStrategy?.leverContract) {
       setAppState(AppState.Transacting);
-      const gasLimit = (
-        await selectedStrategy.leverContract.estimateGas.invest(
-          selectedStrategy.seriesId,
-          ethers.utils.parseUnits('1', 18),  // input.big,
-          // ethers.utils.parseUnits('1', 18), // shortBorrowed.big,
-          '0' // removeSlippage( investPosition.big),
-        )
-      ).mul(2);
+      // const gasLimit = (
+      //   await selectedStrategy.leverContract.estimateGas.invest(
+      //     selectedStrategy.seriesId,
+      //     ethers.utils.parseUnits('1', 18),  // input.big,
+      //     '0' // removeSlippage( investPosition.big),
+      //   )
+      // ).mul(2);
 
       const investTx = await selectedStrategy.leverContract.invest(
         selectedStrategy.seriesId,
@@ -142,8 +145,8 @@ export const useLever = () => {
         // ethers.utils.parseUnits('1', 18), // shortBorrowed.big,
         '0', // removeSlippage( investPosition.big),
         {
-          value: shortAsset?.id === WETH ? input.big : ZERO_BN, // value is set as input if using ETH
-          gasLimit,
+          value: shortAsset?.id === WETH ? ethers.utils.parseUnits('1', 18) : ZERO_BN, // value is set as input if using ETH
+          // gasLimit,
         }
       );
 

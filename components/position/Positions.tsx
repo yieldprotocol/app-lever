@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import tw from 'tailwind-styled-components';
-import PositionProvider from '../../context/PositionContext';
 import { BorderWrap } from '../styles';
 
 const Inner = tw.div`m-4 text-center`;

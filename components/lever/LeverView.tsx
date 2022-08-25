@@ -15,18 +15,11 @@ const LeverView_NoContext = () => {
   const { fillEther } = useTestFunctions();
 
   return (
-    <>
       <div className="flex flex-row">
         <LeverWidget lever={lever} />
         <EstimatedPosition lever={lever} />
         {/* <GraphProvider />*/}
       </div>
-
-      <div className="p-8 gap-2">
-        Test section
-        <Button action={() => void fillEther()}> Fund Eth </Button>
-      </div>
-      </>
   );
 };
 

@@ -13,12 +13,10 @@ const ClearButton = tw.button`text-sm`;
 const PositionView_NoContext = () => {
 
   return (
-    <PositionProvider>
       <div className="flex flex-row">
         <Positions />
         <PositionWidget />
       </div>
-    </PositionProvider>
   );
 };
 
