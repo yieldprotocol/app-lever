@@ -81,7 +81,7 @@ const LeverWidget = (props: any) => {
             {!account ? 'Connect Wallet' : 'Action'}
           </Button>
         </Inner>
-        is simulatin? {isSimulating.toString() }
+        is simulatin? {isSimulating?.toString() }
       </BorderWrap>
   );
 };

@@ -10,9 +10,8 @@ import LeverWidget from './LeverWidget';
 
 const LeverView_NoContext = () => {
   /* lever is abstracted up here in the top level to save a few re-renders/calcs */
+  
   const lever = useLever();
-
-  const { fillEther } = useTestFunctions();
 
   return (
       <div className="flex flex-row">

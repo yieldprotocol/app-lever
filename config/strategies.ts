@@ -1,9 +1,6 @@
-import { NOTIONAL_LEVER, NOTIONAL_SWAP } from '../contracts';
 import { TokenType } from '../lib/types';
 import { WETH, WSTETH } from './assets';
-import { STETH_LEVER, WETH_STETH_STABLESWAP } from './contractRegister';
-
-
+import { STETH_LEVER } from './contractRegister';
 
 export interface ILeverStrategyRoot {
   id: string;

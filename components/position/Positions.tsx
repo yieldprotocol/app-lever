@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import tw from 'tailwind-styled-components';
+import { PositionContext } from '../../context/PositionContext';
 import { BorderWrap } from '../styles';
 
 const Inner = tw.div`m-4 text-center`;
@@ -22,21 +23,31 @@ dark:text-gray-50
 dark:bg-opacity-25
 `;
 
-
-
 const Positions = () => {
+  const [positionState, positionActions] = useContext(PositionContext);
+  const { positions } = positionState;
+  const { selectPosition } = positionActions;
+
   return (
     <BorderWrap>
-    <TopRow >
-          <div className='text-lg'> Positions </div>
+      <TopRow>
+        <div className="text-lg"> Positions </div>
         <ClearButton onClick={() => console.log('actually, this might not do anything? settings?')}>
-            [filter]
+          [filter]
         </ClearButton>
       </TopRow>
-    <Inner>
-      something
+
+      <Inner>
+        {(Array.from(positions.values())).map((v: any) => {
+          return (
+            <div onClick={() => selectPosition(v)} key={v.id}>
+              {console.log(v)}
+              {v.id}
+            </div>
+          );
+        })}
       </Inner>
-      </BorderWrap>
+    </BorderWrap>
   );
 };
 

@@ -8,10 +8,10 @@ import { ILeverContextState, LeverContext } from '../context/LeverContext';
 import { AppState } from '../lib/types';
 import { calculateAPRs } from '../lib/utils';
 
-import { IPoolState, MarketContext } from '../context/MarketContext';
 import { useStEthSim } from './LeverSims/useStEthSim';
 import { useDebounce } from './generalHooks';
 import { MAX_256 } from '@yield-protocol/ui-math';
+import { useNotionalSim } from './LeverSims/useNotionalSim';
 
 
 export interface LeverSimulation {
@@ -54,6 +54,8 @@ export const useLever = () => {
   const [borrowAPR, setBorrowAPR] = useState<number>(0);
   const [netAPR, setNetAPR] = useState<number>(0);
 
+  const [simulator, setSimulator] = useState<any>();
+
   const [investPosition, setInvestPosition] = useState<W3bNumber>(ZERO_W3N);
   const [investValue, setInvestValue] = useState<W3bNumber>(ZERO_W3N);
   const [debtPosition, setDebtPosition] = useState<W3bNumber>(ZERO_W3N);
@@ -63,20 +65,31 @@ export const useLever = () => {
 
   const { setAppState } = leverActions;
 
-  /* use STETH lever simulations */
-  const { simulateInvest, isSimulating } = useStEthSim();
+  /* lever simulators */
+  const stEthSim = useStEthSim();
+  const notionalSim = useNotionalSim();
+
+  
+  /* choose the correct lever simulator */
+  useEffect(()=> {
+    if (selectedStrategy?.ilkId === WSTETH) {
+      setSimulator( stEthSim );
+    }
+    if ( selectedStrategy?.ilkId === 'NOTIONAL' ) {
+      setSimulator( notionalSim );
+    }
+  }, [selectedStrategy])
 
   useEffect(() => {
     (async () => {
       if (selectedStrategy && input?.big.gt(ZERO_BN) && debouncedLeverage) {
-
-        const stEthSim = await simulateInvest();
-        console.log( stEthSim ); 
-        setInvestPosition(stEthSim.investPosition);
-        setInvestValue(stEthSim.investValue);
-        setShortBorrowed(stEthSim.shortBorrowed);
-        setShortInvested(stEthSim.shortInvested);
-        setDebtPosition(stEthSim.debtPosition);
+        const simulated = await simulator.simulateInvest();
+        console.log( 'simulated', simulated ); 
+        setInvestPosition(simulated.investPosition);
+        setInvestValue(simulated.investValue);
+        setShortBorrowed(simulated.shortBorrowed);
+        setShortInvested(simulated.shortInvested);
+        setDebtPosition(simulated.debtPosition);
         // setDebtValue(stEthSim.debtValue);
         // console.log(stEthSim);
         const { netAPR, borrowAPR, investAPR } = calculateAPRs(
@@ -92,7 +105,7 @@ export const useLever = () => {
         setInvestAPR(investAPR);
       }
     })();
-  }, [selectedStrategy, input, debouncedLeverage]);
+  }, [ selectedStrategy, input, debouncedLeverage ]);
 
   useEffect(() => {
       if (selectedStrategy && input?.big.gt(ZERO_BN) && debouncedLeverage) {
@@ -171,7 +184,7 @@ export const useLever = () => {
     investAPR,
     netAPR,
 
-    isSimulating,
+    isSimulating: simulator?.isSimulating,
     // simNotification,
 
   };

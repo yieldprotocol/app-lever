@@ -43,17 +43,23 @@ const inputToW3bNumber = (input: string, decimals: number = 18, displayDecimals?
 const PositionContext = React.createContext<any>({});
 const initState: IPositionContextState = {
   positions: new Map([]),
-  selectedPosition: '',
+  selectedPosition: undefined,
 };
 
-const inputReducer = (state: IPositionContextState, action: any) => {
+const positionReducer = (state: IPositionContextState, action: any) => {
   /* Reducer switch */
   switch (action.type) {
-    case 'UPDATE_POSITIONS':
+    case 'UPDATE_POSITION':
       return {
         ...state,
-        positions: action.payload,
+        positions: new Map(state.positions.set(action.payload.id, action.payload)),
       };
+
+      case 'SELECT_POSITION':
+        return {
+          ...state,
+          selectedPosition: action.payload,
+        };
 
     default:
       return state;
@@ -62,23 +68,23 @@ const inputReducer = (state: IPositionContextState, action: any) => {
 
 const PositionProvider = ({ children }: any) => {
   /* LOCAL STATE */
-  const [inputState, updateState] = useReducer(inputReducer, initState);
+  const [positionState, updateState] = useReducer(positionReducer, initState);
   const [leverState] = useContext(LeverContext);
   const { selectedStrategy, contracts, account, strategies } = leverState as ILeverContextState;
 
-  const updatePositions = async () => {
+  const updatePositions = async ( positionsToUpdate: [] = [] ) => {
     if (account) {
-      console.log(account);
+
       const vaultsReceivedFilter = contracts.Cauldron.filters.VaultGiven(null, account);
       const vaultsReceived = await contracts.Cauldron.queryFilter(vaultsReceivedFilter, 15271100, 'latest');
-
-      const receivedEventsList = await Promise.all(
+ 
+      await Promise.all(
         vaultsReceived.map(async (x:any): Promise<any> => {
           const { vaultId:id } = x.args;
           const { ilkId, seriesId} = await contracts.Cauldron.vaults(id);
           const {ink, art } = await contracts.Cauldron.balances(id)
 
-          return {
+          const vaultInfo = {
             id,
             seriesId,
             ilkId,
@@ -87,9 +93,11 @@ const PositionProvider = ({ children }: any) => {
             // displayName: generateVaultName(id),
             // decimals: series.decimals,
           };
+          updateState( { type: 'UPDATE_POSITION', payload: vaultInfo } ) 
+          return vaultInfo;
         })
-      )     
-      console.log(receivedEventsList);
+      )
+      // console.log(receivedEventsList);
     }
   };
 
@@ -99,13 +107,14 @@ const PositionProvider = ({ children }: any) => {
     updatePositions();
   }, [account, contracts]);
 
+
   /* ACTIONS TO CHANGE CONTEXT */
-  const inputActions = {
+  const positionActions = {
     // updatePositions: () => (positionId: string) => updateState({ type: 'SET_SELECTED_POSITION', payload: positionId }),
-    setSelectedPosition: (positionId: string) => updateState({ type: 'SET_SELECTED_POSITION', payload: positionId }),
+    selectPosition: (position: any) => updateState({ type: 'SELECT_POSITION', payload: position }),
   };
 
-  return <PositionContext.Provider value={[inputState, inputActions]}>{children}</PositionContext.Provider>;
+  return <PositionContext.Provider value={[positionState, positionActions]}>{children}</PositionContext.Provider>;
 };
 
 export { PositionContext };
