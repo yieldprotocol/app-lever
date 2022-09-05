@@ -1,11 +1,7 @@
-import { bytesToBytes32, ZERO_BN } from '@yield-protocol/ui-math';
-import { BigNumber, ethers } from 'ethers';
+import { ZERO_BN } from '@yield-protocol/ui-math';
+import { BigNumber } from 'ethers';
 import React, { useContext, useEffect, useReducer } from 'react';
-import { idText } from 'typescript';
-import { contractFactories } from '../config/contractRegister';
-import { ZERO_W3N } from '../constants';
-import { Cauldron } from '../contracts/types';
-import { ILeverContextState, ILeverStrategy, LeverContext } from './LeverContext';
+import { ILeverContextState, LeverContext } from './LeverContext';
 
 export interface W3bNumber {
   dsp: number;
@@ -15,35 +11,12 @@ export interface W3bNumber {
 
 export interface IPositionContextState {
   positions: Map<any, any>;
-  selectedPosition: any;
 }
-
-/* Parse the input to W3BNumber based on the selected Strategy and base */
-const inputToW3bNumber = (input: string, decimals: number = 18, displayDecimals?: number): W3bNumber | undefined => {
-  if (input) {
-    const input_bn = input ? ethers.utils.parseUnits(input, decimals) : ZERO_BN;
-    const input_hstr = ethers.utils.formatUnits(input_bn, decimals); // hStr wil be the same as dsp because it is what the user is entereing.
-    const input_dsp = displayDecimals
-      ? Number(
-          Math.round(Number(parseFloat(input_hstr) + 'e' + displayDecimals.toString())) +
-            'e-' +
-            displayDecimals.toString()
-        )
-      : parseFloat(input);
-
-    return {
-      dsp: input_dsp,
-      hStr: input_hstr,
-      big: input_bn,
-    };
-  }
-  return undefined;
-};
 
 const PositionContext = React.createContext<any>({});
 const initState: IPositionContextState = {
   positions: new Map([]),
-  selectedPosition: undefined,
+  // selectedPosition: undefined,
 };
 
 const positionReducer = (state: IPositionContextState, action: any) => {
@@ -55,22 +28,17 @@ const positionReducer = (state: IPositionContextState, action: any) => {
         positions: new Map(state.positions.set(action.payload.id, action.payload)),
       };
 
-      case 'SELECT_POSITION':
-        return {
-          ...state,
-          selectedPosition: action.payload,
-        };
-
     default:
       return state;
   }
 };
 
 const PositionProvider = ({ children }: any) => {
+  
   /* LOCAL STATE */
   const [positionState, updateState] = useReducer(positionReducer, initState);
   const [leverState] = useContext(LeverContext);
-  const { selectedStrategy, contracts, account, strategies } = leverState as ILeverContextState;
+  const { contracts, account } = leverState as ILeverContextState;
 
   const updatePositions = async ( positionsToUpdate: [] = [] ) => {
     if (account) {
@@ -101,7 +69,6 @@ const PositionProvider = ({ children }: any) => {
     }
   };
 
-
   /* update the positions if the account/contracts change */
   useEffect(() => {
     updatePositions();
@@ -111,7 +78,7 @@ const PositionProvider = ({ children }: any) => {
   /* ACTIONS TO CHANGE CONTEXT */
   const positionActions = {
     // updatePositions: () => (positionId: string) => updateState({ type: 'SET_SELECTED_POSITION', payload: positionId }),
-    selectPosition: (position: any) => updateState({ type: 'SELECT_POSITION', payload: position }),
+    // selectPosition: (position: any) => updateState({ type: 'SELECT_POSITION', payload: position }),
   };
 
   return <PositionContext.Provider value={[positionState, positionActions]}>{children}</PositionContext.Provider>;

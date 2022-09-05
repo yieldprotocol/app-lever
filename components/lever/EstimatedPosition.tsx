@@ -32,7 +32,7 @@ const EstimatedPosition = (props:any) => {
     investValue,
     flashFee,
     swapFee,
-    isSimulating
+    isSimulating,
   } = props.lever;
 
   return (

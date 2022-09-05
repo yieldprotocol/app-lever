@@ -13,7 +13,6 @@ import { useDebounce } from './generalHooks';
 import { MAX_256 } from '@yield-protocol/ui-math';
 import { useNotionalSim } from './LeverSims/useNotionalSim';
 
-
 export interface LeverSimulation {
   investPosition: W3bNumber; // long asset obtained
   investValue: W3bNumber; // current value of long asset (in terms of short)
@@ -26,29 +25,45 @@ export interface LeverSimulation {
 
   flashFee?: W3bNumber;
   swapFee?: W3bNumber;
+
+  // futureReturn: W3bNumber;
+  // currentReturn: W3bNumber;
 }
 
-export enum NotificationType { INFO, WARN, ERROR }
-export interface Notification { type: NotificationType, msg: string }
+export interface ReturnSimulation {
+  futureReturn: W3bNumber;
+  currentReturn: W3bNumber;
+}
+
+export enum NotificationType {
+  INFO,
+  WARN,
+  ERROR,
+}
+
+export interface Notification {
+  type: NotificationType;
+  msg: string;
+}
 
 export interface simOutput {
   simulateInvest: () => Promise<LeverSimulation>;
-  simulateReturn: () => Promise<W3bNumber>;
+  simulateReturn: (art:BigNumber, ink:BigNumber) => Promise<W3bNumber>;
   isSimulating: boolean;
   notification: Notification[];
   extraBucket: any[];
 }
 
-export const useLever = () => {
+export const useLever = (supressInput:boolean = false) => {
   /* Bring in context*/
   const [leverState, leverActions]: [ILeverContextState, any] = useContext(LeverContext);
   const [inputState] = useContext(InputContext);
 
   const { selectedStrategy, shortAsset } = leverState;
-  const { input, leverage } = inputState as IInputContextState;
+  // const { input, leverage } = supressInput ? {input:ZERO_BN, leverage:0}: inputState;
 
   /* add in debounced leverage when using slider - to prevent excessive calcs */
-  const debouncedLeverage = useDebounce(leverage, 500);
+  const debouncedLeverage = useDebounce(inputState?.leverage, 500);
 
   const [investAPR, setInvestAPR] = useState<number>(0);
   const [borrowAPR, setBorrowAPR] = useState<number>(0);
@@ -65,33 +80,32 @@ export const useLever = () => {
 
   const { setAppState } = leverActions;
 
-  /* lever simulators */
+  /* Lever simulators */
   const stEthSim = useStEthSim();
   const notionalSim = useNotionalSim();
 
-  
-  /* choose the correct lever simulator */
-  useEffect(()=> {
+  /* Choose the correct lever simulator */
+  useEffect(() => {
     if (selectedStrategy?.ilkId === WSTETH) {
-      setSimulator( stEthSim );
+      setSimulator(stEthSim);
     }
-    if ( selectedStrategy?.ilkId === 'NOTIONAL' ) {
-      setSimulator( notionalSim );
+    if (selectedStrategy?.ilkId === 'NOTIONAL') {
+      setSimulator(notionalSim);
     }
-  }, [selectedStrategy])
+  }, [selectedStrategy, inputState] );
 
   useEffect(() => {
     (async () => {
-      if (selectedStrategy && input?.big.gt(ZERO_BN) && debouncedLeverage) {
-        const simulated = await simulator.simulateInvest();
-        console.log( 'simulated', simulated ); 
+      if (selectedStrategy && inputState?.input?.big.gt(ZERO_BN) && debouncedLeverage) {
+        const simulated = await stEthSim.simulateInvest();
+
         setInvestPosition(simulated.investPosition);
         setInvestValue(simulated.investValue);
         setShortBorrowed(simulated.shortBorrowed);
         setShortInvested(simulated.shortInvested);
         setDebtPosition(simulated.debtPosition);
         // setDebtValue(stEthSim.debtValue);
-        // console.log(stEthSim);
+        
         const { netAPR, borrowAPR, investAPR } = calculateAPRs(
           investValue,
           debtPosition,
@@ -105,32 +119,40 @@ export const useLever = () => {
         setInvestAPR(investAPR);
       }
     })();
-  }, [ selectedStrategy, input, debouncedLeverage ]);
+  }, [selectedStrategy, inputState, debouncedLeverage]);
+
+
+  // useEffect(() => {
+  //   (async () => {
+  //     if (selectedStrategy) {
+  //       const simulatedReturn = await stEthSim.simulateReturn( );
+  //       console.log( 'erere' ,  simulatedReturn.dsp )
+  //     }
+  //   })();
+  // }, [selectedStrategy]);
 
   useEffect(() => {
-      if (selectedStrategy && input?.big.gt(ZERO_BN) && debouncedLeverage) {
-        const { netAPR, borrowAPR, investAPR } = calculateAPRs(
-          investValue,
-          debtPosition,
-          shortInvested,
-          shortBorrowed,
-          debouncedLeverage.dsp,
-          selectedStrategy.maturity
-        );
-        setNetAPR(netAPR);
-        setBorrowAPR(borrowAPR);
-        setInvestAPR(investAPR);
-      }
-  }, [selectedStrategy, input, debouncedLeverage]);
+    if (selectedStrategy && inputState?.input?.big.gt(ZERO_BN) && debouncedLeverage) {
+      const { netAPR, borrowAPR, investAPR } = calculateAPRs(
+        investValue,
+        debtPosition,
+        shortInvested,
+        shortBorrowed,
+        debouncedLeverage.dsp,
+        selectedStrategy.maturity
+      );
+      setNetAPR(netAPR);
+      setBorrowAPR(borrowAPR);
+      setInvestAPR(investAPR);
+    }
+  }, [selectedStrategy, inputState, debouncedLeverage]);
 
   const approve = async () => {
-    if (input && selectedStrategy?.investTokenContract) {
+    if (inputState && selectedStrategy?.investTokenContract) {
       setAppState(AppState.Approving);
-      const gasLimit = (
+      const gasLimit =
         // await selectedStrategy.investTokenContract.estimateGas.approve(selectedStrategy.leverAddress, shortInvested.big)
-        await selectedStrategy.investTokenContract.estimateGas.approve(selectedStrategy.leverAddress, MAX_256)
-
-      ).mul(2);
+        (await selectedStrategy.investTokenContract.estimateGas.approve(selectedStrategy.leverAddress, MAX_256)).mul(2);
       // const tx = await selectedStrategy.investTokenContract.approve(selectedStrategy.leverAddress, shortInvested.big);
       const tx = await selectedStrategy.investTokenContract.approve(selectedStrategy.leverAddress, MAX_256);
       await tx.wait();
@@ -139,10 +161,9 @@ export const useLever = () => {
   };
 
   const transact = async () => {
-
     // await approve();
 
-    if (input && selectedStrategy?.leverContract) {
+    if (inputState && selectedStrategy?.leverContract) {
       setAppState(AppState.Transacting);
       // const gasLimit = (
       //   await selectedStrategy.leverContract.estimateGas.invest(
@@ -154,11 +175,11 @@ export const useLever = () => {
 
       const investTx = await selectedStrategy.leverContract.invest(
         selectedStrategy.seriesId,
-        ethers.utils.parseUnits('1', 18),  // input.big,
+        inputState.input.big,
         // ethers.utils.parseUnits('1', 18), // shortBorrowed.big,
         '0', // removeSlippage( investPosition.big),
         {
-          value: shortAsset?.id === WETH ? ethers.utils.parseUnits('1', 18) : ZERO_BN, // value is set as input if using ETH
+          value: shortAsset?.id === WETH ? inputState.input.big : ZERO_BN, // value is set as input if using ETH
           // gasLimit,
         }
       );
@@ -184,8 +205,9 @@ export const useLever = () => {
     investAPR,
     netAPR,
 
-    isSimulating: simulator?.isSimulating,
+    // simulateInvest:  stEthSim?.simulateInvest,
+    // simulateReturn:  stEthSim?.simulateReturn,
+    isSimulating: stEthSim.isSimulating,
     // simNotification,
-
   };
 };

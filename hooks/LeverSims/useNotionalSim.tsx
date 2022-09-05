@@ -6,7 +6,7 @@ import {  InputContext, W3bNumber } from '../../context/InputContext';
 import { IPoolState, MarketContext } from '../../context/MarketContext';
 import { convertToW3bNumber, getTimeToMaturity } from '../../lib/utils';
 import { LeverContext } from '../../context/LeverContext';
-import { WETH_ST_ETH_STABLESWAP, WST_ETH } from '../../contracts';
+import { WST_ETH } from '../../contracts';
 import { ZERO_W3N } from '../../constants';
 import { LeverSimulation, simOutput } from '../useLever';
 
@@ -16,7 +16,6 @@ export const useNotionalSim = ( ): simOutput => {
   const { selectedStrategy, provider } = leverState;
 
   const [ inputState ] = useContext(InputContext);
-  const { input, leverage } = inputState
 
   const [isSimulating, setIsSimulating] = useState<boolean>(false);
 
@@ -36,7 +35,7 @@ export const useNotionalSim = ( ): simOutput => {
       investPosition: ZERO_W3N,
       investValue: ZERO_W3N,
       shortBorrowed: ZERO_W3N,
-      shortInvested: input,
+      shortInvested: inputState?.input,
       flashFee: ZERO_W3N,
       debtPosition: ZERO_W3N,
       debtValue: ZERO_W3N,

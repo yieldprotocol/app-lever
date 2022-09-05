@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import tw from 'tailwind-styled-components';
 import PositionProvider from '../../context/PositionContext';
+import { useLever } from '../../hooks/useLever';
 
 import Positions from './Positions';
 import PositionWidget from './PositionWidget';
@@ -12,10 +13,12 @@ const ClearButton = tw.button`text-sm`;
 
 const PositionView_NoContext = () => {
 
+  const lever = useLever(true); // true here to supress 'input' 
+
   return (
       <div className="flex flex-row">
         <Positions />
-        <PositionWidget />
+        <PositionWidget lever={lever} />
       </div>
   );
 };

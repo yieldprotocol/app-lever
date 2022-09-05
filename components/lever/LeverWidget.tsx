@@ -3,9 +3,6 @@ import tw from 'tailwind-styled-components';
 import Button from '../common/Button';
 
 import { BorderWrap, Header } from '../styles';
-
-import ShortSelect from '../selectors/ShortSelect';
-import LongSelect from '../selectors/LongSelect';
 import LeverageSelect from '../selectors/LeverageSelect';
 
 import { ValueInput } from '../selectors/ValueInput';
@@ -36,7 +33,7 @@ const SectionHead = tw.div`text-left m-2`
 
 const LeverWidget = (props: any) => {
   /* Bring in lever context - instead of passing them as props */
-  const [leverState ] = useContext(LeverContext);
+  const [ leverState ] = useContext(LeverContext);
   const { account, selectedStrategy} = leverState;
 
   const {

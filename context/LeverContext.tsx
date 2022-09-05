@@ -18,6 +18,8 @@ export interface ILeverContextState {
   appState: AppState;
 
   selectedStrategy: ILeverStrategy | undefined;
+  selectedPosition: ILeverStrategy | undefined;
+
   shortAsset: IAsset | undefined;
   longAsset: IAsset | undefined;
 
@@ -43,17 +45,21 @@ export interface ILeverStrategy extends ILeverStrategyRoot {
 const LeverContext = React.createContext<any>({});
 
 const initState: ILeverContextState = {
+  
+  appState: AppState.Loading,
+
   contracts: {},
   assets: new Map(),
   strategies: new Map(),
 
   // selectedStrategy: undefined,
   account: undefined,
-  appState: AppState.Loading,
 
   marketState: undefined,
 
   selectedStrategy: undefined,
+  selectedPosition: undefined,
+
   shortAsset: undefined,
   longAsset: undefined,
 
@@ -93,12 +99,18 @@ const leverReducer = (state: ILeverContextState, action: any) => {
         appState: action.payload,
       };
 
-    case 'SELECT_STRATEGY':
-      return {
-        ...state,
-        selectedStrategy: action.payload,
-      };
+      case 'SELECT_STRATEGY':
+        return {
+          ...state,
+          selectedStrategy: action.payload,
+        };
 
+        case 'SELECT_POSITION':
+          return {
+            ...state,
+            selectedPosition: action.payload,
+          };
+  
     case 'UPDATE_PROVIDER':
       return {
         ...state,
@@ -241,6 +253,7 @@ const LeverProvider = ({ children }: any) => {
   /* ACTIONS TO CHANGE CONTEXT  */
   const leverActions = {
     selectStrategy: (strategy: ILeverStrategy) => updateState({ type: 'SELECT_STRATEGY', payload: strategy }),
+    selectPosition: (position: ILeverStrategy) => updateState({ type: 'SELECT_POSITION', payload: position }),
     setAppState: (appState: AppState) => updateState({ type: 'UPDATE_APPSTATE', payload: appState }),
   };
 

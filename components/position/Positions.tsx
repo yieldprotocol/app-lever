@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import tw from 'tailwind-styled-components';
+import { LeverContext } from '../../context/LeverContext';
 import { PositionContext } from '../../context/PositionContext';
 import { BorderWrap } from '../styles';
 
@@ -24,10 +25,13 @@ dark:bg-opacity-25
 `;
 
 const Positions = () => {
-  const [positionState, positionActions] = useContext(PositionContext);
-  const { positions } = positionState;
-  const { selectPosition } = positionActions;
 
+  const [  , leverActions ] = useContext(LeverContext);
+  const { selectPosition } = leverActions;
+
+  const [ positionState ] = useContext(PositionContext);
+  const { positions } = positionState;
+  
   return (
     <BorderWrap>
       <TopRow>
@@ -41,7 +45,6 @@ const Positions = () => {
         {(Array.from(positions.values())).map((v: any) => {
           return (
             <div onClick={() => selectPosition(v)} key={v.id}>
-              {console.log(v)}
               {v.id}
             </div>
           );

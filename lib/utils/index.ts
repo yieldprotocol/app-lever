@@ -29,7 +29,7 @@ export const calculateAPRs = (
 
   shortInvested: W3bNumber, // total 'short value' (nb: NOT fytokens invested).
   shortBorrowed: W3bNumber, // 'short value' borrowed
-
+  
   leverage: number,
   maturity: number
 ): {
@@ -37,10 +37,16 @@ export const calculateAPRs = (
   borrowAPR: number;
   netAPR: number;
 } => {
+
+
   const now = Math.round(new Date().getTime() / 1000);
   const secsToMaturity = maturity - now;
-  // console.log(maturity, secsToMaturity, now);
-  const oneOverYearProp = 1 / (secsToMaturity / 31536000);
+
+  console.log(maturity, secsToMaturity, now);
+  // const oneOverYearProp = 1 / (secsToMaturity / 31536000);
+  const oneOverYearProp = 1 / (4592000 / 31536000);
+
+  // 4592000
 
   // const investRate = calculateAPR(baseInvested.big, investPosition.big, maturity);
   // const investAPR = investRate ? parseFloat(investRate) : 0;
