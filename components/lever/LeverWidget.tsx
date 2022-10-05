@@ -45,7 +45,7 @@ const LeverWidget = (props: any) => {
   return (
       <BorderWrap>
         <TopRow >
-              <div className='text-lg'> Open Position </div>
+              <div className='text-lg'> Open a Position: </div>
             <ClearButton onClick={() => console.log('actually, this might not do anything? settings?')}>
                 [settings]
             </ClearButton>
@@ -75,10 +75,10 @@ const LeverWidget = (props: any) => {
             // loading={isTransacting} 
           >
             {/* {!account ? 'Connect Wallet' : isTransacting ? 'Trade Initiated...' : 'Trade'} */}
-            {!account ? 'Connect Wallet' : 'Action'}
+            {!account ? 'Connect Wallet' : 'Trade'}
           </Button>
         </Inner>
-        is simulatin? {isSimulating?.toString() }
+        [ dev: is simulatin? {isSimulating?.toString() } ]
       </BorderWrap>
   );
 };

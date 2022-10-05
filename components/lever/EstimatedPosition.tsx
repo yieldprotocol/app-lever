@@ -82,7 +82,10 @@ const EstimatedPosition = (props:any) => {
       <InfoBlock>
         {/* <NotShown> (debtPosition/investPosition * LTV )</NotShown> */}
         <Label>Borrow Limit :</Label>
-        <Value> {debtPosition?.dsp!/investPosition?.dsp! * selectedStrategy?.LoanToValue*100 } %</Value>
+        {/* <Value> {selectedStrategy?.loanToValue*100 } %</Value> */}
+
+        <Value> {debtPosition?.dsp!/investPosition?.dsp! * selectedStrategy?.loanToValue*100 } %</Value>
+
 
         {/* <NotShown>(pos/prin - 1)</NotShown> */}
         <Label>PnL</Label>

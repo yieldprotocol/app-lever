@@ -214,6 +214,8 @@ const LeverProvider = ({ children }: any) => {
         const minRatio = parseFloat(ethers.utils.formatUnits(ratio, 6))
         const loanToValue = 1/minRatio;
 
+        console.log( loanToValue)
+
         // const balance = account ? await investTokenContract.balanceOf(account) : BigNumber.from('0');
         const connectedStrategy = {
           ...strategy,

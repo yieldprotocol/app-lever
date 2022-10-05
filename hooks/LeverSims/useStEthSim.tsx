@@ -16,7 +16,7 @@ export const useStEthSim = (input:W3bNumber, leverage:W3bNumber): simOutput => {
   const [marketState]: [IPoolState] = useContext(MarketContext);
   const { selectedStrategy, selectedPosition, provider } = leverState;
 
-  const {currentTime} = useBlockTime();
+  const { currentTime } = useBlockTime();
   // const [inputState] = useContext(InputContext);
   // const { input, leverage } = inputState;
 

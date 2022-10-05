@@ -6,7 +6,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useColorTheme } from '../hooks/useColorTheme';
 import { XIcon } from '@heroicons/react/solid';
 import LeverProvider from '../context/LeverContext';
-import InputProvider from '../context/InputContext';
 import MarketProvider from '../context/MarketContext';
 
 const DynamicLayout = dynamic(() => import('../components/Layout'), { ssr: false });
@@ -17,7 +16,6 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
   return (
     <DynamicLayout>
       <LeverProvider>
-        {/* <InputProvider>*/}
         <MarketProvider>
           <ToastContainer
             position="bottom-right"
@@ -28,7 +26,6 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
           />
           <Component {...pageProps} />
         </MarketProvider>
-        {/* </InputProvider> */}
       </LeverProvider>
     </DynamicLayout>
   );

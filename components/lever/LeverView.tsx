@@ -1,4 +1,4 @@
-import GraphProvider from '../../context/GraphContext';
+import ChartProvider from '../../context/ChartContext';
 import InputProvider, { InputContext } from '../../context/InputContext';
 import { useLever } from '../../hooks/useLever';
 import EstimatedPosition from './EstimatedPosition';
@@ -12,7 +12,7 @@ const LeverView_NoContext = () => {
       <div className="flex flex-row">
         <LeverWidget lever={lever} />
         <EstimatedPosition lever={lever} />
-        {/* <GraphProvider />*/}
+        <ChartProvider />
       </div>
   );
 };

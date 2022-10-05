@@ -10,7 +10,7 @@ const useTestFunctions = () => {
   const fillEther = useCallback(async () => {
     try {
       const tenderlyProvider = new ethers.providers.JsonRpcProvider(
-        "https://rpc.tenderly.co/fork/9d6c6c94-9bda-423d-88e7-bc95af3b8116"
+        process.env.tenderlyRpc
       );
       const transactionParameters = [
         [leverState?.account],
