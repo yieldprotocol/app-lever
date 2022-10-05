@@ -13,7 +13,7 @@ const ClearButton = tw.button`text-sm`;
 
 const PositionView_NoContext = () => {
 
-  const lever = useLever(true); // true here to supress 'input' 
+  const lever = useLever(); // true here to supress 'input' 
 
   return (
       <div className="flex flex-row">

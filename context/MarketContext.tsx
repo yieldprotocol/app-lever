@@ -5,7 +5,7 @@ import { ILeverContextState, ILeverStrategy, LeverContext } from './LeverContext
 
 export interface IPoolState {
   maturity: number;
-  decimals:number;
+  decimals: number;
   sharesReserves: BigNumber;
   fyTokenReserves: BigNumber;
   fyTokenRealReserves: BigNumber;
@@ -89,7 +89,7 @@ const MarketProvider = ({ children }: any) => {
     }
 
     const market_ = {
-      maturity,
+      maturity : parseInt(maturity),
       decimals,
       sharesReserves,
       fyTokenReserves,

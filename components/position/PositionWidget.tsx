@@ -16,7 +16,8 @@ const PositionWidget = (props: any) => {
   const { account, selectedPosition } = leverState;
 
   const {
-    simulateReturn,
+    currentReturn,
+    futureReturn,
     isSimulating,
   } = props.lever;
 
@@ -35,8 +36,8 @@ const PositionWidget = (props: any) => {
             <div>ink: {selectedPosition?.ink.toString()} </div>
             <div>{selectedPosition?.id} </div>
 
-            <div> Return if divesting now: {}  </div>
-            <div> Return if divesting at maturity: {} </div>
+            <div> Return if divesting now: {currentReturn.dsp}  </div>
+            <div> Return if divesting at maturity: {futureReturn.dsp} </div>
 
             <Button
               action={() => console.log('closing')}

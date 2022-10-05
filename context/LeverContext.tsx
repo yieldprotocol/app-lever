@@ -130,6 +130,7 @@ const leverReducer = (state: ILeverContextState, action: any) => {
 };
 
 const LeverProvider = ({ children }: any) => {
+  
   /* LOCAL STATE */
   const [leverState, updateState] = useReducer(leverReducer, initState);
   const { account, provider} = useConnector();

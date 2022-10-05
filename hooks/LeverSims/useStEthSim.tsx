@@ -1,32 +1,37 @@
 import { useContext, useMemo, useState } from 'react';
-import { sellBase, sellFYToken, ZERO_BN } from '@yield-protocol/ui-math';
+import { buyBase, sellBase, sellFYToken, ZERO_BN } from '@yield-protocol/ui-math';
 import { contractFactories } from '../../config/contractRegister';
-import { InputContext, W3bNumber } from '../../context/InputContext';
+import { W3bNumber } from '../../context/InputContext';
 
 import { IPoolState, MarketContext } from '../../context/MarketContext';
-import { convertToW3bNumber, getTimeToMaturity } from '../../lib/utils';
+import { convertToW3bNumber } from '../../lib/utils';
 import { LeverContext } from '../../context/LeverContext';
 import { WETH_STETH_STABLESWAP, WST_ETH } from '../../contracts';
 import { ZERO_W3N } from '../../constants';
 import { LeverSimulation, simOutput } from '../useLever';
-import { BigNumber, ethers } from 'ethers';
+import useBlockTime from '../useBlockTime';
 
-export const useStEthSim = (): simOutput => {
+export const useStEthSim = (input:W3bNumber, leverage:W3bNumber): simOutput => {
   const [leverState] = useContext(LeverContext);
   const [marketState]: [IPoolState] = useContext(MarketContext);
-  const { selectedStrategy, provider } = leverState;
-  const [inputState] = useContext(InputContext);
+  const { selectedStrategy, selectedPosition, provider } = leverState;
+
+  const {currentTime} = useBlockTime();
+  // const [inputState] = useContext(InputContext);
   // const { input, leverage } = inputState;
+
+  const now = currentTime || Math.round(new Date().getTime() / 1000);
+  const timeToMaturity = marketState.maturity - now;
 
   const [isSimulating, setIsSimulating] = useState<boolean>(false);
 
   const inputAsFyToken: W3bNumber = useMemo(() => {
-    if (inputState?.input && inputState?.input.big.gt(ZERO_BN)) {
+    if (input && input.big.gt(ZERO_BN)) {
       const fyTokens = sellBase(
         marketState.sharesReserves,
         marketState.fyTokenReserves,
-        inputState.input.big,
-        getTimeToMaturity(marketState.maturity),
+        input.big,
+        timeToMaturity.toString(),
         marketState.ts,
         marketState.g1,
         marketState.decimals
@@ -34,15 +39,15 @@ export const useStEthSim = (): simOutput => {
       return convertToW3bNumber(fyTokens, 18, 6);
     }
     return ZERO_W3N;
-  }, [inputState, marketState]);
+  }, [input, marketState]);
 
   const totalToInvest: W3bNumber = useMemo(() => {
     if (inputAsFyToken.big.gt(ZERO_BN)) {
-      const total_ = inputAsFyToken.big.mul(inputState?.leverage!.big).div(100);
+      const total_ = inputAsFyToken.big.mul(leverage!.big).div(100);
       return convertToW3bNumber(total_, 18, 6); /* set as w3bnumber  */
     }
     return ZERO_W3N;
-  }, [inputAsFyToken, inputState]);
+  }, [inputAsFyToken, leverage]);
 
   const toBorrow: W3bNumber = useMemo(() => {
     if (inputAsFyToken) {
@@ -61,10 +66,15 @@ export const useStEthSim = (): simOutput => {
     
     let investPosition = ZERO_W3N;
     let investValue = ZERO_W3N;
+
     let shortInvested = ZERO_W3N;
     let flashFee = ZERO_W3N;
+
     let debtPosition = ZERO_W3N;
     let debtValue = ZERO_W3N;
+
+    let futureReturn = ZERO_W3N;
+    let currentReturn = ZERO_W3N;
 
     if (selectedStrategy && inputAsFyToken.big.gt(ZERO_BN)) {
       setIsSimulating(true);
@@ -75,17 +85,17 @@ export const useStEthSim = (): simOutput => {
       flashFee = convertToW3bNumber(fee.toString(), 18, 6);
 
       /* calculate the resulting debt */
-      const debt_ = sellBase(
+      const debt_ = buyBase(
         marketState.sharesReserves,
         marketState.fyTokenReserves,
         toBorrow.big,
-        getTimeToMaturity(marketState.maturity),
+        timeToMaturity.toString(),
         marketState.ts,
         marketState.g1,
         marketState.decimals
       );
-      debtPosition = convertToW3bNumber(debt_, 18, 6);
 
+      debtPosition = convertToW3bNumber(debt_, 18, 6);
 
       // - sellFyWeth: FyWEth -> WEth
       // const obtainedWEth = await selectedStrategy.marketContract.sellFYTokenPreview(netInvestAmount);
@@ -94,7 +104,7 @@ export const useStEthSim = (): simOutput => {
         marketState.sharesReserves,
         marketState.fyTokenReserves,
         netInvestAmount,
-        getTimeToMaturity(marketState.maturity),
+        timeToMaturity.toString(),
         marketState.ts,
         marketState.g1,
         marketState.decimals
@@ -114,16 +124,18 @@ export const useStEthSim = (): simOutput => {
       // console.log( 'WrappedStETH : ',  investPosition_.toString() )
 
       // check unwrapping  */
-      const oneStEth = ethers.utils.parseUnits('1');
-      const stEthPerWrapped = await wStEthContract.getStETHByWstETH(oneStEth);
-      const unwrappedStEthValue = boughtStEth.mul(stEthPerWrapped).div(oneStEth);
+      // const oneStEth = ethers.utils.parseUnits('1');
+      // const stEthPerWrapped = await wStEthContract.getStETHByWstETH(oneStEth);
+      // const unwrappedStEthValue = boughtStEth.mul(stEthPerWrapped).div(oneStEth);
 
+      const unwrappedStEthValue = await wStEthContract.getStETHByWstETH(boughtStEth)
       // console.log(stEthPerWrapped.toString());
       // console.log('UNWRAPEED STEEHT : ', unwrappedStEthValue.toString());
 
       /* check for anywswapping cost */
       /* Calculate the value of the investPosition in short terms : via swap */
       const investValue_ = await stableSwap.get_dy(1, 0, unwrappedStEthValue);
+
       investValue = convertToW3bNumber(investValue_, 18, 6);
     }
 
@@ -137,36 +149,40 @@ export const useStEthSim = (): simOutput => {
       flashFee,
       debtPosition,
       debtValue,
+
+      futureReturn,
+      currentReturn,
     };
   };
 
   /**
-   * Compute how much WEth the user has at the end of the operation.
+   * Compute how much short asset ( WEth ) the user has at the end of the operation. Currently and at Maturity.
    */
-  const simulateReturn = async ( ink: BigNumber , art: BigNumber ): Promise<W3bNumber> => {
+  const simulateReturn = async( ) : Promise<W3bNumber> => {
     
-    setIsSimulating(false);
+    setIsSimulating(true);
 
     const fyContract = selectedStrategy.investTokenContract;
     const wStEthContract = contractFactories[WST_ETH].connect(WST_ETH, provider);
     const pool = selectedStrategy.poolContract;
     const stableSwap = contractFactories[WETH_STETH_STABLESWAP].connect(WETH_STETH_STABLESWAP, provider);
 
-    // const balance = { ink: '12', art: '2' };
-
-    if (selectedStrategy && art.gt(ZERO_BN)) {
+    if (selectedStrategy && selectedPosition) {
   
-      const stEthUnwrapped = await wStEthContract.getStETHByWstETH(ink);
+      /* amount of steth recieved from unwrapping wSTETH */
+      const stEthUnwrapped = await wStEthContract.getStETHByWstETH(selectedPosition.ink);
+
+      /* Amount of Eth from swapping stETH on curve */
       const wethReceived = await stableSwap.get_dy(1, 0, stEthUnwrapped);
-      const fee = await fyContract.flashFee(fyContract.address, art);
-      const borrowAmountPlusFee = fee.add(art);
+      /* Add in any fee for flashBorrowing */
+      const fee = await fyContract.flashFee(fyContract.address, selectedPosition.art);
+      const borrowAmountPlusFee = fee.add(selectedPosition.art);
 
-      console.log( borrowAmountPlusFee);
+      const wethToTransfer = await pool.buyFYTokenPreview(borrowAmountPlusFee);
+      const wethRemaining = wethReceived.sub(wethToTransfer);
       
-      // const wethToTran = await pool.buyFYTokenPreview(borrowAmountPlusFee);
-      // const wethRemaining = wethReceived.sub(wethToTran);  
-      const wethRemaining = ZERO_BN;
-
+      console.log( 'weth returned: ', wethRemaining.toString() );
+      // const wethRemaining = ZERO_BN;
 
       setIsSimulating(false);
       return convertToW3bNumber(wethRemaining, 18, 6);

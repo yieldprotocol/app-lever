@@ -18,49 +18,46 @@ export const convertToW3bNumber = (value: BigNumber, decimals: number = 18, disp
   };
 };
 
-export const getTimeToMaturity = (maturity: number, blocknumber?: number): string => {
-  const secs = maturity - Math.round(new Date().getTime() / 1000);
-  return secs.toString();
-};
+// export const getTimeToMaturity = (maturity: number, blocknumber?: number): string => {
+//   // tenderlyFork only for now: 
+//   const now = Math.round(new Date().getTime() / 1000);
+//   const secs = maturity - now;
+//   return secs.toString();
+// };
 
-export const calculateAPRs = (
-  investValue: W3bNumber, // 'short value' of long asset obtained
-  debtPosition: W3bNumber, // 'short value' of debt at maturity ( shortvalue === fyToken value here)
 
-  shortInvested: W3bNumber, // total 'short value' (nb: NOT fytokens invested).
-  shortBorrowed: W3bNumber, // 'short value' borrowed
+// export const calculateAPRs = async (
+//   investValue: W3bNumber, // 'short asset value' of long asset 
+//   debtPosition: W3bNumber, // 'short asset value' of debt at maturity ( shortvalue === fyToken value here)
+
+//   shortInvested: W3bNumber, // total 'short value' (nb: NOT fytokens invested).
+//   shortBorrowed: W3bNumber, // 'short value' borrowed
   
-  leverage: number,
-  maturity: number
-): {
-  investAPR: number;
-  borrowAPR: number;
-  netAPR: number;
-} => {
+//   leverage: number,
+//   maturity: number
+// ): Promise < {
+//   investAPR: number;
+//   borrowAPR: number;
+//   netAPR: number;
+// }> => {
 
+//   const secsToMaturity = parseInt(getTimeToMaturity(maturity));
+//   const oneOverYearProp = 1 / (secsToMaturity / 31536000);
 
-  const now = Math.round(new Date().getTime() / 1000);
-  const secsToMaturity = maturity - now;
+//   // const investRate = calculateAPR(baseInvested.big, investPosition.big, maturity);
+//   // const investAPR = investRate ? parseFloat(investRate) : 0;
+//   const investRate = shortInvested.dsp > 0 ? Math.pow(investValue.dsp / shortInvested.dsp, oneOverYearProp) - 1 : 0;
+//   const investAPR = investRate * 100;
+//   // console.log('invest rate: ',   investValue.dsp, shortInvested.dsp , investAPR )
 
-  console.log(maturity, secsToMaturity, now);
-  // const oneOverYearProp = 1 / (secsToMaturity / 31536000);
-  const oneOverYearProp = 1 / (4592000 / 31536000);
+//   // const borrowRate = calculateAPR(debtPosition.big, baseBorrowed.big, maturity);
+//   // const borrowAPR = borrowRate ? parseFloat(borrowRate) : 0;
 
-  // 4592000
+//   const borrowRate = shortBorrowed.dsp > 0 ? Math.pow( debtPosition.dsp/shortBorrowed.dsp , oneOverYearProp) - 1 : 0;
+//   const borrowAPR = borrowRate * 100;
+//   // console.log('borrow rate: ', debtPosition.dsp, borrowed.dsp , borrowAPR )
 
-  // const investRate = calculateAPR(baseInvested.big, investPosition.big, maturity);
-  // const investAPR = investRate ? parseFloat(investRate) : 0;
-  const investRate = shortInvested.dsp > 0 ? Math.pow(investValue.dsp / shortInvested.dsp, oneOverYearProp) - 1 : 0;
-  const investAPR = investRate * 100;
-  // console.log('invest rate: ',   investValue.dsp, shortInvested.dsp , investAPR )
+//   const netAPR = leverage * investAPR - (leverage - 1) * borrowAPR;
 
-  // const borrowRate = calculateAPR(debtPosition.big, baseBorrowed.big, maturity);
-  // const borrowAPR = borrowRate ? parseFloat(borrowRate) : 0;
-  const borrowRate = shortBorrowed.dsp > 0 ? Math.pow(debtPosition.dsp / shortBorrowed.dsp, oneOverYearProp) - 1 : 0;
-  const borrowAPR = borrowRate * 100;
-  // console.log('borrow rate: ', debtPosition.dsp, borrowed.dsp , borrowAPR )
-
-  const netAPR = leverage * investAPR - (leverage - 1) * borrowAPR;
-
-  return { investAPR, borrowAPR, netAPR };
-};
+//   return { investAPR, borrowAPR, netAPR };
+// };
