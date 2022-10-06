@@ -180,6 +180,7 @@ export const useLever = () => {
   };
 
   const transact = async () => {
+
     // await approve();
     if (inputState && selectedStrategy?.leverContract) {
       setAppState(AppState.Transacting);
@@ -190,6 +191,11 @@ export const useLever = () => {
       //     '0' // removeSlippage( investPosition.big),
       //   )
       // ).mul(2);
+
+      console.log(selectedStrategy.seriesId,
+        inputState.input.big,
+         )
+
       const investTx = await selectedStrategy.leverContract.invest(
         selectedStrategy.seriesId,
         inputState.input.big,

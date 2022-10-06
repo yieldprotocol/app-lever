@@ -1,6 +1,7 @@
 import ChartProvider from '../../context/ChartContext';
 import InputProvider, { InputContext } from '../../context/InputContext';
 import { useLever } from '../../hooks/useLever';
+import TenderlyView from '../testing/TenderlyView';
 import EstimatedPosition from './EstimatedPosition';
 import LeverWidget from './LeverWidget';
 
@@ -9,11 +10,14 @@ const LeverView_NoContext = () => {
   const lever = useLever();
 
   return (
+    <>
       <div className="flex flex-row">
         <LeverWidget lever={lever} />
         <EstimatedPosition lever={lever} />
         <ChartProvider />
       </div>
+      <TenderlyView /> 
+      </>
   );
 };
 

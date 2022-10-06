@@ -14,7 +14,7 @@ export interface ILeverContextState {
   assets: Map<string, IAsset>;
 
   strategies: Map<string, ILeverStrategy>;
-  account?: string;
+  
   appState: AppState;
 
   selectedStrategy: ILeverStrategy | undefined;
@@ -25,6 +25,8 @@ export interface ILeverContextState {
 
   marketState: any;
   provider: any;
+
+  account?: string;
 }
 
 export interface IAsset extends IAssetRoot {
@@ -136,17 +138,23 @@ const LeverProvider = ({ children }: any) => {
   const { account, provider} = useConnector();
 
   /* update account on change */
-  useEffect(() => updateState({ type: 'UPDATE_ACCOUNT', payload: account }), [account]);
+  useEffect(() => {
+    console.log( account, ' connected.' )
+    updateState({ type: 'UPDATE_ACCOUNT', payload: account })}, [account]
+  );
+
   /* update account on change */
   useEffect(() => updateState({ type: 'UPDATE_PROVIDER', payload: provider }), [provider]);
 
   /* Connect up Cauldron and Ladle contracts : updates on provider change */
   useEffect(() => {
+
     if (provider) {
       const Cauldron = contractFactories[CAULDRON].connect(CAULDRON, provider);
       const Ladle = contractFactories[LADLE].connect(LADLE, provider);
       updateState({ type: 'UPDATE_CONTRACTS', payload: { Cauldron, Ladle } });
     }
+
   }, [provider]);
 
   /* Connect up asset contracts : updates on provider and account changes */
@@ -195,7 +203,9 @@ const LeverProvider = ({ children }: any) => {
           cauldron.debt(strategy.baseId, strategy.ilkId)
         ])
 
-        // console.log(debt);
+
+        console.log(strategy.baseId, strategy.ilkId )
+        console.log(debt.min.toString());
 
         /* instantiate a oracle contract */
         const oracleContract = contractFactories[ORACLE].connect(oracle, provider);

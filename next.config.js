@@ -5,8 +5,8 @@ const nextConfig = {
   env: {
     infuraKey: process.env.INFURA_KEY,
     defaultChainId: process.env.DEFAULT_CHAIN_ID,
-    alchemyKeyArbitrumRinkeby: ALCHEMY_KEY_ARBITRUM_RINKEBYALCHEMY_KEY_ARBITRUM_RINKEBY,
-    tenderlyRpc: TENDERLY_RPC,
+    alchemyKeyArbitrumRinkeby: process.env.ALCHEMY_KEY_ARBITRUM_RINKEBY,
+    tenderlyRpc: process.env.TENDERLY_RPC,
   },
   async redirects() {
     return [

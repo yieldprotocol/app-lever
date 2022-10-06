@@ -6,8 +6,9 @@ import TenderlyView from './testing/TenderlyView';
 const Layout: FC = ({ children }) => (
   <>
     <Navigation />
-    <Main>{children}</Main>
-    <TenderlyView />
+    <Main>
+      {children}
+    </Main>
   </>
 );
 
