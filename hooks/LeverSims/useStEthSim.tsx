@@ -1,15 +1,16 @@
 import { useContext, useMemo, useState } from 'react';
 import { buyBase, sellBase, sellFYToken, ZERO_BN } from '@yield-protocol/ui-math';
-import { contractFactories } from '../../config/contractRegister';
+import { contractFactories, WETH_STETH_STABLESWAP } from '../../config/contractRegister';
 import { W3bNumber } from '../../context/InputContext';
 
 import { IPoolState, MarketContext } from '../../context/MarketContext';
 import { convertToW3bNumber } from '../../lib/utils';
 import { LeverContext } from '../../context/LeverContext';
-import { WETH_STETH_STABLESWAP, WST_ETH } from '../../contracts';
+// import { WETH_STETH_STABLESWAP, WST_ETH } from '../../contracts';
 import { ZERO_W3N } from '../../constants';
 import { LeverSimulation, simOutput } from '../useLever';
 import useBlockTime from '../useBlockTime';
+import { WST_ETH } from '../../contracts';
 
 export const useStEthSim = (input:W3bNumber, leverage:W3bNumber): simOutput => {
   const [leverState] = useContext(LeverContext);
@@ -62,6 +63,7 @@ export const useStEthSim = (input:W3bNumber, leverage:W3bNumber): simOutput => {
    * parameters.
    */
   const simulateInvest = async (): Promise<LeverSimulation> => {
+    
     const shortBorrowed = toBorrow;
     
     let investPosition = ZERO_W3N;
@@ -123,7 +125,7 @@ export const useStEthSim = (input:W3bNumber, leverage:W3bNumber): simOutput => {
       // const investPosition_ = await wStEthContract.getWstETHByStETH(boughtStEth);
       // console.log( 'WrappedStETH : ',  investPosition_.toString() )
 
-      // check unwrapping  */
+      // check unwrapping */
       // const oneStEth = ethers.utils.parseUnits('1');
       // const stEthPerWrapped = await wStEthContract.getStETHByWstETH(oneStEth);
       // const unwrappedStEthValue = boughtStEth.mul(stEthPerWrapped).div(oneStEth);

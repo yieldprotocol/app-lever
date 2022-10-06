@@ -19,10 +19,10 @@ export const WETH = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
 export const WETH_JOIN = '0x3bDb887Dc46ec0E964Df89fFE2980db0121f0fD0';
 
 /* levers */
-export const STETH_LEVER = '0x2ed8e1c1439576aede07e585de0fd2e9bedacf2f';
+export const STETH_LEVER = '0xe888e0403e3e992fdbb473650547428e90f9ddfc';
 
 /* swaps contracts */
-export const WETH_STETH_STABLESWAP = '0x828b154032950C8ff7CF8085D841723Db2696056';
+export const WETH_STETH_STABLESWAP = '0x828b154032950c8ff7cf8085d841723db2696056';
 
 
 /* general contract type */ 
