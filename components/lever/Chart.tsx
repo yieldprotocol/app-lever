@@ -1,27 +1,17 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useRef} from 'react';
 import HighStock from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
 import { ChartContext } from '../../context/ChartContext';
-import { BorderWrap } from '../styles';
-import tw from 'tailwind-styled-components';
-
-const Inner = tw.div`m-4 text-center`;
-const TopRow = tw.div` p-8 flex justify-between align-middle text-center items-center rounded-t-lg dark:bg-gray-900 
-bg-gray-100
-bg-opacity-25
-dark:text-gray-50 
-dark:bg-opacity-25 `;
 
 export const Chart = (props: HighchartsReact.Props) => {
+  
   const chartComponentRef = useRef<HighchartsReact.RefObject>(null);
   const [chartState] = useContext(ChartContext);
   const { prices } = chartState;
 
   // set Chart options
   let options = {
-    // rangeSelector: {
-    //   selected: 1,
-    // },
+    credits: {enabled: false}, 
     chart: {
       height: 200,
       style: {
@@ -66,9 +56,22 @@ export const Chart = (props: HighchartsReact.Props) => {
 
     xAxis: {
       gridLineWidth: 0,
+      dateTimeLabelFormats:
+      {
+        millisecond: '%H:%M:%S.%L',
+        second: '%H:%M:%S',
+        minute: '%H:%M',
+        hour: '%H:%M',
+        day: '%e %b',
+        week: '%e %b',
+        month: '%b \'%y',
+        year: '%Y'
+      },
+      tickLength: 0, 
+      
     },
     yAxis: {
-      gridLineWidth: 0,
+      visible: false, 
     },
 
     tooltip: {
@@ -92,26 +95,23 @@ export const Chart = (props: HighchartsReact.Props) => {
       floating: true,
       y: 10,
       allButtonsEnabled: true,
+      inputEnabled: false,
+      selected: 1,
       buttons: [
+        {
+          type: 'week',
+          count: 1,
+          text: '1w',
+        },
         {
           type: 'month',
           count: 1,
           text: '1m',
-          // events: {
-          //     click: function() {
-          //         alert('Clicked button');
-          //     }
-          // }
         },
         {
           type: 'month',
           count: 3,
           text: '3m',
-        },
-        {
-          type: 'month',
-          count: 6,
-          text: '6m',
         },
       ],
     },
@@ -133,7 +133,7 @@ export const Chart = (props: HighchartsReact.Props) => {
         type: 'area',
         threshold: null,
         tooltip: {
-          valueDecimals: 2,
+          valueDecimals: 4,
         },
         dataGrouping: { forced: true, units: [ ['day', [1]] ] },
       },
@@ -164,12 +164,6 @@ export const Chart = (props: HighchartsReact.Props) => {
   };
 
   return (
-    <BorderWrap>
-      {/* <TopRow>
-        <div className="text-lg"> StETH ETH </div>
-      </TopRow> */}
-      StETH PRICE:  0.99 ETH
-      <Inner>
         <HighchartsReact
           highcharts={HighStock}
           constructorType={'stockChart'}
@@ -177,7 +171,5 @@ export const Chart = (props: HighchartsReact.Props) => {
           ref={chartComponentRef}
           {...props}
         />
-      </Inner>
-    </BorderWrap>
   );
 };

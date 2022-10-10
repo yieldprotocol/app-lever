@@ -1,8 +1,8 @@
-import ChartProvider from '../../context/ChartContext';
-import InputProvider, { InputContext } from '../../context/InputContext';
+import InputProvider from '../../context/InputContext';
 import { useLever } from '../../hooks/useLever';
 import TenderlyView from '../testing/TenderlyView';
-import { Chart } from './Chart';
+
+import { ChartWidget } from './ChartWidget';
 import EstimatedPosition from './EstimatedPosition';
 import LeverWidget from './LeverWidget';
 
@@ -12,20 +12,16 @@ const LeverView_NoContext = () => {
 
   return (
     <>
-      <div className="flex flex-row gap-8">
+      <div className="flex flex-row gap-4">
         <div className="w-1/2">
           <LeverWidget lever={lever} />
         </div>
 
         <div>
-          <ChartProvider>
-            <Chart />
-          </ChartProvider>
+          <ChartWidget />
           <EstimatedPosition lever={lever} />
         </div>
-
       </div>
-
       <TenderlyView />
     </>
   );
