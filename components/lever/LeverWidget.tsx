@@ -8,6 +8,7 @@ import LeverageSelect from '../selectors/LeverageSelect';
 import { ValueInput } from '../selectors/ValueInput';
 import { LeverContext } from '../../context/LeverContext';
 import StrategySelect from '../selectors/StrategySelect';
+import { LeverSimulation } from '../../hooks/useLever';
 
 const Inner = tw.div`m-4 text-center`;
 const TopRow = tw.div` p-8 flex justify-between align-middle text-center items-center rounded-t-lg dark:bg-gray-900 
@@ -40,7 +41,8 @@ const LeverWidget = (props: any) => {
     transact,
     approve,
     isSimulating,
-  } = props.lever;
+    maxLeverage,
+  }: LeverSimulation = props.lever;
 
   return (
       <BorderWrap>
@@ -65,7 +67,7 @@ const LeverWidget = (props: any) => {
 
           <Section>
           <SectionHead> Leverage:</SectionHead>
-            <LeverageSelect  />
+            <LeverageSelect max={maxLeverage} />
           </Section>
 
           <Button

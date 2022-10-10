@@ -16,6 +16,7 @@ import useBlockTime from './useBlockTime';
 import { calculateAPR } from '@yield-protocol/ui-math';
 
 export interface LeverSimulation {
+
   /* Borrowing simulation: */
   shortBorrowed: W3bNumber; // amount of short asset borrowed
   debtAtMaturity: W3bNumber; // debt owed at maturity
@@ -34,7 +35,28 @@ export interface LeverSimulation {
   /* Simulated return value (in Short-Asset terms) */
   // returnAtMaturity: W3bNumber;
   // returnCurrent: W3bNumber;
+
+  /**
+   * calculated values 
+   * */ 
+  netAPR: number,
+  borrowAPR: number,
+  investAPR: number,
+
+  pnl: number,
+  borrowLimitUsed: number,
+  maxLeverage: number,
+
+  /* flags */ 
+  isSimulating:boolean,
+
+
+  /* actions */
+  approve: ()=> void;
+  transact: ()=> void;
+
 }
+
 
 export enum NotificationType {
   INFO,
@@ -59,6 +81,7 @@ export const useLever = () => {
   /* Bring in context*/
   const [leverState, leverActions]: [ILeverContextState, any] = useContext(LeverContext);
   const { selectedPosition, selectedStrategy, shortAsset } = leverState;
+  const { setAppState } = leverActions;
 
   const [inputState] = useContext(InputContext);
   const { input, leverage } = inputState ? inputState : { input: undefined, leverage: undefined };
@@ -67,13 +90,14 @@ export const useLever = () => {
   const debouncedLeverage = useDebounce(leverage, 500);
 
   const { currentTime } = useBlockTime();
-
-  const [investAPR, setInvestAPR] = useState<number>(0);
-  const [borrowAPR, setBorrowAPR] = useState<number>(0);
-  const [netAPR, setNetAPR] = useState<number>(0);
+  
+  /* Lever simulators */
+  const stEthSim = useStEthSim(input, leverage);
+  const notionalSim = useNotionalSim();
 
   const [simulator, setSimulator] = useState<any>();
 
+  // Resutls from simulation: 
   const [investmentPosition, setInvestmentPosition] = useState<W3bNumber>(ZERO_W3N);
   const [investmentCurrent, setInvestmentCurrent] = useState<W3bNumber>(ZERO_W3N);
   const [investmentAtMaturity, setInvestmentAtMaturity] = useState<W3bNumber>(ZERO_W3N);
@@ -85,14 +109,20 @@ export const useLever = () => {
   const [flashBorrowFee, setFlashBorrowFee] = useState<W3bNumber>();
   const [investmentFee, setInvestmentFee] = useState<W3bNumber | number>();
 
+
+  // Calculated APRS: 
+  const [investAPR, setInvestAPR] = useState<number>(0);
+  const [borrowAPR, setBorrowAPR] = useState<number>(0);
+  const [netAPR, setNetAPR] = useState<number>(0);
+
+  // Calulated parameters : 
+  const [borrowLimitUsed, setBorrowLimitUsed] = useState<number>(0);
+  const [pnl, setPnl] = useState<number>(0);
+  const [maxLeverage, setMaxLeverage] = useState<number>(5);
+
   const [currentReturn, setCurrentReturn] = useState<W3bNumber>(ZERO_W3N);
   const [futureReturn, setFutureReturn] = useState<W3bNumber>(ZERO_W3N);
 
-  const { setAppState } = leverActions;
-
-  /* Lever simulators */
-  const stEthSim = useStEthSim(input, leverage);
-  const notionalSim = useNotionalSim();
 
   // TODO: /* Choose the correct lever simulator */
   // useEffect(() => {
@@ -104,7 +134,7 @@ export const useLever = () => {
   //   }
   // }, [selectedStrategy, input] );
 
-  /* Use the simulator on leverage/input change */
+  /* Use the simulator on each leverage/input change */
   useEffect(() => {
     (async () => {
       if (selectedStrategy && debouncedLeverage) {
@@ -125,8 +155,7 @@ export const useLever = () => {
 
         /**
          * calculate the APR's based on the simulation 
-         * */ 
-
+         * */
         // alternative: Math.pow(investAtMaturity.dsp/investmentPosition.dsp, oneOverYearProp) - 1
         const investRate = calculateAPR(  
           simulated.investmentPosition.big,
@@ -149,6 +178,24 @@ export const useLever = () => {
       
         const netAPR = debouncedLeverage.dsp * investAPR - (debouncedLeverage.dsp - 1) * borrowAPR; 
         setNetAPR(netAPR); // console.log('nettAPR: ', netAPR);
+
+        /** 
+         * Calculate
+         * 
+         * maxRatio :  shortBorrwed
+         * Borrowing limit :  ( debtAtMaturity / ( investPosition * LTV )  )   =  
+         * pnl : pos/prin - 1)
+         */
+
+        const maxLeverage_ = 4.5 // 4.5 // selectedStrategy?.loanToValue  
+        console.log( maxLeverage_  )
+        setMaxLeverage(maxLeverage_)
+
+        const borrowLimitUsed_ =  simulated.debtAtMaturity?.dsp! / (simulated.investmentPosition?.dsp! * selectedStrategy?.loanToValue)*100
+        setBorrowLimitUsed(borrowLimitUsed_);
+
+        const pnl_ = netAPR - investAPR // TODO: this is probably wrong. check it.  (investmentCurrent?.dsp!/shortInvested?.dsp! -1);
+        setPnl(pnl_)
            
       }
     })();
@@ -204,6 +251,7 @@ export const useLever = () => {
   };
 
   return {
+
     approve,
     transact,
 
@@ -228,6 +276,10 @@ export const useLever = () => {
     borrowAPR,
     investAPR,
     netAPR,
+
+    borrowLimitUsed,
+    pnl, 
+    maxLeverage,
 
     isSimulating: stEthSim.isSimulating,
     // simNotification,

@@ -34,8 +34,7 @@ const LeverView_NoContext = () => {
 /* Wrap it with the input porivder */
 const LeverView = () => (
   <InputProvider>
-    {' '}
-    <LeverView_NoContext />{' '}
+    <LeverView_NoContext />
   </InputProvider>
 );
 

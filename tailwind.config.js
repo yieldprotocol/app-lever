@@ -12,7 +12,8 @@ module.exports = {
         current: 'currentColor',
         green: colors.emerald,
         primary: colors.teal,
-        secondary: colors.teal,
+        secondary: colors.magenta,
+        gradient: colors.emerald
       },
       borderWidth: { '0.5':'0.5px' },
     }

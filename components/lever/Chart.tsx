@@ -33,6 +33,7 @@ export const Chart = (props: HighchartsReact.Props) => {
     //   text: 'STETH -ETH',
     // },
 
+
     //   yAxis: [
     //     {
     //       labels: {
@@ -134,8 +135,11 @@ export const Chart = (props: HighchartsReact.Props) => {
         tooltip: {
           valueDecimals: 2,
         },
+        dataGrouping: { forced: true, units: [ ['day', [1]] ] },
       },
     ],
+
+    // chart.series[0].update({ dataGrouping: { forced: true, units: [ ['week', [1]] ] } })
 
     // responsive: {
     //   rules: [

@@ -34,8 +34,10 @@ caret-gray-800
 
 
 
-const LeverageSelect = () => {
+const LeverageSelect = ({max, ... props}) => {
   const [inputState, inputActions] = useContext(InputContext);
+
+  console.log("max'",  max )
 
   return (
     <>
@@ -60,7 +62,7 @@ const LeverageSelect = () => {
             type="range"
             id="leverage_range"
             min={1.1}
-            max={5}
+            max= {max}
             step="0.1"
             onChange={(e) => inputActions.setLeverage(e.target.value)}
           />

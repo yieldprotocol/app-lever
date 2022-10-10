@@ -3,6 +3,7 @@ import tw from 'tailwind-styled-components';
 import { InputContext } from '../../context/InputContext';
 import { BorderWrap } from '../styles';
 import { LeverContext } from '../../context/LeverContext';
+import { LeverSimulation } from '../../hooks/useLever';
 
 const Inner = tw.div`m-4 gap-10`;
 const TopRow = tw.div`flex justify-between align-middle text-center items-center`;
@@ -25,6 +26,7 @@ const EstimatedPosition = (props:any) => {
     netAPR,
     borrowAPR,
     investAPR,
+    
     shortBorrowed,
     shortInvested,
     debtAtMaturity,
@@ -34,7 +36,12 @@ const EstimatedPosition = (props:any) => {
     flashBorrowFee,
     investmentFee,
     isSimulating,
-  } = props.lever;
+
+    pnl,
+    borrowLimitUsed,
+    maxLeverage,
+
+  } : LeverSimulation = props.lever;
 
   return (
     <BorderWrap >
@@ -85,14 +92,14 @@ const EstimatedPosition = (props:any) => {
 
       <InfoBlock>
         {/* <NotShown> (debtPosition/investPosition * LTV )</NotShown> */}
-        <Label>Borrow Limit :</Label>
+        <Label>Borrow Limit Usage:</Label>
         {/* <Value> {selectedStrategy?.loanToValue*100 } %</Value> */}
 
-        <Value> {debtAtMaturity?.dsp!/investmentPosition?.dsp! * selectedStrategy?.loanToValue*100 } %</Value>
+        <Value> {Math.round(((borrowLimitUsed + Number.EPSILON) * 100)) / 100}%</Value>
 
         {/* <NotShown>(pos/prin - 1)</NotShown> */}
         <Label>PnL</Label>
-        <Value>{Math.round(((investmentPosition?.dsp!/shortInvested?.dsp! -1) + Number.EPSILON) * 100) / 100}</Value>
+        <Value>{Math.round(((pnl + Number.EPSILON) * 100)) / 100}</Value>
 
         {/* <NotShown>( investPosition/ baseInvested ) ^ t%year - 1</NotShown> */}
         <Label>Investment rate ( + ):</Label>
