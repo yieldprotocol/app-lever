@@ -8,12 +8,12 @@ html {
 
 body {
   margin: 0;
-  height: 500vh;
-  background: radial-gradient(50% 50% at 50% 50%, #07fcbf10 0, rgba(255, 255, 255, 0) 100%);
-  /* background: radial-gradient(circle at 10% 60%, rgba(13, 148, 136, 0.11), rgba(255, 255, 255, 0) 90.71%),
-    radial-gradient(circle at 90% 90%, rgba(13, 148, 137, 0.048), rgba(255, 255, 255, 0) 70.71%) 100%,
-    radial-gradient(circle at 50% 0, rgba(45, 212, 190, 0.075), rgba(255, 255, 255, 0) 70.71%); */
-}
+  height: 200vh;
+    background-color: rgb(38, 38, 38);
+    background-image: radial-gradient(at 62% 56%, rgb(29, 78, 216) 0, transparent 65%), radial-gradient(at 80% 64%, rgb(232, 121, 249) 0, transparent 27%), radial-gradient(at 57% 24%, rgb(139, 92, 246) 0, transparent 61%), radial-gradient(at 18% 74%, rgb(24, 24, 27) 0, transparent 16%), radial-gradient(at 66% 86%, rgb(250, 204, 21) 0, transparent 23%), radial-gradient(at 75% 57%, rgb(153, 27, 27) 0, transparent 57%);
+  }
+
+
 
 button:disabled {
   cursor: not-allowed;

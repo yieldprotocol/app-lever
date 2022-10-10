@@ -1,8 +1,8 @@
 import Document, { Html, Head, Main, NextScript } from 'next/document';
 import tw from 'tailwind-styled-components';
 
-// const Body = tw.body`bg-gray-50 dark:bg-gray-700`;
-const Body = tw.body`bg-gradient-to-r from-indigo-900 via-red-900 to-black`
+const Body = tw.body`bg-gray-700 dark:bg-gray-700`;
+// const Body = tw.body`bg-gradient-to-tr from-slate-900 via-purple-900 to-slate-900`
 
 
 class MyDocument extends Document {

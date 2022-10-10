@@ -8,9 +8,9 @@ export const Wrap = tw.div`
     rounded-xl 
     dark:bg-gray-900 
     bg-gray-100
-    bg-opacity-25
+    bg-opacity-75
     dark:text-gray-50 
-    dark:bg-opacity-25
+    dark:bg-opacity-75
     text-gray
 `;
 
