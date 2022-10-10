@@ -27,11 +27,12 @@ const EstimatedPosition = (props:any) => {
     investAPR,
     shortBorrowed,
     shortInvested,
-    debtPosition,
-    investPosition,
-    investValue,
-    flashFee,
-    swapFee,
+    debtAtMaturity,
+    investmentPosition,
+    investmentCurrent,
+    investmentAtMaturity,
+    flashBorrowFee,
+    investmentFee,
     isSimulating,
   } = props.lever;
 
@@ -41,12 +42,12 @@ const EstimatedPosition = (props:any) => {
       <TopRow>Estimated Position Information</TopRow>
 
       <InfoBlock>
-        <Label>Input value (Short asset):</Label>
+        <Label>Principle Investment:</Label>
         <Value>  {input?.dsp} { shortAsset?.displaySymbol } </Value>  
         {/* <NotShown> Wrapped input: {input?.dsp} WETH </NotShown>
         <NotShown> Short asset investment as FyToken : {inputAsFyToken.dsp} (fyETH) </NotShown>
         <NotShown> Total Investment ( fyToken ): {totalToInvest.dsp} (fyETH) </NotShown>  */}
-        <Label> Leverage (INPUT):</Label>
+        <Label> Leverage:</Label>
         <Value> {leverage?.dsp || 0} X </Value>
       
       </InfoBlock>
@@ -54,26 +55,29 @@ const EstimatedPosition = (props:any) => {
       <Divider />
 
       <InfoBlock>
-        <Label>Short asset invested:</Label>
-        <Value>{shortInvested?.dsp} FYETH</Value>
+        {/* <Label>Short asset invested:</Label>
+        <Value>{shortInvested?.dsp} FYETH</Value> */}
 
-        <Label>Short asset borrowed:</Label>
+        <Label>Short asset borrowed: </Label>
         <Value>{shortBorrowed?.dsp} { shortAsset?.displaySymbol }</Value>
 
-        <Label>Debt owed at maturity:</Label>
-        <Value> {debtPosition?.dsp} FYETH=={ shortAsset?.displaySymbol } </Value>
+        <Label> - Debt owed at maturity:</Label>
+        <Value> {debtAtMaturity?.dsp} { shortAsset?.displaySymbol } </Value>
 
         <Label>Long asset obtained: </Label>
-        <Value>{investPosition?.dsp} { longAsset?.displaySymbol } </Value>
+        <Value>{investmentPosition?.dsp} { longAsset?.displaySymbol } </Value>
 
-        <Label>Flash fees</Label>
-        <Value>{flashFee?.dsp} </Value>
+        <Label> - Investment at maturity: </Label>
+        <Value>{investmentAtMaturity?.dsp} { longAsset?.displaySymbol } </Value>
 
-        <Label>Swap fees</Label>
-        <Value>{swapFee?.dsp} </Value>
+        <Label>Flash Borrowing fees: </Label>
+        <Value>{flashBorrowFee?.dsp < 0.0000001 ? flashBorrowFee?.dsp : 'Insignificant'} </Value>
 
-        <Label>Value of long asset (in short terms): </Label>
-        <Value>{investValue?.dsp} { shortAsset?.displaySymbol } </Value>
+        <Label>Investment fees: </Label>
+        <Value>{ investmentFee?.dsp  } </Value>
+
+        <Label>Current investment value (in short terms): </Label>
+        <Value>{investmentCurrent?.dsp} { shortAsset?.displaySymbol } </Value>
 
       </InfoBlock>
 
@@ -84,19 +88,18 @@ const EstimatedPosition = (props:any) => {
         <Label>Borrow Limit :</Label>
         {/* <Value> {selectedStrategy?.loanToValue*100 } %</Value> */}
 
-        <Value> {debtPosition?.dsp!/investPosition?.dsp! * selectedStrategy?.loanToValue*100 } %</Value>
-
+        <Value> {debtAtMaturity?.dsp!/investmentPosition?.dsp! * selectedStrategy?.loanToValue*100 } %</Value>
 
         {/* <NotShown>(pos/prin - 1)</NotShown> */}
         <Label>PnL</Label>
-        <Value>{Math.round(((investPosition?.dsp!/shortInvested?.dsp! -1) + Number.EPSILON) * 100) / 100}</Value>
+        <Value>{Math.round(((investmentPosition?.dsp!/shortInvested?.dsp! -1) + Number.EPSILON) * 100) / 100}</Value>
 
         {/* <NotShown>( investPosition/ baseInvested ) ^ t%year - 1</NotShown> */}
-        <Label>Invest rate ( APR):</Label>
+        <Label>Investment rate ( + ):</Label>
         <Value> {Math.round((investAPR + Number.EPSILON) * 100) / 100} %APR</Value>
 
         {/* <NotShown>( debtPosition / baseBorrowed ) ^ t%year -1</NotShown> */}
-        <Label>Borrowing rate (APR):</Label>
+        <Label>Borrowing rate ( - ):</Label>
         <Value>{Math.round((borrowAPR + Number.EPSILON) * 100) / 100} %APR</Value>
 
         {/* <NotShown>leverage*longAPR - (leverage - 1)*borrowAPR</NotShown> */}
@@ -105,7 +108,7 @@ const EstimatedPosition = (props:any) => {
 
         {/* <NotShown>( investPostion - debtPosition - input )</NotShown> */}
         <Label>Return in base: </Label>
-        <Value>{ investPosition?.dsp! - debtPosition?.dsp! - input?.dsp } { shortAsset?.displaySymbol }</Value>
+        <Value>{ investmentPosition?.dsp! - debtAtMaturity?.dsp! - input?.dsp } { shortAsset?.displaySymbol }</Value>
 
       </InfoBlock>
       </Inner>

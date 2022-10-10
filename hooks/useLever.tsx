@@ -16,21 +16,24 @@ import useBlockTime from './useBlockTime';
 import { calculateAPR } from '@yield-protocol/ui-math';
 
 export interface LeverSimulation {
-  investPosition: W3bNumber; // long asset obtained
-  investValue: W3bNumber; // current value of long asset (in terms of short)
-
-  debtPosition: W3bNumber; // debt at maturity
-  debtValue: W3bNumber; // current Value if settling debt now
-
-  shortInvested: W3bNumber; // total short asset
+  /* Borrowing simulation: */
   shortBorrowed: W3bNumber; // amount of short asset borrowed
+  debtAtMaturity: W3bNumber; // debt owed at maturity
+  debtCurrent: W3bNumber; // current Value of debt (if settling now )
 
-  flashFee?: W3bNumber;
-  swapFee?: W3bNumber;
+  flashBorrowFee: W3bNumber;
 
-  // simulated return value
-  futureReturn: W3bNumber;
-  currentReturn: W3bNumber;
+  /* Investment simulation: */
+  shortInvested: W3bNumber; // TOTAL short-asset used for investment (input + borrow)
+  investmentPosition: W3bNumber; // long-asset obtained
+  investmentAtMaturity: W3bNumber; // Est. value of investment at maturity
+  investmentCurrent: W3bNumber; // Current value of long asset (if unwinding now)
+
+  investmentFee: W3bNumber;
+
+  /* Simulated return value (in Short-Asset terms) */
+  // returnAtMaturity: W3bNumber;
+  // returnCurrent: W3bNumber;
 }
 
 export enum NotificationType {
@@ -52,35 +55,6 @@ export interface simOutput {
   extraBucket: any[];
 }
 
-export const calculateAPRs = (
-  investValue: W3bNumber, // 'short asset value' of long asset
-  debtPosition: W3bNumber, // 'short asset value' of debt at maturity ( shortvalue === fyToken value here)
-  shortInvested: W3bNumber, // total 'short value' (nb: NOT fytokens invested).
-  shortBorrowed: W3bNumber, // 'short value' borrowed
-  leverage: number,
-  maturity: number,
-  currentTime?: number // defaults to system time if zero
-): {
-  investAPR: number;
-  borrowAPR: number;
-  netAPR: number;
-} => {
-  const now = currentTime || Math.round(new Date().getTime() / 1000);
-  const secsToMaturity = maturity - now;
-
-  // const secsToMaturity = parseInt(getTimeToMaturity(maturity));
-  const oneOverYearProp = 1 / (secsToMaturity / 31536000);
-
-  console.log( investValue.big, shortInvested.big, maturity, currentTime )
-  console.log('APR: ',  calculateAPR(shortInvested.big, investValue.big,  maturity, currentTime ) )
-
-  const investAPR = shortInvested.dsp > 0 ? Math.pow(investValue.dsp/shortInvested.dsp, oneOverYearProp) - 1 : 0;
-  const borrowAPR = shortBorrowed.dsp > 0 ? Math.pow(debtPosition.dsp/shortBorrowed.dsp, oneOverYearProp) - 1 : 0;
-  const netAPR = (leverage * investAPR) - ((leverage - 1) * borrowAPR);
-
-  return { investAPR, borrowAPR, netAPR };
-};
-
 export const useLever = () => {
   /* Bring in context*/
   const [leverState, leverActions]: [ILeverContextState, any] = useContext(LeverContext);
@@ -100,12 +74,16 @@ export const useLever = () => {
 
   const [simulator, setSimulator] = useState<any>();
 
-  const [investPosition, setInvestPosition] = useState<W3bNumber>(ZERO_W3N);
-  const [investValue, setInvestValue] = useState<W3bNumber>(ZERO_W3N);
-  const [debtPosition, setDebtPosition] = useState<W3bNumber>(ZERO_W3N);
+  const [investmentPosition, setInvestmentPosition] = useState<W3bNumber>(ZERO_W3N);
+  const [investmentCurrent, setInvestmentCurrent] = useState<W3bNumber>(ZERO_W3N);
+  const [investmentAtMaturity, setInvestmentAtMaturity] = useState<W3bNumber>(ZERO_W3N);
+
+  const [debtAtMaturity, setDebtAtMaturity] = useState<W3bNumber>(ZERO_W3N);
   const [shortInvested, setShortInvested] = useState<W3bNumber>(ZERO_W3N);
   const [shortBorrowed, setShortBorrowed] = useState<W3bNumber>(ZERO_W3N);
-  const [flashFee, setFlashFee] = useState<W3bNumber>();
+
+  const [flashBorrowFee, setFlashBorrowFee] = useState<W3bNumber>();
+  const [investmentFee, setInvestmentFee] = useState<W3bNumber | number>();
 
   const [currentReturn, setCurrentReturn] = useState<W3bNumber>(ZERO_W3N);
   const [futureReturn, setFutureReturn] = useState<W3bNumber>(ZERO_W3N);
@@ -130,27 +108,48 @@ export const useLever = () => {
   useEffect(() => {
     (async () => {
       if (selectedStrategy && debouncedLeverage) {
+
+        /** 
+         * Simulate investment and set parameters locally 
+         * */
         const simulated = await stEthSim.simulateInvest();
 
-        setInvestPosition(simulated.investPosition);
-        setInvestValue(simulated.investValue);
+        setInvestmentPosition(simulated.investmentPosition);
+        setInvestmentAtMaturity(simulated.investmentAtMaturity);
+        setInvestmentCurrent(simulated.investmentCurrent);
         setShortBorrowed(simulated.shortBorrowed);
         setShortInvested(simulated.shortInvested);
-        setDebtPosition(simulated.debtPosition);
-        // setDebtValue(stEthSim.debtValue);
+        setDebtAtMaturity(simulated.debtAtMaturity);
+        setFlashBorrowFee(simulated.flashBorrowFee);
+        setInvestmentFee(simulated.investmentFee);
 
-        const { netAPR, borrowAPR, investAPR } = calculateAPRs(
-          simulated.investValue,
-          simulated.debtPosition,
-          simulated.shortInvested,
-          simulated.shortBorrowed,
-          debouncedLeverage.dsp,
+        /**
+         * calculate the APR's based on the simulation 
+         * */ 
+
+        // alternative: Math.pow(investAtMaturity.dsp/investmentPosition.dsp, oneOverYearProp) - 1
+        const investRate = calculateAPR(  
+          simulated.investmentPosition.big,
+          simulated.investmentAtMaturity.big,
           selectedStrategy.maturity,
           currentTime
         );
-        setNetAPR(netAPR);
-        setBorrowAPR(borrowAPR);
-        setInvestAPR(investAPR);
+        const investAPR = parseFloat(investRate!);  
+        setInvestAPR(investAPR); // console.log('investAPR: ', investAPR);
+       
+        // alternative: Math.pow(debtAtMaturity.dsp/shortBorrowed.dsp, oneOverYearProp) - 1 
+        const borrowRate = calculateAPR(
+          simulated.shortBorrowed.big,
+          simulated.debtAtMaturity.big,
+          selectedStrategy.maturity,
+          currentTime
+        );
+        const borrowAPR = parseFloat(borrowRate!); 
+        setBorrowAPR(borrowAPR); // console.log('borrowAPR: ', borrowAPR);
+      
+        const netAPR = debouncedLeverage.dsp * investAPR - (debouncedLeverage.dsp - 1) * borrowAPR; 
+        setNetAPR(netAPR); // console.log('nettAPR: ', netAPR);
+           
       }
     })();
   }, [selectedStrategy, debouncedLeverage, input]);
@@ -180,7 +179,6 @@ export const useLever = () => {
   };
 
   const transact = async () => {
-
     // await approve();
     if (inputState && selectedStrategy?.leverContract) {
       setAppState(AppState.Transacting);
@@ -191,11 +189,6 @@ export const useLever = () => {
       //     '0' // removeSlippage( investPosition.big),
       //   )
       // ).mul(2);
-
-      console.log(selectedStrategy.seriesId,
-        inputState.input.big,
-         )
-
       const investTx = await selectedStrategy.leverContract.invest(
         selectedStrategy.seriesId,
         inputState.input.big,
@@ -215,14 +208,17 @@ export const useLever = () => {
     transact,
 
     // simulated position
-    investPosition,
-    investValue,
-    debtPosition,
+    investmentPosition,
+    investmentAtMaturity,
+    investmentCurrent,
+
+    debtAtMaturity,
     shortBorrowed,
     shortInvested,
 
     // fees
-    flashFee,
+    flashBorrowFee,
+    investmentFee,
 
     // simulated returns
     currentReturn,
