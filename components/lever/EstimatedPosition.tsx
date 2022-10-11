@@ -1,19 +1,10 @@
 import { useContext } from 'react';
 import tw from 'tailwind-styled-components';
 import { InputContext } from '../../context/InputContext';
-import { BorderWrap } from '../styles';
+import { BorderWrap, Divider, InfoBlock, Inner, Label, TopRow, Value } from '../styled';
 import { LeverContext } from '../../context/LeverContext';
 import { LeverSimulation } from '../../hooks/useLever';
 
-const Inner = tw.div`m-4 gap-10`;
-const TopRow = tw.div`flex justify-between align-middle text-center items-center`;
-
-const InfoBlock = tw.div`grid grid-cols-2 gap-4 my-8`;
-const Label = tw.div`text-[grey] text-left`;
-const Value = tw.div`text-[white] text-right`;
-
-const Divider = tw.div`border-0.5 border-[indigo] border-t-[indigo]`;
-const NotShown = tw.div`invisible`;
 
 const EstimatedPosition = (props:any) => {
   const [inputState] = useContext(InputContext);
@@ -45,8 +36,11 @@ const EstimatedPosition = (props:any) => {
 
   return (
     <BorderWrap >
+            <TopRow>
+        Estimated Position Information
+        </TopRow>
       <Inner>
-      <TopRow>Estimated Position Information</TopRow>
+
 
       <InfoBlock>
         <Label>Principle Investment:</Label>

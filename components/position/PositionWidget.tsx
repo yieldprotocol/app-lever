@@ -4,7 +4,7 @@ import { LeverContext } from '../../context/LeverContext';
 import { PositionContext } from '../../context/PositionContext';
 import { useLever } from '../../hooks/useLever';
 import Button from '../common/Button';
-import { BorderWrap } from '../styles';
+import { BorderWrap } from '../styled';
 
 const Inner = tw.div`m-4 text-center gap-2`;
 const Grid = tw.div`grid my-5 auto-rows-auto gap-2`;

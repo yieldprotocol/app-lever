@@ -4,7 +4,7 @@ import tw from 'tailwind-styled-components';
 import { IAsset, ILeverStrategy, LeverContext } from '../../context/LeverContext';
 import AssetLogo from '../common/AssetLogo';
 import Modal from '../common/Modal';
-import { BorderWrap } from '../styles';
+import { BorderWrap } from '../styled';
 
 const InfoBlock = tw.div`grid grid-cols-2 gap-2 p-4`;
 const Label = tw.div`text-[grey] text-left`;

@@ -17,7 +17,7 @@ const LeverView_NoContext = () => {
           <LeverWidget lever={lever} />
         </div>
 
-        <div>
+        <div className="w-1/2">
           <ChartWidget />
           <EstimatedPosition lever={lever} />
         </div>
