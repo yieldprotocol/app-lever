@@ -154,10 +154,18 @@ export const ChartWidget = (props: HighchartsReact.Props) => {
       <TopRow>
         <div className="flex-grow">
           <div className="text-start">
-            Current price:
-            <div>
-              1 {shortAsset?.symbol} = {prices.length ? prices[prices.length - 1][1] : '...'} {longAsset?.symbol}
+
+            <div className="flex flex-row gap-2">
+              <div  className="w-6" >{shortAsset?.image}</div>
+              <div>{shortAsset?.symbol} price </div>
             </div>
+
+            <div className="flex flex-row gap-2 align-middle">
+              <div  className="w-6" >{longAsset?.image}</div>
+              <div>{prices.length ? prices[prices.length - 1][1] : '...'}</div>
+              <div>{longAsset?.symbol}</div>
+            </div>
+
           </div>
 
           <div className="flex flex-row justify-between">

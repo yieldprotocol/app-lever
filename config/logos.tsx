@@ -1,4 +1,3 @@
-import CVX3CRVMark from '../components/logos/CVX3CRVMark';
 import DaiMark from '../components/logos/DaiMark';
 import ENSMark from '../components/logos/ENSMark';
 import EthMark from '../components/logos/EthMark';
@@ -12,7 +11,8 @@ import UNIMark from '../components/logos/UNIMark';
 import USDCMark from '../components/logos/USDCMark';
 import USDTMark from '../components/logos/USDTMark';
 import WBTCMark from '../components/logos/WBTCMark';
-import YVUSDCMark from '../components/logos/YVUSDCMark';
+
+import WethMark from '../components/logos/WethMark';
 
 const logoMap = new Map([
   ['DAI', <DaiMark key="dai" />],
@@ -20,16 +20,15 @@ const logoMap = new Map([
   ['WBTC', <WBTCMark key="wbtc" />],
   ['TST', <TSTMark key="tst" />],
   ['ETH', <EthMark key="eth" />],
+  ['WETH', <WethMark key="weth" />],
   ['USDT', <USDTMark key="usdt" />],
   ['LINK', <LinkMark key="link" />],
-  ['wstETH', <StEthMark key="wsteth" />],
-  ['stETH', <StEthMark key="steth" />],
+  ['WSTETH', <StEthMark key="wsteth" />],
+  ['STETH', <StEthMark key="steth" />],
   ['ENS', <ENSMark key="ens" />],
   ['UNI', <UNIMark key="uni" />],
-  ['yvUSDC', <YVUSDCMark key="yvusdc" />],
   ['MKR', <MakerMark key="mkr" />],
   ['Notional', <NotionalMark key="notional" />],
-  ['cvx3Crv', <CVX3CRVMark key="cvx3crv" />],
   ['FRAX', <FRAXMark key="frax" />],
 ]);
 

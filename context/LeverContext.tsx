@@ -172,12 +172,11 @@ const LeverProvider = ({ children }: any) => {
           if (account && asset.id === WETH) return provider.getBalance(account);
           return BigNumber.from('0');
         };
-
-        
+   
         const balance = convertToW3bNumber(await getBal(asset), asset.decimals, asset.displayDecimals);
         const connectedAsset = {
           ...asset,
-          image: logoMap.get(asset.displaySymbol),
+          image: logoMap.get(asset.symbol),
           assetContract,
           balance,
         };

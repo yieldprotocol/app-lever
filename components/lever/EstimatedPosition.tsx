@@ -39,8 +39,7 @@ const EstimatedPosition = (props: any) => {
         <InfoBlock>
           <Label>Principle Investment:</Label>
           <Value>
-            {' '}
-            {input?.dsp} {shortAsset?.displaySymbol}{' '}
+            {input?.dsp} {shortAsset?.displaySymbol}
           </Value>
           {/* <NotShown> Wrapped input: {input?.dsp} WETH </NotShown>
         <NotShown> Short asset investment as FyToken : {inputAsFyToken.dsp} (fyETH) </NotShown>
