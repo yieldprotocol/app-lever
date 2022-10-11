@@ -2,11 +2,13 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import HighStock, { seriesType } from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
 import { ChartContext } from '../../context/ChartContext';
-import { BorderWrap, Inner, TopRow } from '../styled';
+import { BorderWrap, ClearButton, Inner, TopRow } from '../styled';
 import { LeverContext } from '../../context/LeverContext';
+import tw from 'tailwind-styled-components';
+
+const Button = tw.button`text-xs bg-primary-800 w-5 dark:text-gray-50 text-gray-50 rounded hover:opacity-80`;
 
 export const ChartWidget = (props: HighchartsReact.Props) => {
-
   const chartComponentRef = useRef<HighchartsReact.RefObject>(null);
   const [leverState] = useContext(LeverContext);
   const { selectedStrategy, shortAsset, longAsset } = leverState;
@@ -88,26 +90,26 @@ export const ChartWidget = (props: HighchartsReact.Props) => {
     // linear-gradient(to right, rgb(56, 189, 248), rgb(251, 113, 133), rgb(163, 230, 53))
     plotOptions: {
       area: {
-          fillColor: {
-              linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1},
-              stops: [
-                  [0, 'rgb(251, 113, 133)'],
-                  [1, 'teal'],
-              ]
+        fillColor: {
+          linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+          stops: [
+            [0, 'rgb(251, 113, 133)'],
+            [1, 'teal'],
+          ],
+        },
+        lineWidth: 1,
+        marker: {
+          enabled: false,
+        },
+        shadow: false,
+        states: {
+          hover: {
+            lineWidth: 3,
           },
-          lineWidth: 1,
-          marker: {
-              enabled: false
-          },
-          shadow: false,
-          states: {
-              hover: {
-                  lineWidth: 3
-              }
-          },
-          threshold: null
-      }
-  },
+        },
+        threshold: null,
+      },
+    },
 
     series: [
       {
@@ -130,25 +132,22 @@ export const ChartWidget = (props: HighchartsReact.Props) => {
         },
         dataGrouping: { forced: true, units: [['day', [1]]] },
       },
-
-
-
     ],
   };
 
-  const handleRangeChange = ( seconds: number ) => { 
+  const handleRangeChange = (seconds: number) => {
     const currentDate = new Date().getTime();
-        /* if the seconds are less than a day - show hours in plot, else average out days */
-        if (seconds <= 86400 ) {
-          chartComponentRef?.current?.chart.xAxis[0].setDataGrouping( { units: [['hour', [1]]] } ) 
-        } else if (seconds <= 604800)  {
-          chartComponentRef?.current?.chart.xAxis[0].setDataGrouping( { units: [['hour', [3]]] } )
-        } else {
-          chartComponentRef?.current?.chart.xAxis[0].setDataGrouping( { units: [['day', [1]]] } ) 
-        }
-        
-    chartComponentRef?.current?.chart.xAxis[0].setExtremes(currentDate - (seconds*1000), currentDate)
-  }
+    /* if the seconds are less than a day - show hours in plot, else average out days */
+    if (seconds <= 86400) {
+      chartComponentRef?.current?.chart.xAxis[0].setDataGrouping({ units: [['hour', [1]]] });
+    } else if (seconds <= 604800) {
+      chartComponentRef?.current?.chart.xAxis[0].setDataGrouping({ units: [['hour', [3]]] });
+    } else {
+      chartComponentRef?.current?.chart.xAxis[0].setDataGrouping({ units: [['day', [1]]] });
+    }
+
+    chartComponentRef?.current?.chart.xAxis[0].setExtremes(currentDate - seconds * 1000, currentDate);
+  };
 
   return (
     <BorderWrap>
@@ -163,11 +162,11 @@ export const ChartWidget = (props: HighchartsReact.Props) => {
 
           <div className="flex flex-row justify-between">
             <div> x% vs yesterday </div>
-            <div className='gap-8'>
-              <button onClick={() => handleRangeChange(86400)}> 1d </button>
-              <button onClick={() => handleRangeChange(604800)}> 1w </button>
-              <button onClick={() => handleRangeChange(2628288)}> 1m </button>
-              <button onClick={() => handleRangeChange(7890000)}> 3m </button>
+            <div className="flex flex-row gap-2">
+              <Button onClick={() => handleRangeChange(86400)}> 1d </Button>
+              <Button onClick={() => handleRangeChange(604800)}> 1w </Button>
+              <Button onClick={() => handleRangeChange(2628288)}> 1m </Button>
+              <Button onClick={() => handleRangeChange(7890000)}> 3m </Button>
             </div>
           </div>
         </div>

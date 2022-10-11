@@ -52,7 +52,7 @@ const EstimatedPosition = (props: any) => {
         {isSimulating && <Loader />}
 
         {!isSimulating && input?.dsp > 0 && (
-          <div className={`transition-all ease-out duration-700 pb-4`}>
+          <>
             <Divider />
             <InfoBlock>
               {/* <Label>Short asset invested:</Label>
@@ -124,7 +124,7 @@ const EstimatedPosition = (props: any) => {
                 {investmentPosition?.dsp! - debtAtMaturity?.dsp! - input?.dsp} {shortAsset?.displaySymbol}
               </Value> */}
             </InfoBlock>
-          </div>
+          </>
         )}
       </Inner>
     </BorderWrap>

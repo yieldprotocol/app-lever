@@ -4,6 +4,9 @@ import Button from '../common/Button';
 
 import LeverageSelect from '../selectors/LeverageSelect';
 
+import {CogIcon } from '@heroicons/react/solid';
+
+
 import { ValueInput } from '../selectors/ValueInput';
 import { LeverContext } from '../../context/LeverContext';
 import StrategySelect from '../selectors/StrategySelect';
@@ -44,7 +47,7 @@ const LeverWidget = (props: any) => {
       <TopRow>
         <div className="text-lg"> Open a Position: </div>
         <ClearButton onClick={() => console.log('actually, this might not do anything? settings?')}>
-          [settings]
+         <CogIcon className="h-6 w-6 text-teal-700" />
         </ClearButton>
       </TopRow>
       <Inner>
