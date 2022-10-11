@@ -9,6 +9,8 @@ import { AppState, TokenType } from '../lib/types';
 import { convertToW3bNumber } from '../lib/utils';
 import { W3bNumber } from './InputContext';
 
+import logoMap from '../config/logos';
+
 export interface ILeverContextState {
   contracts: any;
   assets: Map<string, IAsset>;
@@ -171,9 +173,11 @@ const LeverProvider = ({ children }: any) => {
           return BigNumber.from('0');
         };
 
+        
         const balance = convertToW3bNumber(await getBal(asset), asset.decimals, asset.displayDecimals);
         const connectedAsset = {
           ...asset,
+          image: logoMap.get(asset.displaySymbol),
           assetContract,
           balance,
         };
