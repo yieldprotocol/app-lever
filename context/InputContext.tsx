@@ -41,7 +41,7 @@ const inputToW3bNumber = (input: string, decimals: number = 18, displayDecimals?
 
 const InputContext = React.createContext<any>({});
 const initState: IInputContextState = {
-  input: undefined,
+  input: ZERO_W3N,
   leverage: inputToW3bNumber('3', 2),
   slippage: 0.001,
 };

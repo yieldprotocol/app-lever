@@ -36,10 +36,10 @@ dark:bg-opacity-25
 `;
 
 export const InfoBlock = tw.div`grid grid-cols-2 gap-4 my-8`;
-export const Label = tw.div`text-[grey] text-left`;
-export const Value = tw.div`text-[white] text-right`;
+export const Label = tw.div`text-[grey] dark:text-[grey] text-left`;
+export const Value = tw.div`text-black dark:text-white text-right`;
 
-export const Divider = tw.div`border-0.5 border-[indigo] border-t-[indigo]`;
+export const Divider = tw.div`border-0.5 border-[teal] dark:border-[teal]`;
 export const NotShown = tw.div`invisible`;
 
 export const ClearButton = tw.button`text-sm`;

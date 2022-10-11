@@ -95,7 +95,7 @@ export const ChartWidget = (props: HighchartsReact.Props) => {
                   [1, 'teal'],
               ]
           },
-          lineWidth: 2,
+          lineWidth: 1,
           marker: {
               enabled: false
           },

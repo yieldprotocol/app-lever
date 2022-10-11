@@ -41,7 +41,6 @@ const EstimatedPosition = (props:any) => {
         </TopRow>
       <Inner>
 
-
       <InfoBlock>
         <Label>Principle Investment:</Label>
         <Value>  {input?.dsp} { shortAsset?.displaySymbol } </Value>  
@@ -72,7 +71,7 @@ const EstimatedPosition = (props:any) => {
         <Value>{investmentAtMaturity?.dsp} { longAsset?.displaySymbol } </Value>
 
         <Label>Flash Borrowing fees: </Label>
-        <Value>{flashBorrowFee?.dsp < 0.0000001 ? flashBorrowFee?.dsp : 'Insignificant'} </Value>
+        <Value>{flashBorrowFee?.dsp < 0.0000001 ? flashBorrowFee?.dsp :  <p>Insignificant</p>}  </Value>
 
         <Label>Investment fees: </Label>
         <Value>{ investmentFee?.dsp  } </Value>
