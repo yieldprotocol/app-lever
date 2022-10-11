@@ -48,9 +48,9 @@ const EstimatedPosition = (props: any) => {
           <Value> {leverage?.dsp || 0} X </Value>
         </InfoBlock>
 
-        {isSimulating && <Loader />}
+        {/* {isSimulating && <Loader />} */}
 
-        {!isSimulating && input?.dsp > 0 && (
+        {input?.dsp > 0 && (
           <>
             <Divider />
             <InfoBlock>
@@ -61,34 +61,34 @@ const EstimatedPosition = (props: any) => {
 
               <Label>Short asset borrowed: </Label>
               <Value>
-                {shortBorrowed?.dsp} {shortAsset?.displaySymbol}
+                {isSimulating ?  <Loader /> : `${shortBorrowed?.dsp} ${shortAsset?.displaySymbol}` }
               </Value>
 
               <Label> - Debt owed at maturity:</Label>
               <Value>
-                {' '}
-                {debtAtMaturity?.dsp} {shortAsset?.displaySymbol}{' '}
+              {isSimulating ? <Loader /> : `${debtAtMaturity?.dsp } ${shortAsset?.displaySymbol}`}
+
               </Value>
 
               <Label>Long asset obtained: </Label>
               <Value>
-                {investmentPosition?.dsp} {longAsset?.displaySymbol}{' '}
+              {isSimulating ? <Loader /> : `${investmentPosition?.dsp} ${longAsset?.displaySymbol}`}
               </Value>
 
               <Label> - Investment at maturity: </Label>
               <Value>
-                {investmentAtMaturity?.dsp} {longAsset?.displaySymbol}{' '}
+              {isSimulating ? <Loader /> : `${investmentAtMaturity?.dsp} ${longAsset?.displaySymbol}`}
               </Value>
 
               <Label>Flash Borrowing fees: </Label>
-              <Value>{flashBorrowFee?.dsp < 0.0000001 ? flashBorrowFee?.dsp : <p>Insignificant</p>} </Value>
+              <Value>{isSimulating ? <Loader /> : flashBorrowFee?.dsp < 0.0000001 ? flashBorrowFee?.dsp : <p>Insignificant</p>} </Value>
 
               <Label>Investment fees: </Label>
-              <Value>{investmentFee?.dsp} </Value>
+              <Value>{isSimulating ? <Loader /> : investmentFee?.dsp} </Value>
 
               <Label>Current investment value (in short terms): </Label>
               <Value>
-                {investmentCurrent?.dsp} {shortAsset?.displaySymbol}
+                {isSimulating ? <Loader /> :`${investmentCurrent?.dsp} ${shortAsset?.displaySymbol}`}
               </Value>
             </InfoBlock>
 
@@ -99,23 +99,23 @@ const EstimatedPosition = (props: any) => {
               <Label>Borrow Limit Usage:</Label>
               {/* <Value> {selectedStrategy?.loanToValue*100 } %</Value> */}
 
-              <Value> {Math.round((borrowLimitUsed + Number.EPSILON) * 100) / 100}%</Value>
+              <Value> {isSimulating ? <Loader /> : Math.round((borrowLimitUsed + Number.EPSILON) * 100) / 100}%</Value>
 
               {/* <NotShown>(pos/prin - 1)</NotShown> */}
               <Label>PnL</Label>
-              <Value>{Math.round((pnl + Number.EPSILON) * 100) / 100}</Value>
+              <Value>{isSimulating ? <Loader /> : Math.round((pnl + Number.EPSILON) * 100) / 100}</Value>
 
               {/* <NotShown>( investPosition/ baseInvested ) ^ t%year - 1</NotShown> */}
               <Label>Investment rate ( + ):</Label>
-              <Value> {Math.round((investAPR + Number.EPSILON) * 100) / 100} %APR</Value>
+              <Value> { isSimulating ? <Loader /> : Math.round((investAPR + Number.EPSILON) * 100) / 100} %APR</Value>
 
               {/* <NotShown>( debtPosition / baseBorrowed ) ^ t%year -1</NotShown> */}
               <Label>Borrowing rate ( - ):</Label>
-              <Value>{Math.round((borrowAPR + Number.EPSILON) * 100) / 100} %APR</Value>
+              <Value>{isSimulating ? <Loader /> : Math.round((borrowAPR + Number.EPSILON) * 100) / 100} %APR</Value>
 
               {/* <NotShown>leverage*longAPR - (leverage - 1)*borrowAPR</NotShown> */}
               <Label>Net rate:</Label>
-              <Value>{Math.round((netAPR + Number.EPSILON) * 100) / 100} %APR</Value>
+              <Value>{isSimulating ? <Loader /> : Math.round((netAPR + Number.EPSILON) * 100) / 100} %APR</Value>
 
               {/* <NotShown>( investPostion - debtPosition - input )</NotShown> */}
               {/* <Label>Return in base: </Label>

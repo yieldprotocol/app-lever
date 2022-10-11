@@ -153,23 +153,24 @@ export const ChartWidget = (props: HighchartsReact.Props) => {
     <BorderWrap>
       <TopRow>
         <div className="flex-grow">
-          <div className="text-start">
 
+          <div className="text-start py-4" >
             <div className="flex flex-row gap-2">
-              <div  className="w-6" >{shortAsset?.image}</div>
+              <div className="w-6">{shortAsset?.image}</div>
               <div>{shortAsset?.symbol} price </div>
             </div>
 
-            <div className="flex flex-row gap-2 align-middle">
-              <div  className="w-6" >{longAsset?.image}</div>
-              <div>{prices.length ? prices[prices.length - 1][1] : '...'}</div>
-              <div>{longAsset?.symbol}</div>
+            <div className="flex flex-row gap-2 ">
+              <div className="w-8">{longAsset?.image}</div>
+              <div className="text-2xl">
+                {prices.length ? Math.round(parseFloat(prices[prices.length - 1][1]) * 10000) / 10000 : '...'}
+              </div>
+              <div className="text-2xl">{longAsset?.displaySymbol}</div>
             </div>
-
           </div>
 
           <div className="flex flex-row justify-between">
-            <div> x% vs yesterday </div>
+            <div className="text-xs text-slate-500"> x% vs yesterday </div>
             <div className="flex flex-row gap-2">
               <Button onClick={() => handleRangeChange(86400)}> 1d </Button>
               <Button onClick={() => handleRangeChange(604800)}> 1w </Button>
