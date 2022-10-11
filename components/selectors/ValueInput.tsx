@@ -37,16 +37,20 @@ export const ValueInput = () => {
       onBlur={() => setFocus(false)}
     />
     </Inner>
-    <div className="grow min-w-fit">
+    <div className="grow min-w-fit justify-start ">
       <div className="p-1">
         {shortAsset?.displaySymbol}
       </div>
-        <Button
-          onClick={()=>inputActions.setInput(shortAsset?.balance.hStr)}
-        >
+       { inputState.input?.hStr !== shortAsset?.balance.hStr ? 
+        <Button onClick={()=>inputActions.setInput(shortAsset?.balance.hStr)}>
           <div> Use max balance</div>
           <div> {shortAsset?.balance.dsp} </div>
         </Button>
+        : 
+        <Button onClick={()=>inputActions.setInput('0')}>
+        <div> Clear </div>  
+      </Button>
+}
     </div>
     </Container>
   );

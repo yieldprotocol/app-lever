@@ -35,7 +35,7 @@ dark:text-gray-50
 dark:bg-opacity-25
 `;
 
-export const InfoBlock = tw.div`grid grid-cols-2 gap-4 my-8 pb-8`;
+export const InfoBlock = tw.div`grid grid-cols-2 gap-4 my-8`;
 export const Label = tw.div`text-[grey] dark:text-[grey] text-left`;
 export const Value = tw.div`text-black dark:text-white text-right`;
 

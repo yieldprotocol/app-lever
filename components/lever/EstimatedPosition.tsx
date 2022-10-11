@@ -49,14 +49,16 @@ const EstimatedPosition = (props: any) => {
           <Value> {leverage?.dsp || 0} X </Value>
         </InfoBlock>
 
-        {isSimulating && <Loader /> }
+        {isSimulating && <Loader />}
 
         {!isSimulating && input?.dsp > 0 && (
-          <div className={`transition-all ease-out duration-700`}>
+          <div className={`transition-all ease-out duration-700 pb-4`}>
             <Divider />
             <InfoBlock>
               {/* <Label>Short asset invested:</Label>
-        <Value>{shortInvested?.dsp} FYETH</Value> */}
+                  <Value>{shortInvested?.dsp} FYETH</Value> 
+                  
+                */}
 
               <Label>Short asset borrowed: </Label>
               <Value>
@@ -117,10 +119,10 @@ const EstimatedPosition = (props: any) => {
               <Value>{Math.round((netAPR + Number.EPSILON) * 100) / 100} %APR</Value>
 
               {/* <NotShown>( investPostion - debtPosition - input )</NotShown> */}
-              <Label>Return in base: </Label>
+              {/* <Label>Return in base: </Label>
               <Value>
                 {investmentPosition?.dsp! - debtAtMaturity?.dsp! - input?.dsp} {shortAsset?.displaySymbol}
-              </Value>
+              </Value> */}
             </InfoBlock>
           </div>
         )}

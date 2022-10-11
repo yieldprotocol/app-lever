@@ -182,7 +182,7 @@ export const useLever = () => {
         /** 
          * Calculate
          * 
-         * maxRatio :  shortBorrwed
+         * maxLeverage :  shortInvested  shortBorrowed 
          * Borrowing limit :  ( debtAtMaturity / ( investPosition * LTV )  )   =  
          * pnl : pos/prin - 1)
          */
