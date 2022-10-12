@@ -5,13 +5,12 @@ import { PositionContext } from '../../context/PositionContext';
 import { BorderWrap, ClearButton, Inner, TopRow } from '../styled';
 
 const Positions = () => {
-
-  const [  , leverActions ] = useContext(LeverContext);
+  const [, leverActions] = useContext(LeverContext);
   const { selectPosition } = leverActions;
 
-  const [ positionState ] = useContext(PositionContext);
+  const [positionState] = useContext(PositionContext);
   const { positions } = positionState;
-  
+
   return (
     <BorderWrap>
       <TopRow>
@@ -22,13 +21,11 @@ const Positions = () => {
       </TopRow>
 
       <Inner>
-        {(Array.from(positions.values())).map((v: any) => {
-          return (
-            <div onClick={() => selectPosition(v)} key={v.id}>
-              {v.id}
-            </div>
-          );
-        })}
+        {Array.from(positions.values()).map((v: any) => (
+          <div onClick={() => selectPosition(v)} key={v.id}>
+            {v.id}
+          </div>
+        ))}
       </Inner>
     </BorderWrap>
   );

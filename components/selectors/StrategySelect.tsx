@@ -19,40 +19,45 @@ const StrategySelect = () => {
 
   const SelectModal = () => (
     <Modal isOpen={modalOpen} setIsOpen={(isOpen) => setModalOpen(!modalOpen)}>
-      {Array.from(strategies.values()).map((strat: ILeverStrategy) => {
-        return (
-          <BorderWrap>
-              <div onClick={()=>{leverActions.selectStrategy(strat); setModalOpen(false)}  }>{strat.displayName}</div> 
-          </BorderWrap>
-       )
-      })}
+      {Array.from(strategies.values()).map((strat: ILeverStrategy) => (
+        <BorderWrap>
+          <div
+            onClick={() => {
+              leverActions.selectStrategy(strat);
+              setModalOpen(false);
+            }}
+          >
+            {strat.displayName}
+          </div>
+        </BorderWrap>
+      ))}
       <div></div>
     </Modal>
   );
 
   return (
     <>
-
-    <div onClick={() => setModalOpen(!modalOpen)} className='rounded-lg' style={{
+      <div
+        onClick={() => setModalOpen(!modalOpen)}
+        className="rounded-lg"
+        style={{
           background: `linear-gradient(135deg, #f7953380, #f3705580, #ef4e7b80, #a166ab80, #5073b880, #1098ad80, #07b39b80, #6fba8280)`,
-        }}  >
+        }}
+      >
+        <InfoBlock>
+          <Label>Maturity</Label>
+          <Value> {selectedStrategy?.displayName} </Value>
 
-    <InfoBlock>
-        <Label>Maturity</Label>
-        <Value> {selectedStrategy?.displayName} </Value>
-        
-        <Label>Short</Label>
-        <Value> {shortAsset?.displaySymbol} </Value>       
-        
-         <Label>Long </Label>
-        <Value>{longAsset?.displaySymbol} </Value>
+          <Label>Short</Label>
+          <Value> {shortAsset?.displaySymbol} </Value>
 
-        <Label>  </Label>
-        <Value> </Value>
+          <Label>Long </Label>
+          <Value>{longAsset?.displaySymbol} </Value>
 
-    </InfoBlock>
-
-    </div>
+          <Label> </Label>
+          <Value> </Value>
+        </InfoBlock>
+      </div>
 
       {modalOpen && <SelectModal />}
     </>
