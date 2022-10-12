@@ -96,7 +96,7 @@ const ConnectDropdown: FC<{ setModalOpen: (isOpen: boolean) => void }> = ({ setM
                 <div className="px-1 py-1">
                   <Menu.Item>
                     {({ active }) => (
-                      <Button $active={active} onClick={() => connector.deactivate()}>
+                      <Button $active={active} onClick={() => connector?.deactivate()}>
                         Disconnect
                       </Button>
                     )}

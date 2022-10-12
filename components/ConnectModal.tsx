@@ -31,7 +31,7 @@ function Connection({
   connector,
   hooks: { useChainId, useIsActivating, useError, useIsActive },
 }: {
-  connector: MetaMask;
+  connector: MetaMask|Network;
   hooks: Web3ReactHooks;
 }) {
   const isActivating = useIsActivating();
@@ -52,7 +52,7 @@ function Connection({
 
   return (
     <ConnectorButton
-      onClick={() => connector.activate(desiredChainId === -1 ? undefined : getAddChainParameters(desiredChainId))}
+      onClick={() => connector.activate(desiredChainId === -1 ? undefined : getAddChainParameters(desiredChainId) as number)}
       disabled={isActivating || active}
     >
       <Image src={metamaskLogo} height={20} width={20} alt="metamask-logo" />
