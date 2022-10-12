@@ -59,6 +59,8 @@ module.exports = {
     'brace-style': 'off',
     '@typescript-eslint/brace-style': ['error'],
 
+    'no-unused-vars': ['warn'],
+
     // remove below to check before prod:
     'no-console': 'off',
   },
