@@ -187,7 +187,7 @@ export const useLever = () => {
          * pnl : pos/prin - 1)
          */
 
-        const maxLeverage_ = 4.5 // 4.5 // selectedStrategy?.loanToValue  
+        const maxLeverage_ =  3.9;  // input*rate / input*rate - input*LTV
         console.log( maxLeverage_  )
         setMaxLeverage(maxLeverage_)
 
@@ -196,7 +196,9 @@ export const useLever = () => {
 
         const pnl_ = netAPR - investAPR // TODO: this is probably wrong. check it.  (investmentCurrent?.dsp!/shortInvested?.dsp! -1);
         setPnl(pnl_)
-           
+
+        const mLevarge = input ?  input.dsp / (input.dsp - input.dsp*selectedStrategy.loanToValue) : 3.7;
+        console.log(input.dsp , selectedStrategy.loanToValue,  mLevarge ); 
       }
     })();
   }, [selectedStrategy, debouncedLeverage, input]);
