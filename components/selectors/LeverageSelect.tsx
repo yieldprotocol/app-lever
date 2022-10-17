@@ -37,8 +37,6 @@ caret-gray-800
 const LeverageSelect = ({max, ... props}) => {
   const [inputState, inputActions] = useContext(InputContext);
 
-  console.log("max'",  max )
-
   return (
     <>
       <div className="flex-row flex gap-2">
@@ -52,7 +50,7 @@ const LeverageSelect = ({max, ... props}) => {
             onChange={(e) => inputActions.setLeverage(e.target.value)}
             name="leverage_text"
             min={1.1}
-            max={5}
+            max={max}
           />
           </div>
 
@@ -62,7 +60,7 @@ const LeverageSelect = ({max, ... props}) => {
             type="range"
             id="leverage_range"
             min={1.1}
-            max= {max}
+            max={max}
             step="0.1"
             onChange={(e) => inputActions.setLeverage(e.target.value)}
           />
