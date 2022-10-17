@@ -70,7 +70,7 @@ export interface Notification {
 }
 
 export interface simOutput {
-  simulateInvest: () => Promise<LeverSimulation>;
+  simulateInvest: () => Promise<any>;
   simulateReturn: () => Promise<W3bNumber>;
   isSimulating: boolean;
   notification: Notification[];
@@ -122,7 +122,6 @@ export const useLever = () => {
 
   const [currentReturn, setCurrentReturn] = useState<W3bNumber>(ZERO_W3N);
   const [futureReturn, setFutureReturn] = useState<W3bNumber>(ZERO_W3N);
-
 
   // TODO: /* Choose the correct lever simulator */
   // useEffect(() => {
@@ -187,8 +186,11 @@ export const useLever = () => {
          * pnl : pos/prin - 1)
          */
 
-        const maxLeverage_ =  3.9;  // input*rate / input*rate - input*LTV
+        const inp_rat = input.dsp*selectedStrategy.bestRate.dsp
+        const maxLeverage_ =  inp_rat / (inp_rat- input.dsp*selectedStrategy.loanToValue) ;  // input*rate / input*rate - input*LTV
+        
         console.log( maxLeverage_  )
+        
         setMaxLeverage(maxLeverage_)
 
         const borrowLimitUsed_ =  simulated.debtAtMaturity?.dsp! / (simulated.investmentPosition?.dsp! * selectedStrategy?.loanToValue)*100

@@ -30,6 +30,7 @@ export const useStEthSim = (input: W3bNumber, leverage: W3bNumber): simOutput =>
     (async () => {
       // await curve.init('JsonRpc', {}, { });
       await curve.init("Infura", { network: "homestead", apiKey: '2af222f674024a0f84b5f0aad0da72a2'}, { chainId: 1 });
+      
       // --- STETH ---
       const steth = curve && curve.getPool('steth');
       // const vol = await steth.stats.volume();
@@ -121,7 +122,7 @@ export const useStEthSim = (input: W3bNumber, leverage: W3bNumber): simOutput =>
   const simulateInvest = async (): Promise<any> => {
     const shortBorrowed = toBorrow;
 
-    let debtAtMaturity = ZERO_W3N;
+    let debtAtMaturity = ZERO_W3N; 
     let debtCurrent = ZERO_W3N;
 
     let shortInvested = ZERO_W3N;
@@ -170,8 +171,6 @@ export const useStEthSim = (input: W3bNumber, leverage: W3bNumber): simOutput =>
       );
 
       shortInvested = convertToW3bNumber(wethObtained, 18, 6);
-
-
       investmentFee = convertToW3bNumber(shortInvested.big.mul(4).div(10000), 18, 6);
 
       // stableSwap exchange: WEth -> StEth
@@ -217,13 +216,12 @@ export const useStEthSim = (input: W3bNumber, leverage: W3bNumber): simOutput =>
       debtAtMaturity,
       debtCurrent,
 
-      flashBorrowFee,
-
       shortInvested,
       investmentPosition,
       investmentAtMaturity,
       investmentCurrent,
 
+      flashBorrowFee,
       investmentFee,
 
     };

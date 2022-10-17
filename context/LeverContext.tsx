@@ -10,13 +10,14 @@ import { convertToW3bNumber } from '../lib/utils';
 import { W3bNumber } from './InputContext';
 
 import logoMap from '../config/logos';
+import { sellFYToken } from '@yield-protocol/ui-math';
 
 export interface ILeverContextState {
   contracts: any;
   assets: Map<string, IAsset>;
 
   strategies: Map<string, ILeverStrategy>;
-  
+
   appState: AppState;
 
   selectedStrategy: ILeverStrategy | undefined;
@@ -42,14 +43,17 @@ export interface ILeverStrategy extends ILeverStrategyRoot {
   oracleContract: Contract;
   poolContract: Contract;
   poolAddress: string;
+
   minRatio: number;
   loanToValue: number;
+
+  bestRate: W3bNumber;
+  maxBase: W3bNumber;
 }
 
 const LeverContext = React.createContext<any>({});
 
 const initState: ILeverContextState = {
-  
   appState: AppState.Loading,
 
   contracts: {},
@@ -103,18 +107,18 @@ const leverReducer = (state: ILeverContextState, action: any) => {
         appState: action.payload,
       };
 
-      case 'SELECT_STRATEGY':
-        return {
-          ...state,
-          selectedStrategy: action.payload,
-        };
+    case 'SELECT_STRATEGY':
+      return {
+        ...state,
+        selectedStrategy: action.payload,
+      };
 
-        case 'SELECT_POSITION':
-          return {
-            ...state,
-            selectedPosition: action.payload,
-          };
-  
+    case 'SELECT_POSITION':
+      return {
+        ...state,
+        selectedPosition: action.payload,
+      };
+
     case 'UPDATE_PROVIDER':
       return {
         ...state,
@@ -134,29 +138,26 @@ const leverReducer = (state: ILeverContextState, action: any) => {
 };
 
 const LeverProvider = ({ children }: any) => {
-  
   /* LOCAL STATE */
   const [leverState, updateState] = useReducer(leverReducer, initState);
-  const { account, provider} = useConnector();
+  const { account, provider } = useConnector();
 
   /* update account on change */
   useEffect(() => {
-    console.log( account, ' connected.' )
-    updateState({ type: 'UPDATE_ACCOUNT', payload: account })}, [account]
-  );
+    console.log(account, ' connected.');
+    updateState({ type: 'UPDATE_ACCOUNT', payload: account });
+  }, [account]);
 
   /* update account on change */
   useEffect(() => updateState({ type: 'UPDATE_PROVIDER', payload: provider }), [provider]);
 
   /* Connect up Cauldron and Ladle contracts : updates on provider change */
   useEffect(() => {
-
     if (provider) {
       const Cauldron = contractFactories[CAULDRON].connect(CAULDRON, provider);
       const Ladle = contractFactories[LADLE].connect(LADLE, provider);
       updateState({ type: 'UPDATE_CONTRACTS', payload: { Cauldron, Ladle } });
     }
-
   }, [provider]);
 
   /* Connect up asset contracts : updates on provider and account changes */
@@ -172,7 +173,7 @@ const LeverProvider = ({ children }: any) => {
           if (account && asset.id === WETH) return provider.getBalance(account);
           return BigNumber.from('0');
         };
-   
+
         const balance = convertToW3bNumber(await getBal(asset), asset.decimals, asset.displayDecimals);
         const connectedAsset = {
           ...asset,
@@ -203,12 +204,8 @@ const LeverProvider = ({ children }: any) => {
         const cauldron = contractFactories[CAULDRON].connect(CAULDRON, provider);
         const [{ oracle, ratio }, debt] = await Promise.all([
           cauldron.spotOracles(strategy.baseId, strategy.ilkId),
-          cauldron.debt(strategy.baseId, strategy.ilkId)
-        ])
-
-
-        console.log(strategy.baseId, strategy.ilkId )
-        console.log(debt.min.toString());
+          cauldron.debt(strategy.baseId, strategy.ilkId),
+        ]);
 
         /* instantiate a oracle contract */
         const oracleContract = contractFactories[ORACLE].connect(oracle, provider);
@@ -224,10 +221,13 @@ const LeverProvider = ({ children }: any) => {
           poolContract = contractFactories[TokenType.YIELD_POOL].connect(poolAddress, provider);
         }
 
-        const minRatio = parseFloat(ethers.utils.formatUnits(ratio, 6))
-        const loanToValue = 1/minRatio;
+        /* Collateralisation ratio and loan to vaule */
+        const minRatio = parseFloat(ethers.utils.formatUnits(ratio, 6));
+        const loanToValue = 1 / minRatio;
 
-        console.log( loanToValue)
+        /* Calculates the base/fyToken unit selling price */
+        const bestRate = await poolContract.sellFYTokenPreview('1000000000000000000');
+        const maxBase = await poolContract.getBaseBalance()
 
         // const balance = account ? await investTokenContract.balanceOf(account) : BigNumber.from('0');
         const connectedStrategy = {
@@ -237,9 +237,13 @@ const LeverProvider = ({ children }: any) => {
           oracleContract,
           poolContract,
           poolAddress,
+
           minRatio,
           loanToValue,
+          bestRate: convertToW3bNumber(bestRate, 18, 6),
+          maxBase: convertToW3bNumber(maxBase, 18, 6)
         };
+
         updateState({ type: 'UPDATE_STRATEGY', payload: connectedStrategy });
       });
     }
@@ -260,8 +264,8 @@ const LeverProvider = ({ children }: any) => {
       updateState({
         type: 'UPDATE_LONG_SHORT',
         payload: {
-          shortAsset: leverState.assets.get(leverState.selectedStrategy.baseId) ,
-          longAsset: leverState.assets.get(leverState.selectedStrategy.ilkId)  
+          shortAsset: leverState.assets.get(leverState.selectedStrategy.baseId),
+          longAsset: leverState.assets.get(leverState.selectedStrategy.ilkId),
         },
       });
   }, [leverState.selectedStrategy, leverState.assets]);
