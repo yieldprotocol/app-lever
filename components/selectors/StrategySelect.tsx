@@ -49,7 +49,7 @@ const assetOption = (asset: IAsset, shortSelect: boolean = true) => {
 const SelectedAssetStyled = ({ asset, select }: { asset: IAsset; select: 'LONG' | 'SHORT' }) => {
   if (asset)
     return (
-      <Listbox.Button as="div" className="p-2">
+      <Listbox.Button as="div" className="p-2" key={asset.id}>
         {assetOption(asset, select === 'SHORT')}
         {/* <div className="flex flex-row pv-2 justify-start gap-4 align-baseline">
           <div className="w-8">{asset.image}</div>
@@ -72,7 +72,7 @@ const ListOptionsStyled = ({ children }) => (
       leave="transition ease-in duration-100"
       leaveFrom="opacity-100"
       leaveTo="opacity-0"
-      className="absolute shadow-lg bg-slate-900 rounded-lg"
+      className="absolute shadow-lg bg-slate-900 rounded-lg z-50"
     >
       <Listbox.Options className="overflow-auto max-h-80 flex flex-col">{children}</Listbox.Options>
     </Transition>
@@ -161,7 +161,7 @@ const StrategySelect = () => {
             {possibleStrategies.length
               ? possibleStrategies.map((s: ILeverStrategy) => {
                   return (
-                    <div>
+                    <div key={s.id}>
                       <div> {`${s.displayName}`}</div>
                     </div>
                   );

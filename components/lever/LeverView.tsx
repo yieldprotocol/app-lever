@@ -29,9 +29,9 @@ const LeverView_NoContext = () => {
 
 /* Wrap it with the input porivder */
 const LeverView = () => (
-  <InputProvider>
+  // <InputProvider>
     <LeverView_NoContext />
-  </InputProvider>
+  // </InputProvider>
 );
 
 export default LeverView;

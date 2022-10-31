@@ -6,7 +6,7 @@ import { LeverSimulation } from '../../hooks/useLever';
 import Loader from '../common/Loader';
 
 const EstimatedPosition = (props: any) => {
-  const [inputState] = useContext(InputContext);
+  const [ inputState ] = useContext(InputContext);
   const { input, leverage } = inputState;
 
   const [leverState] = useContext(LeverContext);
@@ -48,9 +48,7 @@ const EstimatedPosition = (props: any) => {
           <Value> {leverage?.dsp || 0} X </Value>
         </InfoBlock>
 
-        {/* {isSimulating && <Loader />} */}
-
-        {input?.dsp > 0 && (
+        {input?.dsp > 0 && selectedStrategy && (
           <>
             <Divider />
             <InfoBlock>
@@ -83,7 +81,7 @@ const EstimatedPosition = (props: any) => {
               <Label>Flash Borrowing fees: </Label>
               <Value>{isSimulating ? <Loader /> : flashBorrowFee?.dsp < 0.0000001 ? flashBorrowFee?.dsp : <p>Insignificant</p>} </Value>
 
-              <Label>Investment fees: </Label>
+              <Label>Trading fees: </Label>
               <Value>{isSimulating ? <Loader /> : investmentFee?.dsp} </Value>
 
               <Label>Current investment value (in short terms): </Label>

@@ -12,8 +12,7 @@ interface IButton {
 
 const Button: FC<IButton> = ({ action, disabled, loading, children }) => (
   <StyledButton onClick={action} disabled={disabled}>
-    {loading && <Spinner />}
-    {children}
+    {loading ?  <Spinner /> : children }
   </StyledButton>
 );
 

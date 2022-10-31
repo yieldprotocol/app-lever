@@ -8,6 +8,7 @@ import { XMarkIcon } from '@heroicons/react/24/solid';
 import LeverProvider from '../context/LeverContext';
 import MarketProvider from '../context/MarketContext';
 import ChartProvider from '../context/ChartContext';
+import InputProvider from '../context/InputContext';
 
 const DynamicLayout = dynamic(() => import('../components/Layout'), { ssr: false });
 
@@ -19,6 +20,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
       <LeverProvider>
         <MarketProvider>
           <ChartProvider>
+          <InputProvider>
             <ToastContainer
               position="bottom-right"
               pauseOnHover
@@ -27,6 +29,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
               closeButton={<XMarkIcon height="1rem" width="1rem" color={theme === 'dark' ? '#e4e4e7' : '#18181b'} />}
             />
             <Component {...pageProps} />
+            </InputProvider>
           </ChartProvider>
         </MarketProvider>
       </LeverProvider>

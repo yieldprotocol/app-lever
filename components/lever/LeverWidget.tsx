@@ -68,9 +68,9 @@ const LeverWidget = (props: any) => {
 
         <Button
           action={() => transact()}
-          disabled={!account || !selectedStrategy} // add in isTransacting check
-          loading={false}
-          // loading={isTransacting}
+          disabled={!account || !selectedStrategy || borrowLimitUsed>100 } // add in isTransacting check
+          // loading={false}
+          loading={isSimulating}
         >
           {/* {!account ? 'Connect Wallet' : isTransacting ? 'Trade Initiated...' : 'Trade'} */}
           {!account ? 'Connect Wallet' : 'Trade'}

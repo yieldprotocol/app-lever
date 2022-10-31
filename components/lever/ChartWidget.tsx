@@ -2,9 +2,18 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import HighStock, { seriesType } from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
 import { ChartContext } from '../../context/ChartContext';
-import { BorderWrap, ClearButton, Inner, TopRow } from '../styled';
+import { BorderWrap, Inner, TopRow } from '../styled';
 import { LeverContext } from '../../context/LeverContext';
 import tw from 'tailwind-styled-components';
+import { InputContext } from '../../context/InputContext';
+import { ArrowsPointingOutIcon } from '@heroicons/react/24/solid';
+
+export const TopRow_ = tw.div`p-0 align-middle text-center items-center rounded-t-lg dark:bg-gray-900 
+bg-gray-100
+bg-opacity-25
+dark:text-gray-50 
+dark:bg-opacity-25 
+`;
 
 const Button = tw.button`text-xs bg-primary-800 w-5 dark:text-gray-50 text-gray-50 rounded hover:opacity-80`;
 
@@ -15,11 +24,22 @@ export const ChartWidget = (props: HighchartsReact.Props) => {
   const [chartState] = useContext(ChartContext);
   const { prices } = chartState;
 
+  const [inputState] = useContext(InputContext);
+  const { input } = inputState;
+
+  const [condensedView, setCondensedView] = useState<boolean>(false);
+  const [forceChart, setForceChart] = useState<boolean>(false);
+
+  useEffect(() => {
+    setCondensedView(!forceChart && selectedStrategy && input?.dsp > 0);
+  }, [input, selectedStrategy, forceChart]);
+
   // set Chart options
   let options = {
     credits: { enabled: false },
     chart: {
-      height: 150,
+      height: condensedView ? 100 : 250,
+      width: condensedView ? 250 : undefined,
       style: {
         fontFamily: { sans: ['Inter', 'sans-serif'], serif: ['Inter', 'sans-serif'] },
       },
@@ -139,46 +159,62 @@ export const ChartWidget = (props: HighchartsReact.Props) => {
   };
 
   return (
-    <BorderWrap>
-      <TopRow>
-        <div className="flex-grow">
+    <BorderWrap className="mb-4">
+      <div className={`grid overflow-hidden ${condensedView ? 'grid-rows-1 gap-0' : 'grid-cols-2 gap-2'} `}>
+        <div className={`col-span-2`}>
+          <TopRow>
+            <div className="flex-grow">
+              <div className="text-start py-4">
+                <div className="flex flex-row gap-2">
+                  <div className="w-6">{shortAsset?.image}</div>
+                  <div>{shortAsset?.displaySymbol} price </div>
+                </div>
 
-          <div className="text-start py-4" >
-            <div className="flex flex-row gap-2">
-              <div className="w-6">{shortAsset?.image}</div>
-              <div>{shortAsset?.displaySymbol} price </div>
-            </div>
-
-            <div className="flex flex-row gap-2 ">
-              <div className="w-8">{longAsset?.image}</div>
-              <div className="text-2xl">
-                {prices.length ? Math.round(parseFloat(prices[prices.length - 1][1]) * 10000) / 10000 : '...'}
+                <div className="flex flex-row gap-2 ">
+                  <div className="w-8">{longAsset?.image}</div>
+                  <div className="text-2xl">
+                    {prices.length ? Math.round(parseFloat(prices[prices.length - 1][1]) * 10000) / 10000 : '...'}
+                  </div>
+                  <div className="text-2xl">{longAsset?.displaySymbol}</div>
+                </div>
               </div>
-              <div className="text-2xl">{longAsset?.displaySymbol}</div>
-            </div>
-          </div>
 
-          <div className="flex flex-row justify-between">
-            <div className="text-xs text-slate-500"> x% vs yesterday </div>
-            <div className="flex flex-row gap-2">
-              <Button onClick={() => handleRangeChange(86400)}> 1d </Button>
-              <Button onClick={() => handleRangeChange(604800)}> 1w </Button>
-              <Button onClick={() => handleRangeChange(2628288)}> 1m </Button>
-              <Button onClick={() => handleRangeChange(7890000)}> 3m </Button>
+              {!condensedView && (
+                <div className="flex flex-row justify-between">
+                  <div className="text-xs text-slate-500"> x% vs yesterday </div>
+                  <div className="flex flex-row gap-2">
+                    <Button onClick={() => handleRangeChange(86400)}> 1d </Button>
+                    <Button onClick={() => handleRangeChange(604800)}> 1w </Button>
+                    <Button onClick={() => handleRangeChange(2628288)}> 1m </Button>
+                    <Button onClick={() => handleRangeChange(7890000)}> 3m </Button>
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
+          </TopRow>
         </div>
-      </TopRow>
 
-      <Inner>
-        <HighchartsReact
-          highcharts={HighStock}
-          constructorType={'stockChart'}
-          options={options}
-          ref={chartComponentRef}
-          {...props}
-        />
-      </Inner>
+        {/* <div className={`col-span-2 ${condensedView ? 'col-start-3' : 'col-start-1'} `}> */}
+        <div
+          className={` col-span-2 ${
+            condensedView
+              ? 'dark:bg-gray-900 bg-gray-100 bg-opacity-25 dark:text-gray-50  dark:bg-opacity-25 col-start-3 pt-4'
+              : 'col-start-1'
+          } `}
+        >
+          <HighchartsReact
+            highcharts={HighStock}
+            constructorType={'stockChart'}
+            options={options}
+            ref={chartComponentRef}
+            {...props}
+          />
+
+          {/* <ArrowsPointingOutIcon className='text-size-sm' />  */}
+          {/* <button onClick={()=>setForceChart(!forceChart)}> toggle chart</button> */}
+        </div>
+        {/* </div> */}
+      </div>
     </BorderWrap>
   );
 };
