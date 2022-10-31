@@ -1,66 +1,176 @@
 import { mainModule } from 'process';
-import { FC, useContext, useState } from 'react';
+import { FC, Fragment, useContext, useEffect, useState } from 'react';
 import tw from 'tailwind-styled-components';
 import { IAsset, ILeverStrategy, LeverContext } from '../../context/LeverContext';
-import AssetLogo from '../common/AssetLogo';
+import AssetSelect from './AssetSelect';
 import Modal from '../common/Modal';
-import { BorderWrap } from '../styled';
+import { BorderWrap, Inner, TopRow } from '../styled';
+
+import { ArrowsRightLeftIcon } from '@heroicons/react/24/solid';
+import { ArrowTrendingDownIcon, ArrowTrendingUpIcon } from '@heroicons/react/20/solid';
+
+import { Listbox, Menu, Transition } from '@headlessui/react';
+import { connectors } from '../../connectors';
 
 const InfoBlock = tw.div`grid grid-cols-2 gap-2 p-4`;
-const Label = tw.div`text-[grey] text-left`;
+const Container = tw.div`
+rounded-md
+w-full 
+hover:border 
+border 
+hover:border-gray-400 
+dark:hover:border-gray-600 
+dark:border-gray-800 
+dark:bg-gray-800 bg-gray-300 border-gray-300 dark:bg-opacity-25 bg-opacity-25`;
 const Value = tw.div`text-[white] text-right`;
+
+const assetOption = (asset: IAsset, shortSelect: boolean = true) => {
+  const disabled = shortSelect ? !asset.isShortAsset : !asset.isLongAsset;
+
+  if (asset)
+    return (
+      <Listbox.Option as={Fragment} key={asset.id} value={asset}>
+        {!disabled ? (
+          <div className={`flex flex-row gap-4 align p-2 text-white `}>
+            <div className="w-6">{asset.image}</div>
+            {asset.displaySymbol}
+          </div>
+        ) : (
+          <div className={`flex flex-row gap-4 align p-2 text-white opacity-25 `}>
+            <div className="w-6">{asset.image}</div>
+            {asset.displaySymbol}
+          </div>
+        )}
+      </Listbox.Option>
+    );
+  return <div> Loading ... </div>;
+};
+
+const SelectedAssetStyled = ({ asset, select }: { asset: IAsset; select: 'LONG' | 'SHORT' }) => {
+  if (asset)
+    return (
+      <Listbox.Button as="div" className="p-2">
+        {assetOption(asset, select === 'SHORT')}
+        {/* <div className="flex flex-row pv-2 justify-start gap-4 align-baseline">
+          <div className="w-8">{asset.image}</div>
+          {asset.displaySymbol}
+        </div> */}
+      </Listbox.Button>
+    );
+  return <div> Loading ... </div>;
+};
+
+const ListOptionsStyled = ({ children }) => (
+  <BorderWrap>
+    <Transition
+      // enter="transition duration-100 ease-out"
+      // enterFrom="transform scale-95 opacity-0"
+      // enterTo="transform scale-100 opacity-100"
+      // leave="transition duration-75 ease-out"
+      // leaveFrom="transform scale-100 opacity-100"
+      // leaveTo="transform scale-95 opacity-0"
+      leave="transition ease-in duration-100"
+      leaveFrom="opacity-100"
+      leaveTo="opacity-0"
+      className="absolute shadow-lg bg-slate-900 rounded-lg"
+    >
+      <Listbox.Options className="overflow-auto max-h-80 flex flex-col">{children}</Listbox.Options>
+    </Transition>
+  </BorderWrap>
+);
 
 const StrategySelect = () => {
   const [leverState, leverActions] = useContext(LeverContext);
+  const { selectedStrategy, strategies, shortAsset, longAsset, assets } = leverState;
+  const assetsList = Array.from(assets.values());
 
-  const { selectedStrategy, strategies, shortAsset, longAsset } = leverState;
+  const [possibleStrategies, setPossibleStrategies] = useState<ILeverStrategy[]>([]);
 
-  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [short, setShort] = useState<IAsset>(shortAsset);
+  const [long, setLong] = useState<IAsset>(longAsset);
+  useEffect(() => {
+    setShort(shortAsset);
+    setLong(longAsset);
+  }, [shortAsset, longAsset]);
 
-  const SelectModal = () => (
-    <Modal isOpen={modalOpen} setIsOpen={(isOpen) => setModalOpen(!modalOpen)}>
-      {Array.from(strategies.values()).map((strat: ILeverStrategy) => (
-        <BorderWrap>
-          <div
-            onClick={() => {
-              leverActions.selectStrategy(strat);
-              setModalOpen(false);
-            }}
-          >
-            {strat.displayName}
-          </div>
-        </BorderWrap>
-      ))}
-      <div></div>
-    </Modal>
-  );
+  useEffect(() => {
+    strategies.forEach((x: ILeverStrategy) => {
+      if (x.baseId === short.id && x.ilkId === long.id) {
+        setPossibleStrategies([...possibleStrategies, x]);
+        leverActions.selectStrategy(x);
+      } else {
+        setPossibleStrategies([]);
+        leverActions.selectStrategy(null);
+      }
+    });
+  }, [short, long]);
 
   return (
-    <>
-      <div
-        onClick={() => setModalOpen(!modalOpen)}
-        className="rounded-lg"
-        style={{
-          background: `linear-gradient(135deg, #f7953380, #f3705580, #ef4e7b80, #a166ab80, #5073b880, #1098ad80, #07b39b80, #6fba8280)`,
-        }}
-      >
-        <InfoBlock>
-          <Label>Maturity</Label>
-          <Value> {selectedStrategy?.displayName} </Value>
+    <div className="space-y-4">
+      <div className="flex flex-row gap-4">
+        <Container>
+          <TopRow className="p-1 justify-start gap-2">
+            <div className="flex flex-row text-xs text-slate-500 text-start gap-2">Short</div>
+            <ArrowTrendingDownIcon className="h-4 w-4 text-slate-500" />
+          </TopRow>
 
-          <Label>Short</Label>
-          <Value> {shortAsset?.displaySymbol} </Value>
+          <Listbox value={short} onChange={(x: IAsset) => setShort(x)}>
+            <SelectedAssetStyled asset={short} select="SHORT" />
+            <ListOptionsStyled>
+              {assetsList
+                .filter((a: IAsset) => a.id !== short?.id)
+                .filter((a: IAsset) => a.id !== long?.id)
+                .map((a: IAsset) => assetOption(a))}
+            </ListOptionsStyled>
+          </Listbox>
+        </Container>
 
-          <Label>Long </Label>
-          <Value>{longAsset?.displaySymbol} </Value>
+        <div className="justify-center">
+          <div
+            className="bg-teal-700 rounded-full p-2 "
+            onClick={() => {
+              setLong(short);
+              setShort(long);
+            }}
+          >
+            <ArrowsRightLeftIcon className="h-6 w-6 text-white" />
+          </div>
+        </div>
 
-          <Label> </Label>
-          <Value> </Value>
-        </InfoBlock>
+        <Container>
+          <TopRow className="p-1 justify-start gap-2">
+            <div className="flex flex-row text-xs text-slate-500 text-start gap-2">Long</div>
+            <ArrowTrendingUpIcon className="h-4 w-4 text-slate-500" />
+          </TopRow>
+          <Listbox value={long} onChange={(x: IAsset) => setLong(x)}>
+            <SelectedAssetStyled asset={long} select="LONG" />
+            <ListOptionsStyled>
+              {assetsList
+                .filter((a: IAsset) => a.id !== short?.id)
+                .filter((a: IAsset) => a.id !== long?.id)
+                .map((a: IAsset) => assetOption(a, false))}
+            </ListOptionsStyled>
+          </Listbox>
+        </Container>
       </div>
 
-      {modalOpen && <SelectModal />}
-    </>
+      <div>
+        <Container>
+          <div>
+            {possibleStrategies.length}
+            {possibleStrategies.length
+              ? possibleStrategies.map((s: ILeverStrategy) => {
+                  return (
+                    <div>
+                      <div> {`${s.displayName}`}</div>
+                    </div>
+                  );
+                })
+              : 'No strategy available for that pair yet.'}
+          </div>
+        </Container>
+      </div>
+    </div>
   );
 };
 

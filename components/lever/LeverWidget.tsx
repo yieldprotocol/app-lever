@@ -4,7 +4,7 @@ import Button from '../common/Button';
 
 import LeverageSelect from '../selectors/LeverageSelect';
 
-import {CogIcon } from '@heroicons/react/solid';
+import {CogIcon } from '@heroicons/react/24/solid';
 
 
 import { ValueInput } from '../selectors/ValueInput';
@@ -40,7 +40,7 @@ const LeverWidget = (props: any) => {
   const [leverState] = useContext(LeverContext);
   const { account, selectedStrategy } = leverState;
 
-  const { transact, approve, isSimulating, maxLeverage }: LeverSimulation = props.lever;
+  const { transact, approve, isSimulating, maxLeverage, borrowLimitUsed }: LeverSimulation = props.lever;
 
   return (
     <BorderWrap>
@@ -52,7 +52,7 @@ const LeverWidget = (props: any) => {
       </TopRow>
       <Inner>
         <Section>
-          <SectionHead>Strategy </SectionHead>
+          {/* <SectionHead>Strategy </SectionHead> */}
           <StrategySelect />
         </Section>
 

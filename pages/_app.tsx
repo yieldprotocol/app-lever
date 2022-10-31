@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useColorTheme } from '../hooks/useColorTheme';
-import { XIcon } from '@heroicons/react/solid';
+import { XMarkIcon } from '@heroicons/react/24/solid';
 import LeverProvider from '../context/LeverContext';
 import MarketProvider from '../context/MarketContext';
 import ChartProvider from '../context/ChartContext';
@@ -24,7 +24,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
               pauseOnHover
               closeOnClick
               toastStyle={{ background: theme === 'light' ? '#e4e4e7' : '#18181b' }}
-              closeButton={<XIcon height="1rem" width="1rem" color={theme === 'dark' ? '#e4e4e7' : '#18181b'} />}
+              closeButton={<XMarkIcon height="1rem" width="1rem" color={theme === 'dark' ? '#e4e4e7' : '#18181b'} />}
             />
             <Component {...pageProps} />
           </ChartProvider>

@@ -21,7 +21,6 @@ export const ValueInput = () => {
   const {shortAsset, selectedStrategy } = leverState;
   const [inputState, inputActions ] = useContext(InputContext);
   const [focus, setFocus] = useState(false);
-  // const [asset, setAsset] = useState<IAsset>();
 
   return (
     <Container $unFocused={false}>

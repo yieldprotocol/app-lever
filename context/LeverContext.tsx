@@ -1,7 +1,7 @@
 import { BigNumber, Contract, ethers } from 'ethers';
-import React, { useEffect, useReducer } from 'react';
+import React, { ReactElement, useEffect, useReducer, useState } from 'react';
 import { ASSETS, IAssetRoot, WETH } from '../config/assets';
-import { CAULDRON, contractFactories, LADLE, ORACLE } from '../config/contractRegister';
+// import { CAULDRON, contractFactories, LADLE, ORACLE } from '../config/contractRegister';
 import { ILeverStrategyRoot, STRATEGIES } from '../config/strategies';
 import { ERC20, ERC20Permit, FYToken } from '../contracts/types';
 import useConnector from '../hooks/useConnector';
@@ -10,29 +10,26 @@ import { convertToW3bNumber } from '../lib/utils';
 import { W3bNumber } from './InputContext';
 
 import logoMap from '../config/logos';
-import { sellFYToken } from '@yield-protocol/ui-math';
+import { CAULDRON, contractFactories, contractFactoryMap, LADLE, ORACLE } from '../config/contractRegister';
+
+import { Cauldron, Ladle } from '@yield-protocol/ui-contracts';
 
 export interface ILeverContextState {
   contracts: any;
   assets: Map<string, IAsset>;
-
   strategies: Map<string, ILeverStrategy>;
-
   appState: AppState;
-
   selectedStrategy: ILeverStrategy | undefined;
   selectedPosition: ILeverStrategy | undefined;
-
   shortAsset: IAsset | undefined;
   longAsset: IAsset | undefined;
-
   marketState: any;
   provider: any;
-
   account?: string;
 }
 
 export interface IAsset extends IAssetRoot {
+  image: ReactElement | undefined;
   balance: W3bNumber;
   assetContract: ERC20 | ERC20Permit | FYToken;
 }
@@ -43,10 +40,8 @@ export interface ILeverStrategy extends ILeverStrategyRoot {
   oracleContract: Contract;
   poolContract: Contract;
   poolAddress: string;
-
   minRatio: number;
   loanToValue: number;
-
   bestRate: W3bNumber;
   maxBase: W3bNumber;
 }
@@ -62,7 +57,6 @@ const initState: ILeverContextState = {
 
   // selectedStrategy: undefined,
   account: undefined,
-
   marketState: undefined,
 
   selectedStrategy: undefined,
@@ -141,6 +135,8 @@ const LeverProvider = ({ children }: any) => {
   /* LOCAL STATE */
   const [leverState, updateState] = useReducer(leverReducer, initState);
   const { account, provider } = useConnector();
+  // const [cauldron, setCauldron] = useState<Cauldron>()
+  // const [ladle, setLadle] = useState<Ladle>()
 
   /* update account on change */
   useEffect(() => {
@@ -164,22 +160,35 @@ const LeverProvider = ({ children }: any) => {
   useEffect(() => {
     if (provider) {
       Array.from(ASSETS.values()).map(async (asset: IAssetRoot) => {
+
         const signer = account ? provider.getSigner(account) : provider;
-        const assetContract = contractFactories[asset.address].connect(asset.address, signer) as ERC20;
+        const assetContract = contractFactoryMap.get(asset.tokenType)!.connect(asset.address, signer);
 
         // const _bal = account ? await assetContract.balanceOf(account) : BigNumber.from('0');
         const getBal = (asset: IAssetRoot) => {
-          if (account && asset.id !== WETH) return assetContract.balanceOf(account);
-          if (account && asset.id === WETH) return provider.getBalance(account);
+          if (account && asset.tokenType !== TokenType.ERC1155 ) {
+            if (asset.id !== WETH ) return assetContract.balanceOf(account);
+            if (asset.id === WETH) return provider.getBalance(account);
+          }
           return BigNumber.from('0');
         };
+        const balance = convertToW3bNumber(await getBal(asset), asset.decimals, 6 );
 
-        const balance = convertToW3bNumber(await getBal(asset), asset.decimals, asset.displayDecimals);
+        const displaySymbol = asset.displaySymbol || asset.symbol;
+
+        const strategies = Array.from(STRATEGIES.values());
+
+        const isShortAsset = strategies.some((s:ILeverStrategy)=> s.baseId === asset.id )
+        const isLongAsset = strategies.some((s:ILeverStrategy)=> s.ilkId === asset.id )
+
         const connectedAsset = {
           ...asset,
-          image: logoMap.get(asset.symbol),
+          image: logoMap.get(displaySymbol),
           assetContract,
           balance,
+          displaySymbol,
+          isShortAsset,
+          isLongAsset
         };
         updateState({ type: 'UPDATE_ASSET', payload: connectedAsset });
       });
@@ -191,11 +200,12 @@ const LeverProvider = ({ children }: any) => {
     if (provider) {
       /* connect up relevant contracts */
       Array.from(STRATEGIES.values()).map(async (strategy) => {
+
         const signer = account ? provider.getSigner(account) : provider;
         const leverContract = contractFactories[strategy.leverAddress].connect(strategy.leverAddress, signer);
 
         /* Connect the investToken based on investTokenType */
-        const investTokenContract = contractFactories[strategy.investTokenType].connect(
+        const investTokenContract = contractFactoryMap.get(strategy.investTokenType)!.connect(
           strategy.investTokenAddress,
           provider
         );
@@ -205,10 +215,10 @@ const LeverProvider = ({ children }: any) => {
         const [{ oracle, ratio }, debt] = await Promise.all([
           cauldron.spotOracles(strategy.baseId, strategy.ilkId),
           cauldron.debt(strategy.baseId, strategy.ilkId),
-        ]);
+        ])
 
         /* instantiate a oracle contract */
-        const oracleContract = contractFactories[ORACLE].connect(oracle, provider);
+        const oracleContract = contractFactoryMap.get(TokenType.ORACLE)!.connect(oracle, provider);
         // const sawpContract = contractFactories[ORACLE].connect(oracle, provider);
 
         let poolContract;
@@ -218,7 +228,7 @@ const LeverProvider = ({ children }: any) => {
         if (strategy.investTokenType === TokenType.FYTOKEN) {
           const Ladle = contractFactories[LADLE].connect(LADLE, provider);
           poolAddress = await Ladle.pools(strategy.seriesId);
-          poolContract = contractFactories[TokenType.YIELD_POOL].connect(poolAddress, provider);
+          poolContract = contractFactoryMap.get(TokenType.YIELD_POOL)!.connect(poolAddress, provider);
         }
 
         /* Collateralisation ratio and loan to vaule */

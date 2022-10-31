@@ -1,6 +1,7 @@
 import { FC, useContext, useState } from 'react';
 import tw from 'tailwind-styled-components';
 import { InputContext } from '../../context/InputContext';
+import { Range } from 'react-range';
 
 type DivProps = {
   $unFocused?: boolean;
@@ -10,17 +11,14 @@ const Container = tw.div<DivProps>`${(p) =>
     ? 'opacity-60'
     : ''}  flex rounded-md justify-between p-1 w-full gap-5 align-middle hover:border border hover:border-gray-400 dark:hover:border-gray-600 dark:border-gray-800 dark:bg-gray-800 bg-gray-300 border-gray-300 dark:bg-opacity-25 bg-opacity-25`;
 
-
-const Input = tw.input`
+const Input = tw.input<any>`
 h-full 
 caret-gray-800
  dark:caret-gray-50
   text-2xl 
   appearance-none
    w-full
-   
    dark:bg-black dark:bg-opacity-0 bg-opacity-0
-   
    dark:focus:text-gray-50 
    focus:text-gray-800 
    dark:text-gray-300 
@@ -28,48 +26,92 @@ caret-gray-800
    py-1 
    px-4 
    leading-tight 
-   focus:outline-none 
+   focus:outline-none
    rounded-lg
-   `;
+`;
+
+const getColor = (val:number, max:number) => {
+  const percent = val/max*100;
+  if (max) {
+    if (percent < 33) return '#00000025';
+    if (percent < 50) return '#00AB66';
+    if (percent < 75) return '#FE9953';
+    return '#e06666';
+  }
+  return '#00000025'
+}
 
 
-
-const LeverageSelect = ({max, ... props}) => {
+const LeverageSelect = ({ max, ...props }) => {
   const [inputState, inputActions] = useContext(InputContext);
-
+  const [color, setColor] = useState(undefined)
+ 
   return (
-    <>
-      <div className="flex-row flex gap-2">
+    <Container className=" align-middle">
 
-        <Container>
-
-          <div className='flex flex-shrink'>
-          <Input
-            value={inputState.leverage?.dsp || ''}
-            type="number"
-            onChange={(e) => inputActions.setLeverage(e.target.value)}
-            name="leverage_text"
-            min={1.1}
-            max={max}
-          />
-          </div>
-
-          <div className='grow' >
-          <Input
-            value={inputState.leverage?.dsp || ''}
-            type="range"
-            id="leverage_range"
-            min={1.1}
-            max={max}
-            step="0.1"
-            onChange={(e) => inputActions.setLeverage(e.target.value)}
-          />
-          </div>
-          </Container>
-  
+      <div className="w-1/4 flex flex-grow">
+        <div className=" px-2 py-4" > X </div>
+        <Input
+        className=" before:content: "
+          value={`${inputState?.leverage?.dsp!}`}
+          type="number"
+          onChange={(e) => inputActions.setLeverage(e.target.value)}
+          name="leverage_text"
+          min={1.1}
+          max={max || 5}
+        />
       </div>
-      {/* <div> {inputState.leverage.dsp}X </div> */}
-    </>
+
+      <div className="w-full p-4" >
+        <Range
+          step={0.1}
+          min={1.1}
+          max={max || 5}
+          values={[inputState.leverage?.dsp || '']}
+          onChange={(value) => inputActions.setLeverage(value)}
+          renderTrack={({ props, children }) => (
+            <div
+              {...props}
+              style={{
+                ...props.style,
+                height: '20px',
+                width: '100%',
+                backgroundColor: getColor(inputState.leverage?.dsp, max ),
+                borderRadius: '8px'
+              }}
+            >
+              {children}
+            </div>
+          )}
+          renderMark={({ props, index }) => (
+            <div
+              {...props}
+              style={{
+                ...props.style,
+                height: '2px',
+                width: '2px',
+                backgroundColor: 'teal'
+              }}
+            />
+          )}
+          renderThumb={({ props }) => (
+            <div
+              {...props}
+              style={{
+                ...props.style,
+                height: '36px',
+                width: '24px',
+                backgroundColor: 'teal',
+                borderRadius: '8px',
+                border: 'none',
+                
+              }}
+            />
+          )}
+        />
+        </div>
+
+    </Container>
   );
 };
 

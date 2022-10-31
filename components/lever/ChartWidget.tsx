@@ -114,16 +114,6 @@ export const ChartWidget = (props: HighchartsReact.Props) => {
     series: [
       {
         name: 'STETH / ETH PRICE',
-        // data: (function () {
-        //   var ohlcData: any = [];
-        //   for (var i = 0; i < mockData.length; i++) {
-        //     ohlcData.push([
-        //       mockData[i][0], // the date
-        //       mockData[i][1], // price
-        //     ]);
-        //   }
-        //   return ohlcData;
-        // })(),
         data: prices,
         type: 'area',
         threshold: null,
@@ -145,7 +135,6 @@ export const ChartWidget = (props: HighchartsReact.Props) => {
     } else {
       chartComponentRef?.current?.chart.xAxis[0].setDataGrouping({ units: [['day', [1]]] });
     }
-
     chartComponentRef?.current?.chart.xAxis[0].setExtremes(currentDate - seconds * 1000, currentDate);
   };
 
@@ -157,7 +146,7 @@ export const ChartWidget = (props: HighchartsReact.Props) => {
           <div className="text-start py-4" >
             <div className="flex flex-row gap-2">
               <div className="w-6">{shortAsset?.image}</div>
-              <div>{shortAsset?.symbol} price </div>
+              <div>{shortAsset?.displaySymbol} price </div>
             </div>
 
             <div className="flex flex-row gap-2 ">

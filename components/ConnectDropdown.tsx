@@ -1,6 +1,6 @@
 import { FC, Fragment } from 'react';
 import { Menu, Transition } from '@headlessui/react';
-import { ChevronDownIcon } from '@heroicons/react/solid';
+import { ChevronDownIcon } from '@heroicons/react/24/solid';
 import tw from 'tailwind-styled-components';
 import useCopy from '../hooks/useCopy';
 import { abbreviateHash } from '../utils/appUtils';

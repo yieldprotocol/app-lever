@@ -41,15 +41,20 @@ const ChartProvider = ({ children }: any) => {
   const [chartState, updateState] = useReducer(chartReducer, initState);
 
   /* STATE from other contexts */
-  // const [leverState]: [ILeverContextState] = useContext(LeverContext);
-  // const { selectedStrategy, longAsset, shortAsset } = leverState;
+  const [leverState]: [ILeverContextState] = useContext(LeverContext);
+  const { longAsset, shortAsset } = leverState;
 
   useEffect(()=>{
     var func = async() => {
+
       // console.log(CoinGeckoClient.coins.fetch('bitcoin', {}));
-      let data = await CoinGeckoClient.coins.fetchMarketChart('staked-ether', {vs_currency: 'eth', days: '90' });
-      console.log(data.data)
-      updateState( {type: 'UPDATE_DATA', payload: data.data })
+      // let data_short = await CoinGeckoClient.coins.fetchMarketChart('eth', {vs_currency: 'usd', days: '90' });
+      // let data_long = await CoinGeckoClient.coins.fetchMarketChart('staked-ether', {vs_currency: 'usd', days: '90' });
+      
+      // let data = await CoinGeckoClient.coins.fetchMarketChart('eth', {vs_currency: 'staked-ether', days: '90' });
+      let data_comined = await CoinGeckoClient.coins.fetchMarketChart('staked-ether', {vs_currency: 'eth', days: '90' })
+
+      updateState( {type: 'UPDATE_DATA', payload: data_comined.data })
     }; func();
   },[])
 

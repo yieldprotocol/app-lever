@@ -188,9 +188,6 @@ export const useLever = () => {
 
         const inp_rat = input.dsp*selectedStrategy.bestRate.dsp
         const maxLeverage_ =  inp_rat / (inp_rat- input.dsp*selectedStrategy.loanToValue) ;  // input*rate / input*rate - input*LTV
-        
-        console.log( maxLeverage_  )
-        
         setMaxLeverage(maxLeverage_)
 
         const borrowLimitUsed_ =  simulated.debtAtMaturity?.dsp! / (simulated.investmentPosition?.dsp! * selectedStrategy?.loanToValue)*100
@@ -199,8 +196,10 @@ export const useLever = () => {
         const pnl_ = netAPR - investAPR // TODO: this is probably wrong. check it.  (investmentCurrent?.dsp!/shortInvested?.dsp! -1);
         setPnl(pnl_)
 
-        const mLevarge = input ?  input.dsp / (input.dsp - input.dsp*selectedStrategy.loanToValue) : 3.7;
-        console.log(input.dsp , selectedStrategy.loanToValue,  mLevarge ); 
+        const maxLeverage = input > 0 ?  input.dsp / (input.dsp - input.dsp*selectedStrategy.loanToValue) : 3.7;
+        
+        console.log(input.dsp , selectedStrategy.loanToValue, maxLeverage ); 
+
       }
     })();
   }, [selectedStrategy, debouncedLeverage, input]);
