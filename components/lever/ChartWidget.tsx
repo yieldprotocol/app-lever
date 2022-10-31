@@ -39,7 +39,7 @@ export const ChartWidget = (props: HighchartsReact.Props) => {
     credits: { enabled: false },
     chart: {
       height: condensedView ? 100 : 250,
-      width: condensedView ? 250 : undefined,
+      width: condensedView ? 200 : undefined,
       style: {
         fontFamily: { sans: ['Inter', 'sans-serif'], serif: ['Inter', 'sans-serif'] },
       },

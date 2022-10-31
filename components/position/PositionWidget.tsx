@@ -11,11 +11,12 @@ const PositionWidget = (props: any) => {
     currentReturn,
     futureReturn,
     isSimulating,
+    
   } = props.lever;
 
   return (
     <BorderWrap>
-      {selectedPosition && (
+      {selectedPosition ? (
         <>
           <TopRow>
             <div className="text-lg"> Vault {selectedPosition?.id} </div>
@@ -27,19 +28,19 @@ const PositionWidget = (props: any) => {
         <Value>{shortInvested?.dsp} FYETH</Value> */}
 
         <Label>id: </Label>
-        <Value>{selectedPosition?.id}</Value>
+        <Value>{selectedPosition.id}</Value>
 
         <Label>ilkId:</Label>
-        <Value> {selectedPosition?.ilkId}</Value>
+        <Value> {selectedPosition.ilkId}</Value>
 
         <Label>seriesId: </Label>
-        <Value>{selectedPosition?.seriesId} </Value>
+        <Value>{selectedPosition.seriesId} </Value>
 
         <Label> art: </Label>
-        <Value>{selectedPosition?.art.toString()} </Value>
+        <Value>{selectedPosition.art.toString()} </Value>
 
         <Label>ink: </Label>
-        <Value>{selectedPosition?.ink.toString()}</Value>
+        <Value>{selectedPosition.ink.toString()}</Value>
 
         <Label>Return if divesting now:</Label>
         <Value>{currentReturn.dsp}  </Value>
@@ -61,7 +62,8 @@ const PositionWidget = (props: any) => {
             <div> is simulating: { isSimulating?.toString() }</div>
           </Inner>
         </>
-      )}
+      )
+    : <div/>}
     </BorderWrap>
   );
 };

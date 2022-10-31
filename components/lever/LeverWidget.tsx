@@ -4,8 +4,7 @@ import Button from '../common/Button';
 
 import LeverageSelect from '../selectors/LeverageSelect';
 
-import {CogIcon } from '@heroicons/react/24/solid';
-
+import { CogIcon } from '@heroicons/react/24/solid';
 
 import { ValueInput } from '../selectors/ValueInput';
 import { LeverContext } from '../../context/LeverContext';
@@ -43,11 +42,11 @@ const LeverWidget = (props: any) => {
   const { transact, approve, isSimulating, maxLeverage, borrowLimitUsed }: LeverSimulation = props.lever;
 
   return (
-    <BorderWrap>
+    <BorderWrap className="h-full">
       <TopRow>
         <div className="text-lg"> Open a Position: </div>
         <ClearButton onClick={() => console.log('actually, this might not do anything? settings?')}>
-         <CogIcon className="h-6 w-6 text-teal-700" />
+          <CogIcon className="h-6 w-6 text-teal-700" />
         </ClearButton>
       </TopRow>
       <Inner>
@@ -65,18 +64,20 @@ const LeverWidget = (props: any) => {
           <SectionHead> Leverage:</SectionHead>
           <LeverageSelect max={maxLeverage} />
         </Section>
+      </Inner>
+
+      <div className='p-8 text-center'>
 
         <Button
           action={() => transact()}
-          disabled={!account || !selectedStrategy || borrowLimitUsed>100 } // add in isTransacting check
+          disabled={!account || !selectedStrategy || borrowLimitUsed > 100} // add in isTransacting check
           // loading={false}
           loading={isSimulating}
         >
           {/* {!account ? 'Connect Wallet' : isTransacting ? 'Trade Initiated...' : 'Trade'} */}
           {!account ? 'Connect Wallet' : 'Trade'}
         </Button>
-      </Inner>
-      [ dev: is simulatin? {isSimulating?.toString()} ]
+      </div>
     </BorderWrap>
   );
 };

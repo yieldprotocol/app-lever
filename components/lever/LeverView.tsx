@@ -12,15 +12,18 @@ const LeverView_NoContext = () => {
 
   return (
     <>
-      <div className="flex flex-row gap-4">
-        <div className="w-1/2">
+      <div className="grid overflow-hidden grid-cols-2 grid-rows-2 gap-4">
+        <div className='h-[700px]'>
           <LeverWidget lever={lever} />
         </div>
 
-        <div className="w-1/2">
+        <div className='h-[700px]'>
           <ChartWidget />
-          <EstimatedPosition lever={lever} />
+          <div >
+            <EstimatedPosition lever={lever} />
+          </div>
         </div>
+        
       </div>
       <TenderlyView />
     </>
@@ -30,7 +33,7 @@ const LeverView_NoContext = () => {
 /* Wrap it with the input porivder */
 const LeverView = () => (
   // <InputProvider>
-    <LeverView_NoContext />
+  <LeverView_NoContext />
   // </InputProvider>
 );
 
