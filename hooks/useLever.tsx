@@ -252,29 +252,10 @@ export const useLever = () => {
     // await approve();
     if (inputState && selectedStrategy?.leverContract) {
       setAppState(AppState.Transacting);
-
-        // const gasLimit = (
-        //   await selectedStrategy.leverContract.estimateGas.invest(
-        //     selectedStrategy.seriesId,
-        //     ethers.utils.parseUnits('1', 18),  // input.big,
-        //     '0' // removeSlippage( investPosition.big),
-        //   )
-        // ).mul(2);
-
-        const investTx = await selectedStrategy.leverContract.invest(
-          selectedStrategy.seriesId,
-          inputState.input.big,
-          // ethers.utils.parseUnits('1', 18), // shortBorrowed.big,
-          '0', // removeSlippage( investPosition.big),
-          {
-            value: shortAsset?.id === WETH ? inputState.input.big : ZERO_BN, // value is set as input if using ETH
-            // gasLimit,
-          }
-        );
-        await investTx.wait();
+        const divestTx = await selectedStrategy.leverContract.divest(vaultId, seriesId, ink.toString(), art.toString(), min.toString())
+        await divestTx.wait();
     }
   };
-
 
   return {
     approve,

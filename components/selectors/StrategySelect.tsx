@@ -153,19 +153,19 @@ const StrategySelect = () => {
 
       <div>
         <div className="gap-4">
-          {possibleStrategies.map((s: ILeverStrategy) => {
-            return (
-              <Container key={s.id}>
-                <div 
-                  className={` ${selectedStrategy.id === s.id ? 'bg-teal-900 bg-opacity-25 p-2' : 'text-xs p-2'}`} 
-                  onClick={()=> leverActions.selectStrategy(s)}
-                >
-                  {`${s.displayName}`}
-                </div>
-              </Container>
-            );
-          })}
-          {possibleStrategies.length === 0 && <div className='p-3 text-sm'>  No strategies currently available for this pair. </div>}
+          {possibleStrategies.map((s: ILeverStrategy) => (
+            <Container key={s.id}>
+              <div
+                className={` ${selectedStrategy.id === s.id ? 'bg-teal-900 bg-opacity-25 p-2' : 'text-xs p-2'}`}
+                onClick={() => leverActions.selectStrategy(s)}
+              >
+                {`${s.displayName}`}
+              </div>
+            </Container>
+          ))}
+          {possibleStrategies.length === 0 && (
+            <div className="p-3 text-sm"> No strategies currently available for this pair. </div>
+          )}
         </div>
       </div>
     </div>

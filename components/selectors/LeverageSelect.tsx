@@ -42,7 +42,7 @@ const getColor = (val:number, max:number) => {
 }
 
 
-const LeverageSelect = ({ max, ...props }) => {
+const LeverageSelect = ({ max }) => {
   const [inputState, inputActions] = useContext(InputContext);
   const [color, setColor] = useState(undefined)
  
