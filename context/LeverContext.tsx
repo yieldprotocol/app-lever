@@ -46,6 +46,11 @@ export interface ILeverStrategy extends ILeverStrategyRoot {
   maxBase: W3bNumber;
 }
 
+export interface ILeverPosition {
+  
+
+};
+
 const LeverContext = React.createContext<any>({});
 
 const initState: ILeverContextState = {

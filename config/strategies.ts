@@ -22,13 +22,13 @@ export const STRATEGIES = new Map<string, ILeverStrategyRoot>();
 
 STRATEGIES.set('StETH_01', {
   id: '001',
-  displayName: 'STETH DEC',
+  displayName: 'WETH <> STETH DEC 2022',
   maturity: 1672412400,
 
   investTokenType: TokenType.FYTOKEN,
   investTokenAddress: '0x386a0a72ffeeb773381267d69b61acd1572e074d',
 
-  leverAddress: STETH_LEVER, // 0x2ed8e1c1439576aede07e585de0fd2e9bedacf2f
+  leverAddress: STETH_LEVER, 
   swapAddress: '0x828b154032950C8ff7CF8085D841723Db2696056',
 
   ilkId: WSTETH,
@@ -39,18 +39,18 @@ STRATEGIES.set('StETH_01', {
 
 STRATEGIES.set('StETH_02', {
   id: '002',
-  displayName: 'STETH MAR',
-  maturity: 1672412400,
+  displayName: 'WETH <> STETH MAR 2023',
+  maturity: 1680274800,
 
   investTokenType: TokenType.FYTOKEN,
-  investTokenAddress: '0x386a0a72ffeeb773381267d69b61acd1572e074d',
+  investTokenAddress: '0x0FBd5ca8eE61ec921B3F61B707f1D7D64456d2d1',
 
-  leverAddress: STETH_LEVER, // 0x2ed8e1c1439576aede07e585de0fd2e9bedacf2f
+  leverAddress: STETH_LEVER,
   swapAddress: '0x828b154032950C8ff7CF8085D841723Db2696056',
 
   ilkId: WSTETH,
   baseId: WETH,
-  seriesId: '0x303030380000',
+  seriesId: '0x303030390000',
 });
 
 // STRATEGIES.set('NOTIONAL_01', {

@@ -94,14 +94,11 @@ const StrategySelect = () => {
   }, [shortAsset, longAsset]);
 
   useEffect(() => {
+    const newStratList: ILeverStrategy[] = [];
     strategies.forEach((x: ILeverStrategy) => {
-      if (x.baseId === short.id && x.ilkId === long.id) {
-        setPossibleStrategies([...possibleStrategies, x]);
-        leverActions.selectStrategy(x);
-      } else {
-        setPossibleStrategies([]);
-        leverActions.selectStrategy(null);
-      }
+      if (x.baseId === short.id && x.ilkId === long.id) newStratList.push(x);
+      setPossibleStrategies(newStratList);
+      leverActions.selectStrategy(newStratList[0]);
     });
   }, [short, long]);
 
@@ -155,20 +152,21 @@ const StrategySelect = () => {
       </div>
 
       <div>
-        <Container>
-          <div>
-            {possibleStrategies.length}
-            {possibleStrategies.length
-              ? possibleStrategies.map((s: ILeverStrategy) => {
-                  return (
-                    <div key={s.id}>
-                      <div> {`${s.displayName}`}</div>
-                    </div>
-                  );
-                })
-              : 'No strategy available for that pair yet.'}
-          </div>
-        </Container>
+        <div className="gap-4">
+          {possibleStrategies.map((s: ILeverStrategy) => {
+            return (
+              <Container key={s.id}>
+                <div 
+                  className={` ${selectedStrategy.id === s.id ? 'bg-teal-900 bg-opacity-25 p-2' : 'text-xs p-2'}`} 
+                  onClick={()=> leverActions.selectStrategy(s)}
+                >
+                  {`${s.displayName}`}
+                </div>
+              </Container>
+            );
+          })}
+          {possibleStrategies.length === 0 && <div className='p-3 text-sm'>  No strategies currently available for this pair. </div>}
+        </div>
       </div>
     </div>
   );

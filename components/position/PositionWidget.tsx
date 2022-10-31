@@ -1,17 +1,24 @@
+import { ZERO_BN } from '@yield-protocol/ui-math';
+import { TransactionDescription } from 'ethers/lib/utils';
 import { useContext, useEffect, useState } from 'react';
-import { LeverContext } from '../../context/LeverContext';
+import { ILeverStrategy, LeverContext } from '../../context/LeverContext';
+import { IPosition } from '../../context/PositionContext';
+import { LeverSimulation } from '../../hooks/useLever';
 import Button from '../common/Button';
 import { BorderWrap, InfoBlock, Inner, Label, TopRow, Value } from '../styled';
 
+
 const PositionWidget = (props: any) => {
   const [leverState] = useContext(LeverContext);
-  const { account, selectedPosition } = leverState;
+  const { account, selectedPosition } : {account:string, selectedPosition: IPosition } = leverState;
 
   const {
+
+    divest,
     currentReturn,
     futureReturn,
     isSimulating,
-    
+
   } = props.lever;
 
   return (
@@ -49,9 +56,8 @@ const PositionWidget = (props: any) => {
         <Value>{futureReturn.dsp} </Value>
 
       </InfoBlock>
-
             <Button
-              action={() => console.log('closing')}
+              action={() => divest(selectedPosition.id, selectedPosition.seriesId, selectedPosition.ink, selectedPosition.art,  ZERO_BN )}
               disabled={!account} // add in isTransacting check
               loading={false}
               // loading={isTransacting}

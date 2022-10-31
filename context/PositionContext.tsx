@@ -10,7 +10,15 @@ export interface W3bNumber {
 }
 
 export interface IPositionContextState {
-  positions: Map<any, any>;
+  positions: Map<string, IPosition>;
+}
+
+export interface IPosition {
+  id: string,
+  seriesId: string,
+  ilkId : string,
+  ink : BigNumber,
+  art: BigNumber,
 }
 
 const PositionContext = React.createContext<any>({});

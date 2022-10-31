@@ -39,7 +39,7 @@ const LeverWidget = (props: any) => {
   const [leverState] = useContext(LeverContext);
   const { account, selectedStrategy } = leverState;
 
-  const { transact, approve, isSimulating, maxLeverage, borrowLimitUsed }: LeverSimulation = props.lever;
+  const { invest, approve, isSimulating, maxLeverage, borrowLimitUsed }: LeverSimulation = props.lever;
 
   return (
     <BorderWrap className="h-full">
@@ -51,7 +51,7 @@ const LeverWidget = (props: any) => {
       </TopRow>
       <Inner>
         <Section>
-          {/* <SectionHead>Strategy </SectionHead> */}
+          <SectionHead>Strategy </SectionHead>
           <StrategySelect />
         </Section>
 
@@ -69,7 +69,7 @@ const LeverWidget = (props: any) => {
       <div className='p-8 text-center'>
 
         <Button
-          action={() => transact()}
+          action={() => invest()}
           disabled={!account || !selectedStrategy || borrowLimitUsed > 100} // add in isTransacting check
           // loading={false}
           loading={isSimulating}
