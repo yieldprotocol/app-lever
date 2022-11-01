@@ -35,7 +35,6 @@ export interface IAsset extends IAssetRoot {
 }
 
 export interface ILeverStrategy extends ILeverStrategyRoot {
-  
   investTokenContract: Contract;
   leverContract: Contract;
   oracleContract: Contract;
@@ -52,10 +51,7 @@ export interface ILeverStrategy extends ILeverStrategyRoot {
   minDebt: W3bNumber;
 }
 
-export interface ILeverPosition {
-  
-
-};
+export interface ILeverPosition {}
 
 const LeverContext = React.createContext<any>({});
 
@@ -118,6 +114,17 @@ const leverReducer = (state: ILeverContextState, action: any) => {
         selectedStrategy: action.payload,
       };
 
+    case 'SELECT_LONG':
+      return {
+        ...state,
+        longAsset: action.payload,
+      };
+    case 'SELECT_SHORT':
+      return {
+        ...state,
+        shortAsset: action.payload,
+      };
+
     case 'SELECT_POSITION':
       return {
         ...state,
@@ -128,13 +135,6 @@ const leverReducer = (state: ILeverContextState, action: any) => {
       return {
         ...state,
         provider: action.payload,
-      };
-
-    case 'UPDATE_LONG_SHORT':
-      return {
-        ...state,
-        shortAsset: action.payload.shortAsset,
-        longAsset: action.payload.longAsset,
       };
 
     default:
@@ -171,26 +171,25 @@ const LeverProvider = ({ children }: any) => {
   useEffect(() => {
     if (provider) {
       Array.from(ASSETS.values()).map(async (asset: IAssetRoot) => {
-
         const signer = account ? provider.getSigner(account) : provider;
         const assetContract = contractFactoryMap.get(asset.tokenType)!.connect(asset.address, signer);
 
         // const _bal = account ? await assetContract.balanceOf(account) : BigNumber.from('0');
         const getBal = (asset: IAssetRoot) => {
-          if (account && asset.tokenType !== TokenType.ERC1155 ) {
-            if (asset.id !== WETH ) return assetContract.balanceOf(account);
+          if (account && asset.tokenType !== TokenType.ERC1155) {
+            if (asset.id !== WETH) return assetContract.balanceOf(account);
             if (asset.id === WETH) return provider.getBalance(account);
           }
           return BigNumber.from('0');
         };
-        const balance = convertToW3bNumber(await getBal(asset), asset.decimals, 6 );
+        const balance = convertToW3bNumber(await getBal(asset), asset.decimals, 6);
 
         const displaySymbol = asset.displaySymbol || asset.symbol;
 
         const strategies = Array.from(STRATEGIES.values());
 
-        const isShortAsset = strategies.some((s:ILeverStrategy)=> s.baseId === asset.id )
-        const isLongAsset = strategies.some((s:ILeverStrategy)=> s.ilkId === asset.id )
+        const isShortAsset = strategies.some((s: ILeverStrategy) => s.baseId === asset.id);
+        const isLongAsset = strategies.some((s: ILeverStrategy) => s.ilkId === asset.id);
 
         const connectedAsset = {
           ...asset,
@@ -199,7 +198,7 @@ const LeverProvider = ({ children }: any) => {
           balance,
           displaySymbol,
           isShortAsset,
-          isLongAsset
+          isLongAsset,
         };
         updateState({ type: 'UPDATE_ASSET', payload: connectedAsset });
       });
@@ -211,22 +210,20 @@ const LeverProvider = ({ children }: any) => {
     if (provider) {
       /* connect up relevant contracts */
       Array.from(STRATEGIES.values()).map(async (strategy) => {
-
         const signer = account ? provider.getSigner(account) : provider;
         const leverContract = contractFactories[strategy.leverAddress].connect(strategy.leverAddress, signer);
 
         /* Connect the investToken based on investTokenType */
-        const investTokenContract = contractFactoryMap.get(strategy.investTokenType)!.connect(
-          strategy.investTokenAddress,
-          provider
-        );
+        const investTokenContract = contractFactoryMap
+          .get(strategy.investTokenType)!
+          .connect(strategy.investTokenAddress, provider);
 
         /* get the oracle address from the cauldron  */
         const cauldron = contractFactories[CAULDRON].connect(CAULDRON, provider);
         const [{ oracle, ratio }, debt] = await Promise.all([
           cauldron.spotOracles(strategy.baseId, strategy.ilkId),
           cauldron.debt(strategy.baseId, strategy.ilkId),
-        ])
+        ]);
 
         /* instantiate a oracle contract */
         const oracleContract = contractFactoryMap.get(TokenType.ORACLE)!.connect(oracle, provider);
@@ -248,10 +245,10 @@ const LeverProvider = ({ children }: any) => {
 
         /* Calculates the base/fyToken unit selling price */
         const bestRate = await poolContract.sellFYTokenPreview('1000000000000000000');
-        const maxBaseIn = await poolContract.getBaseBalance()
+        const maxBaseIn = await poolContract.getBaseBalance();
 
-        const maxDebt = ethers.utils.parseUnits(debt.max.toString(), debt.dec)
-        const minDebt = ethers.utils.parseUnits(debt.min.toString(), debt.dec)
+        const maxDebt = ethers.utils.parseUnits(debt.max.toString(), debt.dec);
+        const minDebt = ethers.utils.parseUnits(debt.min.toString(), debt.dec);
 
         // const balance = account ? await investTokenContract.balanceOf(account) : BigNumber.from('0');
         const connectedStrategy = {
@@ -266,10 +263,9 @@ const LeverProvider = ({ children }: any) => {
           loanToValue,
           bestRate: convertToW3bNumber(bestRate, 18, 6),
 
-          minDebt: convertToW3bNumber(minDebt, 18, 6), 
+          minDebt: convertToW3bNumber(minDebt, 18, 6),
           maxDebt: convertToW3bNumber(maxDebt, 18, 6),
-          maxBase: convertToW3bNumber(maxBaseIn, 18, 6)
-          
+          maxBase: convertToW3bNumber(maxBaseIn, 18, 6),
         } as ILeverStrategy;
 
         updateState({ type: 'UPDATE_STRATEGY', payload: connectedStrategy });
@@ -277,7 +273,7 @@ const LeverProvider = ({ children }: any) => {
     }
   }, [account, provider]);
 
-  /* Set the initial selected Strategy if there is no strategy seelcted */
+  /* Set the initial selected Strategy if there is no strategy selected */
   useEffect(() => {
     !leverState.selectedStrategy &&
       updateState({
@@ -286,22 +282,28 @@ const LeverProvider = ({ children }: any) => {
       });
   }, [leverState.strategies]);
 
-  /* set the short and long assets when selected strategy changes */
+  /* ALWAYS set the short and long assets when selected strategy changes */
   useEffect(() => {
-    leverState.selectedStrategy &&
+    if (leverState.selectedStrategy) {
       updateState({
-        type: 'UPDATE_LONG_SHORT',
-        payload: {
-          shortAsset: leverState.assets.get(leverState.selectedStrategy.baseId),
-          longAsset: leverState.assets.get(leverState.selectedStrategy.ilkId),
-        },
+        type: 'SELECT_LONG',
+        payload: leverState.assets.get(leverState.selectedStrategy.ilkId),
       });
+      updateState({
+        type: 'SELECT_SHORT',
+        payload: leverState.assets.get(leverState.selectedStrategy.baseId),
+      });
+    }
   }, [leverState.selectedStrategy, leverState.assets]);
 
-  /* ACTIONS TO CHANGE CONTEXT  */
+  /* ACTIONS TO CHANGE CONTEXT */
   const leverActions = {
+    selectShort: (asset: IAsset) => updateState({ type: 'SELECT_SHORT', payload: asset }),
+    selectLong: (asset: ILeverStrategy) => updateState({ type: 'SELECT_LONG', payload: asset }),
+
     selectStrategy: (strategy: ILeverStrategy) => updateState({ type: 'SELECT_STRATEGY', payload: strategy }),
     selectPosition: (position: ILeverStrategy) => updateState({ type: 'SELECT_POSITION', payload: position }),
+
     setAppState: (appState: AppState) => updateState({ type: 'UPDATE_APPSTATE', payload: appState }),
   };
 

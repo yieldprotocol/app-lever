@@ -46,7 +46,7 @@ const LeverWidget = (props: any) => {
       <TopRow>
         <div className="text-lg"> Open a Position: </div>
         <ClearButton onClick={() => console.log('actually, this might not do anything? settings?')}>
-          <CogIcon className="h-6 w-6 text-teal-700" />
+          <CogIcon className="h-6 w-6 text-primary-700" />
         </ClearButton>
       </TopRow>
       <Inner>

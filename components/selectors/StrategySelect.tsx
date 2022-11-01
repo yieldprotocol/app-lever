@@ -1,16 +1,12 @@
-import { mainModule } from 'process';
-import { FC, Fragment, useContext, useEffect, useState } from 'react';
+import { Fragment, useContext, useEffect, useState } from 'react';
 import tw from 'tailwind-styled-components';
 import { IAsset, ILeverStrategy, LeverContext } from '../../context/LeverContext';
-import AssetSelect from './AssetSelect';
-import Modal from '../common/Modal';
-import { BorderWrap, Inner, TopRow } from '../styled';
+import { BorderWrap, TopRow } from '../styled';
 
 import { ArrowsRightLeftIcon } from '@heroicons/react/24/solid';
 import { ArrowTrendingDownIcon, ArrowTrendingUpIcon } from '@heroicons/react/20/solid';
 
-import { Listbox, Menu, Transition } from '@headlessui/react';
-import { connectors } from '../../connectors';
+import { Listbox, Transition } from '@headlessui/react';
 
 const InfoBlock = tw.div`grid grid-cols-2 gap-2 p-4`;
 const Container = tw.div`
@@ -86,21 +82,14 @@ const StrategySelect = () => {
 
   const [possibleStrategies, setPossibleStrategies] = useState<ILeverStrategy[]>([]);
 
-  const [short, setShort] = useState<IAsset>(shortAsset);
-  const [long, setLong] = useState<IAsset>(longAsset);
-  useEffect(() => {
-    setShort(shortAsset);
-    setLong(longAsset);
-  }, [shortAsset, longAsset]);
-
   useEffect(() => {
     const newStratList: ILeverStrategy[] = [];
     strategies.forEach((x: ILeverStrategy) => {
-      if (x.baseId === short.id && x.ilkId === long.id) newStratList.push(x);
+      if (x.baseId === shortAsset.id && x.ilkId === longAsset.id) newStratList.push(x);
       setPossibleStrategies(newStratList);
       leverActions.selectStrategy(newStratList[0]);
     });
-  }, [short, long]);
+  }, [shortAsset, longAsset]);
 
   return (
     <div className="space-y-4">
@@ -111,12 +100,12 @@ const StrategySelect = () => {
             <ArrowTrendingDownIcon className="h-4 w-4 text-slate-500" />
           </TopRow>
 
-          <Listbox value={short} onChange={(x: IAsset) => setShort(x)}>
-            <SelectedAssetStyled asset={short} select="SHORT" />
+          <Listbox value={shortAsset} onChange={(x: IAsset) => leverActions.selectShort(x)}>
+            <SelectedAssetStyled asset={shortAsset} select="SHORT" />
             <ListOptionsStyled>
               {assetsList
-                .filter((a: IAsset) => a.id !== short?.id)
-                .filter((a: IAsset) => a.id !== long?.id)
+                .filter((a: IAsset) => a.id !== shortAsset?.id)
+                .filter((a: IAsset) => a.id !== longAsset?.id)
                 .map((a: IAsset) => assetOption(a))}
             </ListOptionsStyled>
           </Listbox>
@@ -124,10 +113,10 @@ const StrategySelect = () => {
 
         <div className="justify-center">
           <div
-            className="bg-teal-700 rounded-full p-2 "
+            className="bg-primary-700 rounded-full p-2 "
             onClick={() => {
-              setLong(short);
-              setShort(long);
+              leverActions.selectLong(shortAsset);
+              leverActions.selectShort(longAsset);
             }}
           >
             <ArrowsRightLeftIcon className="h-6 w-6 text-white" />
@@ -139,12 +128,12 @@ const StrategySelect = () => {
             <div className="flex flex-row text-xs text-slate-500 text-start gap-2">Long</div>
             <ArrowTrendingUpIcon className="h-4 w-4 text-slate-500" />
           </TopRow>
-          <Listbox value={long} onChange={(x: IAsset) => setLong(x)}>
-            <SelectedAssetStyled asset={long} select="LONG" />
+          <Listbox value={longAsset} onChange={(x: IAsset) => leverActions.selectLong(x)}>
+            <SelectedAssetStyled asset={longAsset} select="LONG" />
             <ListOptionsStyled>
               {assetsList
-                .filter((a: IAsset) => a.id !== short?.id)
-                .filter((a: IAsset) => a.id !== long?.id)
+                .filter((a: IAsset) => a.id !== shortAsset?.id)
+                .filter((a: IAsset) => a.id !== longAsset?.id)
                 .map((a: IAsset) => assetOption(a, false))}
             </ListOptionsStyled>
           </Listbox>
@@ -156,7 +145,7 @@ const StrategySelect = () => {
           {possibleStrategies.map((s: ILeverStrategy) => (
             <Container key={s.id}>
               <div
-                className={` ${selectedStrategy.id === s.id ? 'bg-teal-900 bg-opacity-25 p-2' : 'text-xs p-2'}`}
+                className={`${selectedStrategy.id === s.id ? 'bg-primary-900 bg-opacity-25 p-2' : 'text-xs p-2'}`}
                 onClick={() => leverActions.selectStrategy(s)}
               >
                 {`${s.displayName}`}
@@ -164,7 +153,7 @@ const StrategySelect = () => {
             </Container>
           ))}
           {possibleStrategies.length === 0 && (
-            <div className="p-3 text-sm"> No strategies currently available for this pair. </div>
+            <div className="p-3 text-sm"> No strategies available for this pair yet. </div>
           )}
         </div>
       </div>

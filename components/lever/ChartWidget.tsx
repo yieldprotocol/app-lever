@@ -16,6 +16,7 @@ dark:bg-opacity-25
 `;
 
 const Button = tw.button`text-xs bg-primary-800 w-5 dark:text-gray-50 text-gray-50 rounded hover:opacity-80`;
+// const primaryColor = tw.
 
 export const ChartWidget = (props: HighchartsReact.Props) => {
   const chartComponentRef = useRef<HighchartsReact.RefObject>(null);
@@ -113,8 +114,8 @@ export const ChartWidget = (props: HighchartsReact.Props) => {
         fillColor: {
           linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
           stops: [
-            [0, 'rgb(251, 113, 133)'],
-            [1, 'teal'],
+            [0, 'teal'],
+            [1, '#ffffff00'],
           ],
         },
         lineWidth: 1,

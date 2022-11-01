@@ -2,6 +2,7 @@ import { FC, useContext, useState } from 'react';
 import tw from 'tailwind-styled-components';
 import { InputContext } from '../../context/InputContext';
 import { Range } from 'react-range';
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
 
 type DivProps = {
   $unFocused?: boolean;
@@ -30,29 +31,27 @@ caret-gray-800
    rounded-lg
 `;
 
-const getColor = (val:number, max:number) => {
-  const percent = val/max*100;
+const getColor = (val: number, max: number) => {
+  const percent = (val / max) * 100;
   if (max) {
     if (percent < 33) return '#00000025';
-    if (percent < 50) return '#00AB66';
-    if (percent < 75) return '#FE9953';
-    return '#e06666';
+    if (percent < 50) return '#006B3D';
+    if (percent < 75) return '#FF980E';
+    return '#D3212C';
   }
-  return '#00000025'
-}
-
+  return '#00000025';
+};
 
 const LeverageSelect = ({ max }) => {
   const [inputState, inputActions] = useContext(InputContext);
-  const [color, setColor] = useState(undefined)
- 
+  const [color, setColor] = useState(undefined);
+
   return (
     <Container className=" align-middle">
-
       <div className="w-1/4 flex flex-grow">
-        <div className=" px-2 py-4" > X </div>
+        <div className=" px-2 py-4"> X </div>
         <Input
-        className=" before:content: "
+          className=" before:content: "
           value={`${inputState?.leverage?.dsp!}`}
           type="number"
           onChange={(e) => inputActions.setLeverage(e.target.value)}
@@ -62,7 +61,7 @@ const LeverageSelect = ({ max }) => {
         />
       </div>
 
-      <div className="w-full p-4" >
+      <div className="w-full p-4">
         <Range
           step={0.1}
           min={1.1}
@@ -74,10 +73,10 @@ const LeverageSelect = ({ max }) => {
               {...props}
               style={{
                 ...props.style,
-                height: '20px',
+                height: '10px',
                 width: '100%',
-                backgroundColor: getColor(inputState.leverage?.dsp, max ),
-                borderRadius: '8px'
+                backgroundColor: getColor(inputState.leverage?.dsp, max),
+                borderRadius: '8px',
               }}
             >
               {children}
@@ -90,7 +89,7 @@ const LeverageSelect = ({ max }) => {
                 ...props.style,
                 height: '2px',
                 width: '2px',
-                backgroundColor: 'teal'
+                backgroundColor: 'teal',
               }}
             />
           )}
@@ -99,18 +98,20 @@ const LeverageSelect = ({ max }) => {
               {...props}
               style={{
                 ...props.style,
-                height: '36px',
-                width: '24px',
-                backgroundColor: 'teal',
+                height: '44px',
+                width: '50px',
+                backgroundColor: 'teal', //getColor(inputState.leverage?.dsp, max),
                 borderRadius: '8px',
-                border: 'none',
-                
+                border: '1px solid grey',
               }}
-            />
+            >
+              <div className="pt-3 flex flex-row justify-center">
+                <ChevronLeftIcon className="h-4 w-4 text-gray-200" /> <ChevronRightIcon className="h-4 w-4 text-gray-200" />
+              </div>
+            </div>
           )}
         />
-        </div>
-
+      </div>
     </Container>
   );
 };
