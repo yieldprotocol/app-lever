@@ -47,16 +47,25 @@ const ChartProvider = ({ children }: any) => {
   useEffect(()=>{
     var func = async() => {
 
+      let data_combined: any = { data: {prices:[], total_volumes: []}};
+
+
+      if (longAsset && shortAsset ) {
+        data_combined = await CoinGeckoClient.coins.fetchMarketChart(longAsset?.chartId!, {vs_currency: 'usd', days: '90' })
+        // short_data = await CoinGeckoClient.coins.fetchMarketChart(shortAsset?.chartId!, {vs_currency: 'usd', days: '90' })
+      }
+
       // console.log(CoinGeckoClient.coins.fetch('bitcoin', {}));
       // let data_short = await CoinGeckoClient.coins.fetchMarketChart('eth', {vs_currency: 'usd', days: '90' });
       // let data_long = await CoinGeckoClient.coins.fetchMarketChart('staked-ether', {vs_currency: 'usd', days: '90' });
-      
       // let data = await CoinGeckoClient.coins.fetchMarketChart('eth', {vs_currency: 'staked-ether', days: '90' });
-      let data_comined = await CoinGeckoClient.coins.fetchMarketChart('staked-ether', {vs_currency: 'eth', days: '90' })
+      // let data_comined = await CoinGeckoClient.coins.fetchMarketChart('staked-ether', {vs_currency: 'eth', days: '90' })
+      // let data_comined = await CoinGeckoClient.coins.fetchMarketChart(longAsset?.chartId!, {vs_currency: 'eth', days: '90' })
 
-      updateState( {type: 'UPDATE_DATA', payload: data_comined.data })
+      updateState( {type: 'UPDATE_DATA', payload: data_combined?.data });
+
     }; func();
-  },[])
+  },[longAsset, shortAsset])
 
   /* ACTIONS TO CHANGE CONTEXT */
   const chartActions = {

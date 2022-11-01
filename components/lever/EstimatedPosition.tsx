@@ -88,7 +88,7 @@ const EstimatedPosition = (props: any) => {
                   {isSimulating ? <Loader /> : `${shortInvested?.dsp} FY${shortAsset?.displaySymbol}`}
                 </Value>
                 <div className=" text-sm text-start mt-2">Debt</div> <div />
-                <Label className="text-sm">Amount owed at maturity:</Label>
+                <Label className="text-sm">Borrowed amount owed at maturity:</Label>
                 <Value className="text-sm">
                   {isSimulating ? <Loader /> : `${debtAtMaturity?.dsp} ${shortAsset?.displaySymbol}`}
                 </Value>

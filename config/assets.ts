@@ -90,6 +90,8 @@ export interface IAssetRoot {
   wrapHandlerAddresses?: Map<number, string>; // mapping a chain id to the corresponding wrap handler address
   unwrapHandlerAddresses?: Map<number, string>; // mapping a chain id to the correpsonding unwrap handler address
   proxyId?: string;
+
+  chartId: string;
 }
 
 export const UNKNOWN = '0x000000000000';
@@ -136,6 +138,8 @@ ASSETS.set(DAI, {
   digitFormat: 2,
   tokenType: TokenType.ERC20_DAI_PERMIT,
   // isYieldBase: true,
+
+  chartId: 'dai',
 });
 
 ASSETS.set(USDC, {
@@ -150,6 +154,8 @@ ASSETS.set(USDC, {
   digitFormat: 2,
   tokenType: TokenType.ERC20_PERMIT,
   // isYieldBase: true,
+
+  chartId: 'usd-coin',
 });
 
 ASSETS.set(WETH, {
@@ -165,6 +171,8 @@ ASSETS.set(WETH, {
   digitFormat: 6,
   tokenType: TokenType.ERC20,
   // isYieldBase: true,
+
+  chartId: 'weth',
 });
 
 ASSETS.set(FRAX, {
@@ -180,6 +188,8 @@ ASSETS.set(FRAX, {
   tokenType: TokenType.ERC20,
   limitToSeries: [],
   // isYieldBase: true,
+
+  chartId: 'frax',
 });
 
 ASSETS.set(ENS, {
@@ -193,6 +203,8 @@ ASSETS.set(ENS, {
   showToken: true,
   digitFormat: 2,
   tokenType: TokenType.ERC20_PERMIT,
+
+  chartId: 'ethereum-name-service',
 });
 
 ASSETS.set(WBTC, {
@@ -206,6 +218,8 @@ ASSETS.set(WBTC, {
   showToken: true,
   digitFormat: 6,
   tokenType: TokenType.ERC20,
+
+  chartId: 'wrapped-bitcoin',
 });
 
 
@@ -227,6 +241,8 @@ ASSETS.set(WSTETH, {
     [4, '0x64BA0F1D2E5479BF132936328e8c533c95646fE8'],
     [5, '0x9f65A6c2b2F12117573323443C8C2290f4C1e675'],
   ]),
+
+  chartId: 'staked-ether', // 'wrapped-steth',
 });
 
 ASSETS.set(STETH, {
@@ -243,6 +259,8 @@ ASSETS.set(STETH, {
   wrapHandlerAddresses: new Map([[1, '0x491aB93faa921C8E634F891F96512Be14fD3DbB1']]),
   unwrapHandlerAddresses: new Map([]),
   proxyId: WSTETH,
+
+  chartId: 'staked-ether',
 });
 
 ASSETS.set(LINK, {
@@ -256,6 +274,8 @@ ASSETS.set(LINK, {
   showToken: true,
   digitFormat: 2,
   tokenType: TokenType.ERC20,
+
+  chartId: 'chainlink'
 });
 
 ASSETS.set(yvUSDC, {
@@ -270,6 +290,8 @@ ASSETS.set(yvUSDC, {
   digitFormat: 2,
   tokenType: TokenType.ERC20,
   limitToSeries: ['0x303230350000', '0x303230360000', '0x303230370000', '0x303230380000', '0x303230390000'],
+  
+  chartId: 'usd-coin',
 });
 
 ASSETS.set(UNI, {
@@ -283,4 +305,6 @@ ASSETS.set(UNI, {
   showToken: true,
   digitFormat: 4,
   tokenType: TokenType.ERC20_PERMIT,
+
+  chartId: 'uniswap'
 });

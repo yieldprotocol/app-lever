@@ -1,12 +1,11 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import HighStock, { seriesType } from 'highcharts/highstock';
+import HighStock from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
 import { ChartContext } from '../../context/ChartContext';
-import { BorderWrap, Inner, TopRow } from '../styled';
+import { BorderWrap, TopRow } from '../styled';
 import { LeverContext } from '../../context/LeverContext';
 import tw from 'tailwind-styled-components';
 import { InputContext } from '../../context/InputContext';
-import { ArrowsPointingOutIcon } from '@heroicons/react/24/solid';
 
 export const TopRow_ = tw.div`p-0 align-middle text-center items-center rounded-t-lg dark:bg-gray-900 
 bg-gray-100
@@ -16,7 +15,6 @@ dark:bg-opacity-25
 `;
 
 const Button = tw.button`text-xs bg-primary-800 w-5 dark:text-gray-50 text-gray-50 rounded hover:opacity-80`;
-// const primaryColor = tw.
 
 export const ChartWidget = (props: HighchartsReact.Props) => {
   const chartComponentRef = useRef<HighchartsReact.RefObject>(null);
@@ -170,7 +168,6 @@ export const ChartWidget = (props: HighchartsReact.Props) => {
                   <div className="w-6">{shortAsset?.image}</div>
                   <div>{shortAsset?.displaySymbol} price </div>
                 </div>
-
                 <div className="flex flex-row gap-2 ">
                   <div className="w-8">{longAsset?.image}</div>
                   <div className="text-2xl">
