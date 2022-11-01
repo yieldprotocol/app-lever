@@ -35,15 +35,21 @@ export interface IAsset extends IAssetRoot {
 }
 
 export interface ILeverStrategy extends ILeverStrategyRoot {
+  
   investTokenContract: Contract;
   leverContract: Contract;
   oracleContract: Contract;
   poolContract: Contract;
+
   poolAddress: string;
+
   minRatio: number;
   loanToValue: number;
+
   bestRate: W3bNumber;
   maxBase: W3bNumber;
+  maxDebt: W3bNumber;
+  minDebt: W3bNumber;
 }
 
 export interface ILeverPosition {
@@ -242,7 +248,10 @@ const LeverProvider = ({ children }: any) => {
 
         /* Calculates the base/fyToken unit selling price */
         const bestRate = await poolContract.sellFYTokenPreview('1000000000000000000');
-        const maxBase = await poolContract.getBaseBalance()
+        const maxBaseIn = await poolContract.getBaseBalance()
+
+        const maxDebt = ethers.utils.parseUnits(debt.max.toString(), debt.dec)
+        const minDebt = ethers.utils.parseUnits(debt.min.toString(), debt.dec)
 
         // const balance = account ? await investTokenContract.balanceOf(account) : BigNumber.from('0');
         const connectedStrategy = {
@@ -256,8 +265,12 @@ const LeverProvider = ({ children }: any) => {
           minRatio,
           loanToValue,
           bestRate: convertToW3bNumber(bestRate, 18, 6),
-          maxBase: convertToW3bNumber(maxBase, 18, 6)
-        };
+
+          minDebt: convertToW3bNumber(minDebt, 18, 6), 
+          maxDebt: convertToW3bNumber(maxDebt, 18, 6),
+          maxBase: convertToW3bNumber(maxBaseIn, 18, 6)
+          
+        } as ILeverStrategy;
 
         updateState({ type: 'UPDATE_STRATEGY', payload: connectedStrategy });
       });
