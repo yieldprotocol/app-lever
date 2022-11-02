@@ -111,7 +111,7 @@ const StrategySelect = () => {
           </Listbox>
         </Container>
 
-        <div className="justify-center pt-4 z-20">
+        <div className="justify-center pt-6 z-20">
           {/* <div className="bg-slate-900 bg-opacity-25 rounded-full p-1 "> */}
           <div
             className="bg-primary-700 rounded-full p-2 "
