@@ -4,9 +4,17 @@ import { IAsset, ILeverStrategy, LeverContext } from '../../context/LeverContext
 import { BorderWrap, TopRow } from '../styled';
 
 import { ArrowsRightLeftIcon } from '@heroicons/react/24/solid';
-import { ArrowTrendingDownIcon, ArrowTrendingUpIcon } from '@heroicons/react/20/solid';
+import {
+  ArrowTrendingDownIcon,
+  ArrowTrendingUpIcon,
+  StarIcon,
+} from '@heroicons/react/20/solid';
 
-import { ExclamationTriangleIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
+import {
+  ExclamationTriangleIcon,
+  InformationCircleIcon,
+  StarIcon as StarIcon_outline,
+} from '@heroicons/react/24/outline';
 
 import { Listbox, Transition } from '@headlessui/react';
 import { formatDate } from '../../utils/appUtils';
@@ -84,6 +92,7 @@ const StrategySelect = () => {
   const assetsList = Array.from(assets.values());
 
   const [possibleStrategies, setPossibleStrategies] = useState<ILeverStrategy[]>([]);
+  const [requestedPairs, setRequestedPair] = useState<string[]>([]);
 
   useEffect(() => {
     const newStratList: ILeverStrategy[] = [];
@@ -126,7 +135,6 @@ const StrategySelect = () => {
             <ArrowsRightLeftIcon className="h-6 w-6 text-white" />
           </div>
           {/* </div> */}
-
         </div>
 
         <Container>
@@ -151,22 +159,38 @@ const StrategySelect = () => {
           {possibleStrategies.map((s: ILeverStrategy) => (
             <Container key={s.id}>
               <div
-                className={`flex flex-row gap-4 p-2 justify-around ${selectedStrategy.id === s.id ? 'bg-primary-900 bg-opacity-25' : 'text-xs'}`}
+                className={`flex flex-row gap-4 p-2 justify-around ${
+                  selectedStrategy.id === s.id ? 'bg-primary-900 bg-opacity-25' : 'text-xs'
+                }`}
                 onClick={() => leverActions.selectStrategy(s)}
               >
-                <div className='w-6 h-6'>{ s.tradeImage }</div>
+                <div className="w-6 h-6">{s.tradeImage}</div>
                 <div>{`${shortAsset.displaySymbol} v ${longAsset.displaySymbol} Lever`} </div>
-                <div>{ formatDate( s.maturityDate) }</div>
-                <div> <InformationCircleIcon className='w-6 h-6 text-gray-500' /> </div>
+                <div>{formatDate(s.maturityDate)}</div>
+                <div>
+                  {' '}
+                  <InformationCircleIcon className="w-6 h-6 text-gray-500" />{' '}
+                </div>
               </div>
             </Container>
           ))}
           {possibleStrategies.length === 0 && (
             <Container>
-              <div className="p-3 flex flex-row gap-4 text-xs"> 
-               <ExclamationTriangleIcon className='w-4 h-4'/> 
-                <div className="text-xs"> No strategies are available for this short/long pair yet. </div> 
-               </div>
+              <div className="p-3 flex flex-row text-xs justify-between align-middle ">
+                <div className="flex flex-row gap-4">
+                  <div className=" p-1">
+                    {' '}
+                    <ExclamationTriangleIcon className="w-4 h-4" />{' '}
+                  </div>
+                  <div className="text-sm"> No strategies are available for this short/long pair yet. </div>
+                </div>
+                <div
+                  className="text-xs p-1"
+                  onClick={() => setRequestedPair([...requestedPairs, `${shortAsset.symbol}${longAsset.symbol}`])}
+                >
+                  { shortAsset && longAsset && requestedPairs.includes( `${shortAsset.symbol}${longAsset.symbol}`) ? <StarIcon className="w-4 h-4" /> : <StarIcon_outline className="w-4 h-4" />}
+                </div>
+              </div>
             </Container>
           )}
         </div>
