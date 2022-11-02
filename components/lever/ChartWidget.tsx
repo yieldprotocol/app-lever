@@ -132,7 +132,7 @@ export const ChartWidget = (props: HighchartsReact.Props) => {
 
     series: [
       {
-        name: 'STETH / ETH PRICE',
+        name: `${longAsset?.displaySymbol} / ${shortAsset?.displaySymbol}`,
         data: prices,
         type: 'area',
         threshold: null,
@@ -163,18 +163,24 @@ export const ChartWidget = (props: HighchartsReact.Props) => {
         <div className={`col-span-2`}>
           <TopRow>
             <div className="flex-grow">
+
               <div className="text-start py-4">
+
                 <div className="flex flex-row gap-2">
                   <div className="w-6">{shortAsset?.image}</div>
-                  <div>{shortAsset?.displaySymbol} price </div>
+                  <div className="flex flex-row pl-2" > 1 {shortAsset?.displaySymbol}  </div>
                 </div>
+
                 <div className="flex flex-row gap-2 ">
-                  <div className="w-8">{longAsset?.image}</div>
+
+                  <div className="w-8 h-8">{longAsset?.image}</div>
                   <div className="text-2xl">
                     {prices.length ? Math.round(parseFloat(prices[prices.length - 1][1]) * 10000) / 10000 : '...'}
                   </div>
                   <div className="text-2xl">{longAsset?.displaySymbol}</div>
+
                 </div>
+
               </div>
 
               {!condensedView && (

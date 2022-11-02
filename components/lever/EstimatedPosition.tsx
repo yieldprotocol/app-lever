@@ -116,7 +116,6 @@ const EstimatedPosition = (props: any) => {
                 {showExtra ? 'Show less -' : 'Show Advanced Info +'}
               </button>
             </div>
-
             <Divider />
 
             <InfoBlock>
@@ -124,23 +123,43 @@ const EstimatedPosition = (props: any) => {
               <Label>Borrow Limit Usage</Label>
               {/* <Value> {selectedStrategy?.loanToValue*100 } %</Value> */}
 
-              <Value> {isSimulating ? <Loader /> : Math.round((borrowLimitUsed + Number.EPSILON) * 100) / 100}%</Value>
+              <Value> {isSimulating ? <Loader /> : Math.round((borrowLimitUsed + Number.EPSILON) * 100) / 100} %</Value>
 
               {/* <NotShown>(pos/prin - 1)</NotShown> */}
               <Label>PnL</Label>
               <Value>{isSimulating ? <Loader /> : Math.round((pnl + Number.EPSILON) * 100) / 100}</Value>
 
               {/* <NotShown>( investPosition/ baseInvested ) ^ t%year - 1</NotShown> */}
-              <Label><div className='flex flex-row gap-2'>Investment rate  <div className='w-5'><PlusCircleIcon /></div></div></Label>
-              <Value> {isSimulating ? <Loader /> : Math.round((investAPR + Number.EPSILON) * 100) / 100} %APR</Value>
+              <Label>
+                <div className="flex flex-row gap-2 ">
+                  Investment rate{' '}
+                  <div className="w-5">
+                    <PlusCircleIcon />
+                  </div>
+                </div>
+              </Label>
+              <Value>
+                {isSimulating ? <Loader /> : Math.round((investAPR + Number.EPSILON) * 100) / 100} % APR
+              </Value>
 
               {/* <NotShown>( debtPosition / baseBorrowed ) ^ t%year -1</NotShown> */}
-              <Label><div className='flex flex-row gap-2'>Borrowing rate  <div className='w-5'><MinusCircleIcon /></div></div></Label>
-              <Value>{isSimulating ? <Loader /> : Math.round((borrowAPR + Number.EPSILON) * 100) / 100} %APR</Value>
+              <Label>
+                <div className="flex flex-row gap-2">
+                  Borrowing rate{' '}
+                  <div className="w-5">
+                    <MinusCircleIcon />
+                  </div>
+                </div>
+              </Label>
+              <Value>
+                {isSimulating ? <Loader /> : Math.round((borrowAPR + Number.EPSILON) * 100) / 100} % APR
+              </Value>
 
               {/* <NotShown>leverage*longAPR - (leverage - 1)*borrowAPR</NotShown> */}
               <Label>Net rate</Label>
-              <Value>{isSimulating ? <Loader /> : Math.round((netAPR + Number.EPSILON) * 100) / 100} %APR</Value>
+              <Value className={netAPR < 0 ? 'text-red-500 dark:text-red-500' : 'text-green-600 dark:text-green-600 '}>
+                {isSimulating ? <Loader /> : Math.round((netAPR + Number.EPSILON) * 100) / 100} % APR
+              </Value>
 
               {/* <NotShown>( investPostion - debtPosition - input )</NotShown> */}
               {/* <Label>Return in base: </Label>
