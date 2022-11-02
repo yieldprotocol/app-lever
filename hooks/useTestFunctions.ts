@@ -1,34 +1,48 @@
 import { ethers } from 'ethers';
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { parseEther } from 'ethers/lib/utils';
+import { useContext, useEffect, useState } from 'react';
 import { LeverContext } from '../context/LeverContext';
-import { copyToClipboard } from '../utils/appUtils';
 
 const useTestFunctions = () => {
+  const [leverState] = useContext(LeverContext);
+  const { account } = leverState;
 
-  const [ leverState ] = useContext(LeverContext);
-  const { account } = leverState; 
-  
+  const [balance, setBalance] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (account) {
+      (async () => {
+        const tenderlyProvider = new ethers.providers.JsonRpcProvider(process.env.tenderlyRpc);
+        const bal = await tenderlyProvider.getBalance(account);
+        setBalance(parseFloat(ethers.utils.formatEther(bal)));
+      })();
+    }
+  }, [account]);
+
   const fillEther = async () => {
-
     try {
-      const tenderlyProvider = new ethers.providers.JsonRpcProvider(
-        process.env.tenderlyRpc
-      );
-      const transactionParameters = [
-        [account],
-        ethers.utils.hexValue(BigInt("100000000000000000000")),
-      ];
-      await tenderlyProvider?.send(
-        "tenderly_addBalance",
-        transactionParameters
-      );
-      console.log("Eth funded.");
+      const tenderlyProvider = new ethers.providers.JsonRpcProvider(process.env.tenderlyRpc);
+      const transactionParameters = [[account], ethers.utils.hexValue(BigInt('100000000000000000000'))];
+      /* only fill if balance is less than 100 */
+      if (balance < 100 ) {
+        setLoading(true)
+        await tenderlyProvider?.send('tenderly_addBalance', transactionParameters);
+        const bal_ = await tenderlyProvider.getBalance(account);
+        setBalance(parseFloat(ethers.utils.formatEther(bal_)));
+        setLoading(false)
+        console.log('Eth funded.');
+      } else {
+        setLoading(false)
+        console.log("Don't be silly, you have more than enough ETH!!.");
+      }
     } catch (e) {
-      console.log("Could not fill eth on tenderly fork :: ", e);
+      setLoading(false)
+      console.log('Could not fill eth on tenderly fork :: ', e);
     }
   };
 
-  return { fillEther };
+  return { fillEther, balance, loading };
 };
 
 export default useTestFunctions;
