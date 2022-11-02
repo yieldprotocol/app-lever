@@ -155,6 +155,7 @@ ASSETS.set(USDC, {
   tokenType: TokenType.ERC20_PERMIT,
   // isYieldBase: true,
 
+  // tradePlatform: 'Curve',
   chartId: 'usd-coin',
 });
 

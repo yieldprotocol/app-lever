@@ -1,20 +1,12 @@
-import React, { useContext, useEffect, useReducer } from 'react';
+import React, { useContext, useEffect, useReducer, useState } from 'react';
 import { ILeverContextState, LeverContext } from './LeverContext';
 import CoinGecko from 'coingecko-api';
 
-
 export interface IChartState {
   prices: any[];
-  total_volumes: any[];
-
 }
 
 const ChartContext = React.createContext<any>({});
-
-const initState: any= {
-  prices: [],
-  total_volumes: [],
-};
 
 const chartReducer = (state: IChartState, action: any) => {
   /* Reducer switch */
@@ -22,8 +14,8 @@ const chartReducer = (state: IChartState, action: any) => {
     case 'UPDATE_DATA':
       return {
         ...state,
-        prices: action.payload.prices,
-        total_volumes: action.payload.total_volumes,
+        prices: action.payload,
+        // total_volumes: action.payload.total_volumes,
       };
     default:
       return state;
@@ -34,37 +26,37 @@ const ChartProvider = ({ children }: any) => {
 
   //1. Initiate the CoinGecko API Client
   const CoinGeckoClient = new CoinGecko();
-
-  // https://api.coingecko.com/api/v3/coins/staked-ether/market_chart?vs_currency=eth&days=max&interval=daily
   
   /* LOCAL STATE */
-  const [chartState, updateState] = useReducer(chartReducer, initState);
+  const [chartState, updateState] = useReducer(chartReducer, {prices:[]});
+  const [priceMap, setPriceMap ] = useState<Map<string, any[]>>( new Map([]) ) 
 
   /* STATE from other contexts */
   const [leverState]: [ILeverContextState] = useContext(LeverContext);
   const { longAsset, shortAsset } = leverState;
 
+  const getPricesPerUsd = async (chartId:string) => {
+    console.log( 'Fetching price data for : ', chartId);
+    const prices = (await CoinGeckoClient.coins.fetchMarketChart(chartId, {vs_currency: 'usd', days: '90' })).data.prices
+    const pricesPerUsd = prices.map((p)=> [p[0], 1/p[1] ]);
+    setPriceMap( priceMap.set(chartId, pricesPerUsd)) ;
+    return pricesPerUsd;
+  };
+
+  /* calculate the price per asset based on usd */ 
   useEffect(()=>{
-    var func = async() => {
+    
+    shortAsset && longAsset &&  (async () => {
+      /* get the prices from eithe map or fetched */ 
+      const shortPerUsd = priceMap.get(shortAsset.chartId) || await getPricesPerUsd(shortAsset.chartId);
+      const longPerUsd = priceMap.get(longAsset.chartId) || await getPricesPerUsd(longAsset.chartId);
+      /* Calculate a short/long price */ 
+      const shortLongPrice_ = longPerUsd.map((p, index)=>[p[0], shortPerUsd[index] ?  p[1] / shortPerUsd[index][1] : undefined ]);
+      /* remove any undefined value pairs */
+      const shortLongPrice = shortLongPrice_.filter((v) => v[0] !== undefined && v[1] !== undefined );
+      updateState( {type: 'UPDATE_DATA', payload: shortLongPrice });
+    })();
 
-      let data_combined: any = { data: {prices:[], total_volumes: []}};
-
-
-      if (longAsset && shortAsset ) {
-        data_combined = await CoinGeckoClient.coins.fetchMarketChart(longAsset?.chartId!, {vs_currency: 'usd', days: '90' })
-        // short_data = await CoinGeckoClient.coins.fetchMarketChart(shortAsset?.chartId!, {vs_currency: 'usd', days: '90' })
-      }
-
-      // console.log(CoinGeckoClient.coins.fetch('bitcoin', {}));
-      // let data_short = await CoinGeckoClient.coins.fetchMarketChart('eth', {vs_currency: 'usd', days: '90' });
-      // let data_long = await CoinGeckoClient.coins.fetchMarketChart('staked-ether', {vs_currency: 'usd', days: '90' });
-      // let data = await CoinGeckoClient.coins.fetchMarketChart('eth', {vs_currency: 'staked-ether', days: '90' });
-      // let data_comined = await CoinGeckoClient.coins.fetchMarketChart('staked-ether', {vs_currency: 'eth', days: '90' })
-      // let data_comined = await CoinGeckoClient.coins.fetchMarketChart(longAsset?.chartId!, {vs_currency: 'eth', days: '90' })
-
-      updateState( {type: 'UPDATE_DATA', payload: data_combined?.data });
-
-    }; func();
   },[longAsset, shortAsset])
 
   /* ACTIONS TO CHANGE CONTEXT */
