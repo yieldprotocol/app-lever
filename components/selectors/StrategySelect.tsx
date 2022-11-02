@@ -158,7 +158,7 @@ const StrategySelect = () => {
             </Container>
           ))}
           {possibleStrategies.length === 0 && (
-            <div className=" flex flex-row p-3 text-sm"> No strategies are available for this pair yet. </div>
+            <div className=" flex flex-row p-3 text-sm"> No strategies are available for this short/long pair yet. </div>
           )}
         </div>
       </div>

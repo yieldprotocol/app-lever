@@ -13,12 +13,10 @@ const PositionWidget = (props: any) => {
   const { account, selectedPosition } : {account:string, selectedPosition: IPosition } = leverState;
 
   const {
-
     divest,
     currentReturn,
     futureReturn,
     isSimulating,
-
   } = props.lever;
 
   return (
@@ -69,7 +67,7 @@ const PositionWidget = (props: any) => {
           </Inner>
         </>
       )
-    : <div/>}
+    : <div />}
     </BorderWrap>
   );
 };

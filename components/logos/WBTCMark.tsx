@@ -4,6 +4,15 @@ function WBTCMark(props: React.SVGProps<SVGSVGElement>) {
   return (
       <svg {...props} xmlns="http://www.w3.org/2000/svg" width="90%" height="90%" viewBox="0 0 109.26 109.26">
         <title>wrapped-bitcoin-wbtc</title>
+
+        <circle
+      style={{
+        fill: '#ffffff95',
+      }}
+      cx={109.26/2}
+      cy={109.26/2}
+      r={109.26/2}
+    />
         <g id="Layer_2" data-name="Layer 2">
           <g id="Layer_1-2" data-name="Layer 1">
             <g id="Page-1">

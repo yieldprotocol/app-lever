@@ -35,7 +35,6 @@ const positionReducer = (state: IPositionContextState, action: any) => {
         ...state,
         positions: new Map(state.positions.set(action.payload.id, action.payload)),
       };
-
     default:
       return state;
   }
@@ -49,8 +48,8 @@ const PositionProvider = ({ children }: any) => {
   const { contracts, account } = leverState as ILeverContextState;
 
   const updatePositions = async ( positionsToUpdate: [] = [] ) => {
+    
     if (account) {
-
       const vaultsReceivedFilter = contracts.Cauldron.filters.VaultGiven(null, account);
       const vaultsReceived = await contracts.Cauldron.queryFilter(vaultsReceivedFilter, 15682427, 'latest');
  
@@ -58,7 +57,7 @@ const PositionProvider = ({ children }: any) => {
         vaultsReceived.map(async (x:any): Promise<any> => {
           const { vaultId:id } = x.args;
           const { ilkId, seriesId} = await contracts.Cauldron.vaults(id);
-          const {ink, art } = await contracts.Cauldron.balances(id)
+          const { ink, art } = await contracts.Cauldron.balances(id)
 
           const vaultInfo = {
             id,
