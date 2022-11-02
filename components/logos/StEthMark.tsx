@@ -2,7 +2,7 @@ import * as React from 'react';
 
 function StEthMark(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg width="100%" height="100%" viewBox="0 0 24 24" {...props}>
+    <svg width="90%" height="90%" viewBox="0 0 24 24" {...props}>
       <path
         d="m7.078 11.148-.135.206a5.788 5.788 0 0 0 .814 7.32 6.043 6.043 0 0 0 4.24 1.72l-4.92-9.246z"
         fill="#00A3FF"

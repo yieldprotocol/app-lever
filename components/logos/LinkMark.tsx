@@ -2,7 +2,7 @@ import * as React from 'react';
 
 function LinkMark(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 37.8 43.6" width="100%" height="100%" {...props}>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 37.8 43.6" width="90%" height="90%" {...props}>
       <g id="Layer_2">
         <g id="Layer_1-2">
           <path
