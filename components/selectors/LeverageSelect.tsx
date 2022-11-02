@@ -62,6 +62,7 @@ const LeverageSelect = ({ max }) => {
       </div>
 
       <div className="w-full p-4">
+        <div className="p-2">
         <Range
           step={0.1}
           min={1.1}
@@ -111,6 +112,7 @@ const LeverageSelect = ({ max }) => {
             </div>
           )}
         />
+        </div>
       </div>
     </Container>
   );
