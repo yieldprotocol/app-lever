@@ -4,7 +4,7 @@ const CRVMark = (props: React.SVGProps<SVGSVGElement>) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="100%" height="100%" {...props}>
     <circle
       style={{
-        fill: '#fff',
+        fill: '#ffffff00',
       }}
       cx={16}
       cy={16}

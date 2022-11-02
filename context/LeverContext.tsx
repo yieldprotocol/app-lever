@@ -1,5 +1,5 @@
 import { BigNumber, Contract, ethers } from 'ethers';
-import React, { ReactElement, useEffect, useReducer, useState } from 'react';
+import React, { ReactComponentElement, ReactElement, useEffect, useReducer, useState } from 'react';
 import { ASSETS, IAssetRoot, WETH } from '../config/assets';
 // import { CAULDRON, contractFactories, LADLE, ORACLE } from '../config/contractRegister';
 import { ILeverStrategyRoot, STRATEGIES } from '../config/strategies';
@@ -49,6 +49,10 @@ export interface ILeverStrategy extends ILeverStrategyRoot {
   maxBase: W3bNumber;
   maxDebt: W3bNumber;
   minDebt: W3bNumber;
+
+  tradeImage: any;
+  maturityDate: Date;
+
 }
 
 export interface ILeverPosition {}
@@ -250,6 +254,8 @@ const LeverProvider = ({ children }: any) => {
         const maxDebt = ethers.utils.parseUnits(debt.max.toString(), debt.dec);
         const minDebt = ethers.utils.parseUnits(debt.min.toString(), debt.dec);
 
+        const maturityDate = new Date( strategy.maturity * 1000)
+
         // const balance = account ? await investTokenContract.balanceOf(account) : BigNumber.from('0');
         const connectedStrategy = {
           ...strategy,
@@ -266,6 +272,11 @@ const LeverProvider = ({ children }: any) => {
           minDebt: convertToW3bNumber(minDebt, 18, 6),
           maxDebt: convertToW3bNumber(maxDebt, 18, 6),
           maxBase: convertToW3bNumber(maxBaseIn, 18, 6),
+
+          // seriesMaturity: 
+          tradeImage: logoMap.get('CURVE'),
+          maturityDate: new Date( strategy.maturity * 1000),
+
         } as ILeverStrategy;
 
         updateState({ type: 'UPDATE_STRATEGY', payload: connectedStrategy });

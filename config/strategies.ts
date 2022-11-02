@@ -16,13 +16,15 @@ export interface ILeverStrategyRoot {
   ilkId: string;
   baseId: string;
   seriesId: string;
+
+  tradePlatform: string;
 }
 
 export const STRATEGIES = new Map<string, ILeverStrategyRoot>();
 
-STRATEGIES.set('StETH_01', {
+STRATEGIES.set('STETH_01', {
   id: '001',
-  displayName: 'WETH <> STETH DEC 2022',
+  displayName: 'WETH - STETH DEC 2022',
   maturity: 1672412400,
 
   investTokenType: TokenType.FYTOKEN,
@@ -34,6 +36,8 @@ STRATEGIES.set('StETH_01', {
   ilkId: WSTETH,
   baseId: WETH,
   seriesId: '0x303030380000',
+
+  tradePlatform: 'Curve',
 });
 
 

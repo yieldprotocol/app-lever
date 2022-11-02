@@ -1,5 +1,4 @@
 import { BigNumber, ethers, utils } from 'ethers';
-import { zeroPad } from 'ethers/lib/utils';
 import { useContext, useEffect, useState } from 'react';
 import { WETH, WSTETH } from '../config/assets';
 import { ZERO_BN, ZERO_W3N } from '../constants';

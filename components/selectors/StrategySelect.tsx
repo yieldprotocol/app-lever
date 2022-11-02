@@ -148,10 +148,12 @@ const StrategySelect = () => {
           {possibleStrategies.map((s: ILeverStrategy) => (
             <Container key={s.id}>
               <div
-                className={`${selectedStrategy.id === s.id ? 'bg-primary-900 bg-opacity-25 p-2' : 'text-xs p-2'}`}
+                className={`flex flex-row gap-4 justify-between ${selectedStrategy.id === s.id ? 'bg-primary-900 bg-opacity-25 p-2' : 'text-xs p-2'}`}
                 onClick={() => leverActions.selectStrategy(s)}
               >
-                {`${s.displayName}`}
+                <div className='w-6 h-6'>{ s.tradeImage }</div>
+                <div>{`${shortAsset.displaySymbol}<>${longAsset.displaySymbol}`} </div>
+                <div>{s.maturityDate.toLocaleDateString() }</div>
               </div>
             </Container>
           ))}
