@@ -1,4 +1,4 @@
-import { getMonth } from 'date-fns';
+import { format, getMonth } from 'date-fns';
 
 export const copyToClipboard = (str: string) => {
   const el = document.createElement('textarea');
@@ -77,6 +77,14 @@ export const numberWithCommas = (x: number) => x.toString().replace(/\B(?=(\d{3}
 
 export const formatValue = (x: string | number, decimals: number) =>
   numberWithCommas(Number(cleanValue(x?.toString(), decimals)));
+
+
+/*
+* Generate the series name from the maturity number.
+* Examples: full (defualt) : 'MMMM yyyy' ,  apr badge  : 'MMM yy' , mobile: 'MMM yyyy'
+* NOTE: subtraction used to accuount for time zone differences
+* */
+export const formatDate = (date:Date, style: string = 'MMMM yyyy') => format(date, style);
 
 // TODO make it change based on hemisphere ( ie swap winter and summer)
 export enum SeasonType {

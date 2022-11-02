@@ -6,13 +6,16 @@ import { BorderWrap, TopRow } from '../styled';
 import { ArrowsRightLeftIcon } from '@heroicons/react/24/solid';
 import { ArrowTrendingDownIcon, ArrowTrendingUpIcon } from '@heroicons/react/20/solid';
 
+import { ExclamationTriangleIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
+
 import { Listbox, Transition } from '@headlessui/react';
+import { formatDate } from '../../utils/appUtils';
 
 const InfoBlock = tw.div`grid grid-cols-2 gap-2 p-4`;
 const Container = tw.div`
 rounded-md
 w-full 
-hover:border 
+hover:border
 border 
 hover:border-gray-400 
 dark:hover:border-gray-600 
@@ -148,17 +151,23 @@ const StrategySelect = () => {
           {possibleStrategies.map((s: ILeverStrategy) => (
             <Container key={s.id}>
               <div
-                className={`flex flex-row gap-4 justify-between ${selectedStrategy.id === s.id ? 'bg-primary-900 bg-opacity-25 p-2' : 'text-xs p-2'}`}
+                className={`flex flex-row gap-4 p-2 justify-around ${selectedStrategy.id === s.id ? 'bg-primary-900 bg-opacity-25' : 'text-xs'}`}
                 onClick={() => leverActions.selectStrategy(s)}
               >
                 <div className='w-6 h-6'>{ s.tradeImage }</div>
-                <div>{`${shortAsset.displaySymbol}<>${longAsset.displaySymbol}`} </div>
-                <div>{s.maturityDate.toLocaleDateString() }</div>
+                <div>{`${shortAsset.displaySymbol} v ${longAsset.displaySymbol} Lever`} </div>
+                <div>{ formatDate( s.maturityDate) }</div>
+                <div> <InformationCircleIcon className='w-6 h-6 text-gray-500' /> </div>
               </div>
             </Container>
           ))}
           {possibleStrategies.length === 0 && (
-            <div className=" flex flex-row p-3 text-sm"> No strategies are available for this short/long pair yet. </div>
+            <Container>
+              <div className="p-3 flex flex-row gap-4 text-xs"> 
+               <ExclamationTriangleIcon className='w-4 h-4'/> 
+                <div className="text-xs"> No strategies are available for this short/long pair yet. </div> 
+               </div>
+            </Container>
           )}
         </div>
       </div>

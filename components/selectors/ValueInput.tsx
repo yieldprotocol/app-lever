@@ -22,14 +22,25 @@ export const ValueInput = () => {
   const [inputState, inputActions ] = useContext(InputContext);
   const [focus, setFocus] = useState(false);
 
+  useEffect(()=> {
+
+    if ( selectedStrategy && inputState.input  ) {
+
+      console.log(  selectedStrategy )
+      console.log( 'greater than minDebt: ',  inputState.input.dsp > selectedStrategy.minDebt.dsp )
+      console.log( 'less than maxBase: ',  inputState.input.dsp < selectedStrategy.maxBase.dsp )
+    }
+
+  },[inputState.input?.dsp,selectedStrategy ])
+
   return (
     <Container $unFocused={false}>
     <Inner>
     <Input
       name="invest_amount"
       type="number"
-      min="0"
-      max={100}
+      // min="0"
+      // max={1}
       value={inputState.input?.dsp || '' }
       onChange={(el)=>inputActions.setInput(el.target.value)}
       onFocus={() => setFocus(true)}

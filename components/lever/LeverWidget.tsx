@@ -11,6 +11,8 @@ import { LeverContext } from '../../context/LeverContext';
 import StrategySelect from '../selectors/StrategySelect';
 import { LeverSimulation } from '../../hooks/useLever';
 import { BorderWrap, TopRow, Inner, Section, SectionHead } from '../styled';
+import { InputContext } from '../../context/InputContext';
+import { isShorthandPropertyAssignment } from 'typescript';
 
 // const Inner = tw.div`m-4 text-center`;
 // const TopRow = tw.div` p-8 flex justify-between align-middle text-center items-center rounded-t-lg dark:bg-gray-900
@@ -37,9 +39,11 @@ const ClearButton = tw.button`text-sm`;
 const LeverWidget = (props: any) => {
   /* Bring in lever context - instead of passing them as props */
   const [leverState] = useContext(LeverContext);
-  const { account, selectedStrategy } = leverState;
+  const { account, selectedStrategy, shortAsset } = leverState;
 
-  const { invest, approve, isSimulating, maxLeverage, borrowLimitUsed }: LeverSimulation = props.lever;
+  const [{ input }] = useContext(InputContext);
+
+  const { invest, approve, isSimulating, maxLeverage, borrowLimitUsed, shortBorrowed }: LeverSimulation = props.lever;
 
   return (
     <BorderWrap className="h-full">
@@ -56,7 +60,16 @@ const LeverWidget = (props: any) => {
         </Section>
 
         <Section>
-          <SectionHead>Principle investment </SectionHead>
+          <SectionHead>
+            <div className="flex flex-row justify-between">
+              Principle investment
+              {selectedStrategy && shortAsset && (
+                <div className="text-xs text-slate-500">
+                  Min: {selectedStrategy.minDebt.dsp} {shortAsset.displaySymbol}{' '}
+                </div>
+              )}
+            </div>
+          </SectionHead>
           <ValueInput />
         </Section>
 
@@ -66,11 +79,16 @@ const LeverWidget = (props: any) => {
         </Section>
       </Inner>
 
-      <div className='p-8 text-center'>
-
+      <div className="p-8 text-center">
         <Button
           action={() => invest()}
-          disabled={!account || !selectedStrategy || borrowLimitUsed > 100} // add in isTransacting check
+          disabled={
+            !account ||
+            !selectedStrategy ||
+            borrowLimitUsed > 100 ||
+            shortBorrowed.big.gt(selectedStrategy.maxBase.big) ||
+            input?.big.lt(selectedStrategy.minDebt.big)
+          } // add in isTransacting check
           // loading={false}
           loading={isSimulating}
         >

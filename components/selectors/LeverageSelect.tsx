@@ -2,7 +2,7 @@ import { FC, useContext, useState } from 'react';
 import tw from 'tailwind-styled-components';
 import { InputContext } from '../../context/InputContext';
 import { Range } from 'react-range';
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
+import { PauseIcon } from '@heroicons/react/24/solid';
 
 type DivProps = {
   $unFocused?: boolean;
@@ -98,15 +98,15 @@ const LeverageSelect = ({ max }) => {
               {...props}
               style={{
                 ...props.style,
-                height: '44px',
-                width: '50px',
+                height: '40px',
+                width: '36px',
                 backgroundColor: 'teal', //getColor(inputState.leverage?.dsp, max),
                 borderRadius: '8px',
-                border: '1px solid grey',
+                // border: '1px solid grey',
               }}
             >
               <div className="pt-3 flex flex-row justify-center">
-                <ChevronLeftIcon className="h-4 w-4 text-gray-200" /> <ChevronRightIcon className="h-4 w-4 text-gray-200" />
+                <PauseIcon  className="h-4 w-4 text-gray-200" />
               </div>
             </div>
           )}
