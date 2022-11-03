@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import tw from 'tailwind-styled-components';
+import { Spinner } from '../styled';
 
 const StyledButton = tw.button`
 h-full 
@@ -17,8 +18,6 @@ ${(p) => (p.disabled
   : "bg-opacity-100 hover:opacity-80 dark:text-gray-50"
 )}
 `;
-
-const Spinner = tw.div`spinner-border animate-spin inline-block w-6 h-6 border-4 rounded-full border-primary-200 border-t-secondary-400`;
 
 interface IButton {
   action: () => void;

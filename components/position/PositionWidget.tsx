@@ -55,7 +55,7 @@ const PositionWidget = (props: any) => {
 
       </InfoBlock>
             <Button
-              action={() => divest(selectedPosition.id, selectedPosition.seriesId, selectedPosition.ink, selectedPosition.art,  ZERO_BN )}
+              action={() => divest(selectedPosition.id, selectedPosition.seriesId, selectedPosition.ink, selectedPosition.art )}
               disabled={!account} // add in isTransacting check
               loading={false}
               // loading={isTransacting}

@@ -8,7 +8,7 @@ import { convertToW3bNumber } from '../../lib/utils';
 import { LeverContext } from '../../context/LeverContext';
 // import { WETH_STETH_STABLESWAP, WST_ETH } from '../../contracts';
 import { ZERO_W3N } from '../../constants';
-import { LeverSimulation, simOutput } from '../useLever';
+import { simOutput } from '../useLever';
 import useBlockTime from '../useBlockTime';
 import { WST_ETH } from '../../contracts_';
 
@@ -27,6 +27,7 @@ export const useStEthSim = (input: W3bNumber, leverage: W3bNumber): simOutput =>
 
   // CURVE infomation :
   useEffect(() => {
+
     (async () => {
       // await curve.init('JsonRpc', {}, { });
       await curve.init("Infura", { network: "homestead", apiKey: '2af222f674024a0f84b5f0aad0da72a2'}, { chainId: 1 });
@@ -75,7 +76,7 @@ export const useStEthSim = (input: W3bNumber, leverage: W3bNumber): simOutput =>
   },[])
 
 
-  const now = Math.round(new Date().getTime() / 1000);
+  const now = currentTime || Math.round(new Date().getTime() / 1000);
   const timeToMaturity = marketState.maturity - now;
   const yearProportion = (timeToMaturity / 31536000);
 

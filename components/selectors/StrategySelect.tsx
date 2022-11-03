@@ -18,6 +18,7 @@ import {
 
 import { Listbox, Transition } from '@headlessui/react';
 import { formatDate } from '../../utils/appUtils';
+import { toast } from 'react-toastify';
 
 const InfoBlock = tw.div`grid grid-cols-2 gap-2 p-4`;
 const Container = tw.div`
@@ -33,7 +34,6 @@ const Value = tw.div`text-[white] text-right`;
 
 const assetOption = (asset: IAsset, shortSelect: boolean = true) => {
   const disabled = shortSelect ? !asset.isShortAsset : !asset.isLongAsset;
-
   if (asset)
     return (
       <Listbox.Option as={Fragment} key={asset.id} value={asset}>
@@ -103,6 +103,11 @@ const StrategySelect = () => {
     });
   }, [shortAsset, longAsset]);
 
+  const handlePairRequest = () => {
+    toast.info('Future pair requested.')
+    setRequestedPair([...requestedPairs, `${shortAsset.symbol}${longAsset.symbol}`])
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex flex-row gap-4">
@@ -168,8 +173,7 @@ const StrategySelect = () => {
                 <div>{`${shortAsset.displaySymbol} v ${longAsset.displaySymbol} Lever`} </div>
                 <div>{formatDate(s.maturityDate)}</div>
                 <div>
-                  {' '}
-                  <InformationCircleIcon className="w-6 h-6 text-gray-500" />{' '}
+                  <InformationCircleIcon className="w-6 h-6 text-gray-500" />
                 </div>
               </div>
             </Container>
@@ -179,14 +183,13 @@ const StrategySelect = () => {
               <div className="p-3 flex flex-row text-xs justify-between align-middle ">
                 <div className="flex flex-row gap-4">
                   <div className=" p-1">
-                    {' '}
-                    <ExclamationTriangleIcon className="w-4 h-4" />{' '}
+                    <ExclamationTriangleIcon className="w-4 h-4" />
                   </div>
                   <div className="text-sm"> No strategies are available for this short/long pair yet. </div>
                 </div>
                 <div
                   className="text-xs p-1"
-                  onClick={() => setRequestedPair([...requestedPairs, `${shortAsset.symbol}${longAsset.symbol}`])}
+                  onClick={() => handlePairRequest()}
                 >
                   { shortAsset && longAsset && requestedPairs.includes( `${shortAsset.symbol}${longAsset.symbol}`) ? <StarIcon className="w-4 h-4" /> : <StarIcon_outline className="w-4 h-4" />}
                 </div>

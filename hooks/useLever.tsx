@@ -89,6 +89,7 @@ export const useLever = () => {
 
   /* Lever simulators */
   const stEthSim = useStEthSim(input, leverage);
+
   const notionalSim = useNotionalSim();
 
   const [simulator, setSimulator] = useState<any>();
@@ -118,20 +119,20 @@ export const useLever = () => {
   const [currentReturn, setCurrentReturn] = useState<W3bNumber>(ZERO_W3N);
   const [futureReturn, setFutureReturn] = useState<W3bNumber>(ZERO_W3N);
 
-  // TODO: /* Choose the correct lever simulator */
-  // useEffect(() => {
-  //   if (selectedStrategy?.ilkId === WSTETH) {
-  //     setSimulator(stEthSim);
-  //   }
-  //   if (selectedStrategy?.ilkId === 'NOTIONAL') {
-  //     setSimulator(notionalSim);
-  //   }
-  // }, [selectedStrategy, input] );
+ /* Choose the correct lever simulator when selected strategy changes */
+  useEffect(() => {
+    if (selectedStrategy?.ilkId === WSTETH) {
+      setSimulator(stEthSim);
+    }
+    // if (selectedStrategy?.ilkId === 'NOTIONAL') {
+    //   setSimulator(notionalSim);
+    // }
+  }, [selectedStrategy] );
 
   /* Use the simulator on each leverage/input change */
   useEffect(() => {
     (async () => {
-      if (selectedStrategy && debouncedLeverage) {
+      if (selectedStrategy && debouncedLeverage && simulator) {
         /**
          * Simulate investment and set parameters locally
          * */
@@ -224,7 +225,6 @@ export const useLever = () => {
     if (inputState && selectedStrategy?.leverContract) {
       setAppState(AppState.Transacting);
 
- 
         // const gasLimit = (
         //   await selectedStrategy.leverContract.estimateGas.invest(
         //     selectedStrategy.seriesId,
@@ -247,7 +247,7 @@ export const useLever = () => {
     }
   };
 
-  const divest = async (vaultId:string, seriesId:string, ink: BigNumber, art:BigNumber, min: BigNumber ) => {
+  const divest = async (vaultId:string, seriesId:string, ink: BigNumber, art:BigNumber, min: BigNumber = BigNumber.from('1') ) => {
     // await approve();
     if (inputState && selectedStrategy?.leverContract) {
       setAppState(AppState.Transacting);
