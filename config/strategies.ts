@@ -1,6 +1,5 @@
 import { TokenType } from '../lib/types';
 import { WETH, WSTETH } from './assets';
-import { STETH_LEVER } from './contractRegister';
 
 export interface ILeverStrategyRoot {
   id: string;
@@ -30,7 +29,7 @@ STRATEGIES.set('STETH_01', {
   investTokenType: TokenType.FYTOKEN,
   investTokenAddress: '0x386a0a72ffeeb773381267d69b61acd1572e074d',
 
-  leverAddress: STETH_LEVER, 
+  leverAddress: '0x60a6a7fabe11ff36cbe917a17666848f0ff3a60a', 
   swapAddress: '0x828b154032950C8ff7CF8085D841723Db2696056',
 
   ilkId: WSTETH,

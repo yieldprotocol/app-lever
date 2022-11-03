@@ -25,14 +25,14 @@ export const ValueInput = () => {
 
   const [warnInput, setWarnInput] = useState<boolean>(false);
 
-  useEffect(() => {
-    if (selectedStrategy && inputState.input) {
-      // toast.warn('Input less than min debt required.')
-      // inputState.input.dsp < selectedStrategy.minDebt.dsp && toast.warn('Input less than min debt required.')
-      // console.log( 'greater than minDebt: ',  inputState.input.dsp > selectedStrategy.minDebt.dsp )
-      // console.log( 'less than maxBase: ',  inputState.input.dsp < selectedStrategy.maxBase.dsp )
-    }
-  }, [inputState.input?.dsp, selectedStrategy]);
+  // useEffect(() => {
+  //   if (selectedStrategy && inputState.input) {
+  //     // toast.warn('Input less than min debt required.')
+  //     // inputState.input.dsp < selectedStrategy.minDebt.dsp && toast.warn('Input less than min debt required.')
+  //     // console.log( 'greater than minDebt: ',  inputState.input.dsp > selectedStrategy.minDebt.dsp )
+  //     // console.log( 'less than maxBase: ',  inputState.input.dsp < selectedStrategy.maxBase.dsp )
+  //   }
+  // }, [inputState.input?.dsp, selectedStrategy]);
 
   return (
     <Container $unFocused={false}>
@@ -50,13 +50,13 @@ export const ValueInput = () => {
 
       <div className="grow min-w-fit text-left ">
         <div className="px-1">{shortAsset?.displaySymbol}</div>
-        {inputState.input?.hStr !== shortAsset?.balance.hStr && shortAsset?.balance.big.gt(ZERO_BN) && (
+        {inputState?.input?.hStr !== shortAsset?.balance.hStr && shortAsset?.balance.big.gt(ZERO_BN) && (
           <Button onClick={() => inputActions.setInput(shortAsset?.balance.hStr)} >
             <div> Use max balance</div>
             <div> {shortAsset?.balance.dsp} </div>
           </Button>
         )}
-        {inputState.input?.hStr === shortAsset?.balance.hStr && shortAsset?.balance.big.gt(ZERO_BN) (
+        {inputState?.input?.hStr === shortAsset?.balance.hStr && shortAsset?.balance.big.gt(ZERO_BN) && (
           <Button onClick={() => inputActions.setInput('0')} >
             <div> Clear </div>
           </Button>

@@ -143,8 +143,8 @@ export const useStEthSim = (input: W3bNumber, leverage: W3bNumber): simOutput =>
       // - netInvestAmount = baseAmount + borrowAmount - fee
       // const fyWeth = await getFyToken(seriesId, contracts, account);
       const fyContract = selectedStrategy.investTokenContract;
-      const fee = await fyContract.flashFee(fyContract.address, toBorrow.big.toString());
-      flashBorrowFee = convertToW3bNumber(fee.toString(), 18, 6);
+      const fee = ZERO_BN // await fyContract.flashFee(fyContract.address, toBorrow.big.toString());
+      flashBorrowFee = convertToW3bNumber(fee, 18, 6);
 
       /* calculate the resulting debt */
       const debt_ = buyBase(
@@ -248,7 +248,7 @@ export const useStEthSim = (input: W3bNumber, leverage: W3bNumber): simOutput =>
       const wethReceived = await stableSwap.get_dy(1, 0, stEthUnwrapped);
 
       /* Add in any fee for flashBorrowing */
-      const fee = await fyContract.flashFee(fyContract.address, selectedPosition.art);
+      const fee = ZERO_BN // await fyContract.flashFee(fyContract.address, selectedPosition.art) ;
       const borrowAmountPlusFee = fee.add(selectedPosition.art);
 
       const wethToTransfer = await pool.buyFYTokenPreview(borrowAmountPlusFee);
@@ -272,7 +272,6 @@ export const useStEthSim = (input: W3bNumber, leverage: W3bNumber): simOutput =>
       // const stEthUnwrapped = await wStEth.getStETHByWstETH(balance.ink);
       // const weth = await stableSwap.get_dy(1, 0, stEthUnwrapped);
       // const wethJoin = getContract(WETH_JOIN, contracts, account);
-      // const fee = await wethJoin.flashFee(WETH, base);
       console.log('TODO: handle post maturity!');
       setIsSimulating(false);
       return ZERO_W3N;
