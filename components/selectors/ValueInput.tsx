@@ -56,7 +56,7 @@ export const ValueInput = () => {
             <div> {shortAsset?.balance.dsp} </div>
           </Button>
         )}
-        {inputState.input?.hStr === shortAsset?.balance.hStr && (
+        {inputState.input?.hStr === shortAsset?.balance.hStr && shortAsset?.balance.big.gt(ZERO_BN) (
           <Button onClick={() => inputActions.setInput('0')} >
             <div> Clear </div>
           </Button>

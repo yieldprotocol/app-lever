@@ -2,8 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-// @ts-ignore
-// @ts-nocheck
+// @ts-nocheck 
 
 import { Contract, Signer, utils } from "ethers";
 import { Provider } from "@ethersproject/providers";
