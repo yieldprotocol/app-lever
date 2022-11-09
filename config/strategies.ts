@@ -19,6 +19,10 @@ export interface ILeverStrategyRoot {
   tradePlatform: string;
 }
 
+// export const LEVERS = new Map([
+//   [ ]
+// ]);
+
 export const STRATEGIES = new Map<string, ILeverStrategyRoot>();
 
 STRATEGIES.set('STETH_01', {

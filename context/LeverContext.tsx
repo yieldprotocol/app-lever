@@ -155,7 +155,6 @@ const LeverProvider = ({ children }: any) => {
 
   /* update account on change */
   useEffect(() => {
-    console.log(account, ' connected.');
     updateState({ type: 'UPDATE_ACCOUNT', payload: account });
   }, [account]);
 
@@ -219,7 +218,7 @@ const LeverProvider = ({ children }: any) => {
         /* Connect the investToken based on investTokenType */
         const investTokenContract = contractFactoryMap
           .get(strategy.investTokenType)!
-          .connect(strategy.investTokenAddress, provider);
+          .connect(strategy.investTokenAddress, signer);
 
         /* get the oracle address from the cauldron  */
         const cauldron = contractFactories[CAULDRON].connect(CAULDRON, provider);

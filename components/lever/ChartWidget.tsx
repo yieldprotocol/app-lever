@@ -17,6 +17,7 @@ dark:bg-opacity-25
 
 const Button = tw.button`text-xs bg-primary-800 w-5 dark:text-gray-50 text-gray-50 rounded hover:opacity-80`;
 
+
 export const ChartWidget = (props: HighchartsReact.Props) => {
   const chartComponentRef = useRef<HighchartsReact.RefObject>(null);
   const [leverState] = useContext(LeverContext);
@@ -142,6 +143,18 @@ export const ChartWidget = (props: HighchartsReact.Props) => {
         },
         dataGrouping: { forced: true, units: [['day', [1]]] },
       },
+      {
+        name: `Trend`,
+        regression: true,
+        data: prices,
+        threshold: null,
+        tooltip: { 
+          valueDecimals: 4,
+        },
+        dataGrouping: { forced: true, units: [['day', [1]]] },
+      },
+
+
     ],
   };
 
@@ -149,7 +162,7 @@ export const ChartWidget = (props: HighchartsReact.Props) => {
     const currentDate = new Date().getTime();
     /* if the seconds are less than a day - show hours in plot, else average out days */
     if (seconds <= 86400) {
-      chartComponentRef?.current?.chart.xAxis[0].setDataGrouping({ units: [['hour', [1]]] });
+      chartComponentRef?.current?.chart.xAxis[0].setDataGrouping({ units: [['day', [1]]] });
     } else if (seconds <= 604800) {
       chartComponentRef?.current?.chart.xAxis[0].setDataGrouping({ units: [['day', [3]]] });
     } else {

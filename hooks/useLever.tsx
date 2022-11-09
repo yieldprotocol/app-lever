@@ -12,6 +12,8 @@ import { MAX_256 } from '@yield-protocol/ui-math';
 import { useNotionalSim } from './LeverSims/useNotionalSim';
 import useBlockTime from './useBlockTime';
 
+import * as leverSimulators from './LeverSims'
+
 import { calculateAPR } from '@yield-protocol/ui-math';
 
 export interface LeverSimulation {
@@ -89,7 +91,6 @@ export const useLever = () => {
 
   /* Lever simulators */
   const stEthSim = useStEthSim(input, leverage);
-
   const notionalSim = useNotionalSim();
 
   const [simulator, setSimulator] = useState<any>();
@@ -132,11 +133,16 @@ export const useLever = () => {
   /* Use the simulator on each leverage/input change */
   useEffect(() => {
     (async () => {
-      if (selectedStrategy && debouncedLeverage && simulator) {
+      if (selectedStrategy && debouncedLeverage) {
         /**
          * Simulate investment and set parameters locally
          * */
+        // const simulator = selectedStrategy?.ilkId === WSTETH ? 
         const simulated = await stEthSim.simulateInvest();
+
+       //  const selectedStrategy // .simulator 
+
+        console.log( simulated )
 
         setInvestmentPosition(simulated.investmentPosition);
         setInvestmentAtMaturity(simulated.investmentAtMaturity);
@@ -207,12 +213,14 @@ export const useLever = () => {
     })();
   }, [selectedPosition]);
 
+
   const approve = async () => {
     if (inputState && selectedStrategy?.investTokenContract) {
       setAppState(AppState.Approving);
-      const gasLimit =
-        // await selectedStrategy.investTokenContract.estimateGas.approve(selectedStrategy.leverAddress, shortInvested.big)
-        (await selectedStrategy.investTokenContract.estimateGas.approve(selectedStrategy.leverAddress, MAX_256)).mul(2);
+      // const gasLimit =
+      //   // await selectedStrategy.investTokenContract.estimateGas.approve(selectedStrategy.leverAddress, shortInvested.big)
+      //   (await selectedStrategy.investTokenContract.estimateGas.approve(selectedStrategy.leverAddress, MAX_256)).mul(2);
+      
       // const tx = await selectedStrategy.investTokenContract.approve(selectedStrategy.leverAddress, shortInvested.big);
       const tx = await selectedStrategy.investTokenContract.approve(selectedStrategy.leverAddress, MAX_256);
       await tx.wait();
@@ -232,10 +240,6 @@ export const useLever = () => {
         //     '0' // removeSlippage( investPosition.big),
         //   )
         // ).mul(2);
-
-        console.log('strategy Contract: ', selectedStrategy.leverContract.address )
-        console.log( 'seriesId: ', selectedStrategy.seriesId,'amount: ', inputState.input.big.toString(), 'min: ' )
-
         const investTx = await selectedStrategy.leverContract.invest(
           selectedStrategy.seriesId,
           inputState.input.big,
@@ -254,7 +258,7 @@ export const useLever = () => {
     // await approve();
     if (inputState && selectedStrategy?.leverContract) {
       setAppState(AppState.Transacting);
-        const divestTx = await selectedStrategy.leverContract.divest(vaultId, seriesId, ink.toString(), art.toString(), min.toString())
+        const divestTx = await selectedStrategy.leverContract.divest(vaultId, seriesId, ink, art, min)
         await divestTx.wait();
     }
   };

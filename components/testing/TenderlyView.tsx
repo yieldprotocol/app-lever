@@ -1,6 +1,3 @@
-import { useContext } from 'react';
-import { LeverContext } from '../../context/LeverContext';
-import { useLever } from '../../hooks/useLever';
 import useTestFunctions from '../../hooks/useTestFunctions';
 import Button from '../common/Button';
 

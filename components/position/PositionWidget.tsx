@@ -3,7 +3,6 @@ import { TransactionDescription } from 'ethers/lib/utils';
 import { useContext, useEffect, useState } from 'react';
 import { ILeverStrategy, LeverContext } from '../../context/LeverContext';
 import { IPosition } from '../../context/PositionContext';
-import { LeverSimulation } from '../../hooks/useLever';
 import Button from '../common/Button';
 import { BorderWrap, InfoBlock, Inner, Label, TopRow, Value } from '../styled';
 
@@ -17,6 +16,7 @@ const PositionWidget = (props: any) => {
     currentReturn,
     futureReturn,
     isSimulating,
+
   } = props.lever;
 
   return (
@@ -63,7 +63,7 @@ const PositionWidget = (props: any) => {
               {/* {!account ? 'Connect Wallet' : isTransacting ? 'Trade Initiated...' : 'Trade'} */}
               Divest
             </Button>
-            <div> is simulating: { isSimulating?.toString() }</div>
+            {/* <div> is simulating: { isSimulating?.toString() }</div> */}
           </Inner>
         </>
       )

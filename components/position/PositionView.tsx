@@ -7,8 +7,11 @@ import Positions from './Positions';
 import PositionWidget from './PositionWidget';
 
 const PositionView_NoContext = () => {
-  const lever = useLever(); // true here to supress 'input'
 
+
+  const lever = useLever(); // true here to supress 'input'? 
+  
+  
   return (
     // <div className="grid overflow-hidden grid-cols-3 grid-rows-2 gap-2">
 

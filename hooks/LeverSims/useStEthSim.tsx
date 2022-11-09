@@ -15,13 +15,12 @@ import { WST_ETH } from '../../contracts_';
 import curve from '@curvefi/api';
 import { ethers } from 'ethers';
 
-export const useStEthSim = (input: W3bNumber, leverage: W3bNumber): simOutput => {
+export const useStEthSim = (input: W3bNumber, leverage: W3bNumber, ): simOutput => {
+  
   const [leverState] = useContext(LeverContext);
   const [marketState]: [IPoolState] = useContext(MarketContext);
   const { selectedStrategy, selectedPosition, provider } = leverState;
-
   const { currentTime } = useBlockTime();
-
   const [ investAPY, setInvestApy ] = useState<string>();
   const [ investFee, setInvestFee ] = useState<string>();
 
@@ -39,7 +38,7 @@ export const useStEthSim = (input: W3bNumber, leverage: W3bNumber): simOutput =>
       /*  Daily/weekly APY based on usage  */ 
       // const apy = await steth.stats.baseApy(); // { day: '3.1587592896017647', week: '2.6522145719060752' } (as %)
       // console.log(apy);
-      /*  Token APY  */ 
+      /*  Token APY  */
       // const tokenApy = await steth.stats.tokenApy();
       // console.log(tokenApy);
       // [ '0.5918', '1.4796' ] ([min, max] as %) 
@@ -133,18 +132,17 @@ export const useStEthSim = (input: W3bNumber, leverage: W3bNumber): simOutput =>
     let investmentCurrent = ZERO_W3N;
 
     let flashBorrowFee = ZERO_W3N;
-
     let investmentFee = ZERO_W3N;
 
     if (selectedStrategy && inputAsFyToken.big.gt(ZERO_BN)) {
       
       setIsSimulating(true);
-
       // - netInvestAmount = baseAmount + borrowAmount - fee
       // const fyWeth = await getFyToken(seriesId, contracts, account);
       const fyContract = selectedStrategy.investTokenContract;
-      const fee = ZERO_BN // await fyContract.flashFee(fyContract.address, toBorrow.big.toString());
-      flashBorrowFee = convertToW3bNumber(fee, 18, 6);
+      const fee = ZERO_BN //  await fyContract.flashFee(fyContract.address, toBorrow.big.toString()) ;
+      
+      flashBorrowFee = convertToW3bNumber( fee, 18, 6);
 
       /* calculate the resulting debt */
       const debt_ = buyBase(
@@ -189,24 +187,10 @@ export const useStEthSim = (input: W3bNumber, leverage: W3bNumber): simOutput =>
       // const stEthPlusReturns = boughtStEth.mul(returns)
       investmentAtMaturity = convertToW3bNumber(returnsLessFees, 18, 6);
 
-      // - Wrap: StEth -> WStEth
-      // const wStEthContract = contractFactories[WST_ETH].connect(WST_ETH, provider);
-      // const investPosition_ = await wStEthContract.getWstETHByStETH(boughtStEth);
-      // console.log( 'WrappedStETH : ',  investPosition_.toString() )
-      // check unwrapping */
-      // const oneStEth = ethers.utils.parseUnits('1');
-      // const stEthPerWrapped = await wStEthContract.getStETHByWstETH(oneStEth);
-      // const unwrappedStEthValue = boughtStEth.mul(stEthPerWrapped).div(oneStEth);
-      // const unwrappedStEthValue = await wStEthContract.getStETHByWstETH(boughtStEth);
-      // console.log(stEthPerWrapped.toString());
-      // console.log('UNWRAPEED STEEHT : ', unwrappedStEthValue.toString());
-
       /* check for anywswapping cost */
       /* Calculate the value of the investPosition in short terms : via swap */
       const investValue_ = await stableSwap.get_dy(1, 0, boughtStEth);
-
       investmentCurrent = convertToW3bNumber(investValue_, 18, 6);
-
     }
 
     setIsSimulating(false);
@@ -241,9 +225,9 @@ export const useStEthSim = (input: W3bNumber, leverage: W3bNumber): simOutput =>
     const stableSwap = contractFactories[WETH_STETH_STABLESWAP].connect(WETH_STETH_STABLESWAP, provider);
 
     if (selectedStrategy && selectedPosition) {
+
       /* amount of steth recieved from unwrapping wSTETH */
       const stEthUnwrapped = await wStEthContract.getStETHByWstETH(selectedPosition.ink);
-
       /* Amount of Eth from swapping stETH on curve */
       const wethReceived = await stableSwap.get_dy(1, 0, stEthUnwrapped);
 

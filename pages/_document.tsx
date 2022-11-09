@@ -4,7 +4,6 @@ import tw from 'tailwind-styled-components';
 const Body = tw.body`bg-gray-700 dark:bg-gray-700`;
 // const Body = tw.body`bg-gradient-to-tr from-slate-900 via-purple-900 to-slate-900`
 
-
 class MyDocument extends Document {
   render() {
     return (

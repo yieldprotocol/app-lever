@@ -17,7 +17,6 @@ const EstimatedPosition = (props: any) => {
     netAPR,
     borrowAPR,
     investAPR,
-
     shortBorrowed,
     shortInvested,
     debtAtMaturity,
@@ -27,7 +26,6 @@ const EstimatedPosition = (props: any) => {
     flashBorrowFee,
     investmentFee,
     isSimulating,
-
     pnl,
     borrowLimitUsed,
   }: LeverSimulation = props.lever;

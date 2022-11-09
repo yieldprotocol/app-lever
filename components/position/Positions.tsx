@@ -5,7 +5,7 @@ import { PositionContext } from '../../context/PositionContext';
 import { BorderWrap, ClearButton, Inner, TopRow } from '../styled';
 
 const Positions = () => {
-  const [, leverActions] = useContext(LeverContext);
+  const [,leverActions] = useContext(LeverContext);
   const { selectPosition } = leverActions;
 
   const [positionState] = useContext(PositionContext);
