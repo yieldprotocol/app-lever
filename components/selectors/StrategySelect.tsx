@@ -104,7 +104,7 @@ const StrategySelect = () => {
   }, [shortAsset, longAsset]);
 
   const handlePairRequest = () => {
-    toast.info('Future pair requested.')
+    toast.info('Trading pair requested.')
     setRequestedPair([...requestedPairs, `${shortAsset.symbol}${longAsset.symbol}`])
   }
 

@@ -99,14 +99,14 @@ const LeverageSelect = ({ max }) => {
               {...props}
               style={{
                 ...props.style,
-                height: '40px',
-                width: '36px',
+                height: '44px',
+                width: '44px',
                 backgroundColor: 'teal', //getColor(inputState.leverage?.dsp, max),
-                borderRadius: '8px',
+                borderRadius: '100%',
                 // border: '1px solid grey',
               }}
             >
-              <div className="pt-3 flex flex-row justify-center">
+              <div className="pt-3.5 flex flex-row justify-center">
                 <PauseIcon  className="h-4 w-4 text-gray-200" />
               </div>
             </div>

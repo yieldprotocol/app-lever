@@ -186,10 +186,9 @@ const LeverProvider = ({ children }: any) => {
           }
           return BigNumber.from('0');
         };
+        
         const balance = convertToW3bNumber(await getBal(asset), asset.decimals, 6);
-
         const displaySymbol = asset.displaySymbol || asset.symbol;
-
         const strategies = Array.from(STRATEGIES.values());
 
         const isShortAsset = strategies.some((s: ILeverStrategy) => s.baseId === asset.id);

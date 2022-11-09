@@ -233,11 +233,14 @@ export const useLever = () => {
         //   )
         // ).mul(2);
 
+        console.log('strategy Contract: ', selectedStrategy.leverContract.address )
+        console.log( 'seriesId: ', selectedStrategy.seriesId,'amount: ', inputState.input.big.toString(), 'min: ' )
+
         const investTx = await selectedStrategy.leverContract.invest(
           selectedStrategy.seriesId,
           inputState.input.big,
           // ethers.utils.parseUnits('1', 18), // shortBorrowed.big,
-          '0', // removeSlippage( investPosition.big),
+          ZERO_BN, // removeSlippage( investPosition.big),
           {
             value: shortAsset?.id === WETH ? inputState.input.big : ZERO_BN, // value is set as input if using ETH
             // gasLimit,

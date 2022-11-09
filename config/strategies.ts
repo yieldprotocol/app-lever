@@ -23,7 +23,7 @@ export const STRATEGIES = new Map<string, ILeverStrategyRoot>();
 
 STRATEGIES.set('STETH_01', {
   id: '001',
-  displayName: 'WETH - STETH DEC 2022',
+  displayName: 'WETH_STETH DEC_2022',
   maturity: 1672412400,
 
   investTokenType: TokenType.FYTOKEN,
@@ -35,6 +35,24 @@ STRATEGIES.set('STETH_01', {
   ilkId: WSTETH,
   baseId: WETH,
   seriesId: '0x303030380000',
+
+  tradePlatform: 'Curve',
+});
+
+STRATEGIES.set('STETH_02', {
+  id: '002',
+  displayName: 'WETH_STETH MAR_2023',
+  maturity: 1680274800,
+
+  investTokenType: TokenType.FYTOKEN,
+  investTokenAddress: '0x0FBd5ca8eE61ec921B3F61B707f1D7D64456d2d1',
+
+  leverAddress: '0x60a6a7fabe11ff36cbe917a17666848f0ff3a60a', 
+  swapAddress: '0x828b154032950C8ff7CF8085D841723Db2696056',
+
+  ilkId: WSTETH,
+  baseId: WETH,
+  seriesId: '0x303030390000',
 
   tradePlatform: 'Curve',
 });
