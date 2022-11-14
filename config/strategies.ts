@@ -31,6 +31,11 @@ export interface ILeverStrategyRoot {
   ) => Promise<simOutput>;
 }
 
+export enum TradePlatforms {
+  CURVE = 'CURVE',
+  YIELD = 'YIELD',
+}
+
 export const STRATEGIES = new Map<string, ILeverStrategyRoot>();
 
 STRATEGIES.set('STETH_01', {
@@ -49,7 +54,7 @@ STRATEGIES.set('STETH_01', {
   seriesId: '0x303030380000',
 
   leverSimulator: stEthSimulator,
-  tradePlatform: 'Curve',
+  tradePlatform: TradePlatforms.CURVE,
 });
 
 STRATEGIES.set('STETH_02', {
@@ -68,7 +73,7 @@ STRATEGIES.set('STETH_02', {
   seriesId: '0x303030390000',
 
   leverSimulator: stEthSimulator,
-  tradePlatform: 'Curve',
+  tradePlatform: TradePlatforms.CURVE,
 });
 
 // STRATEGIES.set('StETH_02', {

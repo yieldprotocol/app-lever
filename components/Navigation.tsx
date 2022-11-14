@@ -30,7 +30,7 @@ const Navigation = () => {
   const router = useRouter();
   const navigation = [
     { name: 'New Levered Position', href: '/lever' },
-    { name: 'My Positons', href: '/positions' },
+    { name: 'My Positions', href: '/positions' },
   ];
 
   return (
