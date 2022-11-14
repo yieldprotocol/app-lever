@@ -1,14 +1,25 @@
-import InputProvider from '../../context/InputContext';
+import { useContext } from 'react';
+import InputProvider, { InputContext } from '../../context/InputContext';
+import { LeverContext } from '../../context/LeverContext';
+import { MarketContext } from '../../context/MarketContext';
 import { useLever } from '../../hooks/useLever';
+import { stEthSimulator } from '../../leverSimulators/stEthSim';
 import TenderlyView from '../testing/TenderlyView';
 
 import { ChartWidget } from './ChartWidget';
 import EstimatedPosition from './EstimatedPosition';
 import LeverWidget from './LeverWidget';
 
-const LeverView_NoContext = () => {
+const LeverView = () => {
+
+  const [inputState] = useContext(InputContext);
+  const [marketState] = useContext(MarketContext);
+  const [leverState] = useContext(LeverContext);
+
+  const simulator = () => stEthSimulator(inputState.input, inputState.leverage, leverState.selectedStrategy, marketState, leverState.provider   )
+
   /* lever is abstracted up here in the top level to save a few re-renders/calcs */
-  const lever = useLever();
+  const lever = useLever(  simulator );
 
   return (
     <>
@@ -29,12 +40,5 @@ const LeverView_NoContext = () => {
     </>
   );
 };
-
-/* Wrap it with the input porivder */
-const LeverView = () => (
-  // <InputProvider>
-  <LeverView_NoContext />
-  // </InputProvider>
-);
 
 export default LeverView;

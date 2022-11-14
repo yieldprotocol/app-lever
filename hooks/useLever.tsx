@@ -1,22 +1,19 @@
-import { BigNumber, ethers, utils } from 'ethers';
+import { BigNumber } from 'ethers';
 import { useContext, useEffect, useState } from 'react';
-import { WETH, WSTETH } from '../config/assets';
+import { WETH } from '../config/assets';
 import { ZERO_BN, ZERO_W3N } from '../constants';
 import { InputContext, W3bNumber } from '../context/InputContext';
 import { ILeverContextState, LeverContext } from '../context/LeverContext';
 import { AppState } from '../lib/types';
 
-import { useStEthSim } from './LeverSims/useStEthSim';
 import { useDebounce } from './generalHooks';
 import { MAX_256 } from '@yield-protocol/ui-math';
-import { useNotionalSim } from './LeverSims/useNotionalSim';
-import useBlockTime from './useBlockTime';
 
-import * as leverSimulators from './LeverSims'
+import useBlockTime from './useBlockTime';
 
 import { calculateAPR } from '@yield-protocol/ui-math';
 
-export interface LeverSimulation {
+export interface simOutput {
   /* Borrowing simulation: */
   shortBorrowed: W3bNumber; // amount of short asset borrowed
   debtAtMaturity: W3bNumber; // debt owed at maturity
@@ -31,11 +28,9 @@ export interface LeverSimulation {
   investmentCurrent: W3bNumber; // Current value of long asset (if unwinding now)
 
   investmentFee: W3bNumber;
+}
 
-  /* Simulated return value (in Short-Asset terms) */
-  // returnAtMaturity: W3bNumber;
-  // returnCurrent: W3bNumber;
-
+export interface LeverSimulation extends simOutput {
   /**
    * calculated values
    * */
@@ -67,15 +62,7 @@ export interface Notification {
   msg: string;
 }
 
-export interface simOutput {
-  simulateInvest: () => Promise<any>;
-  simulateReturn: () => Promise<W3bNumber>;
-  isSimulating: boolean;
-  notification: Notification[];
-  extraBucket: any[];
-}
-
-export const useLever = () => {
+export const useLever = ( simulator: ()=>Promise<simOutput> ) => {
   /* Bring in context*/
   const [leverState, leverActions]: [ILeverContextState, any] = useContext(LeverContext);
   const { selectedPosition, selectedStrategy, shortAsset } = leverState;
@@ -90,10 +77,12 @@ export const useLever = () => {
   const { currentTime } = useBlockTime();
 
   /* Lever simulators */
-  const stEthSim = useStEthSim(input, leverage);
-  const notionalSim = useNotionalSim();
+  // const stEthSim = useStEthSim(input, leverage);
+  // const notionalSim = useNotionalSim();
+  // const [simulator, setSimulator] = useState<any>();
 
-  const [simulator, setSimulator] = useState<any>();
+  // loading flags:
+  const [isSimulating, setIsSimulating] = useState<boolean>(false);
 
   // Resutls from simulation:
   const [investmentPosition, setInvestmentPosition] = useState<W3bNumber>(ZERO_W3N);
@@ -120,27 +109,21 @@ export const useLever = () => {
   const [currentReturn, setCurrentReturn] = useState<W3bNumber>(ZERO_W3N);
   const [futureReturn, setFutureReturn] = useState<W3bNumber>(ZERO_W3N);
 
- /* Choose the correct lever simulator when selected strategy changes */
-  useEffect(() => {
-    if (selectedStrategy?.ilkId === WSTETH) {
-      setSimulator(stEthSim);
-    }
-    // if (selectedStrategy?.ilkId === 'NOTIONAL') {
-    //   setSimulator(notionalSim);
-    // }
-  }, [selectedStrategy] );
-
   /* Use the simulator on each leverage/input change */
   useEffect(() => {
-    (async () => {
-      if (selectedStrategy && debouncedLeverage) {
+    !!selectedStrategy &&
+      !!debouncedLeverage &&
+      !!simulator &&
+      (async () => {
+        
         /**
          * Simulate investment and set parameters locally
          * */
-        // const simulator = selectedStrategy?.ilkId === WSTETH ? 
-        const simulated = await stEthSim.simulateInvest();
+        // const simulator = selectedStrategy?.ilkId === WSTETH ?
+        // const simulated = await stEthSim.simulateInvest();
 
-       //  const selectedStrategy // .simulator 
+        setIsSimulating(true);
+        const simulated = await simulator();
 
         console.log( simulated )
 
@@ -152,6 +135,8 @@ export const useLever = () => {
         setDebtAtMaturity(simulated.debtAtMaturity);
         setFlashBorrowFee(simulated.flashBorrowFee);
         setInvestmentFee(simulated.investmentFee);
+
+        setIsSimulating(false);
 
         /**
          * calculate the APR's based on the simulation
@@ -198,21 +183,20 @@ export const useLever = () => {
 
         const pnl_ = netAPR - investAPR; // TODO: this is probably wrong. check it.  (investmentCurrent?.dsp!/shortInvested?.dsp! -1);
         setPnl(pnl_);
-      }
-    })();
+      })();
+
   }, [selectedStrategy, debouncedLeverage, input]);
 
   /* Calculate the expected returns if a position os selected */
   useEffect(() => {
     (async () => {
       if (selectedPosition) {
-        const simulatedReturn_ = await stEthSim.simulateReturn();
+        const simulatedReturn_ = ZERO_W3N; //  await stEthSim.simulateReturn();
         setCurrentReturn(simulatedReturn_);
         setFutureReturn(simulatedReturn_);
       }
     })();
   }, [selectedPosition]);
-
 
   const approve = async () => {
     if (inputState && selectedStrategy?.investTokenContract) {
@@ -220,7 +204,7 @@ export const useLever = () => {
       // const gasLimit =
       //   // await selectedStrategy.investTokenContract.estimateGas.approve(selectedStrategy.leverAddress, shortInvested.big)
       //   (await selectedStrategy.investTokenContract.estimateGas.approve(selectedStrategy.leverAddress, MAX_256)).mul(2);
-      
+
       // const tx = await selectedStrategy.investTokenContract.approve(selectedStrategy.leverAddress, shortInvested.big);
       const tx = await selectedStrategy.investTokenContract.approve(selectedStrategy.leverAddress, MAX_256);
       await tx.wait();
@@ -232,41 +216,46 @@ export const useLever = () => {
     // await approve();
     if (inputState && selectedStrategy?.leverContract) {
       setAppState(AppState.Transacting);
-
-        // const gasLimit = (
-        //   await selectedStrategy.leverContract.estimateGas.invest(
-        //     selectedStrategy.seriesId,
-        //     ethers.utils.parseUnits('1', 18),  // input.big,
-        //     '0' // removeSlippage( investPosition.big),
-        //   )
-        // ).mul(2);
-        const investTx = await selectedStrategy.leverContract.invest(
-          selectedStrategy.seriesId,
-          inputState.input.big,
-          // ethers.utils.parseUnits('1', 18), // shortBorrowed.big,
-          ZERO_BN, // removeSlippage( investPosition.big),
-          {
-            value: shortAsset?.id === WETH ? inputState.input.big : ZERO_BN, // value is set as input if using ETH
-            // gasLimit,
-          }
-        );
-        await investTx.wait();
+      // const gasLimit = (
+      //   await selectedStrategy.leverContract.estimateGas.invest(
+      //     selectedStrategy.seriesId,
+      //     ethers.utils.parseUnits('1', 18),  // input.big,
+      //     '0' // removeSlippage( investPosition.big),
+      //   )
+      // ).mul(2);
+      const investTx = await selectedStrategy.leverContract.invest(
+        selectedStrategy.seriesId,
+        inputState.input.big,
+        // ethers.utils.parseUnits('1', 18), // shortBorrowed.big,
+        ZERO_BN, // removeSlippage( investPosition.big),
+        {
+          value: shortAsset?.id === WETH ? inputState.input.big : ZERO_BN, // value is set as input if using ETH
+          // gasLimit,
+        }
+      );
+      await investTx.wait();
     }
   };
 
-  const divest = async (vaultId:string, seriesId:string, ink: BigNumber, art:BigNumber, min: BigNumber = BigNumber.from('1') ) => {
+  const divest = async (
+    vaultId: string,
+    seriesId: string,
+    ink: BigNumber,
+    art: BigNumber,
+    min: BigNumber = BigNumber.from('1')
+  ) => {
     // await approve();
     if (inputState && selectedStrategy?.leverContract) {
       setAppState(AppState.Transacting);
-        const divestTx = await selectedStrategy.leverContract.divest(vaultId, seriesId, ink, art, min)
-        await divestTx.wait();
+      const divestTx = await selectedStrategy.leverContract.divest(vaultId, seriesId, ink, art, min);
+      await divestTx.wait();
     }
   };
 
   return {
     approve,
     invest,
-    divest, 
+    divest,
 
     // simulated position
     investmentPosition,
@@ -294,7 +283,7 @@ export const useLever = () => {
     pnl,
     maxLeverage,
 
-    isSimulating: stEthSim.isSimulating,
+    isSimulating,
     // simNotification,
   };
 };

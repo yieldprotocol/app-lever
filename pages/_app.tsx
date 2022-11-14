@@ -16,9 +16,9 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
   const { theme } = useColorTheme();
 
   return (
-      <LeverProvider>
-        <MarketProvider>
-          <ChartProvider>
+    <LeverProvider>
+      <MarketProvider>
+        <ChartProvider>
           <InputProvider>
             <ToastContainer
               position="bottom-right"
@@ -27,13 +27,13 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
               toastStyle={{ background: theme === 'light' ? '#e4e4e7' : '#18181b' }}
               closeButton={<XMarkIcon height="1rem" width="1rem" color={theme === 'dark' ? '#e4e4e7' : '#18181b'} />}
             />
-              <DynamicLayout>
-            <Component {...pageProps} />
+            <DynamicLayout>
+              <Component {...pageProps} />
             </DynamicLayout>
-            </InputProvider>
-          </ChartProvider>
-        </MarketProvider>
-      </LeverProvider>
+          </InputProvider>
+        </ChartProvider>
+      </MarketProvider>
+    </LeverProvider>
   );
 };
 
