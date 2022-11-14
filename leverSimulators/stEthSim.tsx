@@ -1,9 +1,9 @@
 import { buyBase, sellBase, sellFYToken, ZERO_BN } from '@yield-protocol/ui-math';
 import { contractFactories, WETH_STETH_STABLESWAP } from '../config/contractRegister';
-import { W3bNumber } from '../context/InputContext';
+import { IInputContextState, W3bNumber } from '../context/InputContext';
 
 import { convertToW3bNumber } from '../lib/utils';
-import { ILeverStrategy } from '../context/LeverContext';
+import { ILeverContextState, ILeverStrategy } from '../context/LeverContext';
 // import { WETH_STETH_STABLESWAP, WST_ETH } from '../../contracts';
 import { ZERO_W3N } from '../constants';
 import { simOutput } from '../hooks/useLever';
@@ -11,12 +11,10 @@ import { simOutput } from '../hooks/useLever';
 import curve from '@curvefi/api';
 import { ethers } from 'ethers';
 
-export const stEthSimulator = async (
-  input: W3bNumber,
-  leverage: W3bNumber,
-  strategy: ILeverStrategy,
-  marketState: any,
-  provider: any,
+export const stEthSimulator =  async (
+  inputState: IInputContextState,
+  leverState: ILeverContextState,
+  marketState: any, 
   currentTime: number = Math.round(new Date().getTime() / 1000)
 ): Promise<simOutput> => {
 
@@ -30,8 +28,13 @@ export const stEthSimulator = async (
   let flashBorrowFee = ZERO_W3N;
   let investmentFee = ZERO_W3N;
 
+  const input = inputState.input || ZERO_W3N;
+  const leverage = inputState.leverage;
+  const strategy = leverState.selectedStrategy;
+  const provider = leverState.provider;
+
   if (input.big.gt(ZERO_BN)) {
-    
+
     console.log('Fired STETH Lever....');
     /**
      * CURVE infomation :
@@ -109,7 +112,7 @@ export const stEthSimulator = async (
     if (inputAsFyToken.big.gt(ZERO_BN)) {
       // - netInvestAmount = baseAmount + borrowAmount - fee
       // const fyWeth = await getFyToken(seriesId, contracts, account);
-      const fyContract = strategy.investTokenContract;
+      const fyContract = strategy?.investTokenContract;
       const fee = ZERO_BN; //  await fyContract.flashFee(fyContract.address, toBorrow.big.toString()) ;
 
       flashBorrowFee = convertToW3bNumber(fee, 18, 6);
@@ -140,7 +143,6 @@ export const stEthSimulator = async (
       );
 
       shortBorrowed = toBorrow;
-
       shortInvested = convertToW3bNumber(wethObtained, 18, 6);
       investmentFee = convertToW3bNumber(shortInvested.big.mul(4).div(10000), 18, 6);
 

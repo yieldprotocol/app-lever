@@ -12,7 +12,7 @@ import { W3bNumber } from './InputContext';
 import logoMap from '../config/logos';
 import { CAULDRON, contractFactories, contractFactoryMap, LADLE, ORACLE } from '../config/contractRegister';
 
-import { Cauldron, Ladle } from '@yield-protocol/ui-contracts';
+// import { Cauldron, Ladle } from '@yield-protocol/ui-contracts';
 
 export interface ILeverContextState {
   contracts: any;

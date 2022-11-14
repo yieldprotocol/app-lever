@@ -2,7 +2,7 @@ import { BigNumber } from 'ethers';
 import { useContext, useEffect, useState } from 'react';
 import { WETH } from '../config/assets';
 import { ZERO_BN, ZERO_W3N } from '../constants';
-import { InputContext, W3bNumber } from '../context/InputContext';
+import { IInputContextState, InputContext, W3bNumber } from '../context/InputContext';
 import { ILeverContextState, LeverContext } from '../context/LeverContext';
 import { AppState } from '../lib/types';
 
@@ -12,6 +12,7 @@ import { MAX_256 } from '@yield-protocol/ui-math';
 import useBlockTime from './useBlockTime';
 
 import { calculateAPR } from '@yield-protocol/ui-math';
+import { MarketContext } from '../context/MarketContext';
 
 export interface simOutput {
   /* Borrowing simulation: */
@@ -62,24 +63,23 @@ export interface Notification {
   msg: string;
 }
 
-export const useLever = ( simulator: ()=>Promise<simOutput> ) => {
+export const useLever = (
+  simulator: (inputState: IInputContextState, leverState: ILeverContextState, marketState: any, currentTime?:number) => Promise<simOutput>
+) => {
   /* Bring in context*/
   const [leverState, leverActions]: [ILeverContextState, any] = useContext(LeverContext);
-  const { selectedPosition, selectedStrategy, shortAsset } = leverState;
+  const { selectedStrategy, shortAsset } = leverState;
   const { setAppState } = leverActions;
 
   const [inputState] = useContext(InputContext);
   const { input, leverage } = inputState ? inputState : { input: undefined, leverage: undefined };
 
+  const [marketState ] = useContext(MarketContext);
+  
   /* add in debounced leverage when using slider - to prevent excessive calcs */
   const debouncedLeverage = useDebounce(leverage, 500);
 
   const { currentTime } = useBlockTime();
-
-  /* Lever simulators */
-  // const stEthSim = useStEthSim(input, leverage);
-  // const notionalSim = useNotionalSim();
-  // const [simulator, setSimulator] = useState<any>();
 
   // loading flags:
   const [isSimulating, setIsSimulating] = useState<boolean>(false);
@@ -113,19 +113,12 @@ export const useLever = ( simulator: ()=>Promise<simOutput> ) => {
   useEffect(() => {
     !!selectedStrategy &&
       !!debouncedLeverage &&
-      !!simulator &&
       (async () => {
-        
         /**
          * Simulate investment and set parameters locally
          * */
-        // const simulator = selectedStrategy?.ilkId === WSTETH ?
-        // const simulated = await stEthSim.simulateInvest();
-
         setIsSimulating(true);
-        const simulated = await simulator();
-
-        console.log( simulated )
+        const simulated = await simulator(inputState, leverState, marketState);
 
         setInvestmentPosition(simulated.investmentPosition);
         setInvestmentAtMaturity(simulated.investmentAtMaturity);
@@ -184,19 +177,7 @@ export const useLever = ( simulator: ()=>Promise<simOutput> ) => {
         const pnl_ = netAPR - investAPR; // TODO: this is probably wrong. check it.  (investmentCurrent?.dsp!/shortInvested?.dsp! -1);
         setPnl(pnl_);
       })();
-
   }, [selectedStrategy, debouncedLeverage, input]);
-
-  /* Calculate the expected returns if a position os selected */
-  useEffect(() => {
-    (async () => {
-      if (selectedPosition) {
-        const simulatedReturn_ = ZERO_W3N; //  await stEthSim.simulateReturn();
-        setCurrentReturn(simulatedReturn_);
-        setFutureReturn(simulatedReturn_);
-      }
-    })();
-  }, [selectedPosition]);
 
   const approve = async () => {
     if (inputState && selectedStrategy?.investTokenContract) {
