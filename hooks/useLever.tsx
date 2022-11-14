@@ -29,6 +29,8 @@ export interface simOutput {
   investmentCurrent: W3bNumber; // Current value of long asset (if unwinding now)
 
   investmentFee: W3bNumber;
+
+  notification: Notification|undefined;
 }
 
 export interface LeverSimulation extends simOutput {
@@ -75,7 +77,7 @@ export const useLever = (
   const { input, leverage } = inputState ? inputState : { input: undefined, leverage: undefined };
 
   const [marketState ] = useContext(MarketContext);
-  
+
   /* add in debounced leverage when using slider - to prevent excessive calcs */
   const debouncedLeverage = useDebounce(leverage, 500);
 

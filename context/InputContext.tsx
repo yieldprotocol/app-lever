@@ -2,7 +2,6 @@ import { ZERO_BN } from '@yield-protocol/ui-math';
 import { BigNumber, ethers } from 'ethers';
 import React, { useContext, useEffect, useReducer } from 'react';
 import { ZERO_W3N } from '../constants';
-import { useDebounce } from '../hooks/generalHooks';
 import { LeverContext } from './LeverContext';
 
 export interface W3bNumber {
@@ -30,7 +29,6 @@ const inputToW3bNumber = (input: string, decimals: number = 18, displayDecimals?
             displayDecimals.toString()
         )
       : parseFloat(input);
-
     return {
       dsp: input_dsp,
       hStr: input_hstr,

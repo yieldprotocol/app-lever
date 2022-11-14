@@ -82,8 +82,7 @@ export const stEthSimulator =  async (
     //     gamma: undefined
     // }
 
-    const now = currentTime || Math.round(new Date().getTime() / 1000);
-    const timeToMaturity = marketState.maturity - now;
+    const timeToMaturity = marketState.maturity - currentTime;
     const yearProportion = timeToMaturity / 31536000;
 
     const inputAsFyToken_ = sellBase(
@@ -180,6 +179,8 @@ export const stEthSimulator =  async (
 
     flashBorrowFee,
     investmentFee,
+
+    notification: undefined,
   };
 
   // /**
