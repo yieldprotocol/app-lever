@@ -13,10 +13,7 @@ const PositionWidget = (props: any) => {
 
   const {
     divest,
-    currentReturn,
-    futureReturn,
     isSimulating,
-
   } = props.lever;
 
   return (
@@ -48,10 +45,10 @@ const PositionWidget = (props: any) => {
         <Value>{selectedPosition.ink.toString()}</Value>
 
         <Label>Return if divesting now:</Label>
-        <Value>{currentReturn.dsp}  </Value>
+        <Value>0 </Value>
 
         <Label>Return if divesting at maturity: </Label>
-        <Value>{futureReturn.dsp} </Value>
+        <Value>0</Value>
 
       </InfoBlock>
             <Button

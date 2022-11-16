@@ -35,6 +35,14 @@ export enum AppState {
   Transacting,
 }
 
+export enum TxState {
+  ApprovalRequired,
+  ApprovalPending,
+  TxReady,
+  TxPending,
+  TxComplete,
+}
+
 export interface ISignable {
   name: string;
   version: string;
