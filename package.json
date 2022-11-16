@@ -15,6 +15,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "next": "latest",
     "@curvefi/api": "^2.13.0",
     "@ethersproject/providers": "^5.5.3",
     "@headlessui/react": "^1.4.3",
@@ -62,10 +63,8 @@
     "eslint-plugin-react": "^7.28.0",
     "eslint-plugin-react-hooks": "^4.3.0",
     "typechain": "^8.1.0",
-    "next": "latest",
     "@typechain/ethers-v5": "^9.0.0",
     "@typescript-eslint/eslint-plugin": "^5.10.2",
     "@typescript-eslint/parser": "^5.10.2"
-
   }
 }

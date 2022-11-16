@@ -11,7 +11,7 @@ const TenderlyView = () => {
       <p className="text-white">Test section: </p>
       <div className="flex flex-row gap-8">
         <Button action={() => void fillEther()} disabled={ balance > 100 || loading }> Fund Eth </Button>
-        <div>{process.env.tenderlyRpc}</div>
+        <div>{process.env.FORKED_ENV_RPC}</div>
       </div>
     </div>
   );

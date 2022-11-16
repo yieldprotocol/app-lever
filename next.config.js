@@ -10,7 +10,8 @@ const nextConfig = {
     ALCHEMY_ARBITRUM_KEY: process.env.ALCHEMY_ARBITRUM_KEY,
     ALCHEMY_MAINNET_KEY: process.env.ALCHEMY_MAINNET_KEY,
 
-    TENDERLY_RPC: process.env.TENDERLY_RPC
+    FORKED_ENV_RPC: process.env.FORKED_ENV_RPC,
+
   },
   async redirects() {
     return [

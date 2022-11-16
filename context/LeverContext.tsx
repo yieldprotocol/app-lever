@@ -148,7 +148,6 @@ const LeverProvider = ({ children }: any) => {
   const [leverState, updateState] = useReducer(leverReducer, initState);
   const { address:account } = useAccount();
   const provider = useProvider();
-  const { data: signerData } = useSigner();
 
   // const [cauldron, setCauldron] = useState<Cauldron>()
   // const [ladle, setLadle] = useState<Ladle>()
@@ -174,8 +173,8 @@ const LeverProvider = ({ children }: any) => {
   useEffect(() => {
     if (provider) {
       Array.from(ASSETS.values()).map(async (asset: IAssetRoot) => {
-        const signer = account && signerData ? signerData : provider;
-        const assetContract = contractFactoryMap.get(asset.tokenType)!.connect(asset.address, signer);
+        // const signer = account && signerData ? signerData : provider;
+        const assetContract = contractFactoryMap.get(asset.tokenType)!.connect(asset.address, provider);
 
         // const _bal = account ? await assetContract.balanceOf(account) : BigNumber.from('0');
         const getBal = (asset: IAssetRoot) => {
@@ -209,16 +208,16 @@ const LeverProvider = ({ children }: any) => {
 
   /* Connect up strategy contracts updates on account change */
   useEffect(() => {
-    if (provider) {
+    if (provider ) {
       /* connect up relevant contracts */
       Array.from(STRATEGIES.values()).map(async (strategy) => {
-        const signer = account && signerData ? signerData : provider;
-        const leverContract = contractFactories[strategy.leverAddress].connect(strategy.leverAddress, signer);
 
-        /* Connect the investToken based on investTokenType */
+        const leverContract = contractFactories[strategy.leverAddress].connect(strategy.leverAddress, provider);
+
+        /* Connect the investToken based on investTokenType */ 
         const investTokenContract = contractFactoryMap
           .get(strategy.investTokenType)!
-          .connect(strategy.investTokenAddress, signer);
+          .connect(strategy.investTokenAddress, provider);
 
         /* get the oracle address from the cauldron  */
         const cauldron = contractFactories[CAULDRON].connect(CAULDRON, provider);
@@ -280,7 +279,7 @@ const LeverProvider = ({ children }: any) => {
         updateState({ type: 'UPDATE_STRATEGY', payload: connectedStrategy });
       });
     }
-  }, [account, provider]);
+  }, [ provider ]);
 
   /* Set the initial selected Strategy if there is no strategy selected */
   useEffect(() => {

@@ -13,6 +13,7 @@ import useBlockTime from './useBlockTime';
 
 import { calculateAPR } from '@yield-protocol/ui-math';
 import { MarketContext } from '../context/MarketContext';
+import { useSigner } from 'wagmi';
 
 export interface simOutput {
   /* Borrowing simulation: */
@@ -77,6 +78,8 @@ export const useLever = (
   const { input, leverage } = inputState ? inputState : { input: undefined, leverage: undefined };
 
   const [marketState ] = useContext(MarketContext);
+
+  const { data: signer } = useSigner();
 
   /* add in debounced leverage when using slider - to prevent excessive calcs */
   const debouncedLeverage = useDebounce(leverage, 500);
@@ -196,6 +199,7 @@ export const useLever = (
   };
 
   const invest = async () => {
+
     // await approve();
     if (inputState && selectedStrategy?.leverContract) {
       setAppState(AppState.Transacting);
@@ -206,7 +210,7 @@ export const useLever = (
       //     '0' // removeSlippage( investPosition.big),
       //   )
       // ).mul(2);
-      const investTx = await selectedStrategy.leverContract.invest(
+      const investTx = await selectedStrategy.leverContract.connect(signer!).invest(
         selectedStrategy.seriesId,
         inputState.input.big,
         // ethers.utils.parseUnits('1', 18), // shortBorrowed.big,
@@ -230,7 +234,7 @@ export const useLever = (
     // await approve();
     if (inputState && selectedStrategy?.leverContract) {
       setAppState(AppState.Transacting);
-      const divestTx = await selectedStrategy.leverContract.divest(vaultId, seriesId, ink, art, min);
+      const divestTx = await selectedStrategy.leverContract.connect(signer!).divest(vaultId, seriesId, ink, art, min);
       await divestTx.wait();
     }
   };
