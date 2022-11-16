@@ -29,10 +29,10 @@ export interface StEthLeverInterface extends utils.Interface {
     "FLASH_LOAN_RETURN()": FunctionFragment;
     "approveFyToken(bytes6)": FunctionFragment;
     "cauldron()": FunctionFragment;
-    "divest(bytes12,bytes6,uint128,uint128,uint256)": FunctionFragment;
+    "divest(bytes12,bytes6,uint256,uint256,uint256)": FunctionFragment;
     "giver()": FunctionFragment;
     "ilkId()": FunctionFragment;
-    "invest(bytes6,uint128,uint128)": FunctionFragment;
+    "invest(bytes6,uint256,uint256)": FunctionFragment;
     "ladle()": FunctionFragment;
     "onFlashLoan(address,address,uint256,uint256,bytes)": FunctionFragment;
     "stableSwap()": FunctionFragment;
