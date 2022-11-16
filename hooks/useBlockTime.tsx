@@ -9,13 +9,13 @@ const useBlockTime = () => {
   const [currentTime, setCurrentTime] = useState(0);
 
   useEffect(() => {
-    (async () => {
-      // const blockNum = await provider?.getBlockNumber();
-      // if (blockNum) {
-      //   setCurrentBlock(blockNum);
-      //   const timestamp = (await provider?.getBlock(blockNum))?.timestamp;
-      //   timestamp && setCurrentTime(timestamp);
-      // }
+    provider && (async () => {
+      const blockNum = await provider?.getBlockNumber();
+      if (blockNum) {
+        setCurrentBlock(blockNum);
+        const timestamp = (await provider?.getBlock(blockNum))?.timestamp;
+        timestamp && setCurrentTime(timestamp);
+      }
     })();
   }, [provider]);
 
