@@ -1,18 +1,15 @@
 import { BigNumber, Contract, ethers } from 'ethers';
-import React, { ReactComponentElement, ReactElement, useEffect, useReducer, useState } from 'react';
+import React, { ReactElement, useEffect, useReducer, useState } from 'react';
 import { ASSETS, IAssetRoot, WETH } from '../config/assets';
-// import { CAULDRON, contractFactories, LADLE, ORACLE } from '../config/contractRegister';
 import { ILeverStrategyRoot, STRATEGIES } from '../config/strategies';
 import { ERC20, ERC20Permit, FYToken } from '../contracts/types';
-import useConnector from '../hooks/useConnector';
 import { AppState, TokenType } from '../lib/types';
 import { convertToW3bNumber } from '../lib/utils';
 import { W3bNumber } from './InputContext';
 
 import logoMap from '../config/logos';
 import { CAULDRON, contractFactories, contractFactoryMap, LADLE, ORACLE } from '../config/contractRegister';
-
-// import { Cauldron, Ladle } from '@yield-protocol/ui-contracts';
+import { useAccount, useProvider, useSigner } from 'wagmi';
 
 export interface ILeverContextState {
   contracts: any;
@@ -149,7 +146,10 @@ const leverReducer = (state: ILeverContextState, action: any) => {
 const LeverProvider = ({ children }: any) => {
   /* LOCAL STATE */
   const [leverState, updateState] = useReducer(leverReducer, initState);
-  const { account, provider } = useConnector();
+  const { address:account } = useAccount();
+  const provider = useProvider();
+  const { data: signerData } = useSigner();
+
   // const [cauldron, setCauldron] = useState<Cauldron>()
   // const [ladle, setLadle] = useState<Ladle>()
 
@@ -174,7 +174,7 @@ const LeverProvider = ({ children }: any) => {
   useEffect(() => {
     if (provider) {
       Array.from(ASSETS.values()).map(async (asset: IAssetRoot) => {
-        const signer = account ? provider.getSigner(account) : provider;
+        const signer = account && signerData ? signerData : provider;
         const assetContract = contractFactoryMap.get(asset.tokenType)!.connect(asset.address, signer);
 
         // const _bal = account ? await assetContract.balanceOf(account) : BigNumber.from('0');
@@ -212,7 +212,7 @@ const LeverProvider = ({ children }: any) => {
     if (provider) {
       /* connect up relevant contracts */
       Array.from(STRATEGIES.values()).map(async (strategy) => {
-        const signer = account ? provider.getSigner(account) : provider;
+        const signer = account && signerData ? signerData : provider;
         const leverContract = contractFactories[strategy.leverAddress].connect(strategy.leverAddress, signer);
 
         /* Connect the investToken based on investTokenType */
