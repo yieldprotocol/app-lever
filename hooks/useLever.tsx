@@ -120,7 +120,7 @@ export const useLever = (
   const [pnl, setPnl] = useState<number>(0);
   const [maxLeverage, setMaxLeverage] = useState<number>(5);
 
-  const doInvest = useInvest(selectedStrategy, txArgs, { value: input.big }, !isSimulating && input.dsp > 0);
+  const doInvest = useInvest(selectedStrategy, txArgs, { value: input?.big }, !isSimulating && input?.dsp > 0);
 
   const doDivest = useDivest('asdasd');
 
@@ -190,7 +190,7 @@ export const useLever = (
           (simulated.debtAtMaturity?.dsp! / (simulated.investmentPosition?.dsp! * selectedStrategy?.loanToValue)) * 100;
         setBorrowLimitUsed(borrowLimitUsed_);
 
-        const pnl_ = netAPR - investAPR; // TODO: this is probably wrong. check it.  (investmentCurrent?.dsp!/shortInvested?.dsp! -1);
+        const pnl_ = isNaN(netAPR - investAPR) ? 0: netAPR - investAPR;
         setPnl(pnl_);
       })();
   }, [selectedStrategy, debouncedLeverage, input]);

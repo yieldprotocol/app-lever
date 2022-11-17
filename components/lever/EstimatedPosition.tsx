@@ -41,14 +41,11 @@ const EstimatedPosition = (props: any) => {
           <Value>
             {input?.dsp} {shortAsset?.displaySymbol}
           </Value>
-          {/* <NotShown> Wrapped input: {input?.dsp} WETH </NotShown>
-        <NotShown> Short asset investment as FyToken : {inputAsFyToken.dsp} (fyETH) </NotShown>
-        <NotShown> Total Investment ( fyToken ): {totalToInvest.dsp} (fyETH) </NotShown>  */}
           <Label> Leverage:</Label>
           <Value> {leverage?.dsp || 0} X </Value>
         </InfoBlock>
 
-        {input?.dsp > 0 && selectedStrategy && (
+        { selectedStrategy && (input?.dsp > 0) &&(
           <>
             <Divider />
             <InfoBlock>
@@ -60,13 +57,7 @@ const EstimatedPosition = (props: any) => {
 
               <Label>Total fees: </Label>
               <Value>
-                {isSimulating ? (
-                  <Loader />
-                ) : flashBorrowFee?.dsp < 0.0000001 ? (
-                  investmentFee?.dsp + flashBorrowFee?.dsp
-                ) : (
-                  investmentFee?.dsp
-                )}
+                {isSimulating ? <Loader /> : `${investmentFee?.dsp + flashBorrowFee?.dsp} ${shortAsset?.displaySymbol}`}
               </Value>
             </InfoBlock>
 
@@ -92,15 +83,7 @@ const EstimatedPosition = (props: any) => {
                 </Value>
                 <div className=" text-sm text-start mt-2">Fees</div> <div />
                 <Label className="text-sm">Flash Borrowing fees: </Label>
-                <Value className="text-sm">
-                  {isSimulating ? (
-                    <Loader />
-                  ) : flashBorrowFee?.dsp < 0.0000001 ? (
-                    flashBorrowFee?.dsp
-                  ) : (
-                    <p>Insignificant</p>
-                  )}{' '}
-                </Value>
+                <Value className="text-sm">{isSimulating ? <Loader /> : flashBorrowFee?.dsp}</Value>
                 <Label className="text-sm">Trading fees: </Label>
                 <Value className="text-sm">{isSimulating ? <Loader /> : investmentFee?.dsp} </Value>
               </InfoBlock>
@@ -117,17 +100,12 @@ const EstimatedPosition = (props: any) => {
             <Divider />
 
             <InfoBlock>
-              {/* <NotShown> (debtPosition/investPosition * LTV )</NotShown> */}
               <Label>Borrow Limit Usage</Label>
-              {/* <Value> {selectedStrategy?.loanToValue*100 } %</Value> */}
-
               <Value> {isSimulating ? <Loader /> : Math.round((borrowLimitUsed + Number.EPSILON) * 100) / 100} %</Value>
 
-              {/* <NotShown>(pos/prin - 1)</NotShown> */}
               <Label>PnL</Label>
-              <Value>{isSimulating ? <Loader /> : Math.round((pnl + Number.EPSILON) * 100) / 100}</Value>
+              <Value>{ isSimulating ? <Loader /> : Math.round((pnl + Number.EPSILON) * 100) / 100}</Value>
 
-              {/* <NotShown>( investPosition/ baseInvested ) ^ t%year - 1</NotShown> */}
               <Label>
                 <div className="flex flex-row gap-2 ">
                   Investment rate{' '}
@@ -136,11 +114,8 @@ const EstimatedPosition = (props: any) => {
                   </div>
                 </div>
               </Label>
-              <Value>
-                {isSimulating ? <Loader /> : Math.round((investAPR + Number.EPSILON) * 100) / 100} % APR
-              </Value>
+              <Value>{isSimulating ? <Loader /> : Math.round((investAPR + Number.EPSILON) * 100) / 100} % APR</Value>
 
-              {/* <NotShown>( debtPosition / baseBorrowed ) ^ t%year -1</NotShown> */}
               <Label>
                 <div className="flex flex-row gap-2">
                   Borrowing rate{' '}
@@ -149,21 +124,13 @@ const EstimatedPosition = (props: any) => {
                   </div>
                 </div>
               </Label>
-              <Value>
-                {isSimulating ? <Loader /> : Math.round((borrowAPR + Number.EPSILON) * 100) / 100} % APR
-              </Value>
+              <Value>{isSimulating ? <Loader /> : Math.round((borrowAPR + Number.EPSILON) * 100) / 100} % APR</Value>
 
-              {/* <NotShown>leverage*longAPR - (leverage - 1)*borrowAPR</NotShown> */}
               <Label>Net rate</Label>
               <Value className={netAPR < 0 ? 'text-red-500 dark:text-red-500' : 'text-green-600 dark:text-green-600 '}>
                 {isSimulating ? <Loader /> : Math.round((netAPR + Number.EPSILON) * 100) / 100} % APR
               </Value>
 
-              {/* <NotShown>( investPostion - debtPosition - input )</NotShown> */}
-              {/* <Label>Return in base: </Label>
-              <Value>
-                {investmentPosition?.dsp! - debtAtMaturity?.dsp! - input?.dsp} {shortAsset?.displaySymbol}
-              </Value> */}
             </InfoBlock>
           </>
         )}
