@@ -17,11 +17,10 @@ dark:bg-opacity-25
 
 const Button = tw.button`text-xs bg-primary-800 w-5 dark:text-gray-50 text-gray-50 rounded hover:opacity-80`;
 
-
 export const ChartWidget = (props: HighchartsReact.Props) => {
   const chartComponentRef = useRef<HighchartsReact.RefObject>(null);
   const [leverState] = useContext(LeverContext);
-  const { selectedStrategy, shortAsset, longAsset } = leverState;
+  const { selectedLever, shortAsset, longAsset } = leverState;
   const [chartState] = useContext(ChartContext);
   const { prices, pricesAvailable } = chartState;
 
@@ -32,8 +31,8 @@ export const ChartWidget = (props: HighchartsReact.Props) => {
   const [forceChart, setForceChart] = useState<boolean>(false);
 
   useEffect(() => {
-    setCondensedView(!forceChart && selectedStrategy && input?.dsp > 0);
-  }, [input, selectedStrategy, forceChart]);
+    setCondensedView(!forceChart && selectedLever && input?.dsp > 0);
+  }, [input, selectedLever, forceChart]);
 
   // set Chart options
   let options = {

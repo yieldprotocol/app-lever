@@ -52,20 +52,20 @@ const MarketProvider = ({ children }: any) => {
 
   /* STATE from other contexts */
   const [leverState]: [ILeverContextState] = useContext(LeverContext);
-  const { selectedStrategy } = leverState;
+  const { selectedLever } = leverState;
 
-  const getPoolInfo = async (leverStrategy: ILever): Promise<IPoolState> => {
+  const getPoolInfo = async (lever: ILever): Promise<IPoolState> => {
     /* Get all the data simultanenously in a promise.all */
     const [baseReserves, fyTokenReserves, totalSupply, ts, g1, g2, maturity, decimals, fyTokenRealReserves] = await Promise.all([
-      leverStrategy.poolContract.getBaseBalance(),
-      leverStrategy.poolContract.getFYTokenBalance(),
-      leverStrategy.poolContract.totalSupply(),   
-      leverStrategy.poolContract.ts(),
-      leverStrategy.poolContract.g1(),
-      leverStrategy.poolContract.g2(),
-      leverStrategy.poolContract.maturity(),
-      leverStrategy.investTokenContract.decimals(),
-      leverStrategy.investTokenContract.balanceOf(leverStrategy.poolAddress),
+      lever.poolContract.getBaseBalance(),
+      lever.poolContract.getFYTokenBalance(),
+      lever.poolContract.totalSupply(),   
+      lever.poolContract.ts(),
+      lever.poolContract.g1(),
+      lever.poolContract.g2(),
+      lever.poolContract.maturity(),
+      lever.investTokenContract.decimals(),
+      lever.investTokenContract.balanceOf(lever.poolAddress),
     ]);
 
     let sharesReserves: BigNumber;
@@ -76,11 +76,11 @@ const MarketProvider = ({ children }: any) => {
 
     try {
       [sharesReserves, c, mu, currentSharePrice, sharesToken] = await Promise.all([
-        leverStrategy.poolContract.getSharesBalance(),
-        leverStrategy.poolContract.getC(),
-        leverStrategy.poolContract.mu(),
-        leverStrategy.poolContract.getCurrentSharePrice(),
-        leverStrategy.poolContract.sharesToken(),
+        lever.poolContract.getSharesBalance(),
+        lever.poolContract.getC(),
+        lever.poolContract.mu(),
+        lever.poolContract.getCurrentSharePrice(),
+        lever.poolContract.sharesToken(),
       ]);
     } catch (error) {
       sharesReserves = baseReserves;
@@ -107,14 +107,14 @@ const MarketProvider = ({ children }: any) => {
     return market_;
   };
 
-  /* Update market State when selectedStrategy change */
+  /* Update market State when selectedLever change */
   useEffect(() => {
-    selectedStrategy && getPoolInfo(selectedStrategy);
-  }, [selectedStrategy]);
+    selectedLever && getPoolInfo(selectedLever);
+  }, [selectedLever]);
 
   /* ACTIONS TO CHANGE CONTEXT */
   const marketActions = {
-    getPoolInfo: async (strategy: ILever): Promise<IPoolState> => await getPoolInfo(strategy),
+    getPoolInfo: async (lever: ILever): Promise<IPoolState> => await getPoolInfo(lever),
   };
 
   return <MarketContext.Provider value={[ marketState as IPoolState, marketActions ]}>{children}</MarketContext.Provider>;

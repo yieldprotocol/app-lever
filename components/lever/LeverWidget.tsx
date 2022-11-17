@@ -8,7 +8,7 @@ import { CogIcon } from '@heroicons/react/24/solid';
 
 import { ValueInput } from '../selectors/ValueInput';
 import { LeverContext } from '../../context/LeverContext';
-import StrategySelect from '../selectors/StrategySelect';
+import LeverSelect from '../selectors/LeverSelect';
 import { LeverSimulation } from '../../hooks/useLever';
 import { BorderWrap, TopRow, Inner, Section, SectionHead } from '../styled';
 import { InputContext } from '../../context/InputContext';
@@ -40,7 +40,7 @@ const ClearButton = tw.button`text-sm`;
 const LeverWidget = (props: any) => {
   /* Bring in lever context - instead of passing them as props */
   const [leverState] = useContext(LeverContext);
-  const { selectedStrategy, shortAsset } = leverState;
+  const { selectedLever, shortAsset } = leverState;
 
   const [{ input }] = useContext(InputContext);
   const {address: account} = useAccount();
@@ -57,17 +57,17 @@ const LeverWidget = (props: any) => {
       </TopRow>
       <Inner>
         <Section>
-          <SectionHead>Strategy </SectionHead>
-          <StrategySelect />
+          <SectionHead>Lever Strategy </SectionHead>
+          <LeverSelect />
         </Section>
 
         <Section>
           <SectionHead>
             <div className="flex flex-row justify-between">
               Principle investment
-              {selectedStrategy && shortAsset && (
+              {selectedLever && shortAsset && (
                 <div className="text-xs text-slate-500">
-                  Min: {selectedStrategy.minDebt.dsp} {shortAsset.displaySymbol}{' '}
+                  Min: {selectedLever.minDebt.dsp} {shortAsset.displaySymbol}{' '}
                 </div>
               )}
             </div>
@@ -86,10 +86,10 @@ const LeverWidget = (props: any) => {
           action={() => invest()}
           disabled={
             !account ||
-            !selectedStrategy ||
+            !selectedLever ||
             borrowLimitUsed > 100 ||
-            shortBorrowed.big.gt(selectedStrategy.maxBase.big) ||
-            input?.big.lt(selectedStrategy.minDebt.big)
+            shortBorrowed.big.gt(selectedLever.maxBase.big) ||
+            input?.big.lt(selectedLever.minDebt.big)
           } // add in isTransacting check
           // loading={false}
           loading={isSimulating}

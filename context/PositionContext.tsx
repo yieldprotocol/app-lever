@@ -15,7 +15,7 @@ export interface IPosition {
   ilkId: string;
   ink: BigNumber;
   art: BigNumber;
-  leverStrategy: ILever;
+  lever: ILever;
 }
 
 const PositionContext = React.createContext<any>({});
@@ -47,7 +47,7 @@ const PositionProvider = ({ children }: any) => {
   /* LOCAL STATE */
   const [positionState, updateState] = useReducer(positionReducer, initState);
   const [ leverState ] = useContext(LeverContext);
-  const { strategies } = leverState as ILeverContextState;
+  const { levers } = leverState as ILeverContextState;
 
   const provider = useProvider();
 
@@ -68,7 +68,6 @@ const PositionProvider = ({ children }: any) => {
           const { ink, art } = await cauldron.balances(id);
 
           const vaultInfo = {
-            leverStrategy:
             id,
             seriesId,
             ilkId,

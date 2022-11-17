@@ -5,7 +5,7 @@ import { useContractWrite, usePrepareContractWrite } from 'wagmi';
 import { ILever } from '../context/LeverContext';
 
 const useInvest = (
-  leverStrategy: ILever| undefined,
+  lever: ILever| undefined,
   txArgs: any[],
   overrides: { value: BigNumber} = { value: ZERO_BN },
   enabled: boolean = false,
@@ -15,13 +15,13 @@ const useInvest = (
 ) => {
   
   const { config, error, isFetching, isIdle } = usePrepareContractWrite({
-    address: leverStrategy?.leverAddress,
-    abi: leverStrategy?.leverContract.interface as any,
+    address: lever?.leverAddress,
+    abi: lever?.leverContract.interface as any,
     functionName: 'invest',
     args: txArgs,
     overrides,
     enabled
-    // args: [leverStrategy?.seriesId, borrowed, ZERO_BN],
+    // args: [lever?.seriesId, borrowed, ZERO_BN],
     // overrides: { value: input },
     // enabled: input.gt(ZERO_BN) && borrowed.gt(ZERO_BN) && minPosition.gt(ZERO_BN),
   });

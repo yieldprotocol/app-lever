@@ -14,10 +14,9 @@ export interface IInputContextState {
   input: W3bNumber | undefined;
   leverage: W3bNumber | undefined;
   slippage: number;
-  // selectedStrategy: ILever|undefined;
 }
 
-/* Parse the input to W3BNumber based on the selected Strategy and base */
+/* Parse the input to W3BNumber based on the selected lever and base */
 const inputToW3bNumber = (input: string, decimals: number = 18, displayDecimals?: number): W3bNumber | undefined => {
   if (input) {
     const input_bn = input ? ethers.utils.parseUnits(input, decimals) : ZERO_BN;
@@ -54,12 +53,6 @@ const inputReducer = (state: IInputContextState, action: any) => {
         input: action.payload,
       };
 
-    // case 'SELECT_STRATEGY':
-    //   return {
-    //     ...state,
-    //     selectedStrategy: action.payload,
-    //   };
-
     case 'SET_SLIPPAGE':
       return {
         ...state,
@@ -81,13 +74,13 @@ const InputProvider = ({ children }: any) => {
   /* LOCAL STATE */
   const [inputState, updateState] = useReducer(inputReducer, initState);
   const [leverState] = useContext(LeverContext);
-  const { selectedStrategy } = leverState;
+  const { selectedLever } = leverState;
 
-  /* Reset Input and leverage when selected strategy changes */
+  /* Reset Input and leverage when selected lever changes */
   useEffect(() => {
     updateState({ type: 'SET_INPUT', payload: initState.input });
     updateState({ type: 'SET_LEVERAGE', payload: initState.leverage });
-  }, [selectedStrategy]);
+  }, [selectedLever]);
 
   /* ACTIONS TO CHANGE CONTEXT */
   const inputActions = {

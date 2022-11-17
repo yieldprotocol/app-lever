@@ -11,18 +11,13 @@ export interface ILeverRoot {
   id: string;
   displayName: string;
   maturity: number;
-
   investTokenType: TokenType;
   investTokenAddress: string;
-
   leverAddress: string;
-
   ilkId: string;
   baseId: string;
   seriesId: string;
-
   tradePlatform: string;
-
   leverSimulator: (
     inputContext: IInputContextState,
     leverContext: ILeverContextState,
@@ -38,15 +33,15 @@ export enum TradePlatforms {
   NOTIONAL= 'NOTIONAL'
 }
 
-export enum Levers {
+export enum LeverContractAddresses {
   STETH_LEVER = '0x60a6a7fabe11ff36cbe917a17666848f0ff3a60a',
   STRATEGY_LEVER = '0x60a6a7fabe11ff36cbe917a17666848f0ff3a60a',
   NOTIONAL_LEVER = '0x60a6a7fabe11ff36cbe917a17666848f0ff3a60a'
 }
 
-export const LEVER_STRATEGIES = new Map<string, ILeverRoot>();
+export const LEVERS = new Map<string, ILeverRoot>();
 
-LEVER_STRATEGIES.set('STETH_01', {
+LEVERS.set('STETH_01', {
   id: '001',
   displayName: 'WETH_STETH DEC_2022',
   maturity: 1672412400,
@@ -54,7 +49,7 @@ LEVER_STRATEGIES.set('STETH_01', {
   investTokenType: TokenType.FYTOKEN,
   investTokenAddress: '0x386a0a72ffeeb773381267d69b61acd1572e074d',
 
-  leverAddress: Levers.STETH_LEVER,
+  leverAddress: LeverContractAddresses.STETH_LEVER,
 
   ilkId: WSTETH,
   baseId: WETH,
@@ -64,14 +59,14 @@ LEVER_STRATEGIES.set('STETH_01', {
   tradePlatform: TradePlatforms.CURVE,
 });
 
-LEVER_STRATEGIES.set('STETH_02', {
+LEVERS.set('STETH_02', {
   id: '002',
   displayName: 'WETH_STETH MAR_2023',
   maturity: 1680274800,
   investTokenType: TokenType.FYTOKEN,
   investTokenAddress: '0x0FBd5ca8eE61ec921B3F61B707f1D7D64456d2d1',
 
-  leverAddress: Levers.STETH_LEVER,
+  leverAddress: LeverContractAddresses.STETH_LEVER,
 
   ilkId: WSTETH,
   baseId: WETH,
@@ -81,7 +76,7 @@ LEVER_STRATEGIES.set('STETH_02', {
   tradePlatform: TradePlatforms.CURVE,
 });
 
-// LEVER_STRATEGIES.set('StETH_02', {
+// LEVERS.set('StETH_02', {
 //   id: '002',
 //   displayName: 'WETH <> STETH MAR 2023',
 //   maturity: 1680274800,

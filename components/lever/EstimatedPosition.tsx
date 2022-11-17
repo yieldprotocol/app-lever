@@ -11,7 +11,7 @@ const EstimatedPosition = (props: any) => {
   const { input, leverage } = inputState;
 
   const [leverState] = useContext(LeverContext);
-  const { selectedStrategy, shortAsset, longAsset } = leverState;
+  const { selectedLever, shortAsset, longAsset } = leverState;
 
   const {
     netAPR,
@@ -45,7 +45,7 @@ const EstimatedPosition = (props: any) => {
           <Value> {leverage?.dsp || 0} X </Value>
         </InfoBlock>
 
-        { selectedStrategy && (input?.dsp > 0) &&(
+        { selectedLever && (input?.dsp > 0) &&(
           <>
             <Divider />
             <InfoBlock>

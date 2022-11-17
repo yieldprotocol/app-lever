@@ -19,20 +19,20 @@ const Button = tw.button`float-right flex items-center gap-1 my-[1px] text-xs mr
 
 export const ValueInput = () => {
   const [leverState] = useContext(LeverContext);
-  const { shortAsset, selectedStrategy } = leverState;
+  const { shortAsset, selectedLever } = leverState;
   const [inputState, inputActions] = useContext(InputContext);
   const [focus, setFocus] = useState(false);
 
   const [warnInput, setWarnInput] = useState<boolean>(false);
 
   // useEffect(() => {
-  //   if (selectedStrategy && inputState.input) {
+  //   if (selectedLever && inputState.input) {
   //     // toast.warn('Input less than min debt required.')
-  //     // inputState.input.dsp < selectedStrategy.minDebt.dsp && toast.warn('Input less than min debt required.')
-  //     // console.log( 'greater than minDebt: ',  inputState.input.dsp > selectedStrategy.minDebt.dsp )
-  //     // console.log( 'less than maxBase: ',  inputState.input.dsp < selectedStrategy.maxBase.dsp )
+  //     // inputState.input.dsp < selectedLever.minDebt.dsp && toast.warn('Input less than min debt required.')
+  //     // console.log( 'greater than minDebt: ',  inputState.input.dsp > selectedLever.minDebt.dsp )
+  //     // console.log( 'less than maxBase: ',  inputState.input.dsp < selectedLever.maxBase.dsp )
   //   }
-  // }, [inputState.input?.dsp, selectedStrategy]);
+  // }, [inputState.input?.dsp, selectedLever]);
 
   return (
     <Container $unFocused={false}>

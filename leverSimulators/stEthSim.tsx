@@ -10,13 +10,7 @@ import { simOutput } from '../hooks/useLever';
 import curve from '@curvefi/api';
 import { ethers } from 'ethers';
 
-import {
-  // FlashJoin__factory,
-  // IOracle__factory,
-  StableSwap__factory,
-  // StEthLever__factory,
-  // WStEth__factory,
-} from '../contracts/types';
+import { StableSwap__factory } from '../contracts/types';
 
 /* stable swap contract */
 export const WETH_STETH_STABLESWAP = '0x828b154032950c8ff7cf8085d841723db2696056';
@@ -41,7 +35,7 @@ export const stEthSimulator =  async (
 
   const input = inputState.input || ZERO_W3N;
   const leverage = inputState.leverage;
-  const strategy = leverState.selectedStrategy;
+  const lever = leverState.selectedLever;
 
   if (input.big.gt(ZERO_BN) && provider) {
 
@@ -121,7 +115,7 @@ export const stEthSimulator =  async (
     if (inputAsFyToken.big.gt(ZERO_BN)) {
       // - netInvestAmount = baseAmount + borrowAmount - fee
       // const fyWeth = await getFyToken(seriesId, contracts, account);
-      const fyContract = strategy?.investTokenContract;
+      const fyContract = lever?.investTokenContract;
       const fee = ZERO_BN; //  await fyContract.flashFee(fyContract.address, toBorrow.big.toString()) ;
 
       flashBorrowFee = convertToW3bNumber(fee, 18, 6);
@@ -139,7 +133,7 @@ export const stEthSimulator =  async (
       debtAtMaturity = convertToW3bNumber(debt_, 18, 6);
 
       // - sellFyWeth: FyWEth -> WEth
-      // const obtainedWEth = await selectedStrategy.marketContract.sellFYTokenPreview(netInvestAmount);
+      // const obtainedWEth = await selectedLever.marketContract.sellFYTokenPreview(netInvestAmount);
       const netInvestAmount = inputAsFyToken.big.add(toBorrow.big); // .sub(fee); // - netInvestAmount = baseAmount + borrowAmount - fee
       const wethObtained = sellFYToken(
         marketState.sharesReserves,
@@ -189,8 +183,8 @@ export const stEthSimulator =  async (
     flashBorrowFee,
     investmentFee,
 
-    investArgs: [strategy?.seriesId, input.big, ZERO_BN ],
-    divestArgs: [strategy?.seriesId, input.big, ZERO_BN ],
+    investArgs: [lever?.seriesId, input.big, ZERO_BN ],
+    divestArgs: [lever?.seriesId, input.big, ZERO_BN ],
 
     notification: undefined,
   };
@@ -201,12 +195,12 @@ export const stEthSimulator =  async (
   // const simulateReturn = async (): Promise<W3bNumber> => {
   //   setIsSimulating(true);
 
-  //   const fyContract = selectedStrategy.investTokenContract;
+  //   const fyContract = selectedLever.investTokenContract;
   //   const wStEthContract = contractFactories[WST_ETH].connect(WST_ETH, provider);
-  //   const pool = selectedStrategy.poolContract;
+  //   const pool = selectedLever.poolContract;
   //   const stableSwap = contractFactories[WETH_STETH_STABLESWAP].connect(WETH_STETH_STABLESWAP, provider);
 
-  //   if (selectedStrategy && selectedPosition) {
+  //   if (selectedLever && selectedPosition) {
   //     /* amount of steth recieved from unwrapping wSTETH */
   //     const stEthUnwrapped = await wStEthContract.getStETHByWstETH(selectedPosition.ink);
   //     /* Amount of Eth from swapping stETH on curve */

@@ -78,20 +78,20 @@ const ListOptionsStyled = ({children}: {children: any[]}) => (
   </BorderWrap>
 );
 
-const StrategySelect = () => {
+const LeverSelect = () => {
   const [leverState, leverActions] = useContext(LeverContext);
-  const { selectedStrategy, strategies, shortAsset, longAsset, assets } = leverState;
+  const { selectedLever, levers, shortAsset, longAsset, assets } = leverState;
   const assetsList = Array.from(assets.values());
 
-  const [possibleStrategies, setPossibleStrategies] = useState<ILever[]>([]);
+  const [possibleLevers, setPossibleLevers] = useState<ILever[]>([]);
   const [requestedPairs, setRequestedPair] = useState<string[]>([]);
 
   useEffect(() => {
     const newStratList: ILever[] = [];
-    strategies.forEach((x: ILever) => {
+    levers.forEach((x: ILever) => {
       if (x.baseId === shortAsset.id && x.ilkId === longAsset.id) newStratList.push(x);
-      setPossibleStrategies(newStratList);
-      leverActions.selectStrategy(newStratList[0]);
+      setPossibleLevers(newStratList);
+      leverActions.selectLever(newStratList[0]);
     });
   }, [shortAsset, longAsset]);
 
@@ -152,13 +152,13 @@ const StrategySelect = () => {
 
       <div>
         <div className="gap-4">
-          {possibleStrategies.map((s: ILever) => (
+          {possibleLevers.map((s: ILever) => (
             <Container key={s.id}>
               <div
                 className={`flex flex-row gap-4 p-2 justify-around ${
-                  selectedStrategy.id === s.id ? 'bg-primary-900 bg-opacity-25' : 'text-xs'
+                  selectedLever.id === s.id ? 'bg-primary-900 bg-opacity-25' : 'text-xs'
                 }`}
-                onClick={() => leverActions.selectStrategy(s)}
+                onClick={() => leverActions.selectLever(s)}
               >
                 <div className="w-6 h-6">{s.tradeImage}</div>
                 <div>{`${shortAsset.displaySymbol} v ${longAsset.displaySymbol} Lever`} </div>
@@ -169,14 +169,14 @@ const StrategySelect = () => {
               </div>
             </Container>
           ))}
-          {possibleStrategies.length === 0 && (
+          {possibleLevers.length === 0 && (
             <Container>
               <div className="p-3 flex flex-row text-xs justify-between align-middle ">
                 <div className="flex flex-row gap-4">
                   <div className=" p-1">
                     <ExclamationTriangleIcon className="w-4 h-4" />
                   </div>
-                  <div className="text-sm"> No strategies are available for this short/long pair yet. </div>
+                  <div className="text-sm"> No lever strategies are available for this short/long pair yet. </div>
                 </div>
                 <div className="text-xs p-1" onClick={() => handlePairRequest()}>
                   {shortAsset && longAsset && requestedPairs.includes(`${shortAsset.symbol}${longAsset.symbol}`) ? (
@@ -194,4 +194,4 @@ const StrategySelect = () => {
   );
 };
 
-export default StrategySelect;
+export default LeverSelect;
