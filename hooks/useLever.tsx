@@ -1,7 +1,5 @@
-import { BigNumber } from 'ethers';
 import { useContext, useEffect, useState } from 'react';
-import { WETH } from '../config/assets';
-import { ZERO_BN, ZERO_W3N } from '../constants';
+import { ZERO_W3N } from '../constants';
 import { IInputContextState, InputContext, W3bNumber } from '../context/InputContext';
 import { ILeverContextState, LeverContext } from '../context/LeverContext';
 import { AppState } from '../lib/types';
@@ -13,10 +11,10 @@ import useBlockTime from './useBlockTime';
 
 import { calculateAPR } from '@yield-protocol/ui-math';
 import { MarketContext } from '../context/MarketContext';
-import { useSigner } from 'wagmi';
 
 import useInvest from './useInvest';
 import useDivest from './useDivest';
+import { IPositionContextState, PositionContext } from '../context/PositionContext';
 
 export interface simOutput {
   /* Borrowing simulation: */
@@ -34,7 +32,9 @@ export interface simOutput {
 
   investmentFee: W3bNumber;
 
-  txArgs: any[];
+  investArgs: any[];
+  divestArgs: any[];
+
   notification: Notification | undefined;
 }
 
@@ -79,7 +79,7 @@ export const useLever = (
   ) => Promise<simOutput>
 ) => {
   /* Bring in context*/
-  const [leverState, leverActions]: [ILeverContextState, any] = useContext(LeverContext);
+  const [ leverState, leverActions ]: [ILeverContextState, any] = useContext(LeverContext);
   const { selectedStrategy, shortAsset } = leverState;
   const { setAppState } = leverActions;
 
@@ -87,7 +87,9 @@ export const useLever = (
   const { input, leverage } = inputState ? inputState : { input: undefined, leverage: undefined };
 
   const [marketState] = useContext(MarketContext);
-  const { data: signer } = useSigner();
+
+  const [positionState] : [IPositionContextState, any] = useContext(PositionContext);
+  const { selectedPosition } = positionState;
 
   /* add in debounced leverage when using slider - to prevent excessive calcs */
   const debouncedLeverage = useDebounce(leverage, 500);
@@ -108,7 +110,8 @@ export const useLever = (
   const [flashBorrowFee, setFlashBorrowFee] = useState<W3bNumber>();
   const [investmentFee, setInvestmentFee] = useState<W3bNumber | number>();
 
-  const [txArgs, setTxArgs] = useState<any[]>([]);
+  const [investArgs, setInvestArgs] = useState<any[]>([]);
+  const [divestArgs, setDivestArgs] = useState<any[]>([]);
 
   // Calculated APRS:
   const [investAPR, setInvestAPR] = useState<number>(0);
@@ -120,9 +123,8 @@ export const useLever = (
   const [pnl, setPnl] = useState<number>(0);
   const [maxLeverage, setMaxLeverage] = useState<number>(5);
 
-  const doInvest = useInvest(selectedStrategy, txArgs, { value: input?.big }, !isSimulating && input?.dsp > 0);
-
-  const doDivest = useDivest('asdasd');
+  const invest = useInvest(selectedStrategy, investArgs, { value: input?.big }, !isSimulating && input?.dsp > 0);
+  const divest = useDivest(selectedStrategy, divestArgs, { value: input?.big }, false );
 
   /* Use the simulator on each leverage/input change */
   useEffect(() => {
@@ -144,7 +146,8 @@ export const useLever = (
         setFlashBorrowFee(simulated.flashBorrowFee);
         setInvestmentFee(simulated.investmentFee);
 
-        setTxArgs(simulated.txArgs);
+        setInvestArgs(simulated.investArgs);
+        setDivestArgs(simulated.divestArgs);
 
         setIsSimulating(false);
 
@@ -209,54 +212,54 @@ export const useLever = (
     }
   };
 
-  const invest = async () => {
-    // await approve();
-    if (inputState && selectedStrategy?.leverContract) {
-      setAppState(AppState.Transacting);
+  // const invest = async () => {
+  //   // await approve();
+  //   if (inputState && selectedStrategy?.leverContract) {
+  //     setAppState(AppState.Transacting);
 
-      doInvest && doInvest();
-      // const gasLimit = (
-      //   await selectedStrategy.leverContract.estimateGas.invest(
-      //     selectedStrategy.seriesId,
-      //     inputState.input.big,
-      //     ZERO_BN, // removeSlippage( investPosition.big),
-      //     {
-      //       value: shortAsset?.id === WETH ? inputState.input.big : ZERO_BN, // value is set as input if using ETH
-      //     }
-      //   )
-      // ).mul(110).div(100); // add 10% in gas to prevent out-of-gas occasionally
+  //     doInvest && doInvest();
+  //     // const gasLimit = (
+  //     //   await selectedStrategy.leverContract.estimateGas.invest(
+  //     //     selectedStrategy.seriesId,
+  //     //     inputState.input.big,
+  //     //     ZERO_BN, // removeSlippage( investPosition.big),
+  //     //     {
+  //     //       value: shortAsset?.id === WETH ? inputState.input.big : ZERO_BN, // value is set as input if using ETH
+  //     //     }
+  //     //   )
+  //     // ).mul(110).div(100); // add 10% in gas to prevent out-of-gas occasionally
 
-      // const investTx = await selectedStrategy.leverContract.connect(signer!).invest(
-      //   selectedStrategy.seriesId,
-      //   inputState.input.big,
-      //   ZERO_BN, // removeSlippage( investPosition.big),
-      //   {
-      //     value: shortAsset?.id === WETH ? inputState.input.big : ZERO_BN, // value is set as input if using ETH
-      //     gasLimit,
-      //   }
-      // );
+  //     // const investTx = await selectedStrategy.leverContract.connect(signer!).invest(
+  //     //   selectedStrategy.seriesId,
+  //     //   inputState.input.big,
+  //     //   ZERO_BN, // removeSlippage( investPosition.big),
+  //     //   {
+  //     //     value: shortAsset?.id === WETH ? inputState.input.big : ZERO_BN, // value is set as input if using ETH
+  //     //     gasLimit,
+  //     //   }
+  //     // );
 
-      // toast.info('Transaction pending.')
-      // await investTx.wait();
+  //     // toast.info('Transaction pending.')
+  //     // await investTx.wait();
 
-      // toast.info('Transaction complete.')
-    }
-  };
+  //     // toast.info('Transaction complete.')
+  //   }
+  // };
 
-  const divest = async (
-    vaultId: string,
-    seriesId: string,
-    ink: BigNumber,
-    art: BigNumber,
-    min: BigNumber = BigNumber.from('1')
-  ) => {
-    // await approve();
-    if (inputState && selectedStrategy?.leverContract) {
-      setAppState(AppState.Transacting);
-      const divestTx = await selectedStrategy.leverContract.connect(signer!).divest(vaultId, seriesId, ink, art, min);
-      await divestTx.wait();
-    }
-  };
+  // const divest = async (
+  //   vaultId: string,
+  //   seriesId: string,
+  //   ink: BigNumber,
+  //   art: BigNumber,
+  //   min: BigNumber = BigNumber.from('1')
+  // ) => {
+  //   // await approve();
+  //   if (inputState && selectedStrategy?.leverContract) {
+  //     setAppState(AppState.Transacting);
+  //     const divestTx = await selectedStrategy.leverContract.connect(signer!).divest(vaultId, seriesId, ink, art, min);
+  //     await divestTx.wait();
+  //   }
+  // };
 
   return {
     approve,

@@ -3,8 +3,8 @@ import { contractFactories, WETH_STETH_STABLESWAP } from '../config/contractRegi
 import { IInputContextState, W3bNumber } from '../context/InputContext';
 
 import { convertToW3bNumber } from '../lib/utils';
-import { ILeverContextState, ILeverStrategy } from '../context/LeverContext';
-// import { WETH_STETH_STABLESWAP, WST_ETH } from '../../contracts';
+import { ILeverContextState } from '../context/LeverContext';
+
 import { ZERO_W3N } from '../constants';
 import { simOutput } from '../hooks/useLever';
 
@@ -14,7 +14,8 @@ import { ethers } from 'ethers';
 export const stEthSimulator =  async (
   inputState: IInputContextState,
   leverState: ILeverContextState,
-  marketState: any, 
+  marketState: any,
+  
   currentTime: number = Math.round(new Date().getTime() / 1000)
 ): Promise<simOutput> => {
 
@@ -180,7 +181,9 @@ export const stEthSimulator =  async (
     flashBorrowFee,
     investmentFee,
 
-    txArgs: [strategy?.seriesId, input.big, ZERO_BN ],
+    investArgs: [strategy?.seriesId, input.big, ZERO_BN ],
+    divestArgs: [strategy?.seriesId, input.big, ZERO_BN ],
+
     notification: undefined,
   };
 

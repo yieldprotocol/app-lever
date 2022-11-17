@@ -1,15 +1,12 @@
-import { useContext, useEffect, useState } from 'react';
-import tw from 'tailwind-styled-components';
-import { LeverContext } from '../../context/LeverContext';
+import { useContext } from 'react';
 import { PositionContext } from '../../context/PositionContext';
 import { BorderWrap, ClearButton, Inner, TopRow } from '../styled';
 
 const Positions = () => {
-  const [,leverActions] = useContext(LeverContext);
-  const { selectPosition } = leverActions;
 
-  const [positionState] = useContext(PositionContext);
-  const { positions } = positionState;
+  const [ positionState, positionActions ] = useContext(PositionContext);
+  const { positions,  } = positionState;
+  const { selectPosition } = positionActions;
 
   return (
     <BorderWrap>

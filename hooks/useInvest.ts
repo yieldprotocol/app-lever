@@ -13,7 +13,7 @@ const useInvest = (
   // borrowed: BigNumber,
   // minPosition: BigNumber = ZERO_BN
 ) => {
-
+  
   const { config, error, isFetching, isIdle } = usePrepareContractWrite({
     address: leverStrategy?.leverAddress,
     abi: leverStrategy?.leverContract.interface as any,
@@ -29,7 +29,7 @@ const useInvest = (
   const {
     isError,
     isLoading,
-    write,
+    write:invest,
     isSuccess,
     error: txError,
   } = useContractWrite({
@@ -41,7 +41,7 @@ const useInvest = (
       toast.error(`Transaction Error: ${error?.message}`)
     }
   });
-  return write;
+  return invest;
 };
 
 export default useInvest;

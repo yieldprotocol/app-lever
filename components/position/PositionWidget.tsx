@@ -1,15 +1,14 @@
-import { ZERO_BN } from '@yield-protocol/ui-math';
-import { TransactionDescription } from 'ethers/lib/utils';
-import { useContext, useEffect, useState } from 'react';
-import { ILeverStrategy, LeverContext } from '../../context/LeverContext';
-import { IPosition } from '../../context/PositionContext';
+import { useContext} from 'react';
+import { useAccount } from 'wagmi';
+import { IPosition, PositionContext } from '../../context/PositionContext';
 import Button from '../common/Button';
 import { BorderWrap, InfoBlock, Inner, Label, TopRow, Value } from '../styled';
 
-
 const PositionWidget = (props: any) => {
-  const [leverState] = useContext(LeverContext);
-  const { account, selectedPosition } : {account:string, selectedPosition: IPosition } = leverState;
+
+  const {address: account } = useAccount();
+  const [positionState] = useContext(PositionContext);
+  const {selectedPosition}= positionState;
 
   const {
     divest,
@@ -26,8 +25,6 @@ const PositionWidget = (props: any) => {
           <Inner>
 
           <InfoBlock>
-        {/* <Label>Short asset invested:</Label>
-        <Value>{shortInvested?.dsp} FYETH</Value> */}
 
         <Label>id: </Label>
         <Value>{selectedPosition.id}</Value>

@@ -17,7 +17,7 @@ export interface ILeverContextState {
   strategies: Map<string, ILeverStrategy>;
   appState: AppState;
   selectedStrategy: ILeverStrategy | undefined;
-  selectedPosition: ILeverStrategy | undefined;
+  // selectedPosition: ILeverStrategy | undefined;
   shortAsset: IAsset | undefined;
   longAsset: IAsset | undefined;
   marketState: any;
@@ -68,7 +68,7 @@ const initState: ILeverContextState = {
   marketState: undefined,
 
   selectedStrategy: undefined,
-  selectedPosition: undefined,
+  // selectedPosition: undefined,
 
   shortAsset: undefined,
   longAsset: undefined,
@@ -126,11 +126,11 @@ const leverReducer = (state: ILeverContextState, action: any) => {
         shortAsset: action.payload,
       };
 
-    case 'SELECT_POSITION':
-      return {
-        ...state,
-        selectedPosition: action.payload,
-      };
+    // case 'SELECT_POSITION':
+    //   return {
+    //     ...state,
+    //     selectedPosition: action.payload,
+    //   };
 
     case 'UPDATE_PROVIDER':
       return {
@@ -149,15 +149,10 @@ const LeverProvider = ({ children }: any) => {
   const { address:account } = useAccount();
   const provider = useProvider();
 
-  // const [cauldron, setCauldron] = useState<Cauldron>()
-  // const [ladle, setLadle] = useState<Ladle>()
-
   /* update account on change */
-  useEffect(() => {
-    updateState({ type: 'UPDATE_ACCOUNT', payload: account });
-  }, [account]);
+  useEffect(() =>  updateState({ type: 'UPDATE_ACCOUNT', payload: account }), [account]);
 
-  /* update account on change */
+  /* update provider on change */
   useEffect(() => updateState({ type: 'UPDATE_PROVIDER', payload: provider }), [provider]);
 
   /* Connect up Cauldron and Ladle contracts : updates on provider change */
@@ -310,7 +305,7 @@ const LeverProvider = ({ children }: any) => {
     selectLong: (asset: ILeverStrategy) => updateState({ type: 'SELECT_LONG', payload: asset }),
 
     selectStrategy: (strategy: ILeverStrategy) => updateState({ type: 'SELECT_STRATEGY', payload: strategy }),
-    selectPosition: (position: ILeverStrategy) => updateState({ type: 'SELECT_POSITION', payload: position }),
+    // selectPosition: (position: ILeverStrategy) => updateState({ type: 'SELECT_POSITION', payload: position }),
 
     setAppState: (appState: AppState) => updateState({ type: 'UPDATE_APPSTATE', payload: appState }),
   };
