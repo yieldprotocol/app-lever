@@ -137,7 +137,6 @@ ASSETS.set(DAI, {
   showToken: true,
   digitFormat: 2,
   tokenType: TokenType.ERC20_DAI_PERMIT,
-  // isYieldBase: true,
 
   chartId: 'dai',
 });
@@ -153,7 +152,6 @@ ASSETS.set(USDC, {
   showToken: true,
   digitFormat: 2,
   tokenType: TokenType.ERC20_PERMIT,
-  // isYieldBase: true,
 
   // tradePlatform: 'Curve',
   chartId: 'usd-coin',
@@ -171,7 +169,6 @@ ASSETS.set(WETH, {
   showToken: true,
   digitFormat: 6,
   tokenType: TokenType.ERC20,
-  // isYieldBase: true,
 
   chartId: 'weth',
 });
@@ -188,7 +185,6 @@ ASSETS.set(FRAX, {
   digitFormat: 2,
   tokenType: TokenType.ERC20,
   limitToSeries: [],
-  // isYieldBase: true,
 
   chartId: 'frax',
 });

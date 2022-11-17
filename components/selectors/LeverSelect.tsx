@@ -87,11 +87,11 @@ const LeverSelect = () => {
   const [requestedPairs, setRequestedPair] = useState<string[]>([]);
 
   useEffect(() => {
-    const newStratList: ILever[] = [];
+    const newLeverList: ILever[] = [];
     levers.forEach((x: ILever) => {
-      if (x.baseId === shortAsset.id && x.ilkId === longAsset.id) newStratList.push(x);
-      setPossibleLevers(newStratList);
-      leverActions.selectLever(newStratList[0]);
+      if (x.baseId === shortAsset.id && x.ilkId === longAsset.id) newLeverList.push(x);
+      setPossibleLevers(newLeverList);
+      leverActions.selectLever(newLeverList[0]);
     });
   }, [shortAsset, longAsset]);
 

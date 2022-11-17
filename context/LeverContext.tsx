@@ -1,13 +1,16 @@
 import { BigNumber, Contract, ethers } from 'ethers';
 import React, { ReactElement, useEffect, useReducer, useState } from 'react';
-import { ASSETS, IAssetRoot, WETH } from '../config/assets';
-import { ILeverRoot, LEVERS } from '../config/levers';
+
 import { ERC20, ERC20Permit, FYToken } from '../contracts/types';
 import { AppState, TokenType } from '../lib/types';
 import { convertToW3bNumber } from '../lib/utils';
 import { W3bNumber } from './InputContext';
 
+import { ASSETS, IAssetRoot, WETH } from '../config/assets';
+import { ILeverRoot, LEVERS } from '../config/levers';
+
 import logoMap from '../config/logos';
+
 import { CAULDRON, LADLE, contractMap, factoryContractMap} from '../config/contractRegister';
 import { useAccount, useProvider } from 'wagmi';
 
@@ -119,22 +122,14 @@ const leverReducer = (state: ILeverContextState, action: any) => {
 };
 
 const LeverProvider = ({ children }: any) => {
+
   /* LOCAL STATE */
   const [leverState, updateState] = useReducer(leverReducer, initState);
   const { address:account } = useAccount();
   const provider = useProvider();
 
-  /* Connect up Cauldron and Ladle contracts : updates on provider change */
-  useEffect(() => {
-    if (provider) {
-      const Cauldron = contractMap.get(CAULDRON).connect(CAULDRON, provider);
-      const Ladle = contractMap.get(LADLE).connect(LADLE, provider);
-      updateState({ type: 'UPDATE_CONTRACTS', payload: { Cauldron, Ladle } });
-    }
-  }, [provider]);
-
   /* Connect up asset contracts : updates on provider and account changes */
-  useEffect(() => {
+  useEffect(() => { 
     if (provider) {
       Array.from(ASSETS.values()).map(async (asset: IAssetRoot) => {
         // const signer = account && signerData ? signerData : provider;
@@ -172,7 +167,7 @@ const LeverProvider = ({ children }: any) => {
 
   /* Connect up lever contracts updates on account change */
   useEffect(() => {
-    if (provider ) {
+    if ( provider ) {
       /* connect up relevant contracts */
       Array.from(LEVERS.values()).map(async (lever) => {
 
@@ -240,7 +235,7 @@ const LeverProvider = ({ children }: any) => {
 
         } as ILever;
 
-        updateState({ type: 'UPDATE_LEVER', payload: connectedLever });
+        updateState({ type: 'UPDATE_LEVERS', payload: connectedLever });
       });
     }
   }, [ provider ]);
