@@ -9,6 +9,7 @@ import LeverProvider from '../context/LeverContext';
 import MarketProvider from '../context/MarketContext';
 import ChartProvider from '../context/ChartContext';
 import InputProvider from '../context/InputContext';
+import ProviderContext from '../context/ProviderContext';
 
 const DynamicLayout = dynamic(() => import('../components/Layout'), { ssr: false });
 
@@ -16,24 +17,26 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
   const { theme } = useColorTheme();
 
   return (
+    <ProviderContext>
       <LeverProvider>
         <MarketProvider>
           <ChartProvider>
-          <InputProvider>
-            <ToastContainer
-              position="bottom-right"
-              pauseOnHover
-              closeOnClick
-              toastStyle={{ background: theme === 'light' ? '#e4e4e7' : '#18181b' }}
-              closeButton={<XMarkIcon height="1rem" width="1rem" color={theme === 'dark' ? '#e4e4e7' : '#18181b'} />}
-            />
+            <InputProvider>
+              <ToastContainer
+                position="bottom-right"
+                pauseOnHover
+                closeOnClick
+                toastStyle={{ background: theme === 'light' ? '#e4e4e7' : '#18181b' }}
+                closeButton={<XMarkIcon height="1rem" width="1rem" color={theme === 'dark' ? '#e4e4e7' : '#18181b'} />}
+              />
               <DynamicLayout>
-            <Component {...pageProps} />
-            </DynamicLayout>
+                <Component {...pageProps} />
+              </DynamicLayout>
             </InputProvider>
           </ChartProvider>
         </MarketProvider>
       </LeverProvider>
+    </ProviderContext>
   );
 };
 

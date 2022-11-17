@@ -80,14 +80,14 @@ const _abi = [
         type: "bytes6",
       },
       {
-        internalType: "uint128",
+        internalType: "uint256",
         name: "ink",
-        type: "uint128",
+        type: "uint256",
       },
       {
-        internalType: "uint128",
+        internalType: "uint256",
         name: "art",
-        type: "uint128",
+        type: "uint256",
       },
       {
         internalType: "uint256",
@@ -134,14 +134,14 @@ const _abi = [
         type: "bytes6",
       },
       {
-        internalType: "uint128",
+        internalType: "uint256",
         name: "borrowAmount",
-        type: "uint128",
+        type: "uint256",
       },
       {
-        internalType: "uint128",
+        internalType: "uint256",
         name: "minCollateral",
-        type: "uint128",
+        type: "uint256",
       },
     ],
     name: "invest",

@@ -29,7 +29,6 @@ const inputToW3bNumber = (input: string, decimals: number = 18, displayDecimals?
             displayDecimals.toString()
         )
       : parseFloat(input);
-
     return {
       dsp: input_dsp,
       hStr: input_hstr,

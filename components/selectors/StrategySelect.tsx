@@ -4,11 +4,7 @@ import { IAsset, ILeverStrategy, LeverContext } from '../../context/LeverContext
 import { BorderWrap, TopRow } from '../styled';
 
 import { ArrowsRightLeftIcon } from '@heroicons/react/24/solid';
-import {
-  ArrowTrendingDownIcon,
-  ArrowTrendingUpIcon,
-  StarIcon,
-} from '@heroicons/react/20/solid';
+import { ArrowTrendingDownIcon, ArrowTrendingUpIcon, StarIcon } from '@heroicons/react/20/solid';
 
 import {
   ExclamationTriangleIcon,
@@ -104,44 +100,14 @@ const StrategySelect = () => {
   }, [shortAsset, longAsset]);
 
   const handlePairRequest = () => {
-    toast.info('Trading pair requested.')
-    setRequestedPair([...requestedPairs, `${shortAsset.symbol}${longAsset.symbol}`])
-  }
+    toast.info('Trading pair requested.');
+    setRequestedPair([...requestedPairs, `${shortAsset.symbol}${longAsset.symbol}`]);
+  };
 
   return (
     <div className="space-y-4">
       <div className="flex flex-row gap-4">
-        <Container>
-          <TopRow className="p-1 justify-start gap-2">
-            <div className="flex flex-row text-xs text-slate-500 text-start gap-2">Short</div>
-            <ArrowTrendingDownIcon className="h-4 w-4 text-slate-500" />
-          </TopRow>
-
-          <Listbox value={shortAsset} onChange={(x: IAsset) => leverActions.selectShort(x)}>
-            <SelectedAssetStyled asset={shortAsset} select="SHORT" />
-            <ListOptionsStyled>
-              {assetsList
-                .filter((a: IAsset) => a.id !== shortAsset?.id)
-                .filter((a: IAsset) => a.id !== longAsset?.id)
-                .map((a: IAsset) => assetOption(a))}
-            </ListOptionsStyled>
-          </Listbox>
-        </Container>
-
-        <div className="justify-center pt-6 z-20">
-          {/* <div className="bg-slate-900 bg-opacity-25 rounded-full p-1 "> */}
-          <div
-            className="bg-primary-700 rounded-full p-2 "
-            onClick={() => {
-              leverActions.selectLong(shortAsset);
-              leverActions.selectShort(longAsset);
-            }}
-          >
-            <ArrowsRightLeftIcon className="h-6 w-6 text-white" />
-          </div>
-          {/* </div> */}
-        </div>
-
+        
         <Container>
           <TopRow className="p-1 justify-start gap-2">
             <div className="flex flex-row text-xs text-slate-500 text-start gap-2">Long</div>
@@ -157,6 +123,35 @@ const StrategySelect = () => {
             </ListOptionsStyled>
           </Listbox>
         </Container>
+
+        <div className="justify-center pt-6 z-20">
+          <div
+            className="bg-primary-700 rounded-full p-2 "
+            onClick={() => {
+              leverActions.selectLong(shortAsset);
+              leverActions.selectShort(longAsset);
+            }}
+          >
+            <ArrowsRightLeftIcon className="h-6 w-6 text-white" />
+          </div>
+        </div>
+
+        <Container>
+          <TopRow className="p-1 justify-start gap-2">
+            <div className="flex flex-row text-xs text-slate-500 text-start gap-2">Short</div>
+            <ArrowTrendingDownIcon className="h-4 w-4 text-slate-500" />
+          </TopRow>
+          <Listbox value={shortAsset} onChange={(x: IAsset) => leverActions.selectShort(x)}>
+            <SelectedAssetStyled asset={shortAsset} select="SHORT" />
+            <ListOptionsStyled>
+              {assetsList
+                .filter((a: IAsset) => a.id !== shortAsset?.id)
+                .filter((a: IAsset) => a.id !== longAsset?.id)
+                .map((a: IAsset) => assetOption(a))}
+            </ListOptionsStyled>
+          </Listbox>
+        </Container>
+
       </div>
 
       <div>
@@ -187,11 +182,12 @@ const StrategySelect = () => {
                   </div>
                   <div className="text-sm"> No strategies are available for this short/long pair yet. </div>
                 </div>
-                <div
-                  className="text-xs p-1"
-                  onClick={() => handlePairRequest()}
-                >
-                  { shortAsset && longAsset && requestedPairs.includes( `${shortAsset.symbol}${longAsset.symbol}`) ? <StarIcon className="w-4 h-4" /> : <StarIcon_outline className="w-4 h-4" />}
+                <div className="text-xs p-1" onClick={() => handlePairRequest()}>
+                  {shortAsset && longAsset && requestedPairs.includes(`${shortAsset.symbol}${longAsset.symbol}`) ? (
+                    <StarIcon className="w-4 h-4" />
+                  ) : (
+                    <StarIcon_outline className="w-4 h-4" />
+                  )}
                 </div>
               </div>
             </Container>

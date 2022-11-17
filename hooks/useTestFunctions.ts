@@ -13,16 +13,17 @@ const useTestFunctions = () => {
   useEffect(() => {
     if (account) {
       (async () => {
-        const tenderlyProvider = new ethers.providers.JsonRpcProvider(process.env.tenderlyRpc);
+        const tenderlyProvider = new ethers.providers.JsonRpcProvider(process.env.FORKED_ENV_RPC);
         const bal = await tenderlyProvider.getBalance(account);
         setBalance(parseFloat(ethers.utils.formatEther(bal)));
       })();
+      console.log( 'RPC URL: ', process.env.FORKED_ENV_RPC  )
     }
   }, [account]);
 
   const fillEther = async () => {
     try {
-      const tenderlyProvider = new ethers.providers.JsonRpcProvider(process.env.tenderlyRpc);
+      const tenderlyProvider = new ethers.providers.JsonRpcProvider(process.env.FORKED_ENV_RPC);
       const transactionParameters = [[account], ethers.utils.hexValue(BigInt('100000000000000000000'))];
       /* only fill if balance is less than 100 */
       if (balance < 100 ) {
