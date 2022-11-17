@@ -13,7 +13,7 @@ import useBlockTime from './useBlockTime';
 
 import { calculateAPR } from '@yield-protocol/ui-math';
 import { MarketContext } from '../context/MarketContext';
-import {  useSigner } from 'wagmi';
+import { useSigner } from 'wagmi';
 
 import useInvest from './useInvest';
 import useDivest from './useDivest';
@@ -34,7 +34,8 @@ export interface simOutput {
 
   investmentFee: W3bNumber;
 
-  notification: Notification|undefined;
+  txArgs: any[];
+  notification: Notification | undefined;
 }
 
 export interface LeverSimulation extends simOutput {
@@ -70,9 +71,13 @@ export interface Notification {
 }
 
 export const useLever = (
-  simulator: (inputState: IInputContextState, leverState: ILeverContextState, marketState: any, currentTime?:number) => Promise<simOutput>
+  simulator: (
+    inputState: IInputContextState,
+    leverState: ILeverContextState,
+    marketState: any,
+    currentTime?: number
+  ) => Promise<simOutput>
 ) => {
-
   /* Bring in context*/
   const [leverState, leverActions]: [ILeverContextState, any] = useContext(LeverContext);
   const { selectedStrategy, shortAsset } = leverState;
@@ -81,7 +86,7 @@ export const useLever = (
   const [inputState] = useContext(InputContext);
   const { input, leverage } = inputState ? inputState : { input: undefined, leverage: undefined };
 
-  const [marketState ] = useContext(MarketContext);
+  const [marketState] = useContext(MarketContext);
   const { data: signer } = useSigner();
 
   /* add in debounced leverage when using slider - to prevent excessive calcs */
@@ -103,6 +108,8 @@ export const useLever = (
   const [flashBorrowFee, setFlashBorrowFee] = useState<W3bNumber>();
   const [investmentFee, setInvestmentFee] = useState<W3bNumber | number>();
 
+  const [txArgs, setTxArgs] = useState<any[]>([]);
+
   // Calculated APRS:
   const [investAPR, setInvestAPR] = useState<number>(0);
   const [borrowAPR, setBorrowAPR] = useState<number>(0);
@@ -113,9 +120,9 @@ export const useLever = (
   const [pnl, setPnl] = useState<number>(0);
   const [maxLeverage, setMaxLeverage] = useState<number>(5);
 
-  const doInvest = useInvest( selectedStrategy!, inputState.input?.big, shortBorrowed.big,  investmentPosition.big  )
+  const doInvest = useInvest(selectedStrategy, txArgs, { value: input.big }, !isSimulating && input.dsp > 0);
 
-  const doDivest = useDivest('asdasd' )  ;
+  const doDivest = useDivest('asdasd');
 
   /* Use the simulator on each leverage/input change */
   useEffect(() => {
@@ -136,6 +143,8 @@ export const useLever = (
         setDebtAtMaturity(simulated.debtAtMaturity);
         setFlashBorrowFee(simulated.flashBorrowFee);
         setInvestmentFee(simulated.investmentFee);
+
+        setTxArgs(simulated.txArgs);
 
         setIsSimulating(false);
 
@@ -201,12 +210,10 @@ export const useLever = (
   };
 
   const invest = async () => {
-
     // await approve();
     if (inputState && selectedStrategy?.leverContract) {
-
       setAppState(AppState.Transacting);
-      
+
       doInvest && doInvest();
       // const gasLimit = (
       //   await selectedStrategy.leverContract.estimateGas.invest(
@@ -217,8 +224,8 @@ export const useLever = (
       //       value: shortAsset?.id === WETH ? inputState.input.big : ZERO_BN, // value is set as input if using ETH
       //     }
       //   )
-      // ).mul(110).div(100); // add 10% in gas to prevent out-of-gas occasionally 
-      
+      // ).mul(110).div(100); // add 10% in gas to prevent out-of-gas occasionally
+
       // const investTx = await selectedStrategy.leverContract.connect(signer!).invest(
       //   selectedStrategy.seriesId,
       //   inputState.input.big,
@@ -250,8 +257,6 @@ export const useLever = (
       await divestTx.wait();
     }
   };
-
-
 
   return {
     approve,
@@ -285,8 +290,4 @@ export const useLever = (
   };
 };
 
-
-const handleTransaction = () => {
-
-
-}
+const handleTransaction = () => {};

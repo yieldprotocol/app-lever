@@ -180,6 +180,7 @@ export const stEthSimulator =  async (
     flashBorrowFee,
     investmentFee,
 
+    txArgs: [strategy?.seriesId, input.big, ZERO_BN ],
     notification: undefined,
   };
 
