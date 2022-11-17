@@ -13,6 +13,7 @@ import { LeverSimulation } from '../../hooks/useLever';
 import { BorderWrap, TopRow, Inner, Section, SectionHead } from '../styled';
 import { InputContext } from '../../context/InputContext';
 import { isShorthandPropertyAssignment } from 'typescript';
+import { useAccount } from 'wagmi';
 
 // const Inner = tw.div`m-4 text-center`;
 // const TopRow = tw.div` p-8 flex justify-between align-middle text-center items-center rounded-t-lg dark:bg-gray-900
@@ -39,9 +40,10 @@ const ClearButton = tw.button`text-sm`;
 const LeverWidget = (props: any) => {
   /* Bring in lever context - instead of passing them as props */
   const [leverState] = useContext(LeverContext);
-  const { account, selectedStrategy, shortAsset } = leverState;
+  const { selectedStrategy, shortAsset } = leverState;
 
   const [{ input }] = useContext(InputContext);
+  const {address: account} = useAccount();
 
   const { invest, approve, isSimulating, maxLeverage, borrowLimitUsed, shortBorrowed }: LeverSimulation = props.lever;
 
@@ -92,7 +94,6 @@ const LeverWidget = (props: any) => {
           // loading={false}
           loading={isSimulating}
         >
-          {/* {!account ? 'Connect Wallet' : isTransacting ? 'Trade Initiated...' : 'Trade'} */}
           {!account ? 'Connect Wallet' : 'Trade'}
         </Button>
       </div>

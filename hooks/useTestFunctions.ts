@@ -1,11 +1,9 @@
 import { ethers } from 'ethers';
-import { parseEther } from 'ethers/lib/utils';
-import { useContext, useEffect, useState } from 'react';
-import { LeverContext } from '../context/LeverContext';
+import { useEffect, useState } from 'react';
+import { useAccount } from 'wagmi';
 
 const useTestFunctions = () => {
-  const [leverState] = useContext(LeverContext);
-  const { account } = leverState;
+  const { address: account } = useAccount();
 
   const [balance, setBalance] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
@@ -24,12 +22,12 @@ const useTestFunctions = () => {
   const fillEther = async () => {
     try {
       const tenderlyProvider = new ethers.providers.JsonRpcProvider(process.env.FORKED_ENV_RPC);
-      const transactionParameters = [[account], ethers.utils.hexValue(BigInt('100000000000000000000'))];
+      const transactionParameters = [[account!], ethers.utils.hexValue(BigInt('100000000000000000000'))];
       /* only fill if balance is less than 100 */
       if (balance < 100 ) {
         setLoading(true)
         await tenderlyProvider?.send('tenderly_addBalance', transactionParameters);
-        const bal_ = await tenderlyProvider.getBalance(account);
+        const bal_ = await tenderlyProvider.getBalance(account!);
         setBalance(parseFloat(ethers.utils.formatEther(bal_)));
         setLoading(false)
         console.log('Eth funded.');

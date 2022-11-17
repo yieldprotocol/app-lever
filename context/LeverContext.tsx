@@ -64,7 +64,6 @@ const initState: ILeverContextState = {
   strategies: new Map(),
 
   // selectedStrategy: undefined,
-  account: undefined,
   marketState: undefined,
 
   selectedStrategy: undefined,
@@ -97,12 +96,6 @@ const leverReducer = (state: ILeverContextState, action: any) => {
         contracts: action.payload,
       };
 
-    case 'UPDATE_ACCOUNT':
-      return {
-        ...state,
-        account: action.payload,
-      };
-
     case 'UPDATE_APPSTATE':
       return {
         ...state,
@@ -126,12 +119,6 @@ const leverReducer = (state: ILeverContextState, action: any) => {
         shortAsset: action.payload,
       };
 
-    // case 'SELECT_POSITION':
-    //   return {
-    //     ...state,
-    //     selectedPosition: action.payload,
-    //   };
-
     case 'UPDATE_PROVIDER':
       return {
         ...state,
@@ -148,9 +135,6 @@ const LeverProvider = ({ children }: any) => {
   const [leverState, updateState] = useReducer(leverReducer, initState);
   const { address:account } = useAccount();
   const provider = useProvider();
-
-  /* update account on change */
-  useEffect(() =>  updateState({ type: 'UPDATE_ACCOUNT', payload: account }), [account]);
 
   /* update provider on change */
   useEffect(() => updateState({ type: 'UPDATE_PROVIDER', payload: provider }), [provider]);

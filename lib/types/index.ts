@@ -50,11 +50,3 @@ export interface ISignable {
   symbol: string;
   tokenType: TokenType;
 }
-
-// export interface IAsset extends ISignable {
-//   decimals: number;
-//   balance: W3bNumber;
-//   contract: ERC20Permit | FYToken;
-//   getAllowance: (account: string, spender: string) => Promise<BigNumber>;
-//   checkBalance: () => Promise<W3bNumber>;
-// }

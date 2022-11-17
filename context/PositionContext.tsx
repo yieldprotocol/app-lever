@@ -1,5 +1,6 @@
 import { BigNumber } from 'ethers';
 import React, { useContext, useEffect, useReducer } from 'react';
+import { useAccount } from 'wagmi';
 import { ILeverContextState, LeverContext } from './LeverContext';
 
 export interface IPositionContextState {
@@ -43,11 +44,13 @@ const positionReducer = (state: IPositionContextState, action: any) => {
 const PositionProvider = ({ children }: any) => {
   /* LOCAL STATE */
   const [positionState, updateState] = useReducer(positionReducer, initState);
-  const [leverState] = useContext(LeverContext);
-  const { contracts, account } = leverState as ILeverContextState;
+  const [ leverState ] = useContext(LeverContext);
+  const { selectedStrategy, contracts } = leverState as ILeverContextState;
+
+  const {address: account} = useAccount();
 
   const updatePositions = async (positionsToUpdate: [] = []) => {
-    if (account) {
+    if (account && contracts.Cauldron ) {
       const vaultsReceivedFilter = contracts.Cauldron.filters.VaultGiven(null, account);
       const vaultsReceived = await contracts.Cauldron.queryFilter(vaultsReceivedFilter, 15940787, 'latest');
 
