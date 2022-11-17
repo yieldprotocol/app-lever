@@ -44,13 +44,13 @@ const positionReducer = (state: IPositionContextState, action: any) => {
 };
 
 const PositionProvider = ({ children }: any) => {
+  
   /* LOCAL STATE */
   const [positionState, updateState] = useReducer(positionReducer, initState);
   const [ leverState ] = useContext(LeverContext);
   const { levers } = leverState as ILeverContextState;
 
   const provider = useProvider();
-
   const {address: account} = useAccount();
 
   const updatePositions = async (positionsToUpdate: [] = []) => {

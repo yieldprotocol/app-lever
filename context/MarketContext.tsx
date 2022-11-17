@@ -3,7 +3,7 @@ import { BigNumber, ethers } from 'ethers';
 import React, { useContext, useEffect, useMemo, useReducer } from 'react';
 import { ILeverContextState, ILever, LeverContext } from './LeverContext';
 
-export interface IPoolState {
+export interface IMarketContextState {
   maturity: number;
   decimals: number;
   sharesReserves: BigNumber;
@@ -17,9 +17,7 @@ export interface IPoolState {
   mu?: BigNumber;
 }
 
-const MarketContext = React.createContext<any>({});
-
-const initState: IPoolState = {
+const initState: IMarketContextState = {
   maturity: 0,
   decimals:18, 
   sharesReserves: ZERO_BN,
@@ -33,7 +31,9 @@ const initState: IPoolState = {
   mu: undefined,
 };
 
-const marketReducer = (state: IPoolState, action: any) => {
+const MarketContext = React.createContext<any>({});
+
+const marketReducer = (state: IMarketContextState, action: any) => {
   /* Reducer switch */
   switch (action.type) {
     case 'UPDATE_MARKET':
@@ -54,7 +54,7 @@ const MarketProvider = ({ children }: any) => {
   const [leverState]: [ILeverContextState] = useContext(LeverContext);
   const { selectedLever } = leverState;
 
-  const getPoolInfo = async (lever: ILever): Promise<IPoolState> => {
+  const getPoolInfo = async (lever: ILever): Promise<IMarketContextState> => {
     /* Get all the data simultanenously in a promise.all */
     const [baseReserves, fyTokenReserves, totalSupply, ts, g1, g2, maturity, decimals, fyTokenRealReserves] = await Promise.all([
       lever.poolContract.getBaseBalance(),
@@ -114,10 +114,10 @@ const MarketProvider = ({ children }: any) => {
 
   /* ACTIONS TO CHANGE CONTEXT */
   const marketActions = {
-    getPoolInfo: async (lever: ILever): Promise<IPoolState> => await getPoolInfo(lever),
+    getPoolInfo: async (lever: ILever): Promise<IMarketContextState> => await getPoolInfo(lever),
   };
 
-  return <MarketContext.Provider value={[ marketState as IPoolState, marketActions ]}>{children}</MarketContext.Provider>;
+  return <MarketContext.Provider value={[ marketState as IMarketContextState, marketActions ]}>{children}</MarketContext.Provider>;
 };
 
 export { MarketContext };

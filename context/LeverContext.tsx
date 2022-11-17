@@ -35,6 +35,7 @@ export interface IAsset extends IAssetRoot {
 }
 
 export interface ILever extends ILeverRoot {
+
   investTokenContract: Contract;
   leverContract: Contract;
   oracleContract: Contract;
@@ -74,8 +75,6 @@ const initState: ILeverContextState = {
 
   shortAsset: undefined,
   longAsset: undefined,
-
-  // provider: undefined,
 };
 
 const leverReducer = (state: ILeverContextState, action: any) => {
@@ -273,7 +272,7 @@ const LeverProvider = ({ children }: any) => {
     setAppState: (appState: AppState) => updateState({ type: 'UPDATE_APPSTATE', payload: appState }),
   };
 
-  return <LeverContext.Provider value={[leverState, leverActions]}>{children}</LeverContext.Provider>;
+  return <LeverContext.Provider value={[leverState as ILeverContextState, leverActions]}>{children}</LeverContext.Provider>;
 };
 
 export { LeverContext };

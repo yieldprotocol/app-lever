@@ -8,10 +8,9 @@ const Positions = () => {
   const { positions,  } = positionState;
   const { selectPosition } = positionActions;
 
-  console.log(positions)
-
   return (
     <BorderWrap>
+      
       <TopRow>
         <div className="text-lg"> Positions </div>
         <ClearButton onClick={() => console.log('actually, this might not do anything? settings?')}>
@@ -26,6 +25,7 @@ const Positions = () => {
           </div>
         ))}
       </Inner>
+
     </BorderWrap>
   );
 };
