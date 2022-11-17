@@ -59,7 +59,7 @@ const PositionProvider = ({ children }: any) => {
 
     if (account ) {
       const vaultsReceivedFilter = cauldron.filters.VaultGiven(null, account);
-      const vaultsReceived = await cauldron.queryFilter(vaultsReceivedFilter, 15940787, 'latest');
+      const vaultsReceived = await cauldron.queryFilter(vaultsReceivedFilter, 15990171, 'latest');
 
       await Promise.all(
         vaultsReceived.map(async (x: any): Promise<any> => {

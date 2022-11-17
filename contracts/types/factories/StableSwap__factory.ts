@@ -2,10 +2,8 @@
 /* tslint:disable */
 /* eslint-disable */
 
-// @ts-nocheck 
-
 import { Contract, Signer, utils } from "ethers";
-import { Provider } from "@ethersproject/providers";
+import type { Provider } from "@ethersproject/providers";
 import type { StableSwap, StableSwapInterface } from "../StableSwap";
 
 const _abi = [

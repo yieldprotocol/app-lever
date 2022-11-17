@@ -15,7 +15,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "next": "latest",
     "@curvefi/api": "^2.13.0",
     "@ethersproject/providers": "^5.5.3",
     "@headlessui/react": "^1.4.3",
@@ -31,6 +30,7 @@
     "ethers": "^5.5.3",
     "highcharts": "^10.2.1",
     "highcharts-react-official": "^3.1.0",
+    "next": "latest",
     "react": "^18.0.0-beta-24dd07bd2-20211208",
     "react-dom": "^18.0.0-beta-24dd07bd2-20211208",
     "react-loading-skeleton": "^3.1.0",
@@ -46,15 +46,17 @@
     "wagmi": "^0.8.4"
   },
   "devDependencies": {
+    "@typechain/ethers-v5": "^10.1.1",
     "@types/coingecko-api": "^1.0.10",
     "@types/node": "^12.12.21",
     "@types/react": "^17.0.39",
     "@types/uuid": "^8.3.4",
+    "@typescript-eslint/eslint-plugin": "^5.10.2",
+    "@typescript-eslint/parser": "^5.10.2",
     "autoprefixer": "^10.4.2",
     "eslint": "^8.8.0",
-    "eslint-config-next": "12.0.10",
-    "postcss": "^8.4.5",
     "eslint-config-airbnb-typescript": "^16.1.0",
+    "eslint-config-next": "12.0.10",
     "eslint-config-prettier": "^8.3.0",
     "eslint-config-react-app": "^7.0.0",
     "eslint-plugin-flowtype": "^8.0.3",
@@ -62,9 +64,7 @@
     "eslint-plugin-jsx-a11y": "^6.5.1",
     "eslint-plugin-react": "^7.28.0",
     "eslint-plugin-react-hooks": "^4.3.0",
-    "typechain": "^8.1.0",
-    "@typechain/ethers-v5": "^9.0.0",
-    "@typescript-eslint/eslint-plugin": "^5.10.2",
-    "@typescript-eslint/parser": "^5.10.2"
+    "postcss": "^8.4.5",
+    "typechain": "^8.1.1"
   }
 }

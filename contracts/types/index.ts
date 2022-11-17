@@ -4,16 +4,16 @@
 export type { Cauldron } from "./Cauldron";
 export type { ERC20 } from "./ERC20";
 export type { ERC20Permit } from "./ERC20Permit";
-export type { FlashJoin } from "./FlashJoin";
 export type { FYToken } from "./FYToken";
+export type { FlashJoin } from "./FlashJoin";
 export type { IOracle } from "./IOracle";
 export type { Ladle } from "./Ladle";
 export type { NotionalLever } from "./NotionalLever";
 export type { Pool } from "./Pool";
-export type { StableSwap } from "./StableSwap";
 export type { StEthLever } from "./StEthLever";
+export type { StableSwap } from "./StableSwap";
 export type { WStEth } from "./WStEth";
-
+export * as factories from "./factories";
 export { Cauldron__factory } from "./factories/Cauldron__factory";
 export { ERC20__factory } from "./factories/ERC20__factory";
 export { ERC20Permit__factory } from "./factories/ERC20Permit__factory";
