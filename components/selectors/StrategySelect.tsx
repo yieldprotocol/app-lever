@@ -1,4 +1,4 @@
-import { Fragment, useContext, useEffect, useState } from 'react';
+import { Fragment, ReactElement, useContext, useEffect, useState } from 'react';
 import tw from 'tailwind-styled-components';
 import { IAsset, ILever, LeverContext } from '../../context/LeverContext';
 import { BorderWrap, TopRow } from '../styled';
@@ -63,21 +63,17 @@ const SelectedAssetStyled = ({ asset, select }: { asset: IAsset; select: 'LONG' 
   return <div> Loading ... </div>;
 };
 
-const ListOptionsStyled = ({ children }) => (
+const ListOptionsStyled = ({children}: {children: any[]}) => (
   <BorderWrap>
     <Transition
-      // enter="transition duration-100 ease-out"
-      // enterFrom="transform scale-95 opacity-0"
-      // enterTo="transform scale-100 opacity-100"
-      // leave="transition duration-75 ease-out"
-      // leaveFrom="transform scale-100 opacity-100"
-      // leaveTo="transform scale-95 opacity-0"
       leave="transition ease-in duration-100"
       leaveFrom="opacity-100"
       leaveTo="opacity-0"
       className="absolute shadow-lg bg-slate-900 rounded-lg z-50"
     >
-      <Listbox.Options className="overflow-auto max-h-80 flex flex-col">{children}</Listbox.Options>
+      <Listbox.Options className="overflow-auto max-h-80 flex flex-col">
+        {children}
+      </Listbox.Options>
     </Transition>
   </BorderWrap>
 );
@@ -117,9 +113,9 @@ const StrategySelect = () => {
             <SelectedAssetStyled asset={longAsset} select="LONG" />
             <ListOptionsStyled>
               {assetsList
-                .filter((a: IAsset) => a.id !== shortAsset?.id)
-                .filter((a: IAsset) => a.id !== longAsset?.id)
-                .map((a: IAsset) => assetOption(a, false))}
+                .filter((a: any) => a.id !== shortAsset?.id)
+                .filter((a: any) => a.id !== longAsset?.id)
+                .map((a: any) => assetOption(a, false))}
             </ListOptionsStyled>
           </Listbox>
         </Container>
@@ -145,9 +141,9 @@ const StrategySelect = () => {
             <SelectedAssetStyled asset={shortAsset} select="SHORT" />
             <ListOptionsStyled>
               {assetsList
-                .filter((a: IAsset) => a.id !== shortAsset?.id)
-                .filter((a: IAsset) => a.id !== longAsset?.id)
-                .map((a: IAsset) => assetOption(a))}
+                .filter((a: any) => a.id !== shortAsset?.id)
+                .filter((a: any) => a.id !== longAsset?.id)
+                .map((a: any) => assetOption(a))}
             </ListOptionsStyled>
           </Listbox>
         </Container>

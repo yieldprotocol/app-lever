@@ -3,7 +3,7 @@ import { Switch } from '@headlessui/react';
 
 interface IToggle {
   enabled: boolean;
-  setEnabled: (boolean) => void;
+  setEnabled: (arg0:boolean) => void;
   label: string;
 }
 

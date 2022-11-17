@@ -1,5 +1,4 @@
 import { buyBase, sellBase, sellFYToken, ZERO_BN } from '@yield-protocol/ui-math';
-import { contractFactories, WETH_STETH_STABLESWAP } from '../config/contractRegister';
 import { IInputContextState, W3bNumber } from '../context/InputContext';
 
 import { convertToW3bNumber } from '../lib/utils';
@@ -11,12 +10,22 @@ import { simOutput } from '../hooks/useLever';
 import curve from '@curvefi/api';
 import { ethers } from 'ethers';
 
+import {
+  // FlashJoin__factory,
+  // IOracle__factory,
+  StableSwap__factory,
+  // StEthLever__factory,
+  // WStEth__factory,
+} from '../contracts/types';
+
+/* stable swap contract */
+export const WETH_STETH_STABLESWAP = '0x828b154032950c8ff7cf8085d841723db2696056';
+
 export const stEthSimulator =  async (
   inputState: IInputContextState,
   leverState: ILeverContextState,
   marketState: any,
-  
-  provider: ethers.providers.BaseProvider,
+  provider: ethers.providers.BaseProvider| undefined,
   currentTime: number = Math.round(new Date().getTime() / 1000)
 ): Promise<simOutput> => {
 
@@ -34,9 +43,7 @@ export const stEthSimulator =  async (
   const leverage = inputState.leverage;
   const strategy = leverState.selectedStrategy;
 
-  // const provider = useProvider(); // TODO remove this provider dependance - so we have no dependance on wagmi? 
-
-  if (input.big.gt(ZERO_BN)) {
+  if (input.big.gt(ZERO_BN) && provider) {
 
     console.log('Fired STETH Lever....');
     /**
@@ -148,8 +155,7 @@ export const stEthSimulator =  async (
       shortInvested = convertToW3bNumber(wethObtained, 18, 6);
       investmentFee = convertToW3bNumber(shortInvested.big.mul(4).div(10000), 18, 6);
 
-      // stableSwap exchange: WEth -> StEth
-      const stableSwap = contractFactories[WETH_STETH_STABLESWAP].connect(WETH_STETH_STABLESWAP, provider);
+      const stableSwap = StableSwap__factory.connect(WETH_STETH_STABLESWAP, provider)
       const boughtStEth = await stableSwap.get_dy(0, 1, wethObtained);
 
       // investPosition (stEth held)

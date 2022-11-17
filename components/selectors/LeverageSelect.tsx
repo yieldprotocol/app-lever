@@ -42,7 +42,7 @@ const getColor = (val: number, max: number) => {
   return '#00000025';
 };
 
-const LeverageSelect = ({ max }) => {
+const LeverageSelect = ({ max }: { max:number}) => {
   const [inputState, inputActions] = useContext(InputContext);
   const [color, setColor] = useState(undefined);
 
@@ -54,7 +54,7 @@ const LeverageSelect = ({ max }) => {
           className=" before:content: "
           value={`${inputState?.leverage?.dsp!}`}
           type="number"
-          onChange={(e) => inputActions.setLeverage(e.target.value)}
+          onChange={(e: any) => inputActions.setLeverage(e.target.value)}
           name="leverage_text"
           min={1.1}
           max={max || 5}

@@ -1,7 +1,7 @@
 import { BigNumber } from 'ethers';
 import React, { useContext, useEffect, useReducer } from 'react';
 import { useAccount, useProvider } from 'wagmi';
-import { CAULDRON, contractFactories } from '../config/contractRegister';
+import { CAULDRON, contractMap } from '../config/contractRegister';
 import { ILeverContextState, ILever, LeverContext } from './LeverContext';
 
 export interface IPositionContextState {
@@ -55,7 +55,7 @@ const PositionProvider = ({ children }: any) => {
 
   const updatePositions = async (positionsToUpdate: [] = []) => {
 
-    const cauldron = contractFactories[CAULDRON].connect(CAULDRON, provider);
+    const cauldron = contractMap.get(CAULDRON).connect(CAULDRON, provider);
 
     if (account ) {
       const vaultsReceivedFilter = cauldron.filters.VaultGiven(null, account);

@@ -1,5 +1,5 @@
 import { ZERO_BN } from '@yield-protocol/ui-math';
-import { useContext, useEffect, useState } from 'react';
+import { ChangeEvent, useContext, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import tw from 'tailwind-styled-components';
 import { InputContext } from '../../context/InputContext';
@@ -42,7 +42,7 @@ export const ValueInput = () => {
           name="invest_amount"
           type="number"
           value={inputState.input?.dsp || ''}
-          onChange={(el) => inputActions.setInput(el.target.value)}
+          onChange={(el: ChangeEvent<HTMLInputElement> ) => inputActions.setInput(el.target.value)}
           onFocus={() => setFocus(true)}
           onBlur={() => setFocus(false)}
         />

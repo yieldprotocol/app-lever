@@ -1,14 +1,14 @@
 import { BigNumber, Contract, ethers } from 'ethers';
 import React, { ReactElement, useEffect, useReducer, useState } from 'react';
 import { ASSETS, IAssetRoot, WETH } from '../config/assets';
-import { ILeverRoot, STRATEGIES } from '../config/strategies';
+import { ILeverRoot, LEVER_STRATEGIES } from '../config/strategies';
 import { ERC20, ERC20Permit, FYToken } from '../contracts/types';
 import { AppState, TokenType } from '../lib/types';
 import { convertToW3bNumber } from '../lib/utils';
 import { W3bNumber } from './InputContext';
 
 import logoMap from '../config/logos';
-import { CAULDRON, contractFactories, contractFactoryMap, LADLE } from '../config/contractRegister';
+import { CAULDRON, LADLE, contractMap, factoryContractMap} from '../config/contractRegister';
 import { useAccount, useProvider } from 'wagmi';
 
 export interface ILeverContextState {
@@ -127,8 +127,8 @@ const LeverProvider = ({ children }: any) => {
   /* Connect up Cauldron and Ladle contracts : updates on provider change */
   useEffect(() => {
     if (provider) {
-      const Cauldron = contractFactories[CAULDRON].connect(CAULDRON, provider);
-      const Ladle = contractFactories[LADLE].connect(LADLE, provider);
+      const Cauldron = contractMap.get(CAULDRON).connect(CAULDRON, provider);
+      const Ladle = contractMap.get(LADLE).connect(LADLE, provider);
       updateState({ type: 'UPDATE_CONTRACTS', payload: { Cauldron, Ladle } });
     }
   }, [provider]);
@@ -138,7 +138,7 @@ const LeverProvider = ({ children }: any) => {
     if (provider) {
       Array.from(ASSETS.values()).map(async (asset: IAssetRoot) => {
         // const signer = account && signerData ? signerData : provider;
-        const assetContract = contractFactoryMap.get(asset.tokenType)!.connect(asset.address, provider);
+        const assetContract = factoryContractMap.get(asset.tokenType)!.connect(asset.address, provider);
 
         // const _bal = account ? await assetContract.balanceOf(account) : BigNumber.from('0');
         const getBal = (asset: IAssetRoot) => {
@@ -151,10 +151,10 @@ const LeverProvider = ({ children }: any) => {
         
         const balance = convertToW3bNumber(await getBal(asset), asset.decimals, 6);
         const displaySymbol = asset.displaySymbol || asset.symbol;
-        const strategies = Array.from(STRATEGIES.values());
+        const strategies = Array.from(LEVER_STRATEGIES.values());
 
-        const isShortAsset = strategies.some((s: ILever) => s.baseId === asset.id);
-        const isLongAsset = strategies.some((s: ILever) => s.ilkId === asset.id);
+        const isShortAsset = strategies.some((s: ILeverRoot) => s.baseId === asset.id);
+        const isLongAsset = strategies.some((s: ILeverRoot) => s.ilkId === asset.id);
 
         const connectedAsset = {
           ...asset,
@@ -174,24 +174,24 @@ const LeverProvider = ({ children }: any) => {
   useEffect(() => {
     if (provider ) {
       /* connect up relevant contracts */
-      Array.from(STRATEGIES.values()).map(async (strategy) => {
+      Array.from(LEVER_STRATEGIES.values()).map(async (strategy) => {
 
-        const leverContract = contractFactories[strategy.leverAddress].connect(strategy.leverAddress, provider);
+        const leverContract = contractMap.get(strategy.leverAddress).connect(strategy.leverAddress, provider);
 
         /* Connect the investToken based on investTokenType */ 
-        const investTokenContract = contractFactoryMap
+        const investTokenContract = factoryContractMap
           .get(strategy.investTokenType)!
           .connect(strategy.investTokenAddress, provider);
 
         /* get the oracle address from the cauldron  */
-        const cauldron = contractFactories[CAULDRON].connect(CAULDRON, provider);
+        const cauldron = contractMap.get(CAULDRON).connect(CAULDRON, provider);
         const [{ oracle, ratio }, debt] = await Promise.all([
           cauldron.spotOracles(strategy.baseId, strategy.ilkId),
           cauldron.debt(strategy.baseId, strategy.ilkId),
         ]);
 
         /* instantiate a oracle contract */
-        const oracleContract = contractFactoryMap.get(TokenType.ORACLE)!.connect(oracle, provider);
+        const oracleContract = factoryContractMap.get(TokenType.ORACLE)!.connect(oracle, provider);
         // const sawpContract = contractFactories[ORACLE].connect(oracle, provider);
 
         let poolContract;
@@ -199,9 +199,9 @@ const LeverProvider = ({ children }: any) => {
 
         /* if investTokenType is FYTOKEN , use the yield pool as the marketContract */
         if (strategy.investTokenType === TokenType.FYTOKEN) {
-          const Ladle = contractFactories[LADLE].connect(LADLE, provider);
+          const Ladle = contractMap.get(LADLE).connect(LADLE, provider);
           poolAddress = await Ladle.pools(strategy.seriesId);
-          poolContract = contractFactoryMap.get(TokenType.YIELD_POOL)!.connect(poolAddress, provider);
+          poolContract = factoryContractMap.get(TokenType.YIELD_POOL)!.connect(poolAddress, provider);
         }
 
         /* Collateralisation ratio and loan to vaule */
