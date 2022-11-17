@@ -1,7 +1,7 @@
 import { ZERO_BN } from '@yield-protocol/ui-math';
 import { BigNumber, ethers } from 'ethers';
 import React, { useContext, useEffect, useMemo, useReducer } from 'react';
-import { ILeverContextState, ILeverStrategy, LeverContext } from './LeverContext';
+import { ILeverContextState, ILever, LeverContext } from './LeverContext';
 
 export interface IPoolState {
   maturity: number;
@@ -54,7 +54,7 @@ const MarketProvider = ({ children }: any) => {
   const [leverState]: [ILeverContextState] = useContext(LeverContext);
   const { selectedStrategy } = leverState;
 
-  const getPoolInfo = async (leverStrategy: ILeverStrategy): Promise<IPoolState> => {
+  const getPoolInfo = async (leverStrategy: ILever): Promise<IPoolState> => {
     /* Get all the data simultanenously in a promise.all */
     const [baseReserves, fyTokenReserves, totalSupply, ts, g1, g2, maturity, decimals, fyTokenRealReserves] = await Promise.all([
       leverStrategy.poolContract.getBaseBalance(),
@@ -114,7 +114,7 @@ const MarketProvider = ({ children }: any) => {
 
   /* ACTIONS TO CHANGE CONTEXT */
   const marketActions = {
-    getPoolInfo: async (strategy: ILeverStrategy): Promise<IPoolState> => await getPoolInfo(strategy),
+    getPoolInfo: async (strategy: ILever): Promise<IPoolState> => await getPoolInfo(strategy),
   };
 
   return <MarketContext.Provider value={[ marketState as IPoolState, marketActions ]}>{children}</MarketContext.Provider>;

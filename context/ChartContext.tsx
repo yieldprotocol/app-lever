@@ -76,7 +76,7 @@ const ChartProvider = ({ children }: any) => {
 
   /* ACTIONS TO CHANGE CONTEXT */
   const chartActions = {
-    // getPoolInfo: async (strategy: ILeverStrategy): Promise<IPoolState> => await getGraphInfo(strategy),
+    // getPoolInfo: async (strategy: ILever): Promise<IPoolState> => await getGraphInfo(strategy),
   };
 
   return <ChartContext.Provider value={[chartState, chartActions]}>{children}</ChartContext.Provider>;

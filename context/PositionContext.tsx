@@ -1,7 +1,8 @@
 import { BigNumber } from 'ethers';
 import React, { useContext, useEffect, useReducer } from 'react';
-import { useAccount } from 'wagmi';
-import { ILeverContextState, LeverContext } from './LeverContext';
+import { useAccount, useProvider } from 'wagmi';
+import { CAULDRON, contractFactories } from '../config/contractRegister';
+import { ILeverContextState, ILever, LeverContext } from './LeverContext';
 
 export interface IPositionContextState {
   positions: Map<string, IPosition>;
@@ -14,6 +15,7 @@ export interface IPosition {
   ilkId: string;
   ink: BigNumber;
   art: BigNumber;
+  leverStrategy: ILever;
 }
 
 const PositionContext = React.createContext<any>({});
@@ -45,22 +47,28 @@ const PositionProvider = ({ children }: any) => {
   /* LOCAL STATE */
   const [positionState, updateState] = useReducer(positionReducer, initState);
   const [ leverState ] = useContext(LeverContext);
-  const { selectedStrategy, contracts } = leverState as ILeverContextState;
+  const { strategies } = leverState as ILeverContextState;
+
+  const provider = useProvider();
 
   const {address: account} = useAccount();
 
   const updatePositions = async (positionsToUpdate: [] = []) => {
-    if (account && contracts.Cauldron ) {
-      const vaultsReceivedFilter = contracts.Cauldron.filters.VaultGiven(null, account);
-      const vaultsReceived = await contracts.Cauldron.queryFilter(vaultsReceivedFilter, 15940787, 'latest');
+
+    const cauldron = contractFactories[CAULDRON].connect(CAULDRON, provider);
+
+    if (account ) {
+      const vaultsReceivedFilter = cauldron.filters.VaultGiven(null, account);
+      const vaultsReceived = await cauldron.queryFilter(vaultsReceivedFilter, 15940787, 'latest');
 
       await Promise.all(
         vaultsReceived.map(async (x: any): Promise<any> => {
           const { vaultId: id } = x.args;
-          const { ilkId, seriesId } = await contracts.Cauldron.vaults(id);
-          const { ink, art } = await contracts.Cauldron.balances(id);
+          const { ilkId, seriesId } = await cauldron.vaults(id);
+          const { ink, art } = await cauldron.balances(id);
 
           const vaultInfo = {
+            leverStrategy:
             id,
             seriesId,
             ilkId,
@@ -69,10 +77,12 @@ const PositionProvider = ({ children }: any) => {
             // displayName: generateVaultName(id),
             // decimals: series.decimals,
           };
-          updateState({ type: 'UPDATE_POSITION', payload: vaultInfo });
+          updateState({ type: 'UPDATE_POSITION', payload: vaultInfo  });
           return vaultInfo;
         })
       );
+
+
       // console.log(receivedEventsList);
     }
   };
@@ -80,7 +90,7 @@ const PositionProvider = ({ children }: any) => {
   /* update the positions if the account/contracts change */
   useEffect(() => {
     updatePositions();
-  }, [account, contracts]);
+  }, [account]);
 
   /* ACTIONS TO CHANGE CONTEXT */
   const positionActions = {

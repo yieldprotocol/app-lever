@@ -1,10 +1,7 @@
 import { Provider } from '@ethersproject/providers';
 import {
   Cauldron,
-  FYToken,
   Ladle,
-  Pool,
-  ERC20Permit,
   ERC20,
   Pool__factory,
   FYToken__factory,
@@ -18,7 +15,6 @@ import { Signer } from 'ethers';
 import {
   FlashJoin,
   FlashJoin__factory,
-  IOracle,
   IOracle__factory,
   StableSwap__factory,
   StEthLever__factory,
@@ -40,10 +36,13 @@ export const LADLE = '0x6cB18fF2A33e981D1e38A663Ca056c0a5265066A';
 /* Asset Contracts */
 export const WSTETH = '0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0';
 export const WETH = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
+
 /* joins */
 export const WETH_JOIN = '0x3bDb887Dc46ec0E964Df89fFE2980db0121f0fD0';
+
 /* levers */
 export const STETH_LEVER = '0x60a6a7fabe11ff36cbe917a17666848f0ff3a60a';
+
 /* swaps contracts */
 export const WETH_STETH_STABLESWAP = '0x828b154032950c8ff7cf8085d841723db2696056';
 

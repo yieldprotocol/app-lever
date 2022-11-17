@@ -2,10 +2,10 @@ import { ZERO_BN } from '@yield-protocol/ui-math';
 import { BigNumber } from 'ethers';
 import { toast } from 'react-toastify';
 import { useContractWrite, usePrepareContractWrite } from 'wagmi';
-import { ILeverStrategy } from '../context/LeverContext';
+import { ILever } from '../context/LeverContext';
 
 const useInvest = (
-  leverStrategy: ILeverStrategy| undefined,
+  leverStrategy: ILever| undefined,
   txArgs: any[],
   overrides: { value: BigNumber} = { value: ZERO_BN },
   enabled: boolean = false,

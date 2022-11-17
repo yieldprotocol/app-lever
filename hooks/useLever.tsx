@@ -15,6 +15,8 @@ import { MarketContext } from '../context/MarketContext';
 import useInvest from './useInvest';
 import useDivest from './useDivest';
 import { IPositionContextState, PositionContext } from '../context/PositionContext';
+import { ethers } from 'ethers';
+import { useProvider } from 'wagmi';
 
 export interface simOutput {
   /* Borrowing simulation: */
@@ -75,6 +77,7 @@ export const useLever = (
     inputState: IInputContextState,
     leverState: ILeverContextState,
     marketState: any,
+    provider: ethers.providers.BaseProvider,
     currentTime?: number
   ) => Promise<simOutput>
 ) => {
@@ -94,6 +97,7 @@ export const useLever = (
   /* add in debounced leverage when using slider - to prevent excessive calcs */
   const debouncedLeverage = useDebounce(leverage, 500);
   const { currentTime } = useBlockTime();
+  const provider = useProvider();
 
   // loading flags:
   const [isSimulating, setIsSimulating] = useState<boolean>(false);
@@ -124,7 +128,7 @@ export const useLever = (
   const [maxLeverage, setMaxLeverage] = useState<number>(5);
 
   const invest = useInvest(selectedStrategy, investArgs, { value: input?.big }, !isSimulating && input?.dsp > 0);
-  const divest = useDivest(selectedStrategy, divestArgs, { value: input?.big }, false );
+  const divest = useDivest(selectedStrategy, divestArgs, { value: input?.big }, !!selectedPosition );
 
   /* Use the simulator on each leverage/input change */
   useEffect(() => {
@@ -135,7 +139,7 @@ export const useLever = (
          * Simulate investment and set parameters locally
          * */
         setIsSimulating(true);
-        const simulated = await simulator(inputState, leverState, marketState);
+        const simulated = await simulator(inputState, leverState, marketState, provider );
 
         setInvestmentPosition(simulated.investmentPosition);
         setInvestmentAtMaturity(simulated.investmentAtMaturity);

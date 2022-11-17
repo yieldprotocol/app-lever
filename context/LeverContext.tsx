@@ -1,28 +1,28 @@
 import { BigNumber, Contract, ethers } from 'ethers';
 import React, { ReactElement, useEffect, useReducer, useState } from 'react';
 import { ASSETS, IAssetRoot, WETH } from '../config/assets';
-import { ILeverStrategyRoot, STRATEGIES } from '../config/strategies';
+import { ILeverRoot, STRATEGIES } from '../config/strategies';
 import { ERC20, ERC20Permit, FYToken } from '../contracts/types';
 import { AppState, TokenType } from '../lib/types';
 import { convertToW3bNumber } from '../lib/utils';
 import { W3bNumber } from './InputContext';
 
 import logoMap from '../config/logos';
-import { CAULDRON, contractFactories, contractFactoryMap, LADLE, ORACLE } from '../config/contractRegister';
-import { useAccount, useProvider, useSigner } from 'wagmi';
+import { CAULDRON, contractFactories, contractFactoryMap, LADLE } from '../config/contractRegister';
+import { useAccount, useProvider } from 'wagmi';
 
 export interface ILeverContextState {
-  contracts: any;
+
   assets: Map<string, IAsset>;
-  strategies: Map<string, ILeverStrategy>;
+  strategies: Map<string, ILever>;
   appState: AppState;
-  selectedStrategy: ILeverStrategy | undefined;
-  // selectedPosition: ILeverStrategy | undefined;
+
+  selectedStrategy: ILever | undefined;
+
   shortAsset: IAsset | undefined;
   longAsset: IAsset | undefined;
   marketState: any;
-  provider: any;
-  account?: string;
+
 }
 
 export interface IAsset extends IAssetRoot {
@@ -31,7 +31,7 @@ export interface IAsset extends IAssetRoot {
   assetContract: ERC20 | ERC20Permit | FYToken;
 }
 
-export interface ILeverStrategy extends ILeverStrategyRoot {
+export interface ILever extends ILeverRoot {
   investTokenContract: Contract;
   leverContract: Contract;
   oracleContract: Contract;
@@ -59,7 +59,7 @@ const LeverContext = React.createContext<any>({});
 const initState: ILeverContextState = {
   appState: AppState.Loading,
 
-  contracts: {},
+  // contracts: {},
   assets: new Map(),
   strategies: new Map(),
 
@@ -72,7 +72,7 @@ const initState: ILeverContextState = {
   shortAsset: undefined,
   longAsset: undefined,
 
-  provider: undefined,
+  // provider: undefined,
 };
 
 const leverReducer = (state: ILeverContextState, action: any) => {
@@ -88,12 +88,6 @@ const leverReducer = (state: ILeverContextState, action: any) => {
       return {
         ...state,
         assets: new Map(state.assets.set(action.payload.id, action.payload)),
-      };
-
-    case 'UPDATE_CONTRACTS':
-      return {
-        ...state,
-        contracts: action.payload,
       };
 
     case 'UPDATE_APPSTATE':
@@ -119,12 +113,6 @@ const leverReducer = (state: ILeverContextState, action: any) => {
         shortAsset: action.payload,
       };
 
-    case 'UPDATE_PROVIDER':
-      return {
-        ...state,
-        provider: action.payload,
-      };
-
     default:
       return state;
   }
@@ -135,9 +123,6 @@ const LeverProvider = ({ children }: any) => {
   const [leverState, updateState] = useReducer(leverReducer, initState);
   const { address:account } = useAccount();
   const provider = useProvider();
-
-  /* update provider on change */
-  useEffect(() => updateState({ type: 'UPDATE_PROVIDER', payload: provider }), [provider]);
 
   /* Connect up Cauldron and Ladle contracts : updates on provider change */
   useEffect(() => {
@@ -168,8 +153,8 @@ const LeverProvider = ({ children }: any) => {
         const displaySymbol = asset.displaySymbol || asset.symbol;
         const strategies = Array.from(STRATEGIES.values());
 
-        const isShortAsset = strategies.some((s: ILeverStrategy) => s.baseId === asset.id);
-        const isLongAsset = strategies.some((s: ILeverStrategy) => s.ilkId === asset.id);
+        const isShortAsset = strategies.some((s: ILever) => s.baseId === asset.id);
+        const isLongAsset = strategies.some((s: ILever) => s.ilkId === asset.id);
 
         const connectedAsset = {
           ...asset,
@@ -253,7 +238,7 @@ const LeverProvider = ({ children }: any) => {
           tradeImage: logoMap.get('CURVE'),
           maturityDate: new Date( strategy.maturity * 1000),
 
-        } as ILeverStrategy;
+        } as ILever;
 
         updateState({ type: 'UPDATE_STRATEGY', payload: connectedStrategy });
       });
@@ -286,10 +271,10 @@ const LeverProvider = ({ children }: any) => {
   /* ACTIONS TO CHANGE CONTEXT */
   const leverActions = {
     selectShort: (asset: IAsset) => updateState({ type: 'SELECT_SHORT', payload: asset }),
-    selectLong: (asset: ILeverStrategy) => updateState({ type: 'SELECT_LONG', payload: asset }),
+    selectLong: (asset: ILever) => updateState({ type: 'SELECT_LONG', payload: asset }),
 
-    selectStrategy: (strategy: ILeverStrategy) => updateState({ type: 'SELECT_STRATEGY', payload: strategy }),
-    // selectPosition: (position: ILeverStrategy) => updateState({ type: 'SELECT_POSITION', payload: position }),
+    selectStrategy: (strategy: ILever) => updateState({ type: 'SELECT_STRATEGY', payload: strategy }),
+    // selectPosition: (position: ILever) => updateState({ type: 'SELECT_POSITION', payload: position }),
 
     setAppState: (appState: AppState) => updateState({ type: 'UPDATE_APPSTATE', payload: appState }),
   };

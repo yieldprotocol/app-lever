@@ -14,7 +14,7 @@ export interface IInputContextState {
   input: W3bNumber | undefined;
   leverage: W3bNumber | undefined;
   slippage: number;
-  // selectedStrategy: ILeverStrategy|undefined;
+  // selectedStrategy: ILever|undefined;
 }
 
 /* Parse the input to W3BNumber based on the selected Strategy and base */

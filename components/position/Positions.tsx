@@ -8,6 +8,8 @@ const Positions = () => {
   const { positions,  } = positionState;
   const { selectPosition } = positionActions;
 
+  console.log(positions)
+
   return (
     <BorderWrap>
       <TopRow>

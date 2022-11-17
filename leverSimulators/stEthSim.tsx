@@ -16,6 +16,7 @@ export const stEthSimulator =  async (
   leverState: ILeverContextState,
   marketState: any,
   
+  provider: ethers.providers.BaseProvider,
   currentTime: number = Math.round(new Date().getTime() / 1000)
 ): Promise<simOutput> => {
 
@@ -32,7 +33,8 @@ export const stEthSimulator =  async (
   const input = inputState.input || ZERO_W3N;
   const leverage = inputState.leverage;
   const strategy = leverState.selectedStrategy;
-  const provider = leverState.provider;
+
+  // const provider = useProvider(); // TODO remove this provider dependance - so we have no dependance on wagmi? 
 
   if (input.big.gt(ZERO_BN)) {
 

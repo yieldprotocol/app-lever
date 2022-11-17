@@ -1,6 +1,6 @@
 import { Fragment, useContext, useEffect, useState } from 'react';
 import tw from 'tailwind-styled-components';
-import { IAsset, ILeverStrategy, LeverContext } from '../../context/LeverContext';
+import { IAsset, ILever, LeverContext } from '../../context/LeverContext';
 import { BorderWrap, TopRow } from '../styled';
 
 import { ArrowsRightLeftIcon } from '@heroicons/react/24/solid';
@@ -87,12 +87,12 @@ const StrategySelect = () => {
   const { selectedStrategy, strategies, shortAsset, longAsset, assets } = leverState;
   const assetsList = Array.from(assets.values());
 
-  const [possibleStrategies, setPossibleStrategies] = useState<ILeverStrategy[]>([]);
+  const [possibleStrategies, setPossibleStrategies] = useState<ILever[]>([]);
   const [requestedPairs, setRequestedPair] = useState<string[]>([]);
 
   useEffect(() => {
-    const newStratList: ILeverStrategy[] = [];
-    strategies.forEach((x: ILeverStrategy) => {
+    const newStratList: ILever[] = [];
+    strategies.forEach((x: ILever) => {
       if (x.baseId === shortAsset.id && x.ilkId === longAsset.id) newStratList.push(x);
       setPossibleStrategies(newStratList);
       leverActions.selectStrategy(newStratList[0]);
@@ -156,7 +156,7 @@ const StrategySelect = () => {
 
       <div>
         <div className="gap-4">
-          {possibleStrategies.map((s: ILeverStrategy) => (
+          {possibleStrategies.map((s: ILever) => (
             <Container key={s.id}>
               <div
                 className={`flex flex-row gap-4 p-2 justify-around ${

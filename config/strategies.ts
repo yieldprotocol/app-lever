@@ -5,8 +5,9 @@ import { TokenType } from '../lib/types';
 import { WETH, WSTETH } from './assets';
 
 import { stEthSimulator }  from '../leverSimulators/stEthSim';
+import { ethers } from 'ethers';
 
-export interface ILeverStrategyRoot {
+export interface ILeverRoot {
   id: string;
   displayName: string;
   maturity: number;
@@ -27,6 +28,7 @@ export interface ILeverStrategyRoot {
     inputContext: IInputContextState,
     leverContext: ILeverContextState,
     marketContext: any,
+    provider?: ethers.providers.BaseProvider,
     currentTime?: number,
   ) => Promise<simOutput>;
 }
@@ -36,7 +38,13 @@ export enum TradePlatforms {
   YIELD = 'YIELD',
 }
 
-export const STRATEGIES = new Map<string, ILeverStrategyRoot>();
+export enum Levers {
+  STETH_LEVER = '0x60a6a7fabe11ff36cbe917a17666848f0ff3a60a',
+  STRATEGY_LEVER = '0x60a6a7fabe11ff36cbe917a17666848f0ff3a60a',
+  NOTIONAL_LEVER = '0x60a6a7fabe11ff36cbe917a17666848f0ff3a60a'
+}
+
+export const STRATEGIES = new Map<string, ILeverRoot>();
 
 STRATEGIES.set('STETH_01', {
   id: '001',
@@ -46,7 +54,7 @@ STRATEGIES.set('STETH_01', {
   investTokenType: TokenType.FYTOKEN,
   investTokenAddress: '0x386a0a72ffeeb773381267d69b61acd1572e074d',
 
-  leverAddress: '0x60a6a7fabe11ff36cbe917a17666848f0ff3a60a',
+  leverAddress: Levers.STETH_LEVER,
   swapAddress: '0x828b154032950C8ff7CF8085D841723Db2696056',
 
   ilkId: WSTETH,
@@ -65,7 +73,7 @@ STRATEGIES.set('STETH_02', {
   investTokenType: TokenType.FYTOKEN,
   investTokenAddress: '0x0FBd5ca8eE61ec921B3F61B707f1D7D64456d2d1',
 
-  leverAddress: '0x60a6a7fabe11ff36cbe917a17666848f0ff3a60a',
+  leverAddress: Levers.STETH_LEVER,
   swapAddress: '0x828b154032950C8ff7CF8085D841723Db2696056',
 
   ilkId: WSTETH,

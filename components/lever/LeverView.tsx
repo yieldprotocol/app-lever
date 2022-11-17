@@ -13,6 +13,7 @@ const LeverView = () => {
   
   const [leverState] = useContext(LeverContext);
   const simulator = leverState.selectedStrategy?.leverSimulator
+  
   /* lever is abstracted up here in a higher level to save a few re-renders/calcs */
   const lever = useLever( simulator );
 
