@@ -4,20 +4,23 @@ import { IInputContextState, W3bNumber } from '../context/InputContext';
 
 import { ILeverContextState } from '../context/LeverContext';
 import { ZERO_W3N } from '../constants';
-import { NULL_OUTPUT, simOutput } from '../hooks/useLever';
+import { NULL_OUTPUT, Simulator, SimulatorOutput } from '../hooks/useLever';
+import { IMarketContextState } from '../context/MarketContext';
+import { IPositionContextState } from '../context/PositionContext';
 
 // import { YieldStrategyLever__factory} from '../contracts/types';
 
 /* Swap contract */
 // export const WETH_STETH_STABLESWAP = '0x828b154032950c8ff7cf8085d841723db2696056';
 
-export const strategySimulator =  async (
+export const strategySimulator: Simulator =  async (
   inputState: IInputContextState,
   leverState: ILeverContextState,
-  marketState: any,
+  marketState: IMarketContextState,
+  positionState: IPositionContextState,
   provider: ethers.providers.BaseProvider| undefined,
   currentTime: number = Math.round(new Date().getTime() / 1000)
-): Promise<simOutput> => {
+): Promise<SimulatorOutput> => {
 
   const output = NULL_OUTPUT; 
 
