@@ -6,7 +6,7 @@ import { WETH, WSTETH } from './assets';
 
 import { stEthSimulator }  from '../leverSimulators/stEthSim';
 import { ethers } from 'ethers';
-import { NOTIONAL_LEVER, STETH_LEVER, STRATEGY_LEVER } from './contracts';
+import { NOTIONAL_LEVER, STETH_LEVER, YIELD_STRATEGY_LEVER } from './contracts';
 
 interface ILeverCommon {
   leverAddress: string;
@@ -46,7 +46,7 @@ const stEthLeverBase_: ILeverCommon = {
 }
 
 const strategyLeverBase_: ILeverCommon = {
-  leverAddress : STRATEGY_LEVER,
+  leverAddress : YIELD_STRATEGY_LEVER,
   leverSimulator: stEthSimulator,
   tradePlatform: TradePlatforms.YIELD,
   ilkId: WSTETH,
@@ -82,6 +82,16 @@ LEVERS.set('STETH_02', {
   investTokenAddress: '0x0FBd5ca8eE61ec921B3F61B707f1D7D64456d2d1',
   seriesId: '0x303030390000',
 });
+
+// LEVERS.set('STRATEGY_01', {
+//   ...stEthLeverBase_,
+//   id: '001',
+//   displayName: 'WETH_STETH MAR_2023',
+//   maturity: 1680274800,
+//   investTokenType: TokenType.FYTOKEN,
+//   investTokenAddress: '0x0FBd5ca8eE61ec921B3F61B707f1D7D64456d2d1',
+//   seriesId: '0x303030390000',
+// });
 
 // LEVERS.set('StETH_02', {
 //   id: '002',

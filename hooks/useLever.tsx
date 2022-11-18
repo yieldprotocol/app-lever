@@ -10,7 +10,7 @@ import { MAX_256 } from '@yield-protocol/ui-math';
 import useBlockTime from './useBlockTime';
 
 import { calculateAPR } from '@yield-protocol/ui-math';
-import { MarketContext } from '../context/MarketContext';
+import { IMarketContextState, MarketContext } from '../context/MarketContext';
 
 import useInvest from './useInvest';
 import useDivest from './useDivest';
@@ -18,7 +18,16 @@ import { IPositionContextState, PositionContext } from '../context/PositionConte
 import { ethers } from 'ethers';
 import { useProvider } from 'wagmi';
 
-export interface simOutput {
+export type Simulator = (
+  inputState: IInputContextState,
+  leverState: ILeverContextState,
+  marketState: IMarketContextState,
+  positionState: IPositionContextState,
+  provider: ethers.providers.BaseProvider,
+  currentTime?: number
+) => Promise<SimulatorOutput>;
+
+export type SimulatorOutput = {
   /* Borrowing simulation: */
   shortBorrowed: W3bNumber; // amount of short asset borrowed
   debtAtMaturity: W3bNumber; // debt owed at maturity
@@ -40,22 +49,23 @@ export interface simOutput {
   notification: Notification | undefined;
 }
 
-export const NULL_OUTPUT = { 
-  shortBorrowed:ZERO_W3N,
-  debtAtMaturity:ZERO_W3N,
-  debtCurrent:ZERO_W3N,
-  shortInvested:ZERO_W3N,
-  investmentPosition:ZERO_W3N,
-  investmentAtMaturity:ZERO_W3N,
-  investmentCurrent:ZERO_W3N,
-  flashBorrowFee:ZERO_W3N,
-  investmentFee:ZERO_W3N,
-  investArgs:[],
-  divestArgs:[],
-  notification: undefined
-} as simOutput;
+/* TODO this is probably not the best way to initialise simulators */
+export const NULL_OUTPUT = {
+  shortBorrowed: ZERO_W3N,
+  debtAtMaturity: ZERO_W3N,
+  debtCurrent: ZERO_W3N,
+  shortInvested: ZERO_W3N,
+  investmentPosition: ZERO_W3N,
+  investmentAtMaturity: ZERO_W3N,
+  investmentCurrent: ZERO_W3N,
+  flashBorrowFee: ZERO_W3N,
+  investmentFee: ZERO_W3N,
+  investArgs: [],
+  divestArgs: [],
+  notification: undefined,
+} as SimulatorOutput;
 
-export interface LeverSimulation extends simOutput {
+export interface LeverSimulation extends SimulatorOutput {
   /**
    * calculated values
    * */
@@ -87,17 +97,9 @@ export interface Notification {
   msg: string;
 }
 
-export const useLever = (
-  simulator: (
-    inputState: IInputContextState,
-    leverState: ILeverContextState,
-    marketState: any,
-    provider: ethers.providers.BaseProvider,
-    currentTime?: number
-  ) => Promise<simOutput>
-) => {
+export const useLever = (simulator: Simulator) => {
   /* Bring in context*/
-  const [ leverState, leverActions ]: [ILeverContextState, any] = useContext(LeverContext);
+  const [leverState, leverActions]: [ILeverContextState, any] = useContext(LeverContext);
   const { selectedLever, shortAsset } = leverState;
   const { setAppState } = leverActions;
 
@@ -106,7 +108,7 @@ export const useLever = (
 
   const [marketState] = useContext(MarketContext);
 
-  const [positionState] : [IPositionContextState, any] = useContext(PositionContext);
+  const [positionState]: [IPositionContextState, any] = useContext(PositionContext);
   const { selectedPosition } = positionState;
 
   /* add in debounced leverage when using slider - to prevent excessive calcs */
@@ -142,8 +144,14 @@ export const useLever = (
   const [pnl, setPnl] = useState<number>(0);
   const [maxLeverage, setMaxLeverage] = useState<number>(5);
 
-  const invest = useInvest(selectedLever, investArgs, { value: input?.big }, !isSimulating && input?.dsp > 0);
-  const divest = useDivest(selectedLever, divestArgs, { value: input?.big }, !!selectedPosition );
+  const invest = useInvest(
+    selectedLever,
+    investArgs,
+    { value: input?.big },
+    !isSimulating && input?.dsp > 0 && investArgs.length > 0
+  );
+
+  const divest = useDivest(selectedLever, divestArgs, { value: input?.big }, !!selectedPosition);
 
   /* Use the simulator on each leverage/input change */
   useEffect(() => {
@@ -154,7 +162,7 @@ export const useLever = (
          * Simulate investment and set parameters locally
          * */
         setIsSimulating(true);
-        const simulated = await simulator(inputState, leverState, marketState, provider );
+        const simulated = await simulator(inputState, leverState, marketState, positionState, provider);
 
         setInvestmentPosition(simulated.investmentPosition);
         setInvestmentAtMaturity(simulated.investmentAtMaturity);
@@ -212,7 +220,7 @@ export const useLever = (
           (simulated.debtAtMaturity?.dsp! / (simulated.investmentPosition?.dsp! * selectedLever?.loanToValue)) * 100;
         setBorrowLimitUsed(borrowLimitUsed_);
 
-        const pnl_ = isNaN(netAPR - investAPR) ? 0: netAPR - investAPR;
+        const pnl_ = isNaN(netAPR - investAPR) ? 0 : netAPR - investAPR;
         setPnl(pnl_);
       })();
   }, [selectedLever, debouncedLeverage, input]);
