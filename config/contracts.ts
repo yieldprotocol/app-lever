@@ -8,7 +8,9 @@ import {
   ERC20Permit__factory,
 } from '@yield-protocol/ui-contracts';
 import {
-  IOracle__factory, StEthLever__factory,
+  IOracle__factory, 
+  StEthLever__factory,
+  YieldStrategyLever__factory,
 } from '../contracts/types';
 
 import { TokenType } from '../lib/types';
@@ -28,11 +30,12 @@ export const NOTIONAL_LEVER = '0x3df40d95931892c68c88bb15ca80f17f7767ecb3';
 export const EULER_LEVER = '0x3df40d95931892c68c88bb15ca80f17f7767ecb3';
 
 export const contractMap = new Map<string, any>([
-  [CAULDRON, Cauldron__factory],
+  [CAULDRON, Cauldron__factory ],
   [LADLE, Ladle__factory],
 
   /* lever contracts */
   [STETH_LEVER, StEthLever__factory],
+  [YIELD_STRATEGY_LEVER, YieldStrategyLever__factory],
 ]);
 
 /**
