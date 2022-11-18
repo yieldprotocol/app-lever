@@ -12,22 +12,27 @@ import {
 } from '../contracts/types';
 
 import { TokenType } from '../lib/types';
-import { LeverContractAddresses } from './levers';
 
 /**
  * Specific Contract addresses
  */
 
-/* Protocol contracts */
+/* Protocol contract address */
 export const CAULDRON = '0xc88191F8cb8e6D4a668B047c1C8503432c3Ca867';
 export const LADLE = '0x6cB18fF2A33e981D1e38A663Ca056c0a5265066A';
+
+/* lever contract addresses */
+export const STETH_LEVER = '0x60a6a7fabe11ff36cbe917a17666848f0ff3a60a';
+export const STRATEGY_LEVER = '0x5582b8398fb586f1b79edd1a6e83f1c5aa558955';
+export const NOTIONAL_LEVER = '0x3df40d95931892c68c88bb15ca80f17f7767ecb3';
+export const EULER_LEVER = '0x3df40d95931892c68c88bb15ca80f17f7767ecb3';
 
 export const contractMap = new Map<string, any>([
   [CAULDRON, Cauldron__factory],
   [LADLE, Ladle__factory],
 
   /* lever contracts */
-  [LeverContractAddresses.STETH_LEVER, StEthLever__factory],
+  [STETH_LEVER, StEthLever__factory],
 ]);
 
 /**

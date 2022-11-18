@@ -23,7 +23,6 @@ export interface simOutput {
   shortBorrowed: W3bNumber; // amount of short asset borrowed
   debtAtMaturity: W3bNumber; // debt owed at maturity
   debtCurrent: W3bNumber; // current Value of debt (if settling now )
-
   flashBorrowFee: W3bNumber;
 
   /* Investment simulation: */
@@ -31,14 +30,30 @@ export interface simOutput {
   investmentPosition: W3bNumber; // long-asset obtained
   investmentAtMaturity: W3bNumber; // Est. value of investment at maturity
   investmentCurrent: W3bNumber; // Current value of long asset (if unwinding now)
-
   investmentFee: W3bNumber;
 
+  /* transaction arguments */
   investArgs: any[];
   divestArgs: any[];
 
+  /* simulation instance notifcation */
   notification: Notification | undefined;
 }
+
+export const NULL_OUTPUT = { 
+  shortBorrowed:ZERO_W3N,
+  debtAtMaturity:ZERO_W3N,
+  debtCurrent:ZERO_W3N,
+  shortInvested:ZERO_W3N,
+  investmentPosition:ZERO_W3N,
+  investmentAtMaturity:ZERO_W3N,
+  investmentCurrent:ZERO_W3N,
+  flashBorrowFee:ZERO_W3N,
+  investmentFee:ZERO_W3N,
+  investArgs:[],
+  divestArgs:[],
+  notification: undefined
+} as simOutput;
 
 export interface LeverSimulation extends simOutput {
   /**

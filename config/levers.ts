@@ -6,6 +6,7 @@ import { WETH, WSTETH } from './assets';
 
 import { stEthSimulator }  from '../leverSimulators/stEthSim';
 import { ethers } from 'ethers';
+import { NOTIONAL_LEVER, STETH_LEVER, STRATEGY_LEVER } from './contracts';
 
 interface ILeverCommon {
   leverAddress: string;
@@ -36,14 +37,8 @@ export enum TradePlatforms {
   NOTIONAL= 'NOTIONAL'
 }
 
-export enum LeverContractAddresses {
-  STETH_LEVER = '0x60a6a7fabe11ff36cbe917a17666848f0ff3a60a',
-  STRATEGY_LEVER = '0x60a6a7fabe11ff36cbe917a17666848f0ff3a60a',
-  NOTIONAL_LEVER = '0x60a6a7fabe11ff36cbe917a17666848f0ff3a60a'
-}
-
 const stEthLeverBase_: ILeverCommon = {
-  leverAddress : LeverContractAddresses.STETH_LEVER,
+  leverAddress : STETH_LEVER,
   leverSimulator: stEthSimulator,
   tradePlatform: TradePlatforms.CURVE,
   ilkId: WSTETH,
@@ -51,7 +46,7 @@ const stEthLeverBase_: ILeverCommon = {
 }
 
 const strategyLeverBase_: ILeverCommon = {
-  leverAddress : LeverContractAddresses.STRATEGY_LEVER,
+  leverAddress : STRATEGY_LEVER,
   leverSimulator: stEthSimulator,
   tradePlatform: TradePlatforms.YIELD,
   ilkId: WSTETH,
@@ -59,7 +54,7 @@ const strategyLeverBase_: ILeverCommon = {
 }
 
 const notionalLeverBase_: ILeverCommon = {
-  leverAddress : LeverContractAddresses.NOTIONAL_LEVER,
+  leverAddress : NOTIONAL_LEVER,
   leverSimulator: stEthSimulator,
   tradePlatform: TradePlatforms.NOTIONAL,
   ilkId: WSTETH,
