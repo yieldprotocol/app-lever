@@ -296,5 +296,3 @@ export const useLever = (
     // simNotification,
   };
 };
-
-const handleTransaction = () => {};

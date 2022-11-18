@@ -10,7 +10,7 @@ import { simOutput } from '../hooks/useLever';
 import curve from '@curvefi/api';
 import { ethers } from 'ethers';
 
-import { StableSwap__factory } from '../contracts/types';
+import { StableSwap__factory, StEthLever__factory} from '../contracts/types';
 
 /* stable swap contract */
 export const WETH_STETH_STABLESWAP = '0x828b154032950c8ff7cf8085d841723db2696056';

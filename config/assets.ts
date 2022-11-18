@@ -153,7 +153,6 @@ ASSETS.set(USDC, {
   digitFormat: 2,
   tokenType: TokenType.ERC20_PERMIT,
 
-  // tradePlatform: 'Curve',
   chartId: 'usd-coin',
 });
 

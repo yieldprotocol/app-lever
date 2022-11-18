@@ -11,7 +11,7 @@ import { ILeverRoot, LEVERS } from '../config/levers';
 
 import logoMap from '../config/logos';
 
-import { CAULDRON, LADLE, contractMap, factoryContractMap} from '../config/contractRegister';
+import { CAULDRON, LADLE, contractMap, factoryContractMap} from '../config/contracts';
 import { useAccount, useProvider } from 'wagmi';
 
 export interface ILeverContextState {

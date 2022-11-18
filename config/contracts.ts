@@ -8,11 +8,11 @@ import {
   ERC20Permit__factory,
 } from '@yield-protocol/ui-contracts';
 import {
-  IOracle__factory,
-  StEthLever__factory,
+  IOracle__factory, StEthLever__factory,
 } from '../contracts/types';
 
 import { TokenType } from '../lib/types';
+import { LeverContractAddresses } from './levers';
 
 /**
  * Specific Contract addresses
@@ -22,17 +22,17 @@ import { TokenType } from '../lib/types';
 export const CAULDRON = '0xc88191F8cb8e6D4a668B047c1C8503432c3Ca867';
 export const LADLE = '0x6cB18fF2A33e981D1e38A663Ca056c0a5265066A';
 
-/* levers */
-export const STETH_LEVER = '0x60a6a7fabe11ff36cbe917a17666848f0ff3a60a';
-
 export const contractMap = new Map<string, any>([
   [CAULDRON, Cauldron__factory],
   [LADLE, Ladle__factory],
 
   /* lever contracts */
-  [STETH_LEVER, StEthLever__factory],
-
+  [LeverContractAddresses.STETH_LEVER, StEthLever__factory],
 ]);
+
+/**
+ * Multiple Contracts
+ */
 
 export const factoryContractMap = new Map([
   [TokenType.FYTOKEN, FYToken__factory],

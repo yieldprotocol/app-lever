@@ -7,16 +7,10 @@ import { WETH, WSTETH } from './assets';
 import { stEthSimulator }  from '../leverSimulators/stEthSim';
 import { ethers } from 'ethers';
 
-export interface ILeverRoot {
-  id: string;
-  displayName: string;
-  maturity: number;
-  investTokenType: TokenType;
-  investTokenAddress: string;
+interface ILeverCommon {
   leverAddress: string;
   ilkId: string;
   baseId: string;
-  seriesId: string;
   tradePlatform: string;
   leverSimulator: (
     inputContext: IInputContextState,
@@ -25,6 +19,15 @@ export interface ILeverRoot {
     provider?: ethers.providers.BaseProvider | undefined,
     currentTime?: number,
   ) => Promise<simOutput>;
+}
+
+export interface ILeverRoot extends ILeverCommon{
+  id: string;
+  displayName: string;
+  maturity: number;
+  investTokenType: TokenType;
+  investTokenAddress: string;
+  seriesId: string;
 }
 
 export enum TradePlatforms {
@@ -39,41 +42,50 @@ export enum LeverContractAddresses {
   NOTIONAL_LEVER = '0x60a6a7fabe11ff36cbe917a17666848f0ff3a60a'
 }
 
+const stEthLeverBase_: ILeverCommon = {
+  leverAddress : LeverContractAddresses.STETH_LEVER,
+  leverSimulator: stEthSimulator,
+  tradePlatform: TradePlatforms.CURVE,
+  ilkId: WSTETH,
+  baseId: WETH,
+}
+
+const strategyLeverBase_: ILeverCommon = {
+  leverAddress : LeverContractAddresses.STRATEGY_LEVER,
+  leverSimulator: stEthSimulator,
+  tradePlatform: TradePlatforms.YIELD,
+  ilkId: WSTETH,
+  baseId: WETH,
+}
+
+const notionalLeverBase_: ILeverCommon = {
+  leverAddress : LeverContractAddresses.NOTIONAL_LEVER,
+  leverSimulator: stEthSimulator,
+  tradePlatform: TradePlatforms.NOTIONAL,
+  ilkId: WSTETH,
+  baseId: WETH,
+}
+
 export const LEVERS = new Map<string, ILeverRoot>();
 
 LEVERS.set('STETH_01', {
+  ...stEthLeverBase_,
   id: '001',
   displayName: 'WETH_STETH DEC_2022',
   maturity: 1672412400,
-
   investTokenType: TokenType.FYTOKEN,
   investTokenAddress: '0x386a0a72ffeeb773381267d69b61acd1572e074d',
-
-  leverAddress: LeverContractAddresses.STETH_LEVER,
-
-  ilkId: WSTETH,
-  baseId: WETH,
   seriesId: '0x303030380000',
-
-  leverSimulator: stEthSimulator,
-  tradePlatform: TradePlatforms.CURVE,
 });
 
 LEVERS.set('STETH_02', {
+  ...stEthLeverBase_,
   id: '002',
   displayName: 'WETH_STETH MAR_2023',
   maturity: 1680274800,
   investTokenType: TokenType.FYTOKEN,
   investTokenAddress: '0x0FBd5ca8eE61ec921B3F61B707f1D7D64456d2d1',
-
-  leverAddress: LeverContractAddresses.STETH_LEVER,
-
-  ilkId: WSTETH,
-  baseId: WETH,
   seriesId: '0x303030390000',
-
-  leverSimulator: stEthSimulator,
-  tradePlatform: TradePlatforms.CURVE,
 });
 
 // LEVERS.set('StETH_02', {

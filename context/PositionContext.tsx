@@ -1,7 +1,7 @@
 import { BigNumber } from 'ethers';
 import React, { useContext, useEffect, useReducer } from 'react';
 import { useAccount, useProvider } from 'wagmi';
-import { CAULDRON, contractMap } from '../config/contractRegister';
+import { CAULDRON, contractMap } from '../config/contracts';
 import { ILeverContextState, ILever, LeverContext } from './LeverContext';
 
 export interface IPositionContextState {
