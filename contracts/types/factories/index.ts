@@ -13,3 +13,4 @@ export { Pool__factory } from "./Pool__factory";
 export { StEthLever__factory } from "./StEthLever__factory";
 export { StableSwap__factory } from "./StableSwap__factory";
 export { WStEth__factory } from "./WStEth__factory";
+export { YieldStrategyLever__factory } from "./YieldStrategyLever__factory";

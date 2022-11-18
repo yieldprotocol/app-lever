@@ -15,7 +15,7 @@ import { IMarketContextState } from '../context/MarketContext';
 import { IPositionContextState } from '../context/PositionContext';
 
 /* stable swap contract */
-export const WETH_STETH_STABLESWAP = '0x828b154032950c8ff7cf8085d841723db2696056';
+export const STETH_STABLESWAP = '0x828b154032950c8ff7cf8085d841723db2696056';
 
 export const stEthSimulator : Simulator =  async (
   inputState: IInputContextState,
@@ -27,7 +27,7 @@ export const stEthSimulator : Simulator =  async (
 ): Promise<SimulatorOutput> => {
 
   const output = NULL_OUTPUT; 
-  
+
   const input = inputState.input || ZERO_W3N;
   const leverage = inputState.leverage;
   const lever = leverState.selectedLever;
@@ -109,7 +109,7 @@ export const stEthSimulator : Simulator =  async (
       output.shortInvested = convertToW3bNumber(wethObtained, 18, 6);
       output.investmentFee = convertToW3bNumber(output.shortInvested.big.mul(4).div(10000), 18, 6);
 
-      const stableSwap = StableSwap__factory.connect(WETH_STETH_STABLESWAP, provider)
+      const stableSwap = StableSwap__factory.connect(STETH_STABLESWAP, provider)
       const boughtStEth = await stableSwap.get_dy(0, 1, wethObtained); // .catch(()=>{console.log('too big'); return ZERO_BN} );
 
       // investPosition (stEth held)
