@@ -29,7 +29,7 @@ const useDivest = (
   const {
     isError,
     isLoading,
-    write: divest,
+    write,
     isSuccess,
     error: txError,
   } = useContractWrite({
@@ -41,7 +41,7 @@ const useDivest = (
       toast.error(`Transaction Error: ${error?.message}`)
     }
   });
-  return divest;
+  return write;
 };
 
 export default useDivest;

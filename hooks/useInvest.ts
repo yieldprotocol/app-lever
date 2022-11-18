@@ -1,7 +1,10 @@
+import { connectorsForWallets } from '@rainbow-me/rainbowkit';
 import { ZERO_BN } from '@yield-protocol/ui-math';
 import { BigNumber } from 'ethers';
+import { FormatTypes } from 'ethers/lib/utils.js';
 import { toast } from 'react-toastify';
-import { useContractWrite, usePrepareContractWrite } from 'wagmi';
+import { useContractWrite, usePrepareContractWrite, useSigner } from 'wagmi';
+import { contractMap } from '../config/contracts';
 import { ILever } from '../context/LeverContext';
 
 const useInvest = (
@@ -13,24 +16,18 @@ const useInvest = (
   // borrowed: BigNumber,
   // minPosition: BigNumber = ZERO_BN
 ) => {
-  
-  const { config, error, isFetching, isIdle } = usePrepareContractWrite({
+
+  const { config, error, isFetching, isIdle, status } = usePrepareContractWrite({
     address: lever?.leverAddress,
     abi: lever?.leverContract.interface as any,
     functionName: 'invest',
     args: txArgs,
-    overrides,
-    enabled
-    // args: [lever?.seriesId, borrowed, ZERO_BN],
-    // overrides: { value: input },
-    // enabled: input.gt(ZERO_BN) && borrowed.gt(ZERO_BN) && minPosition.gt(ZERO_BN),
+    // overrides,
+    enabled: txArgs.length > 0,
   });
 
   const {
-    isError,
-    isLoading,
-    write:invest,
-    isSuccess,
+    write,
     error: txError,
   } = useContractWrite({
     ...config,
@@ -39,9 +36,10 @@ const useInvest = (
     },
     onError(error) {
       toast.error(`Transaction Error: ${error?.message}`)
-    }
+    },
   });
-  return invest;
+
+  return write;
 };
 
 export default useInvest;

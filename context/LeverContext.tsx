@@ -172,6 +172,8 @@ const LeverProvider = ({ children }: any) => {
 
         const leverContract = contractMap.get(lever.leverAddress).connect(lever.leverAddress, provider);
 
+        // console.log( contractMap.get(lever.leverAddress).abi )
+
         /* Connect the investToken based on investTokenType */ 
         const investTokenContract = factoryContractMap
           .get(lever.investTokenType)!
