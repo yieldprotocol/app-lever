@@ -1,11 +1,8 @@
-import { IInputContextState } from '../context/InputContext';
-import { ILeverContextState } from '../context/LeverContext';
-import { simOutput } from '../hooks/useLever';
+import { Simulator } from '../hooks/useLever';
 import { TokenType } from '../lib/types';
 import { WETH, WSTETH } from './assets';
 
 import { stEthSimulator }  from '../leverSimulators/stEthSim';
-import { ethers } from 'ethers';
 import { NOTIONAL_LEVER, STETH_LEVER, YIELD_STRATEGY_LEVER } from './contracts';
 
 interface ILeverCommon {
@@ -13,13 +10,7 @@ interface ILeverCommon {
   ilkId: string;
   baseId: string;
   tradePlatform: string;
-  leverSimulator: (
-    inputContext: IInputContextState,
-    leverContext: ILeverContextState,
-    marketContext: any,
-    provider?: ethers.providers.BaseProvider | undefined,
-    currentTime?: number,
-  ) => Promise<simOutput>;
+  leverSimulator: Simulator;
 }
 
 export interface ILeverRoot extends ILeverCommon{

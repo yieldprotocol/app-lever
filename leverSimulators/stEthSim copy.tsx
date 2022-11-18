@@ -5,7 +5,7 @@ import { convertToW3bNumber } from '../lib/utils';
 import { ILeverContextState } from '../context/LeverContext';
 
 import { ZERO_W3N } from '../constants';
-import { NULL_OUTPUT, simOutput } from '../hooks/useLever';
+import { NULL_OUTPUT, SimulatorOutput } from '../hooks/useLever';
 
 import curve from '@curvefi/api';
 import { ethers } from 'ethers';
@@ -15,15 +15,13 @@ import { StableSwap__factory, StEthLever__factory} from '../contracts/types';
 /* stable swap contract */
 export const WETH_STETH_STABLESWAP = '0x828b154032950c8ff7cf8085d841723db2696056';
 
-
-
 export const stEthSimulator =  async (
   inputState: IInputContextState,
   leverState: ILeverContextState,
   marketState: any,
   provider: ethers.providers.BaseProvider| undefined,
   currentTime: number = Math.round(new Date().getTime() / 1000)
-): Promise<simOutput> => {
+): Promise<SimulatorOutput> => {
 
   const output = NULL_OUTPUT; 
   
