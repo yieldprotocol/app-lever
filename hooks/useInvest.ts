@@ -1,23 +1,16 @@
-import { connectorsForWallets } from '@rainbow-me/rainbowkit';
 import { ZERO_BN } from '@yield-protocol/ui-math';
 import { BigNumber } from 'ethers';
-import { FormatTypes } from 'ethers/lib/utils.js';
 import { toast } from 'react-toastify';
-import { useContractWrite, usePrepareContractWrite, useSigner } from 'wagmi';
-import { contractMap } from '../config/contracts';
+import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
 import { ILever } from '../context/LeverContext';
 
 const useInvest = (
-  lever: ILever| undefined,
+  lever: ILever | undefined,
   txArgs: any[],
-  overrides: { value: BigNumber} = { value: ZERO_BN },
-  enabled: boolean = false,
-  // input: BigNumber,
-  // borrowed: BigNumber,
-  // minPosition: BigNumber = ZERO_BN
+  overrides: { value: BigNumber } = { value: ZERO_BN },
+  enabled: boolean = false
 ) => {
-
-  const { config, error, isFetching, isIdle, status } = usePrepareContractWrite({
+  const { config } = usePrepareContractWrite({
     address: lever?.leverAddress,
     abi: lever?.leverContract.interface as any,
     functionName: 'invest',
@@ -28,18 +21,30 @@ const useInvest = (
 
   const {
     write,
-    error: txError,
+    // error: txError,
+    data: writeData,
   } = useContractWrite({
     ...config,
-    onSuccess(data) {
-      toast.success(`Transaction Complete: ${data}`)
-    },
-    onError(error) {
-      toast.error(`Transaction Error: ${error?.message}`)
-    },
+    // onError(error_) {
+    //
+    // },
   });
 
-  return write
+  const {
+    data: waitData,
+    error: waitError,
+    isError,
+    isLoading,
+    status,
+  } = useWaitForTransaction({
+    hash: writeData?.hash,
+  });
+
+  status !== 'idle' && console.log('STATUS: ', status)
+  waitData && console.log('WAIT DATA RESULT: ', waitData.status);
+  isError && toast.error(`Transaction Error: ${waitError?.message}`);
+
+  return write;
 };
 
 export default useInvest;
