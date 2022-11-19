@@ -3,7 +3,9 @@ import React, { useEffect, useReducer } from 'react';
 import { useAccount, useProvider } from 'wagmi';
 import { CAULDRON, contractMap } from '../config/contracts';
 import { ILeverRoot, LEVERS } from '../config/levers';
+import { convertToW3bNumber } from '../lib/utils';
 import { generateVaultName } from '../utils/appUtils';
+import { W3bNumber } from './InputContext';
 
 export interface IPositionContextState {
   positions: Map<string, IPosition>;
@@ -15,17 +17,16 @@ export interface IPosition {
   seriesId: string;
   ilkId: string;
 
-  investment: BigNumber; // ink
-  debt: BigNumber; // art
+  investment: W3bNumber; // ink
+  debt: W3bNumber; // art
 
-  amountInvested: BigNumber;
+  amountInvested: W3bNumber;
 
   investDate: Date;
   divestDate: Date | undefined;
   // lever: ILever;
 
   displayName: string;
-  
 }
 
 const PositionContext = React.createContext<any>({});
@@ -54,69 +55,65 @@ const positionReducer = (state: IPositionContextState, action: any) => {
 };
 
 const PositionProvider = ({ children }: any) => {
-  
   /* LOCAL STATE */
   const [positionState, updateState] = useReducer(positionReducer, initState);
 
   const provider = useProvider();
-  const {address: account} = useAccount();
-  
-  const updatePositions = async (positionsToUpdate: [] = []) => {
+  const { address: account } = useAccount();
 
+  const updatePositions = async (positionsToUpdate: [] = []) => {
     const cauldron = contractMap.get(CAULDRON).connect(CAULDRON, provider);
 
-    const allLevers = Array.from(LEVERS.values())
+    const allLevers = Array.from(LEVERS.values());
     const uniqueBy = 'leverAddress';
-    const uniqueLevers = [...new Map(allLevers.map(item =>[item[uniqueBy], item])).values()];
+    const uniqueLevers = [...new Map(allLevers.map((item) => [item[uniqueBy], item])).values()];
 
     if (account) {
-      uniqueLevers.map( async (lever:ILeverRoot) => {
+      uniqueLevers.map(async (lever: ILeverRoot) => {
         const contract_ = contractMap.get(lever.leverAddress).connect(lever.leverAddress, provider);
         const investedFilter_ = contract_.filters.Invested(null, null, account, null, null);
         const divestedFilter_ = contract_.filters.Divested();
 
-        const [ investedEvents , divestedEvents ] = await Promise.all([
+        const [investedEvents, divestedEvents] = await Promise.all([
           contract_.queryFilter(investedFilter_, 15990171, 'latest'),
           contract_.queryFilter(divestedFilter_, 15990171, 'latest'),
-        ])
-        
+        ]);
+
         await Promise.all(
-        investedEvents.map(async (x: any): Promise<any> => {
-          const { vaultId, seriesId, investment, debt} = x.args;
-          const { ilkId } = await cauldron.vaults(vaultId);
-          
-          const tx = (await x.getTransaction() )
-          let { args, value } =  contract_.interface.parseTransaction({ data: tx.data, value: tx.value });
+          investedEvents.map(async (x: any): Promise<any> => {
+            const { vaultId, seriesId, investment, debt } = x.args;
+            const { ilkId } = await cauldron.vaults(vaultId);
 
-          const divestEvent = divestedEvents.find((d:any)=> d.args.vaultId === vaultId )
-          const divestDate = divestEvent ? divestEvent[0] : undefined;
+            const tx = await x.getTransaction();
+            let { args, value } = contract_.interface.parseTransaction({ data: tx.data, value: tx.value });
 
-          const vaultInfo = {
-            vaultId,
-            seriesId,
-            ilkId,
+            const divestEvent = divestedEvents.find((d: any) => d.args.vaultId === vaultId);
+            const divestDate = divestEvent ? divestEvent[0] : undefined;
 
-            investment,
-            debt,
-            amountInvested: args.amountToInvest || value,
+            const vaultInfo = {
+              vaultId,
+              seriesId,
+              ilkId,
 
-            investDate: new Date(),
-            divestDate,
+              investment: convertToW3bNumber(investment, 18, 6),
+              debt: convertToW3bNumber(debt, 18, 6),
+              amountInvested: convertToW3bNumber(args.amountToInvest || value, 18, 6),
 
-            displayName: generateVaultName(vaultId),
-            // decimals: series.decimals,
-          };
+              investDate: new Date(),
+              divestDate,
 
-          console.log(vaultInfo );
+              displayName: generateVaultName(vaultId),
+              // decimals: series.decimals,
+            };
 
-          updateState({ type: 'UPDATE_POSITION', payload: vaultInfo  });
-          return vaultInfo;
-        })
-      );
+            console.log(vaultInfo);
 
-      })
+            updateState({ type: 'UPDATE_POSITION', payload: vaultInfo });
+            return vaultInfo;
+          })
+        );
+      });
     }
-
   };
 
   /* update the positions if the account/contracts change */
@@ -131,7 +128,6 @@ const PositionProvider = ({ children }: any) => {
   };
 
   return <PositionContext.Provider value={[positionState, positionActions]}>{children}</PositionContext.Provider>;
-  
 };
 
 export { PositionContext };

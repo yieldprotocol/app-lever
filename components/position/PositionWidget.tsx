@@ -23,7 +23,6 @@ const PositionWidget = (props: any) => {
             <div className="text-lg"> {selectedPosition?.displayName} </div>
           </TopRow>
           <Inner>
-
           <InfoBlock>
 
         <Label>Vault Id: </Label>
@@ -36,13 +35,13 @@ const PositionWidget = (props: any) => {
         <Value>{selectedPosition.seriesId} </Value>
 
         <Label>Initial Investment: </Label>
-        <Value>{selectedPosition.amountInvested.toString()} </Value>
+        <Value>{selectedPosition.amountInvested.dsp} </Value>
 
         <Label>Debt: </Label>
-        <Value>{selectedPosition.debt.toString()} </Value>
+        <Value>{selectedPosition.debt.dsp} </Value>
 
         <Label>Investment: </Label>
-        <Value>{selectedPosition.investment.toString()}</Value>
+        <Value>{selectedPosition.investment.dsp}</Value>
 
         <Label>Return if divesting now:</Label>
         <Value>0 </Value>
