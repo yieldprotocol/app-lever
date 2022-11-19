@@ -35,6 +35,9 @@ const PositionWidget = (props: any) => {
         <Label>Series Id: </Label>
         <Value>{selectedPosition.seriesId} </Value>
 
+        <Label>Initial Investment: </Label>
+        <Value>{selectedPosition.amountInvested.toString()} </Value>
+
         <Label>Debt: </Label>
         <Value>{selectedPosition.debt.toString()} </Value>
 

@@ -18,8 +18,10 @@ export interface IPosition {
   investment: BigNumber; // ink
   debt: BigNumber; // art
 
+  amountInvested: BigNumber;
+
   investDate: Date;
-  divestDate: Date;
+  divestDate: Date | undefined;
   // lever: ILever;
 
   displayName: string;
@@ -82,23 +84,31 @@ const PositionProvider = ({ children }: any) => {
         investedEvents.map(async (x: any): Promise<any> => {
           const { vaultId, seriesId, investment, debt} = x.args;
           const { ilkId } = await cauldron.vaults(vaultId);
+          
+          const tx = (await x.getTransaction() )
+          let { args, value } =  contract_.interface.parseTransaction({ data: tx.data, value: tx.value });
 
           const divestEvent = divestedEvents.find((d:any)=> d.args.vaultId === vaultId )
-          console.log(divestEvent)
+          const divestDate = divestEvent ? divestEvent[0] : undefined;
 
           const vaultInfo = {
             vaultId,
             seriesId,
             ilkId,
+
             investment,
             debt,
-            // investDate,
-            // divestDate,
+            amountInvested: args.amountToInvest || value,
+
+            investDate: new Date(),
+            divestDate,
 
             displayName: generateVaultName(vaultId),
             // decimals: series.decimals,
           };
+
           console.log(vaultInfo );
+
           updateState({ type: 'UPDATE_POSITION', payload: vaultInfo  });
           return vaultInfo;
         })
