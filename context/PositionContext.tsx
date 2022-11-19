@@ -1,8 +1,9 @@
 import { BigNumber } from 'ethers';
-import React, { useContext, useEffect, useReducer } from 'react';
+import React, { useEffect, useReducer } from 'react';
 import { useAccount, useProvider } from 'wagmi';
 import { CAULDRON, contractMap } from '../config/contracts';
-import { ILeverContextState, ILever, LeverContext } from './LeverContext';
+import { ILeverRoot, LEVERS } from '../config/levers';
+import { generateVaultName } from '../utils/appUtils';
 
 export interface IPositionContextState {
   positions: Map<string, IPosition>;
@@ -10,12 +11,19 @@ export interface IPositionContextState {
 }
 
 export interface IPosition {
-  id: string;
+  vaultId: string;
   seriesId: string;
   ilkId: string;
-  ink: BigNumber;
-  art: BigNumber;
-  lever: ILever;
+
+  investment: BigNumber; // ink
+  debt: BigNumber; // art
+
+  investDate: Date;
+  divestDate: Date;
+  // lever: ILever;
+
+  displayName: string;
+  
 }
 
 const PositionContext = React.createContext<any>({});
@@ -30,7 +38,7 @@ const positionReducer = (state: IPositionContextState, action: any) => {
     case 'UPDATE_POSITION':
       return {
         ...state,
-        positions: new Map(state.positions.set(action.payload.id, action.payload)),
+        positions: new Map(state.positions.set(action.payload.vaultId, action.payload)),
       };
 
     case 'SELECT_POSITION':
@@ -47,43 +55,58 @@ const PositionProvider = ({ children }: any) => {
   
   /* LOCAL STATE */
   const [positionState, updateState] = useReducer(positionReducer, initState);
-  const [ leverState ] = useContext(LeverContext);
-  const { levers } = leverState as ILeverContextState;
 
   const provider = useProvider();
   const {address: account} = useAccount();
-
+  
   const updatePositions = async (positionsToUpdate: [] = []) => {
 
     const cauldron = contractMap.get(CAULDRON).connect(CAULDRON, provider);
 
-    if (account ) {
-      const vaultsReceivedFilter = cauldron.filters.VaultGiven(null, account);
-      const vaultsReceived = await cauldron.queryFilter(vaultsReceivedFilter, 15990171, 'latest');
+    const allLevers = Array.from(LEVERS.values())
+    const uniqueBy = 'leverAddress';
+    const uniqueLevers = [...new Map(allLevers.map(item =>[item[uniqueBy], item])).values()];
 
-      await Promise.all(
-        vaultsReceived.map(async (x: any): Promise<any> => {
-          const { vaultId: id } = x.args;
-          const { ilkId, seriesId } = await cauldron.vaults(id);
-          const { ink, art } = await cauldron.balances(id);
+    if (account) {
+      uniqueLevers.map( async (lever:ILeverRoot) => {
+        const contract_ = contractMap.get(lever.leverAddress).connect(lever.leverAddress, provider);
+        const investedFilter_ = contract_.filters.Invested(null, null, account, null, null);
+        const divestedFilter_ = contract_.filters.Divested();
+
+        const [ investedEvents , divestedEvents ] = await Promise.all([
+          contract_.queryFilter(investedFilter_, 15990171, 'latest'),
+          contract_.queryFilter(divestedFilter_, 15990171, 'latest'),
+        ])
+        
+        await Promise.all(
+        investedEvents.map(async (x: any): Promise<any> => {
+          const { vaultId, seriesId, investment, debt} = x.args;
+          const { ilkId } = await cauldron.vaults(vaultId);
+
+          const divestEvent = divestedEvents.find((d:any)=> d.args.vaultId === vaultId )
+          console.log(divestEvent)
 
           const vaultInfo = {
-            id,
+            vaultId,
             seriesId,
             ilkId,
-            ink,
-            art,
-            // displayName: generateVaultName(id),
+            investment,
+            debt,
+            // investDate,
+            // divestDate,
+
+            displayName: generateVaultName(vaultId),
             // decimals: series.decimals,
           };
+          console.log(vaultInfo );
           updateState({ type: 'UPDATE_POSITION', payload: vaultInfo  });
           return vaultInfo;
         })
       );
 
-
-      // console.log(receivedEventsList);
+      })
     }
+
   };
 
   /* update the positions if the account/contracts change */

@@ -1,4 +1,5 @@
 import { format, getMonth } from 'date-fns';
+import { uniqueNamesGenerator, Config, adjectives, animals } from 'unique-names-generator';
 
 export const copyToClipboard = (str: string) => {
   const el = document.createElement('textarea');
@@ -113,3 +114,14 @@ export const getSeason = (dateInSecs: number): SeasonType => {
 };
 
 export const formatFyTokenSymbol = (name: string) => name.slice(0, -4);
+
+
+export const generateVaultName = (id: string) => {
+  const vaultNameConfig: Config = {
+    dictionaries: [adjectives, animals],
+    separator: ' ',
+    length: 2,
+  };
+  return uniqueNamesGenerator({ seed: parseInt(id.substring(14), 16), ...vaultNameConfig });
+};
+

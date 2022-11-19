@@ -131,7 +131,7 @@ export const stEthSimulator : Simulator =  async (
     }
   }
 
-  output.investArgs = [lever?.seriesId, input.big, ZERO_BN ];
+  output.investArgs = lever ? [lever.seriesId, output.shortBorrowed.big, ZERO_BN ] : [];
   output.divestArgs = [lever?.seriesId, input.big, ZERO_BN ];
 
   return output;

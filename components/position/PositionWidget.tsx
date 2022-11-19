@@ -20,26 +20,26 @@ const PositionWidget = (props: any) => {
       {selectedPosition ? (
         <>
           <TopRow>
-            <div className="text-lg"> Vault {selectedPosition?.id} </div>
+            <div className="text-lg"> {selectedPosition?.displayName} </div>
           </TopRow>
           <Inner>
 
           <InfoBlock>
 
-        <Label>id: </Label>
-        <Value>{selectedPosition.id}</Value>
+        <Label>Vault Id: </Label>
+        <Value>{selectedPosition.vaultId}</Value>
 
-        <Label>ilkId:</Label>
+        <Label>Ilk Id:</Label>
         <Value> {selectedPosition.ilkId}</Value>
 
-        <Label>seriesId: </Label>
+        <Label>Series Id: </Label>
         <Value>{selectedPosition.seriesId} </Value>
 
-        <Label> art: </Label>
-        <Value>{selectedPosition.art.toString()} </Value>
+        <Label>Debt: </Label>
+        <Value>{selectedPosition.debt.toString()} </Value>
 
-        <Label>ink: </Label>
-        <Value>{selectedPosition.ink.toString()}</Value>
+        <Label>Investment: </Label>
+        <Value>{selectedPosition.investment.toString()}</Value>
 
         <Label>Return if divesting now:</Label>
         <Value>0 </Value>

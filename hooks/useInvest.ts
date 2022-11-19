@@ -22,8 +22,8 @@ const useInvest = (
     abi: lever?.leverContract.interface as any,
     functionName: 'invest',
     args: txArgs,
-    // overrides,
-    enabled: txArgs.length > 0,
+    overrides,
+    enabled,
   });
 
   const {
@@ -39,7 +39,7 @@ const useInvest = (
     },
   });
 
-  return write;
+  return write
 };
 
 export default useInvest;

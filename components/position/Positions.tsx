@@ -19,9 +19,9 @@ const Positions = () => {
       </TopRow>
 
       <Inner>
-        {Array.from(positions.values()).map((v: any) => (
-          <div onClick={() => selectPosition(v)} key={v.id}>
-            {v.id}
+        {Array.from(positions.values()).map((p: any) => (
+          <div onClick={() => selectPosition(p)} key={p.vaultId}>
+            {p.displayName}
           </div>
         ))}
       </Inner>
