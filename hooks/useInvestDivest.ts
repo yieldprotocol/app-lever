@@ -40,7 +40,9 @@ const useInvestDivest = (
   waitData && console.log('WAIT DATA RESULT: ', waitData.status);
   isError && toast.error(`Transaction Error: ${waitError?.message}`);
 
-  return write;
+  const notReady = () => console.log('not ready');
+
+  return write || notReady;
 };
 
 export default useInvestDivest;

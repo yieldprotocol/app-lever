@@ -45,7 +45,7 @@ const PositionWidget = (props: any) => {
               <Value>0</Value>
             </InfoBlock>
             <Button
-              action={() => divest(selectedPosition.lever)}
+              action={() => divest() }
               disabled={!account}
               loading={false}
               // loading={isTransacting}

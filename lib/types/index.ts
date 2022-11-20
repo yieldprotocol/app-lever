@@ -23,8 +23,6 @@ export interface W3bNumber {
   ORACLE
 }
 
-
-
 export enum NotificationType {
   INFO,
   WARN,

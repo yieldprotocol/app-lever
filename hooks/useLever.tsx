@@ -1,6 +1,6 @@
-import { useContext, useEffect, useState} from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { ZERO_W3N } from '../constants';
-import { IInputContextState, InputContext} from '../context/InputContext';
+import { IInputContextState, InputContext } from '../context/InputContext';
 import { ILeverContextState, LeverContext } from '../context/LeverContext';
 import { useDebounce } from './generalHooks';
 import useBlockTime from './useBlockTime';
@@ -53,12 +53,13 @@ export const NULL_OUTPUT = {
   investmentCurrent: ZERO_W3N,
   flashBorrowFee: ZERO_W3N,
   investmentFee: ZERO_W3N,
+
   investArgs: [],
   divestArgs: [],
   notification: undefined,
 } as SimulatorOutput;
 
-export interface LeverSimulation extends SimulatorOutput {
+export interface ILeverSimulation extends Omit<SimulatorOutput, 'investArgs'|'divestArgs'|'notification'> {
   /**
    * calculated values
    * */
@@ -74,13 +75,11 @@ export interface LeverSimulation extends SimulatorOutput {
   isSimulating: boolean;
 
   /* actions */
-  approve: () => void;
   invest: () => void;
   divest: () => void;
 }
 
-
-export const useLever = (simulator: Simulator) => {
+export const useLever = (simulator: Simulator): ILeverSimulation => {
   /* Bring in context*/
   const [leverState, leverActions]: [ILeverContextState, any] = useContext(LeverContext);
   const { selectedLever, shortAsset } = leverState;
@@ -111,8 +110,10 @@ export const useLever = (simulator: Simulator) => {
   const [shortInvested, setShortInvested] = useState<W3bNumber>(ZERO_W3N);
   const [shortBorrowed, setShortBorrowed] = useState<W3bNumber>(ZERO_W3N);
 
-  const [flashBorrowFee, setFlashBorrowFee] = useState<W3bNumber>();
-  const [investmentFee, setInvestmentFee] = useState<W3bNumber | number>();
+  const [debtCurrent, setDebtCurrent] = useState<W3bNumber>(ZERO_W3N);
+
+  const [flashBorrowFee, setFlashBorrowFee] = useState<W3bNumber>(ZERO_W3N);
+  const [investmentFee, setInvestmentFee] = useState<W3bNumber>(ZERO_W3N);
 
   const [investArgs, setInvestArgs] = useState<any[]>([]);
   const [divestArgs, setDivestArgs] = useState<any[]>([]);
@@ -143,12 +144,15 @@ export const useLever = (simulator: Simulator) => {
         const simulated = await simulator(inputState, leverState, marketState, positionState, provider);
 
         if (simulated) {
+
           setInvestmentPosition(simulated.investmentPosition);
           setInvestmentAtMaturity(simulated.investmentAtMaturity);
           setInvestmentCurrent(simulated.investmentCurrent);
           setShortBorrowed(simulated.shortBorrowed);
           setShortInvested(simulated.shortInvested);
           setDebtAtMaturity(simulated.debtAtMaturity);
+
+          setDebtCurrent(simulated.debtCurrent);
           setFlashBorrowFee(simulated.flashBorrowFee);
           setInvestmentFee(simulated.investmentFee);
 
@@ -205,22 +209,8 @@ export const useLever = (simulator: Simulator) => {
       })();
   }, [input, debouncedLeverage, leverState, marketState, positionState, provider]);
 
-  // const approve = async () => {
-  //   if (inputState && selectedLever?.investTokenContract) {
-  //     setAppState(AppState.Approving);
-  //     // const gasLimit =
-  //     //   // await selectedLever.investTokenContract.estimateGas.approve(selectedLever.leverAddress, shortInvested.big)
-  //     //   (await selectedLever.investTokenContract.estimateGas.approve(selectedLever.leverAddress, MAX_256)).mul(2);
-
-  //     // const tx = await selectedLever.investTokenContract.approve(selectedLever.leverAddress, shortInvested.big);
-  //     const tx = await selectedLever.investTokenContract.approve(selectedLever.leverAddress, MAX_256);
-  //     await tx.wait();
-  //     setAppState(AppState.Transactable);
-  //   }
-  // };
-
   return {
-    // approve,
+
     invest,
     divest,
 
@@ -232,6 +222,8 @@ export const useLever = (simulator: Simulator) => {
     debtAtMaturity,
     shortBorrowed,
     shortInvested,
+
+    debtCurrent,
 
     // fees
     flashBorrowFee,
@@ -247,6 +239,6 @@ export const useLever = (simulator: Simulator) => {
     maxLeverage,
 
     isSimulating,
-    // simNotification,
+
   };
 };
