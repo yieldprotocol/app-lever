@@ -106,8 +106,6 @@ const PositionProvider = ({ children }: any) => {
               // decimals: series.decimals,
             };
 
-            console.log(vaultInfo);
-
             updateState({ type: 'UPDATE_POSITION', payload: vaultInfo });
             return vaultInfo;
           })
@@ -124,7 +122,7 @@ const PositionProvider = ({ children }: any) => {
   /* ACTIONS TO CHANGE CONTEXT */
   const positionActions = {
     // updatePositions: () => (positionId: string) => updateState({ type: 'SET_SELECTED_POSITION', payload: positionId }),
-    selectPosition: (position: any) => updateState({ type: 'SELECT_POSITION', payload: position }),
+    selectPosition: (position: any) => updateState({ type: 'SELECT_POSITION', payload: position })
   };
 
   return <PositionContext.Provider value={[positionState, positionActions]}>{children}</PositionContext.Provider>;

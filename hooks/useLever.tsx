@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState, useMemo } from 'react';
 import { ZERO_W3N } from '../constants';
 import { IInputContextState, InputContext, W3bNumber } from '../context/InputContext';
 import { ILeverContextState, LeverContext } from '../context/LeverContext';
@@ -151,7 +151,11 @@ export const useLever = (simulator: Simulator) => {
     !isSimulating && input?.dsp > 0 && investArgs.length > 0
   );
 
-  const divest = useDivest(selectedLever, divestArgs, { value: input?.big }, !!selectedPosition);
+  const divest = useDivest(
+    selectedLever, 
+    divestArgs, 
+    !!selectedPosition
+  );
 
   /* Use the simulator on each leverage/input change */
   useEffect(() => {
@@ -223,7 +227,7 @@ export const useLever = (simulator: Simulator) => {
         const pnl_ = isNaN(netAPR - investAPR) ? 0 : netAPR - investAPR;
         setPnl(pnl_);
       })();
-  }, [selectedLever, debouncedLeverage, input]);
+  }, [selectedLever, debouncedLeverage, input, inputState, leverState, marketState, positionState, provider]);
 
   const approve = async () => {
     if (inputState && selectedLever?.investTokenContract) {
@@ -238,55 +242,6 @@ export const useLever = (simulator: Simulator) => {
       setAppState(AppState.Transactable);
     }
   };
-
-  // const invest = async () => {
-  //   // await approve();
-  //   if (inputState && selectedLever?.leverContract) {
-  //     setAppState(AppState.Transacting);
-
-  //     doInvest && doInvest();
-  //     // const gasLimit = (
-  //     //   await selectedLever.leverContract.estimateGas.invest(
-  //     //     selectedLever.seriesId,
-  //     //     inputState.input.big,
-  //     //     ZERO_BN, // removeSlippage( investPosition.big),
-  //     //     {
-  //     //       value: shortAsset?.id === WETH ? inputState.input.big : ZERO_BN, // value is set as input if using ETH
-  //     //     }
-  //     //   )
-  //     // ).mul(110).div(100); // add 10% in gas to prevent out-of-gas occasionally
-
-  //     // const investTx = await selectedLever.leverContract.connect(signer!).invest(
-  //     //   selectedLever.seriesId,
-  //     //   inputState.input.big,
-  //     //   ZERO_BN, // removeSlippage( investPosition.big),
-  //     //   {
-  //     //     value: shortAsset?.id === WETH ? inputState.input.big : ZERO_BN, // value is set as input if using ETH
-  //     //     gasLimit,
-  //     //   }
-  //     // );
-
-  //     // toast.info('Transaction pending.')
-  //     // await investTx.wait();
-
-  //     // toast.info('Transaction complete.')
-  //   }
-  // };
-
-  // const divest = async (
-  //   vaultId: string,
-  //   seriesId: string,
-  //   ink: BigNumber,
-  //   art: BigNumber,
-  //   min: BigNumber = BigNumber.from('1')
-  // ) => {
-  //   // await approve();
-  //   if (inputState && selectedLever?.leverContract) {
-  //     setAppState(AppState.Transacting);
-  //     const divestTx = await selectedLever.leverContract.connect(signer!).divest(vaultId, seriesId, ink, art, min);
-  //     await divestTx.wait();
-  //   }
-  // };
 
   return {
     approve,
@@ -318,4 +273,4 @@ export const useLever = (simulator: Simulator) => {
     isSimulating,
     // simNotification,
   };
-};
+}

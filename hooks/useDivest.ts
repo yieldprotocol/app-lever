@@ -1,47 +1,38 @@
-import { ZERO_BN } from '@yield-protocol/ui-math';
-import { BigNumber } from 'ethers';
 import { toast } from 'react-toastify';
-import { useContractWrite, usePrepareContractWrite } from 'wagmi';
+import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
 import { ILever } from '../context/LeverContext';
 
-const useDivest = (
-  lever: ILever| undefined,
+const useInvest = (
+  lever: ILever | undefined,
   txArgs: any[],
-  overrides: { value: BigNumber} = { value: ZERO_BN },
-  enabled: boolean = false,
-  // input: BigNumber,
-  // borrowed: BigNumber,
-  // minPosition: BigNumber = ZERO_BN
+  enabled: boolean = false
 ) => {
-
-  const { config, error, isFetching, isIdle } = usePrepareContractWrite({
+  
+  const { config } = usePrepareContractWrite({
     address: lever?.leverAddress,
     abi: lever?.leverContract.interface as any,
     functionName: 'divest',
     args: txArgs,
-    overrides,
-    enabled
-    // args: [lever?.seriesId, borrowed, ZERO_BN],
-    // overrides: { value: input },
-    // enabled: input.gt(ZERO_BN) && borrowed.gt(ZERO_BN) && minPosition.gt(ZERO_BN),
+    enabled,
   });
 
+  const { write, data: writeData } = useContractWrite({ ...config });
+
   const {
+    data: waitData,
+    error: waitError,
     isError,
     isLoading,
-    write,
-    isSuccess,
-    error: txError,
-  } = useContractWrite({
-    ...config,
-    onSuccess(data) {
-      toast.success(`Transaction Complete: ${data}`)
-    },
-    onError(error) {
-      toast.error(`Transaction Error: ${error?.message}`)
-    }
+    status,
+  } = useWaitForTransaction({
+    hash: writeData?.hash,
   });
+
+  status !== 'idle' && console.log('STATUS: ', status);
+  waitData && console.log('WAIT DATA RESULT: ', waitData.status);
+  isError && toast.error(`Transaction Error: ${waitError?.message}`);
+
   return write;
 };
 
-export default useDivest;
+export default useInvest;

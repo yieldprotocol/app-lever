@@ -10,30 +10,30 @@ import { NULL_OUTPUT, SimulatorOutput, Simulator } from '../hooks/useLever';
 import curve from '@curvefi/api';
 import { ethers } from 'ethers';
 
-import { StableSwap__factory, StEthLever__factory} from '../contracts/types';
+import { StableSwap__factory, StEthLever__factory } from '../contracts/types';
 import { IMarketContextState } from '../context/MarketContext';
 import { IPositionContextState } from '../context/PositionContext';
 
 /* stable swap contract */
 export const STETH_STABLESWAP = '0x828b154032950c8ff7cf8085d841723db2696056';
 
-export const stEthSimulator : Simulator =  async (
+export const stEthSimulator: Simulator = async (
   inputState: IInputContextState,
   leverState: ILeverContextState,
   marketState: IMarketContextState,
-  positionState:IPositionContextState,
-  provider: ethers.providers.BaseProvider| undefined,
+  positionState: IPositionContextState,
+  provider: ethers.providers.BaseProvider | undefined,
   currentTime: number = Math.round(new Date().getTime() / 1000)
 ): Promise<SimulatorOutput> => {
-
-  const output = NULL_OUTPUT; 
+  const output = NULL_OUTPUT;
 
   const input = inputState.input || ZERO_W3N;
   const leverage = inputState.leverage;
-  const lever = leverState.selectedLever;
+
+  const selectedLever = leverState.selectedLever;
+  const selectedPosition = positionState.selectedPosition;
 
   if (input.big.gt(ZERO_BN) && provider) {
-
     console.log('Fired STETH Lever....');
     /**
      * CURVE infomation:
@@ -75,7 +75,7 @@ export const stEthSimulator : Simulator =  async (
     if (inputAsFyToken.big.gt(ZERO_BN)) {
       // - netInvestAmount = baseAmount + borrowAmount - fee
       // const fyWeth = await getFyToken(seriesId, contracts, account);
-      const fyContract = lever?.investTokenContract;
+      const fyContract = selectedLever?.investTokenContract;
       const fee = ZERO_BN; //  await fyContract.flashFee(fyContract.address, toBorrow.big.toString()) ;
 
       output.flashBorrowFee = convertToW3bNumber(fee, 18, 6);
@@ -109,7 +109,7 @@ export const stEthSimulator : Simulator =  async (
       output.shortInvested = convertToW3bNumber(wethObtained, 18, 6);
       output.investmentFee = convertToW3bNumber(output.shortInvested.big.mul(4).div(10000), 18, 6);
 
-      const stableSwap = StableSwap__factory.connect(STETH_STABLESWAP, provider)
+      const stableSwap = StableSwap__factory.connect(STETH_STABLESWAP, provider);
       const boughtStEth = await stableSwap.get_dy(0, 1, wethObtained); // .catch(()=>{console.log('too big'); return ZERO_BN} );
 
       // investPosition (stEth held)
@@ -125,15 +125,17 @@ export const stEthSimulator : Simulator =  async (
 
       /* check for any swapping costs */
       /* Calculate the value of the investPosition in short terms : via swap */
-      const investValue_ = await stableSwap.get_dy(1, 0, boughtStEth) // .catch(()=>{console.log('failed'); return ZERO_BN} );
-      const investValueLessFees = investValue_.sub(output.investmentFee.big)
+      const investValue_ = await stableSwap.get_dy(1, 0, boughtStEth); // .catch(()=>{console.log('failed'); return ZERO_BN} );
+      const investValueLessFees = investValue_.sub(output.investmentFee.big);
       output.investmentCurrent = convertToW3bNumber(investValueLessFees, 18, 6);
     }
   }
 
-  output.investArgs = lever ? [lever.seriesId, output.shortBorrowed.big, ZERO_BN ] : [];
-  output.divestArgs = [lever?.seriesId, input.big, ZERO_BN ];
+  output.investArgs = selectedLever ? [selectedLever.seriesId, output.shortBorrowed.big, ZERO_BN] : [];
+
+  /** DIVEST : bytes12 vaultId, bytes6 seriesId, uint256 ink,uint256 art, uint256 minWeth */
+  console.log( selectedPosition )
+  output.divestArgs =  selectedPosition ? [selectedPosition.vaultId, selectedPosition.seriesId, selectedPosition.investment, selectedPosition.debt, ZERO_BN] :[]
 
   return output;
-
 };
