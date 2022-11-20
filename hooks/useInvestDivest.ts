@@ -1,19 +1,27 @@
+import { ZERO_BN } from '@yield-protocol/ui-math';
+import { BigNumber } from 'ethers';
+import { useContext } from 'react';
 import { toast } from 'react-toastify';
 import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
-import { ILever } from '../context/LeverContext';
+import { LeverContext } from '../context/LeverContext';
 
-const useInvest = (
-  lever: ILever | undefined,
+const useInvestDivest = (
+  transactType: 'invest' | 'divest',
   txArgs: any[],
-  enabled: boolean = false
+  enabled: boolean = false,
+  overrides: { value: BigNumber } = { value: ZERO_BN },
 ) => {
+
+  const [leverState] = useContext(LeverContext)
+  const {selectedLever} = leverState
   
   const { config } = usePrepareContractWrite({
-    address: lever?.leverAddress,
-    abi: lever?.leverContract.interface as any,
-    functionName: 'divest',
+    address: selectedLever.leverAddress,
+    abi: selectedLever.leverContract.interface as any,
+    functionName: transactType,
     args: txArgs,
-    enabled,
+    overrides,
+    enabled: enabled && !!selectedLever,
   });
 
   const { write, data: writeData } = useContractWrite({ ...config });
@@ -35,4 +43,4 @@ const useInvest = (
   return write;
 };
 
-export default useInvest;
+export default useInvestDivest;

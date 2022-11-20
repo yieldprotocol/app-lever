@@ -12,11 +12,10 @@ import useBlockTime from './useBlockTime';
 import { calculateAPR } from '@yield-protocol/ui-math';
 import { IMarketContextState, MarketContext } from '../context/MarketContext';
 
-import useInvest from './useInvest';
-import useDivest from './useDivest';
 import { IPositionContextState, PositionContext } from '../context/PositionContext';
 import { ethers } from 'ethers';
 import { useProvider } from 'wagmi';
+import useInvestDivest from './useInvestDivest';
 
 export type Simulator = (
   inputState: IInputContextState,
@@ -144,18 +143,20 @@ export const useLever = (simulator: Simulator) => {
   const [pnl, setPnl] = useState<number>(0);
   const [maxLeverage, setMaxLeverage] = useState<number>(5);
 
-  const invest = useInvest(
-    selectedLever,
+  const invest = useInvestDivest(
+    'invest',
     investArgs,
+    !isSimulating && input?.dsp > 0 && investArgs.length > 0,
     { value: input?.big },
-    !isSimulating && input?.dsp > 0 && investArgs.length > 0
   );
 
-  const divest = useDivest(
-    selectedLever, 
-    divestArgs, 
-    !!selectedPosition
+  const divest = useInvestDivest(
+    'divest', 
+    divestArgs,
+    !!selectedPosition,
   );
+
+
 
   /* Use the simulator on each leverage/input change */
   useEffect(() => {
