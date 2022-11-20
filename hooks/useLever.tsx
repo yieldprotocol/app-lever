@@ -2,7 +2,6 @@ import { useContext, useEffect, useState, useMemo } from 'react';
 import { ZERO_W3N } from '../constants';
 import { IInputContextState, InputContext, W3bNumber } from '../context/InputContext';
 import { ILeverContextState, LeverContext } from '../context/LeverContext';
-import { AppState } from '../lib/types';
 
 import { useDebounce } from './generalHooks';
 import { MAX_256 } from '@yield-protocol/ui-math';
@@ -85,16 +84,6 @@ export interface LeverSimulation extends SimulatorOutput {
   divest: () => void;
 }
 
-export enum NotificationType {
-  INFO,
-  WARN,
-  ERROR,
-}
-
-export interface Notification {
-  type: NotificationType;
-  msg: string;
-}
 
 export const useLever = (simulator: Simulator) => {
   /* Bring in context*/

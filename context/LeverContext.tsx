@@ -2,7 +2,7 @@ import { BigNumber, Contract, ethers } from 'ethers';
 import React, { ReactElement, useEffect, useReducer, useState } from 'react';
 
 import { ERC20, ERC20Permit, FYToken } from '../contracts/types';
-import { AppState, TokenType } from '../lib/types';
+import { TokenType } from '../lib/types';
 import { convertToW3bNumber } from '../lib/utils';
 import { W3bNumber } from './InputContext';
 
@@ -18,7 +18,6 @@ export interface ILeverContextState {
 
   assets: Map<string, IAsset>;
   levers: Map<string, ILever>;
-  appState: AppState;
 
   selectedLever: ILever | undefined;
 
@@ -61,7 +60,6 @@ export interface ILeverPosition {}
 const LeverContext = React.createContext<any>({});
 
 const initState: ILeverContextState = {
-  appState: AppState.Loading,
 
   // contracts: {},
   assets: new Map(),
@@ -90,12 +88,6 @@ const leverReducer = (state: ILeverContextState, action: any) => {
       return {
         ...state,
         assets: new Map(state.assets.set(action.payload.id, action.payload)),
-      };
-
-    case 'UPDATE_APPSTATE':
-      return {
-        ...state,
-        appState: action.payload,
       };
 
     case 'SELECT_LEVER':
@@ -266,10 +258,7 @@ const LeverProvider = ({ children }: any) => {
   const leverActions = {
     selectShort: (asset: IAsset) => updateState({ type: 'SELECT_SHORT', payload: asset }),
     selectLong: (asset: ILever) => updateState({ type: 'SELECT_LONG', payload: asset }),
-
     selectLever: (lever: ILever) => updateState({ type: 'SELECT_LEVER', payload: lever }),
-
-    setAppState: (appState: AppState) => updateState({ type: 'UPDATE_APPSTATE', payload: appState }),
   };
 
   return <LeverContext.Provider value={[leverState as ILeverContextState, leverActions]}>{children}</LeverContext.Provider>;

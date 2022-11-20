@@ -23,30 +23,49 @@ interface W3bNumber {
   big: BigNumber;
 }
 
-export enum AppState {
-  Loading,
-  ApprovalRequired,
-  Transactable,
-  DebtTooLow,
-  NotEnoughFunds,
-  UnknownError,
-  Undercollateralized,
-  Approving,
-  Transacting,
+export enum NotificationType {
+  INFO,
+  WARN,
+  ERROR,
 }
 
-export enum TxState {
-  ApprovalRequired,
-  ApprovalPending,
-  TxReady,
-  TxPending,
-  TxComplete,
+export interface Notification {
+  type: NotificationType;
+  msg: string;
 }
 
-export interface ISignable {
-  name: string;
-  version: string;
-  address: string;
-  symbol: string;
-  tokenType: TokenType;
+
+export enum Operation {
+  BORROW,
+  REPAY,
+  CLOSE,
+  REDEEM
 }
+
+// export enum AppState {
+//   Loading,
+//   ApprovalRequired,
+//   Transactable,
+//   DebtTooLow,
+//   NotEnoughFunds,
+//   UnknownError,
+//   Undercollateralized,
+//   Approving,
+//   Transacting,
+// }
+
+// export enum TxState {
+//   ApprovalRequired,
+//   ApprovalPending,
+//   TxReady,
+//   TxPending,
+//   TxComplete,
+// }
+
+// export interface ISignable {
+//   name: string;
+//   version: string;
+//   address: string;
+//   symbol: string;
+//   tokenType: TokenType;
+// }
