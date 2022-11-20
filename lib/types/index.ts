@@ -1,7 +1,13 @@
 import { Web3Provider } from '@ethersproject/providers';
-import { BigNumber, Contract, ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 
-export type Provider = Web3Provider | ethers.providers.JsonRpcProvider;
+export type Provider = Web3Provider | ethers.providers.JsonRpcProvider | ethers.providers.BaseProvider;
+
+export interface W3bNumber {
+  dsp: number;
+  hStr: string;
+  big: BigNumber;
+}
 
 /** 
  * General Token types > could have multiple addresses 
@@ -17,11 +23,7 @@ export type Provider = Web3Provider | ethers.providers.JsonRpcProvider;
   ORACLE
 }
 
-interface W3bNumber {
-  dsp: number;
-  hStr: string;
-  big: BigNumber;
-}
+
 
 export enum NotificationType {
   INFO,
@@ -34,38 +36,9 @@ export interface Notification {
   msg: string;
 }
 
-
 export enum Operation {
   BORROW,
   REPAY,
   CLOSE,
   REDEEM
 }
-
-// export enum AppState {
-//   Loading,
-//   ApprovalRequired,
-//   Transactable,
-//   DebtTooLow,
-//   NotEnoughFunds,
-//   UnknownError,
-//   Undercollateralized,
-//   Approving,
-//   Transacting,
-// }
-
-// export enum TxState {
-//   ApprovalRequired,
-//   ApprovalPending,
-//   TxReady,
-//   TxPending,
-//   TxComplete,
-// }
-
-// export interface ISignable {
-//   name: string;
-//   version: string;
-//   address: string;
-//   symbol: string;
-//   tokenType: TokenType;
-// }

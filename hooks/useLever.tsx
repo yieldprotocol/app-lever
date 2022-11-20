@@ -1,27 +1,22 @@
-import { useContext, useEffect, useState, useMemo } from 'react';
+import { useContext, useEffect, useState} from 'react';
 import { ZERO_W3N } from '../constants';
-import { IInputContextState, InputContext, W3bNumber } from '../context/InputContext';
+import { IInputContextState, InputContext} from '../context/InputContext';
 import { ILeverContextState, LeverContext } from '../context/LeverContext';
-
 import { useDebounce } from './generalHooks';
-import { MAX_256 } from '@yield-protocol/ui-math';
-
 import useBlockTime from './useBlockTime';
-
 import { calculateAPR } from '@yield-protocol/ui-math';
 import { IMarketContextState, MarketContext } from '../context/MarketContext';
-
 import { IPositionContextState, PositionContext } from '../context/PositionContext';
-import { ethers } from 'ethers';
 import { useProvider } from 'wagmi';
 import useInvestDivest from './useInvestDivest';
+import { Provider, W3bNumber } from '../lib/types';
 
 export type Simulator = (
   inputState: IInputContextState,
   leverState: ILeverContextState,
   marketState: IMarketContextState,
   positionState: IPositionContextState,
-  provider: ethers.providers.BaseProvider,
+  provider: Provider,
   currentTime?: number
 ) => Promise<SimulatorOutput | undefined>;
 

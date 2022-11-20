@@ -1,12 +1,11 @@
-import { ethers } from 'ethers';
-import { buyBase, sellBase, sellFYToken, ZERO_BN } from '@yield-protocol/ui-math';
-import { IInputContextState, W3bNumber } from '../context/InputContext';
-
+import { ZERO_BN } from '@yield-protocol/ui-math';
+import { IInputContextState } from '../context/InputContext';
 import { ILeverContextState } from '../context/LeverContext';
 import { ZERO_W3N } from '../constants';
 import { NULL_OUTPUT, Simulator, SimulatorOutput } from '../hooks/useLever';
 import { IMarketContextState } from '../context/MarketContext';
 import { IPositionContextState } from '../context/PositionContext';
+import { Provider } from '../lib/types';
 
 // import { YieldStrategyLever__factory} from '../contracts/types';
 
@@ -34,7 +33,7 @@ export const strategySimulator: Simulator = async (
   leverState: ILeverContextState,
   marketState: IMarketContextState,
   positionState: IPositionContextState,
-  provider: ethers.providers.BaseProvider | undefined,
+  provider: Provider | undefined,
   currentTime: number = Math.round(new Date().getTime() / 1000)
 ): Promise<SimulatorOutput | undefined> => {
   const output = NULL_OUTPUT;

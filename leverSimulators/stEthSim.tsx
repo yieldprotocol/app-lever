@@ -1,5 +1,5 @@
 import { buyBase, sellBase, sellFYToken, ZERO_BN } from '@yield-protocol/ui-math';
-import { IInputContextState, W3bNumber } from '../context/InputContext';
+import { IInputContextState} from '../context/InputContext';
 
 import { convertToW3bNumber } from '../lib/utils';
 import { ILeverContextState } from '../context/LeverContext';
@@ -13,6 +13,7 @@ import { ethers } from 'ethers';
 import { StableSwap__factory } from '../contracts/types';
 import { IMarketContextState } from '../context/MarketContext';
 import { IPositionContextState } from '../context/PositionContext';
+import { Provider, W3bNumber } from '../lib/types';
 
 /* stable swap contract */
 export const STETH_STABLESWAP = '0x828b154032950c8ff7cf8085d841723db2696056';
@@ -22,7 +23,7 @@ export const stEthSimulator: Simulator = async (
   leverState: ILeverContextState,
   marketState: IMarketContextState,
   positionState: IPositionContextState,
-  provider: ethers.providers.BaseProvider | undefined,
+  provider: Provider,
   currentTime: number = Math.round(new Date().getTime() / 1000)
 ): Promise<SimulatorOutput> => {
   const output = NULL_OUTPUT;

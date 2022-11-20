@@ -6,7 +6,6 @@ import { BorderWrap, Spinner, TopRow } from '../styled';
 import { LeverContext } from '../../context/LeverContext';
 import tw from 'tailwind-styled-components';
 import { InputContext } from '../../context/InputContext';
-import Skeleton from 'react-loading-skeleton';
 
 export const TopRow_ = tw.div`p-0 align-middle text-center items-center rounded-t-lg dark:bg-gray-900 
 bg-gray-100
@@ -147,13 +146,11 @@ export const ChartWidget = (props: HighchartsReact.Props) => {
         regression: true,
         data: prices,
         threshold: null,
-        tooltip: { 
+        tooltip: {
           valueDecimals: 4,
         },
         dataGrouping: { forced: true, units: [['day', [1]]] },
       },
-
-
     ],
   };
 
@@ -223,7 +220,9 @@ export const ChartWidget = (props: HighchartsReact.Props) => {
                 {...props}
               />
             ) : (
-              <div className='p-4' ><Spinner /></div>
+              <div className="p-4">
+                <Spinner />
+              </div>
             )}
 
             {/* <ArrowsPointingOutIcon className='text-size-sm' />  */}

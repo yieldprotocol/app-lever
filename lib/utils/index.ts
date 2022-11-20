@@ -1,19 +1,19 @@
 import { BigNumber, ethers } from 'ethers';
-import { W3bNumber } from '../../context/InputContext';
+import { W3bNumber } from '../types';
 
 /* Parse the input to W3BNumber based on the selected lever and base */
 export const convertToW3bNumber = (value: BigNumber, decimals: number = 18, displayDecimals?: number): W3bNumber => {
-  const input_hstr = ethers.utils.formatUnits(value, decimals); // hStr wil be the same as dsp because it is what the user is entereing.
-  const input_dsp = displayDecimals
+  const inputHstr = ethers.utils.formatUnits(value, decimals); // hStr wil be the same as dsp because it is what the user is entereing.
+  const inputDsp = displayDecimals
     ? Number(
-        Math.round(Number(parseFloat(input_hstr) + 'e' + displayDecimals.toString())) +
+        Math.round(Number(parseFloat(inputHstr) + 'e' + displayDecimals.toString())) +
           'e-' +
           displayDecimals.toString()
       )
-    : parseFloat(input_hstr);
+    : parseFloat(inputHstr);
   return {
-    dsp: input_dsp,
-    hStr: input_hstr,
+    dsp: inputDsp,
+    hStr: inputHstr,
     big: value,
   };
 };

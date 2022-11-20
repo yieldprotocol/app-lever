@@ -1,8 +1,5 @@
-import Skeleton from "react-loading-skeleton";
-
-
 const Loader = () => (
-    <div role="status" className="inline" >
+  <div role="status" className="inline">
     <svg
       className="inline mr-2 w-4 h-4 text-primary animate-spin dark:text-primary fill-primary dark:fill-[purple]"
       viewBox="0 0 100 101"

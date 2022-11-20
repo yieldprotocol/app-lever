@@ -1,7 +1,5 @@
 import { useContext } from 'react';
-import InputProvider, { InputContext } from '../../context/InputContext';
 import { LeverContext } from '../../context/LeverContext';
-import { MarketContext } from '../../context/MarketContext';
 import { useLever } from '../../hooks/useLever';
 import TenderlyView from '../testing/TenderlyView';
 

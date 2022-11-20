@@ -1,4 +1,4 @@
-import { Fragment, ReactElement, useContext, useEffect, useState } from 'react';
+import { Fragment, useContext, useEffect, useState } from 'react';
 import tw from 'tailwind-styled-components';
 import { IAsset, ILever, LeverContext } from '../../context/LeverContext';
 import { BorderWrap, TopRow } from '../styled';
@@ -9,14 +9,13 @@ import { ArrowTrendingDownIcon, ArrowTrendingUpIcon, StarIcon } from '@heroicons
 import {
   ExclamationTriangleIcon,
   InformationCircleIcon,
-  StarIcon as StarIcon_outline,
+  StarIcon as StarIconOutline,
 } from '@heroicons/react/24/outline';
 
 import { Listbox, Transition } from '@headlessui/react';
 import { formatDate } from '../../utils/appUtils';
 import { toast } from 'react-toastify';
 
-const InfoBlock = tw.div`grid grid-cols-2 gap-2 p-4`;
 const Container = tw.div`
 rounded-md
 w-full 
@@ -26,7 +25,6 @@ hover:border-gray-400
 dark:hover:border-gray-600 
 dark:border-gray-800 
 dark:bg-gray-800 bg-gray-300 border-gray-300 dark:bg-opacity-25 bg-opacity-25`;
-const Value = tw.div`text-[white] text-right`;
 
 const assetOption = (asset: IAsset, shortSelect: boolean = true) => {
   const disabled = shortSelect ? !asset.isShortAsset : !asset.isLongAsset;
@@ -54,16 +52,12 @@ const SelectedAssetStyled = ({ asset, select }: { asset: IAsset; select: 'LONG' 
     return (
       <Listbox.Button as="div" className="p-2" key={asset.id}>
         {assetOption(asset, select === 'SHORT')}
-        {/* <div className="flex flex-row pv-2 justify-start gap-4 align-baseline">
-          <div className="w-8">{asset.image}</div>
-          {asset.displaySymbol}
-        </div> */}
       </Listbox.Button>
     );
   return <div> Loading ... </div>;
 };
 
-const ListOptionsStyled = ({children}: {children: any[]}) => (
+const ListOptionsStyled = ({ children }: { children: any[] }) => (
   <BorderWrap>
     <Transition
       leave="transition ease-in duration-100"
@@ -71,9 +65,7 @@ const ListOptionsStyled = ({children}: {children: any[]}) => (
       leaveTo="opacity-0"
       className="absolute shadow-lg bg-slate-900 rounded-lg z-50"
     >
-      <Listbox.Options className="overflow-auto max-h-80 flex flex-col">
-        {children}
-      </Listbox.Options>
+      <Listbox.Options className="overflow-auto max-h-80 flex flex-col">{children}</Listbox.Options>
     </Transition>
   </BorderWrap>
 );
@@ -93,7 +85,7 @@ const LeverSelect = () => {
       setPossibleLevers(newLeverList);
       leverActions.selectLever(newLeverList[0]);
     });
-  }, [shortAsset, longAsset]);
+  }, [shortAsset, longAsset, levers, leverActions]);
 
   const handlePairRequest = () => {
     toast.info('Trading pair requested.');
@@ -103,7 +95,6 @@ const LeverSelect = () => {
   return (
     <div className="space-y-4">
       <div className="flex flex-row gap-4">
-        
         <Container>
           <TopRow className="p-1 justify-start gap-2">
             <div className="flex flex-row text-xs text-slate-500 text-start gap-2">Long</div>
@@ -147,7 +138,6 @@ const LeverSelect = () => {
             </ListOptionsStyled>
           </Listbox>
         </Container>
-
       </div>
 
       <div>
@@ -182,7 +172,7 @@ const LeverSelect = () => {
                   {shortAsset && longAsset && requestedPairs.includes(`${shortAsset.symbol}${longAsset.symbol}`) ? (
                     <StarIcon className="w-4 h-4" />
                   ) : (
-                    <StarIcon_outline className="w-4 h-4" />
+                    <StarIconOutline className="w-4 h-4" />
                   )}
                 </div>
               </div>

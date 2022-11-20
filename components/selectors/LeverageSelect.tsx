@@ -1,4 +1,4 @@
-import { FC, useContext, useState } from 'react';
+import { useContext } from 'react';
 import tw from 'tailwind-styled-components';
 import { InputContext } from '../../context/InputContext';
 import { Range } from 'react-range';
@@ -44,8 +44,6 @@ const getColor = (val: number, max: number) => {
 
 const LeverageSelect = ({ max }: { max:number}) => {
   const [inputState, inputActions] = useContext(InputContext);
-  const [color, setColor] = useState(undefined);
-
   return (
     <Container className=" align-middle">
       <div className="w-1/4 flex flex-grow">
@@ -83,7 +81,7 @@ const LeverageSelect = ({ max }: { max:number}) => {
               {children}
             </div>
           )}
-          renderMark={({ props, index }) => (
+          renderMark={({ props }) => (
             <div
               {...props}
               style={{

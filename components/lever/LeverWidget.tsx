@@ -12,30 +12,9 @@ import LeverSelect from '../selectors/LeverSelect';
 import { LeverSimulation } from '../../hooks/useLever';
 import { BorderWrap, TopRow, Inner, Section, SectionHead } from '../styled';
 import { InputContext } from '../../context/InputContext';
-import { isShorthandPropertyAssignment } from 'typescript';
 import { useAccount } from 'wagmi';
 
-// const Inner = tw.div`m-4 text-center`;
-// const TopRow = tw.div` p-8 flex justify-between align-middle text-center items-center rounded-t-lg dark:bg-gray-900
-// bg-gray-100
-// bg-opacity-25
-// dark:text-gray-50
-// dark:bg-opacity-25 `;
 const ClearButton = tw.button`text-sm`;
-
-// const Section = tw.div`
-// w-full
-// my-2
-// p-2
-// rounded-lg
-// dark:bg-gray-900
-// bg-gray-100
-// bg-opacity-25
-// dark:text-gray-50
-// dark:bg-opacity-25
-// `;
-
-// const SectionHead = tw.div`text-left m-2`
 
 const LeverWidget = (props: any) => {
   /* Bring in lever context - instead of passing them as props */
@@ -43,9 +22,9 @@ const LeverWidget = (props: any) => {
   const { selectedLever, shortAsset } = leverState;
 
   const [{ input }] = useContext(InputContext);
-  const {address: account} = useAccount();
+  const { address: account } = useAccount();
 
-  const { invest, approve, isSimulating, maxLeverage, borrowLimitUsed, shortBorrowed }: LeverSimulation = props.lever;
+  const { invest, isSimulating, maxLeverage, borrowLimitUsed, shortBorrowed }: LeverSimulation = props.lever;
 
   return (
     <BorderWrap className="h-full">

@@ -2,9 +2,8 @@ import { BigNumber, Contract, ethers } from 'ethers';
 import React, { ReactElement, useEffect, useReducer, useState } from 'react';
 
 import { ERC20, ERC20Permit, FYToken } from '../contracts/types';
-import { TokenType } from '../lib/types';
+import { TokenType, W3bNumber } from '../lib/types';
 import { convertToW3bNumber } from '../lib/utils';
-import { W3bNumber } from './InputContext';
 
 import { ASSETS, IAssetRoot, WETH } from '../config/assets';
 import { ILeverRoot, LEVERS } from '../config/levers';

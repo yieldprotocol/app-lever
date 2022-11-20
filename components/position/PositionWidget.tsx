@@ -1,19 +1,15 @@
-import { useContext} from 'react';
+import { useContext } from 'react';
 import { useAccount } from 'wagmi';
-import { IPosition, PositionContext } from '../../context/PositionContext';
+import { PositionContext } from '../../context/PositionContext';
 import Button from '../common/Button';
 import { BorderWrap, InfoBlock, Inner, Label, TopRow, Value } from '../styled';
 
 const PositionWidget = (props: any) => {
-
-  const {address: account } = useAccount();
+  const { address: account } = useAccount();
   const [positionState] = useContext(PositionContext);
-  const {selectedPosition}= positionState;
+  const { selectedPosition } = positionState;
 
-  const {
-    divest,
-    isSimulating,
-  } = props.lever;
+  const { divest } = props.lever;
 
   return (
     <BorderWrap>
@@ -23,49 +19,44 @@ const PositionWidget = (props: any) => {
             <div className="text-lg"> {selectedPosition?.displayName} </div>
           </TopRow>
           <Inner>
-          <InfoBlock>
+            <InfoBlock>
+              <Label>Vault Id: </Label>
+              <Value>{selectedPosition.vaultId}</Value>
 
-        <Label>Vault Id: </Label>
-        <Value>{selectedPosition.vaultId}</Value>
+              <Label>Ilk Id:</Label>
+              <Value> {selectedPosition.ilkId}</Value>
 
-        <Label>Ilk Id:</Label>
-        <Value> {selectedPosition.ilkId}</Value>
+              <Label>Series Id: </Label>
+              <Value>{selectedPosition.seriesId} </Value>
 
-        <Label>Series Id: </Label>
-        <Value>{selectedPosition.seriesId} </Value>
+              <Label>Initial Investment: </Label>
+              <Value>{selectedPosition.amountInvested.dsp} </Value>
 
-        <Label>Initial Investment: </Label>
-        <Value>{selectedPosition.amountInvested.dsp} </Value>
+              <Label>Debt: </Label>
+              <Value>{selectedPosition.debt.dsp} </Value>
 
-        <Label>Debt: </Label>
-        <Value>{selectedPosition.debt.dsp} </Value>
+              <Label>Investment: </Label>
+              <Value>{selectedPosition.investment.dsp}</Value>
 
-        <Label>Investment: </Label>
-        <Value>{selectedPosition.investment.dsp}</Value>
+              <Label>Return if divesting now:</Label>
+              <Value>0 </Value>
 
-        <Label>Return if divesting now:</Label>
-        <Value>0 </Value>
-
-        <Label>Return if divesting at maturity: </Label>
-        <Value>0</Value>
-
-      </InfoBlock>
+              <Label>Return if divesting at maturity: </Label>
+              <Value>0</Value>
+            </InfoBlock>
             <Button
-
-              action = { () => divest(selectedPosition.lever )  }
-              // action={() => divest(selectedPosition.id, selectedPosition.seriesId, selectedPosition.ink, selectedPosition.art )}
-              disabled={!account} // add in isTransacting check
+              action={() => divest(selectedPosition.lever)}
+              disabled={!account}
               loading={false}
               // loading={isTransacting}
             >
-              {/* {!account ? 'Connect Wallet' : isTransacting ? 'Trade Initiated...' : 'Trade'} */}
               Divest
             </Button>
-            {/* <div> is simulating: { isSimulating?.toString() }</div> */}
           </Inner>
         </>
-      )
-    : <div />}
+      ) : (
+        <div />
+      )}
     </BorderWrap>
   );
 };

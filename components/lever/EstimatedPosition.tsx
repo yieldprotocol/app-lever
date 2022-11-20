@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react';
 import { InputContext } from '../../context/InputContext';
-import { BorderWrap, Divider, InfoBlock, Inner, Label, Spinner, TopRow, Value } from '../styled';
+import { BorderWrap, Divider, InfoBlock, Inner, Label, TopRow, Value } from '../styled';
 import { LeverContext } from '../../context/LeverContext';
 import { LeverSimulation } from '../../hooks/useLever';
 import Loader from '../common/Loader';
@@ -45,7 +45,7 @@ const EstimatedPosition = (props: any) => {
           <Value> {leverage?.dsp || 0} X </Value>
         </InfoBlock>
 
-        { selectedLever && (input?.dsp > 0) &&(
+        {selectedLever && input?.dsp > 0 && (
           <>
             <Divider />
             <InfoBlock>
@@ -104,7 +104,7 @@ const EstimatedPosition = (props: any) => {
               <Value> {isSimulating ? <Loader /> : Math.round((borrowLimitUsed + Number.EPSILON) * 100) / 100} %</Value>
 
               <Label>PnL</Label>
-              <Value>{ isSimulating ? <Loader /> : Math.round((pnl + Number.EPSILON) * 100) / 100}</Value>
+              <Value>{isSimulating ? <Loader /> : Math.round((pnl + Number.EPSILON) * 100) / 100}</Value>
 
               <Label>
                 <div className="flex flex-row gap-2 ">
@@ -130,7 +130,6 @@ const EstimatedPosition = (props: any) => {
               <Value className={netAPR < 0 ? 'text-red-500 dark:text-red-500' : 'text-green-600 dark:text-green-600 '}>
                 {isSimulating ? <Loader /> : Math.round((netAPR + Number.EPSILON) * 100) / 100} % APR
               </Value>
-
             </InfoBlock>
           </>
         )}

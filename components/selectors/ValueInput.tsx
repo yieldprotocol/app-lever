@@ -1,9 +1,8 @@
 import { ZERO_BN } from '@yield-protocol/ui-math';
-import { ChangeEvent, useContext, useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
+import { ChangeEvent, useContext } from 'react';
 import tw from 'tailwind-styled-components';
 import { InputContext } from '../../context/InputContext';
-import { IAsset, LeverContext } from '../../context/LeverContext';
+import { LeverContext } from '../../context/LeverContext';
 
 type DivProps = {
   $unFocused?: boolean;
@@ -19,49 +18,36 @@ const Button = tw.button`float-right flex items-center gap-1 my-[1px] text-xs mr
 
 export const ValueInput = () => {
   const [leverState] = useContext(LeverContext);
-  const { shortAsset, selectedLever } = leverState;
+  const { shortAsset } = leverState;
   const [inputState, inputActions] = useContext(InputContext);
-  const [focus, setFocus] = useState(false);
-
-  const [warnInput, setWarnInput] = useState<boolean>(false);
-
-  // useEffect(() => {
-  //   if (selectedLever && inputState.input) {
-  //     // toast.warn('Input less than min debt required.')
-  //     // inputState.input.dsp < selectedLever.minDebt.dsp && toast.warn('Input less than min debt required.')
-  //     // console.log( 'greater than minDebt: ',  inputState.input.dsp > selectedLever.minDebt.dsp )
-  //     // console.log( 'less than maxBase: ',  inputState.input.dsp < selectedLever.maxBase.dsp )
-  //   }
-  // }, [inputState.input?.dsp, selectedLever]);
+  // const [focus, setFocus] = useState(false);
 
   return (
     <Container $unFocused={false}>
-      
-      <Inner className='pl-4'>
+      <Inner className="pl-4">
         <Input
           name="invest_amount"
           type="number"
           value={inputState.input?.dsp || ''}
-          onChange={(el: ChangeEvent<HTMLInputElement> ) => inputActions.setInput(el.target.value)}
-          onFocus={() => setFocus(true)}
-          onBlur={() => setFocus(false)}
+          onChange={(el: ChangeEvent<HTMLInputElement>) => inputActions.setInput(el.target.value)}
+          // onFocus={() => setFocus(true)}
+          // onBlur={() => setFocus(false)}
         />
       </Inner>
 
       <div className="grow min-w-fit text-left ">
         <div className="px-1">{shortAsset?.displaySymbol}</div>
         {inputState?.input?.hStr !== shortAsset?.balance.hStr && shortAsset?.balance.big.gt(ZERO_BN) && (
-          <Button onClick={() => inputActions.setInput(shortAsset?.balance.hStr)} >
+          <Button onClick={() => inputActions.setInput(shortAsset?.balance.hStr)}>
             <div> Use max balance</div>
             <div> {shortAsset?.balance.dsp} </div>
           </Button>
         )}
         {inputState?.input?.hStr === shortAsset?.balance.hStr && shortAsset?.balance.big.gt(ZERO_BN) && (
-          <Button onClick={() => inputActions.setInput('0')} >
+          <Button onClick={() => inputActions.setInput('0')}>
             <div> Clear </div>
           </Button>
         )}
-
       </div>
     </Container>
   );
