@@ -81,11 +81,11 @@ const LeverSelect = () => {
   useEffect(() => {
     const newLeverList: ILever[] = [];
     levers.forEach((x: ILever) => {
-      if (x.baseId === shortAsset.id && x.ilkId === longAsset.id) newLeverList.push(x);
+      if (x.baseId === shortAsset?.id && x.ilkId === longAsset?.id) newLeverList.push(x);
       setPossibleLevers(newLeverList);
       leverActions.selectLever(newLeverList[0]);
     });
-  }, [shortAsset, longAsset, levers, leverActions]);
+  }, [ shortAsset, longAsset, levers ]);
 
   const handlePairRequest = () => {
     toast.info('Trading pair requested.');

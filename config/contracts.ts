@@ -15,33 +15,30 @@ import {
 
 import { TokenType } from '../lib/types';
 
-/**
- * Specific Contract addresses
- */
+type address = string;
 
-/* Protocol contract address */
+/**
+ * Specific  Protocol Contract addresses
+ */
 export const CAULDRON = '0xc88191F8cb8e6D4a668B047c1C8503432c3Ca867';
 export const LADLE = '0x6cB18fF2A33e981D1e38A663Ca056c0a5265066A';
 
-/* lever contract addresses */
+/** 
+ * Lever contract addresses
+ * */
 export const STETH_LEVER = '0x2093bea6bd953c19c4c6e5d7f6d06354181383a9';
 export const YIELD_STRATEGY_LEVER = '0x5582b8398fb586f1b79edd1a6e83f1c5aa558955';
 export const NOTIONAL_LEVER = '0x3df40d95931892c68c88bb15ca80f17f7767ecb3';
-export const EULER_LEVER = '0x3df40d95931892c68c88bb15ca80f17f7767ecb3';
-
-export const contractMap = new Map<string, any>([
-  [CAULDRON, Cauldron__factory ],
-  [LADLE, Ladle__factory],
-
-  /* lever contracts */
-  [STETH_LEVER, StEthLever__factory],
-  [YIELD_STRATEGY_LEVER, YieldStrategyLever__factory],
-]);
+export const EULER_LEVER = '';
 
 /**
- * Multiple Contracts
+ * Mapped contracts
  */
-export const factoryContractMap = new Map([
+export const contractMap = new Map<address|TokenType, any>([
+  [CAULDRON, Cauldron__factory ],
+  [LADLE, Ladle__factory],
+  [STETH_LEVER, StEthLever__factory],
+  [YIELD_STRATEGY_LEVER, YieldStrategyLever__factory],
   [TokenType.FYTOKEN, FYToken__factory],
   [TokenType.YIELD_POOL, Pool__factory],
   [TokenType.ORACLE, IOracle__factory],
