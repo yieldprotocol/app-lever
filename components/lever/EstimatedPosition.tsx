@@ -2,7 +2,7 @@ import { useContext, useState } from 'react';
 import { InputContext } from '../../context/InputContext';
 import { BorderWrap, Divider, InfoBlock, Inner, Label, TopRow, Value } from '../styled';
 import { LeverContext } from '../../context/LeverContext';
-import { LeverSimulation } from '../../hooks/useLever';
+import { ILeverSimulation } from '../../hooks/useLever';
 import Loader from '../common/Loader';
 import { MinusCircleIcon, PlusCircleIcon } from '@heroicons/react/20/solid';
 
@@ -28,7 +28,7 @@ const EstimatedPosition = (props: any) => {
     isSimulating,
     pnl,
     borrowLimitUsed,
-  }: LeverSimulation = props.lever;
+  }: ILeverSimulation = props.lever;
 
   const [showExtra, setShowExtra] = useState<Boolean>(false);
 

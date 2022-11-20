@@ -9,7 +9,7 @@ import { CogIcon } from '@heroicons/react/24/solid';
 import { ValueInput } from '../selectors/ValueInput';
 import { LeverContext } from '../../context/LeverContext';
 import LeverSelect from '../selectors/LeverSelect';
-import { LeverSimulation } from '../../hooks/useLever';
+import { ILeverSimulation } from '../../hooks/useLever';
 import { BorderWrap, TopRow, Inner, Section, SectionHead } from '../styled';
 import { InputContext } from '../../context/InputContext';
 import { useAccount } from 'wagmi';
@@ -24,7 +24,7 @@ const LeverWidget = (props: any) => {
   const [{ input }] = useContext(InputContext);
   const { address: account } = useAccount();
 
-  const { invest, isSimulating, maxLeverage, borrowLimitUsed, shortBorrowed }: LeverSimulation = props.lever;
+  const { invest, isSimulating, maxLeverage, borrowLimitUsed, shortBorrowed }: ILeverSimulation = props.lever;
 
   return (
     <BorderWrap className="h-full">

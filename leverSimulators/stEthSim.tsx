@@ -25,12 +25,12 @@ export const stEthSimulator: Simulator = async (
   positionState: IPositionContextState,
   provider: Provider,
   currentTime: number = Math.round(new Date().getTime() / 1000)
-): Promise<SimulatorOutput> => {
+): Promise<SimulatorOutput | undefined> => {
+  
   const output = NULL_OUTPUT;
-
+  
   const input = inputState.input || ZERO_W3N;
   const leverage = inputState.leverage;
-
   const selectedLever = leverState.selectedLever;
   const selectedPosition = positionState.selectedPosition;
 
