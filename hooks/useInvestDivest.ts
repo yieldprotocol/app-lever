@@ -12,16 +12,16 @@ const useInvestDivest = (
   overrides: { value: BigNumber } = { value: ZERO_BN },
 ) => {
 
-  const [leverState] = useContext(LeverContext)
-  const {selectedLever} = leverState
+  const [ leverState ] = useContext(LeverContext)
+  const { selectedLever } = leverState
   
   const { config } = usePrepareContractWrite({
-    address: selectedLever.leverAddress,
-    abi: selectedLever.leverContract.interface as any,
+    address: selectedLever?.leverAddress,
+    abi: selectedLever?.leverContract.interface as any,
     functionName: transactType,
     args: txArgs,
     overrides,
-    enabled: enabled && !!selectedLever,
+    enabled: enabled && !!selectedLever && txArgs.length>0,
   });
 
   const { write, data: writeData } = useContractWrite({ ...config });

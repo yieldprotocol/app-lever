@@ -1,7 +1,8 @@
 import { ZERO_BN } from '@yield-protocol/ui-math';
 import { BigNumber, ethers } from 'ethers';
-import React, { useContext, useEffect, useReducer } from 'react';
+import React, { useContext, useEffect, useReducer, useState } from 'react';
 import { ZERO_W3N } from '../constants';
+import { useDebounce } from '../hooks/generalHooks';
 import { LeverContext } from './LeverContext';
 
 export interface W3bNumber {
@@ -76,6 +77,13 @@ const InputProvider = ({ children }: any) => {
   const [leverState] = useContext(LeverContext);
   const { selectedLever } = leverState;
 
+  /* NOTE: try debounceleverage when using slider - to prevent excessive calcs */
+  // const [rawLeverage, setRawLeverage] = useState<number>(0);
+  // const debouncedLeverage = useDebounce(rawLeverage, 500);
+  // useEffect(()=>{
+  //   updateState({ type: 'SET_LEVERAGE', payload: inputToW3bNumber(debouncedLeverage.toString(), 2) })
+  // },[debouncedLeverage])
+
   /* Reset Input and leverage when selected lever changes */
   useEffect(() => {
     updateState({ type: 'SET_INPUT', payload: initState.input });
@@ -85,6 +93,7 @@ const InputProvider = ({ children }: any) => {
   /* ACTIONS TO CHANGE CONTEXT */
   const inputActions = {
     setInput: (input: number) => updateState({ type: 'SET_INPUT', payload: inputToW3bNumber(input.toString()) }),
+    // setLeverage: (leverage: number) => setRawLeverage(leverage),
     setLeverage: (leverage: number) =>
       updateState({ type: 'SET_LEVERAGE', payload: inputToW3bNumber(leverage.toString(), 2) }),
     setSlippage: (slippagePercent: number) => updateState({ type: 'SET_SLIPPAGE', payload: slippagePercent / 100 }),

@@ -13,23 +13,37 @@ import { IPositionContextState } from '../context/PositionContext';
 /* Swap contract */
 // export const WETH_STETH_STABLESWAP = '0x828b154032950c8ff7cf8085d841723db2696056';
 
-export const strategySimulator: Simulator =  async (
+/**
+ Reference simoutput requirements: 
+  shortBorrowed: ZERO_W3N,
+  debtAtMaturity: ZERO_W3N,
+  debtCurrent: ZERO_W3N,
+  shortInvested: ZERO_W3N,
+  investmentPosition: ZERO_W3N,
+  investmentAtMaturity: ZERO_W3N,
+  investmentCurrent: ZERO_W3N,
+  flashBorrowFee: ZERO_W3N,
+  investmentFee: ZERO_W3N,
+  investArgs: [],
+  divestArgs: [],
+  notification: undefined,
+*/
+
+export const strategySimulator: Simulator = async (
   inputState: IInputContextState,
   leverState: ILeverContextState,
   marketState: IMarketContextState,
   positionState: IPositionContextState,
-  provider: ethers.providers.BaseProvider| undefined,
+  provider: ethers.providers.BaseProvider | undefined,
   currentTime: number = Math.round(new Date().getTime() / 1000)
-): Promise<SimulatorOutput> => {
-
-  const output = NULL_OUTPUT; 
+): Promise<SimulatorOutput | undefined> => {
+  const output = NULL_OUTPUT;
 
   const input = inputState.input || ZERO_W3N;
   const leverage = inputState.leverage;
   const lever = leverState.selectedLever;
 
   if (input.big.gt(ZERO_BN) && provider) {
-
     console.log('Fired STRATEGY LEVER....');
 
     /**
@@ -128,9 +142,8 @@ export const strategySimulator: Simulator =  async (
     // }
   }
 
-  output.investArgs = [lever?.seriesId, input.big, ZERO_BN ];
-  output.divestArgs = [lever?.seriesId, input.big, ZERO_BN ];
+  output.investArgs = [lever?.seriesId, input.big, ZERO_BN];
+  output.divestArgs = [lever?.seriesId, input.big, ZERO_BN];
 
   return output;
-
 };

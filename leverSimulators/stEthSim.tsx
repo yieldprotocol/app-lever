@@ -10,7 +10,7 @@ import { NULL_OUTPUT, SimulatorOutput, Simulator } from '../hooks/useLever';
 import curve from '@curvefi/api';
 import { ethers } from 'ethers';
 
-import { StableSwap__factory, StEthLever__factory } from '../contracts/types';
+import { StableSwap__factory } from '../contracts/types';
 import { IMarketContextState } from '../context/MarketContext';
 import { IPositionContextState } from '../context/PositionContext';
 
@@ -35,6 +35,7 @@ export const stEthSimulator: Simulator = async (
 
   if (input.big.gt(ZERO_BN) && provider) {
     console.log('Fired STETH Lever....');
+    
     /**
      * CURVE infomation:
      * */
@@ -131,11 +132,19 @@ export const stEthSimulator: Simulator = async (
     }
   }
 
+  /** INVEST : bytes6 seriesId, uint256 borrowed, uint256 minWeth */
   output.investArgs = selectedLever ? [selectedLever.seriesId, output.shortBorrowed.big, ZERO_BN] : [];
 
   /** DIVEST : bytes12 vaultId, bytes6 seriesId, uint256 ink,uint256 art, uint256 minWeth */
-  console.log( selectedPosition )
-  output.divestArgs =  selectedPosition ? [selectedPosition.vaultId, selectedPosition.seriesId, selectedPosition.investment, selectedPosition.debt, ZERO_BN] :[]
+  output.divestArgs = selectedPosition
+    ? [
+        selectedPosition.vaultId,
+        selectedPosition.seriesId,
+        selectedPosition.investment.big,
+        selectedPosition.debt.big,
+        ZERO_BN,
+      ]
+    : [];
 
   return output;
 };
