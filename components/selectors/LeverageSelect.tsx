@@ -10,7 +10,7 @@ type DivProps = {
 const Container = tw.div<DivProps>`${(p) =>
   p.$unFocused
     ? 'opacity-60'
-    : ''}  flex rounded-md justify-between p-1 w-full gap-5 align-middle hover:border border hover:border-gray-400 dark:hover:border-gray-600 dark:border-gray-800 dark:bg-gray-800 bg-gray-300 border-gray-300 dark:bg-opacity-25 bg-opacity-25`;
+    : ''}  flex rounded-md justify-between p-1 w-full gap-5 align-middle hover:border border hover:border-green-400 dark:hover:border-green-600 dark:border-gray-800 dark:bg-gray-800 bg-gray-300 border-gray-300 dark:bg-opacity-25 bg-opacity-25`;
 
 const Input = tw.input<any>`
 h-full 

@@ -42,7 +42,7 @@ const LeverWidget = (props: any) => {
           <LeverSelect  />
         </Section>
 
-        <Section>
+        <Section className={ selectedLever ? 'opacity-100' : 'opacity-25'} >
           <SectionHead>
             <div className="flex flex-row justify-between">
               Principle investment
@@ -56,7 +56,7 @@ const LeverWidget = (props: any) => {
           <ValueInput />
         </Section>
 
-        <Section>
+        <Section className={ selectedLever ? 'opacity-100' : 'opacity-25'}>
           <SectionHead> Leverage:</SectionHead>
           <LeverageSelect max={maxLeverage} />
         </Section>

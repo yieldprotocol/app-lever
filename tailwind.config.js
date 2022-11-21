@@ -11,7 +11,7 @@ module.exports = {
         transparent: 'transparent',
         current: 'currentColor',
         green: colors.emerald,
-        primary: colors.teal,
+        primary: colors.emerald,
         secondary: colors.magenta,
         gradient: colors.emerald
       },

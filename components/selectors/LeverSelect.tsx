@@ -21,8 +21,8 @@ rounded-md
 w-full 
 hover:border
 border 
-hover:border-gray-400 
-dark:hover:border-gray-600 
+hover:border-green-400 
+dark:hover:border-green-600 
 dark:border-gray-800 
 dark:bg-gray-800 bg-gray-300 border-gray-300 dark:bg-opacity-25 bg-opacity-25`;
 
@@ -89,12 +89,14 @@ const LeverSelect = () => {
 
   useEffect(() => {
     const list = Array.from(levers.values());
-    setPossibleLevers(
-      list
-      .filter(
-        (lever_: ILever) => (lever_.baseId === selectedShortAsset?.id && lever_.ilkId === selectedLongAsset?.id)
-      )
+    const filteredLevers = list.filter(
+      (lever_: ILever) => lever_.baseId === selectedShortAsset?.id && lever_.ilkId === selectedLongAsset?.id
     );
+    setPossibleLevers(filteredLevers);
+
+    /* select the first on the list, of the list is blank deselect the strategy */
+    filteredLevers.length > 0 ? leverActions.selectLever(filteredLevers[0]) : leverActions.selectLever(undefined);
+
   }, [selectedShortAsset, selectedLongAsset, levers]);
 
   const handlePairRequest = () => {
@@ -177,8 +179,9 @@ const LeverSelect = () => {
                   <div className=" p-1">
                     <ExclamationTriangleIcon className="w-4 h-4" />
                   </div>
-                  <div className="text-sm"> No lever strategies are available for this short/long pair yet. </div>
+                  <div className=" text-sm"> No strategies are available for this pair yet. </div>
                 </div>
+
                 <div className="text-xs p-1" onClick={() => handlePairRequest()}>
                   {selectedShortAsset &&
                   selectedLongAsset &&
@@ -188,6 +191,7 @@ const LeverSelect = () => {
                     <StarIconOutline className="w-4 h-4" />
                   )}
                 </div>
+
               </div>
             </Container>
           )}
