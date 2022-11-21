@@ -3,7 +3,7 @@ import HighStock from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
 import { ChartContext } from '../../context/ChartContext';
 import { BorderWrap, Spinner, TopRow } from '../styled';
-import { LeverContext } from '../../context/LeverContext';
+import { ILeverContextState, LeverContext } from '../../context/LeverContext';
 import tw from 'tailwind-styled-components';
 import { InputContext } from '../../context/InputContext';
 
@@ -19,7 +19,7 @@ const Button = tw.button`text-xs bg-primary-800 w-5 dark:text-gray-50 text-gray-
 export const ChartWidget = (props: HighchartsReact.Props) => {
   const chartComponentRef = useRef<HighchartsReact.RefObject>(null);
   const [leverState] = useContext(LeverContext);
-  const { selectedLever, shortAsset, longAsset } = leverState;
+  const { selectedLever } = leverState;
   const [chartState] = useContext(ChartContext);
   const { prices, pricesAvailable } = chartState;
 
@@ -28,6 +28,8 @@ export const ChartWidget = (props: HighchartsReact.Props) => {
 
   const [condensedView, setCondensedView] = useState<boolean>(false);
   const [forceChart, setForceChart] = useState<boolean>(false);
+
+  const { longAsset, shortAsset} = props;
 
   useEffect(() => {
     setCondensedView(!forceChart && selectedLever && input?.dsp > 0);

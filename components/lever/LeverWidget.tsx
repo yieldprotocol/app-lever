@@ -7,7 +7,7 @@ import LeverageSelect from '../selectors/LeverageSelect';
 import { CogIcon } from '@heroicons/react/24/solid';
 
 import { ValueInput } from '../selectors/ValueInput';
-import { LeverContext } from '../../context/LeverContext';
+import { ILeverContextState, LeverContext } from '../../context/LeverContext';
 import LeverSelect from '../selectors/LeverSelect';
 import { ILeverSimulation } from '../../hooks/useLever';
 import { BorderWrap, TopRow, Inner, Section, SectionHead } from '../styled';
@@ -19,7 +19,9 @@ const ClearButton = tw.button`text-sm`;
 const LeverWidget = (props: any) => {
   /* Bring in lever context - instead of passing them as props */
   const [leverState] = useContext(LeverContext);
-  const { selectedLever, shortAsset } = leverState;
+  const { selectedLever, assets } = leverState as ILeverContextState;
+
+  const shortAsset = assets.get(selectedLever?.baseId!);
 
   const [{ input }] = useContext(InputContext);
   const { address: account } = useAccount();
@@ -37,7 +39,7 @@ const LeverWidget = (props: any) => {
       <Inner>
         <Section>
           <SectionHead>Lever Strategy </SectionHead>
-          <LeverSelect />
+          <LeverSelect  />
         </Section>
 
         <Section>

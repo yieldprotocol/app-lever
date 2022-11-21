@@ -39,7 +39,10 @@ const ChartProvider = ({ children }: any) => {
 
   /* STATE from other contexts */
   const [leverState]: [ILeverContextState] = useContext(LeverContext);
-  const { longAsset, shortAsset } = leverState;
+  const { assets, selectedLever } = leverState;
+
+  const shortAsset = assets.get(selectedLever?.baseId!);
+  const longAsset = assets.get(selectedLever?.ilkId!);
 
   const getPricesPerUsd = async (chartId: string) => {
     console.log('Fetching price data for : ', chartId);

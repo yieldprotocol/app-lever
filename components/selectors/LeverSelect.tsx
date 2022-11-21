@@ -1,6 +1,6 @@
 import { Fragment, useContext, useEffect, useState } from 'react';
 import tw from 'tailwind-styled-components';
-import { IAsset, ILever, LeverContext } from '../../context/LeverContext';
+import { IAsset, ILever, ILeverContextState, LeverContext } from '../../context/LeverContext';
 import { BorderWrap, TopRow } from '../styled';
 
 import { ArrowsRightLeftIcon } from '@heroicons/react/24/solid';
@@ -72,24 +72,34 @@ const ListOptionsStyled = ({ children }: { children: any[] }) => (
 
 const LeverSelect = () => {
   const [leverState, leverActions] = useContext(LeverContext);
-  const { selectedLever, levers, shortAsset, longAsset, assets } = leverState;
+  const { selectedLever, levers, assets, selectedShortAsset, selectedLongAsset } = leverState as ILeverContextState;
+
   const assetsList = Array.from(assets.values());
 
   const [possibleLevers, setPossibleLevers] = useState<ILever[]>([]);
   const [requestedPairs, setRequestedPair] = useState<string[]>([]);
 
+  /* When the selected lever changes, make sure the selected assets match */
   useEffect(() => {
-    const newLeverList: ILever[] = [];
-    levers.forEach((x: ILever) => {
-      if (x.baseId === shortAsset?.id && x.ilkId === longAsset?.id) newLeverList.push(x);
-      setPossibleLevers(newLeverList);
-      leverActions.selectLever(newLeverList[0]);
-    });
-  }, [ shortAsset, longAsset, levers ]);
+    if (selectedLever) {
+      leverActions.selectShort(assets.get(selectedLever.baseId));
+      leverActions.selectLong(assets.get(selectedLever.ilkId));
+    }
+  }, [selectedLever]);
+
+  useEffect(() => {
+    const list = Array.from(levers.values());
+    setPossibleLevers(
+      list
+      // .filter(
+      //   (lever_: ILever) => lever_.baseId === selectedShortAsset?.id && lever_.ilkId === selectedLongAsset?.id
+      // )
+    );
+  }, [selectedShortAsset, selectedLongAsset, levers]);
 
   const handlePairRequest = () => {
     toast.info('Trading pair requested.');
-    setRequestedPair([...requestedPairs, `${shortAsset.symbol}${longAsset.symbol}`]);
+    setRequestedPair([...requestedPairs, `${selectedShortAsset?.symbol}${selectedLongAsset?.symbol}`]);
   };
 
   return (
@@ -100,12 +110,12 @@ const LeverSelect = () => {
             <div className="flex flex-row text-xs text-slate-500 text-start gap-2">Long</div>
             <ArrowTrendingUpIcon className="h-4 w-4 text-slate-500" />
           </TopRow>
-          <Listbox value={longAsset} onChange={(x: IAsset) => leverActions.selectLong(x)}>
-            <SelectedAssetStyled asset={longAsset} select="LONG" />
+          <Listbox value={selectedLongAsset} onChange={(x: IAsset) => leverActions.selectLong(x)}>
+            <SelectedAssetStyled asset={selectedLongAsset!} select="LONG" />
             <ListOptionsStyled>
               {assetsList
-                .filter((a: any) => a.id !== shortAsset?.id)
-                .filter((a: any) => a.id !== longAsset?.id)
+                .filter((a: any) => a.id !== selectedShortAsset?.id)
+                .filter((a: any) => a.id !== selectedLongAsset?.id)
                 .map((a: any) => assetOption(a, false))}
             </ListOptionsStyled>
           </Listbox>
@@ -115,8 +125,8 @@ const LeverSelect = () => {
           <div
             className="bg-primary-700 rounded-full p-2 "
             onClick={() => {
-              leverActions.selectLong(shortAsset);
-              leverActions.selectShort(longAsset);
+              leverActions.selectLong(selectedShortAsset);
+              leverActions.selectShort(selectedLongAsset);
             }}
           >
             <ArrowsRightLeftIcon className="h-6 w-6 text-white" />
@@ -128,12 +138,12 @@ const LeverSelect = () => {
             <div className="flex flex-row text-xs text-slate-500 text-start gap-2">Short</div>
             <ArrowTrendingDownIcon className="h-4 w-4 text-slate-500" />
           </TopRow>
-          <Listbox value={shortAsset} onChange={(x: IAsset) => leverActions.selectShort(x)}>
-            <SelectedAssetStyled asset={shortAsset} select="SHORT" />
+          <Listbox value={selectedShortAsset} onChange={(x: IAsset) => leverActions.selectShort(x)}>
+            <SelectedAssetStyled asset={selectedShortAsset!} select="SHORT" />
             <ListOptionsStyled>
               {assetsList
-                .filter((a: any) => a.id !== shortAsset?.id)
-                .filter((a: any) => a.id !== longAsset?.id)
+                .filter((a: any) => a.id !== selectedShortAsset?.id)
+                .filter((a: any) => a.id !== selectedLongAsset?.id)
                 .map((a: any) => assetOption(a))}
             </ListOptionsStyled>
           </Listbox>
@@ -146,12 +156,12 @@ const LeverSelect = () => {
             <Container key={s.id}>
               <div
                 className={`flex flex-row gap-4 p-2 justify-around ${
-                  selectedLever.id === s.id ? 'bg-primary-900 bg-opacity-25' : 'text-xs'
+                  selectedLever?.id === s.id ? 'bg-primary-900 bg-opacity-25' : 'text-xs'
                 }`}
                 onClick={() => leverActions.selectLever(s)}
               >
                 <div className="w-6 h-6">{s.tradeImage}</div>
-                <div>{`${shortAsset.displaySymbol} v ${longAsset.displaySymbol} Lever`} </div>
+                <div>{`${selectedShortAsset?.displaySymbol} v ${selectedLongAsset?.displaySymbol} Lever`} </div>
                 <div>{formatDate(s.maturityDate)}</div>
                 <div>
                   <InformationCircleIcon className="w-6 h-6 text-gray-500" />
@@ -159,6 +169,7 @@ const LeverSelect = () => {
               </div>
             </Container>
           ))}
+
           {possibleLevers.length === 0 && (
             <Container>
               <div className="p-3 flex flex-row text-xs justify-between align-middle ">
@@ -169,7 +180,9 @@ const LeverSelect = () => {
                   <div className="text-sm"> No lever strategies are available for this short/long pair yet. </div>
                 </div>
                 <div className="text-xs p-1" onClick={() => handlePairRequest()}>
-                  {shortAsset && longAsset && requestedPairs.includes(`${shortAsset.symbol}${longAsset.symbol}`) ? (
+                  {selectedShortAsset &&
+                  selectedLongAsset &&
+                  requestedPairs.includes(`${selectedShortAsset.symbol}${selectedLongAsset.symbol}`) ? (
                     <StarIcon className="w-4 h-4" />
                   ) : (
                     <StarIconOutline className="w-4 h-4" />

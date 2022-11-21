@@ -83,8 +83,8 @@ export interface ILeverSimulation extends Omit<SimulatorOutput, 'investArgs' | '
 export const useLever = (simulator: Simulator): ILeverSimulation => {
   /* Bring in context*/
   const [leverState, leverActions]: [ILeverContextState, any] = useContext(LeverContext);
-  const { selectedLever, shortAsset } = leverState;
-  const { setAppState } = leverActions;
+  const { selectedLever, assets } = leverState;
+  const shortAsset = assets.get(selectedLever?.baseId!);
 
   const [inputState] = useContext(InputContext);
   const { input, leverage } = inputState ? inputState : { input: undefined, leverage: undefined };

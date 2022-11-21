@@ -17,10 +17,12 @@ const Inner = tw.div`flex flex-grow text-right text-lg align-middle items-center
 const Button = tw.button`float-right flex items-center gap-1 my-[1px] text-xs mr-2 dark:text-gray-300 text-gray-700 hover:text-gray-600 dark:hover:text-gray-400`;
 
 export const ValueInput = () => {
-  const [leverState] = useContext(LeverContext);
-  const { shortAsset } = leverState;
+  
   const [inputState, inputActions] = useContext(InputContext);
-  // const [focus, setFocus] = useState(false);
+  
+  const [leverState] = useContext(LeverContext);
+  const { selectedLever, assets } = leverState;
+  const shortAsset = assets.get(selectedLever?.baseId!);
 
   return (
     <Container $unFocused={false}>

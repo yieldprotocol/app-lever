@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { LeverContext } from '../../context/LeverContext';
 import { useLever } from '../../hooks/useLever';
 import TenderlyView from '../testing/TenderlyView';
@@ -14,6 +14,8 @@ const LeverView = () => {
   
   /* lever is abstracted up here in a higher level to save a few re-renders/calcs */
   const lever = useLever( simulator );
+  
+  const {selectedLongAsset, selectedShortAsset } = leverState;
 
   return (
     <>
@@ -23,7 +25,7 @@ const LeverView = () => {
         </div>
 
         <div className="h-[700px]">
-          <ChartWidget />
+          <ChartWidget  longAsset={selectedLongAsset} shortAsset={selectedShortAsset} />
           <div>
             <EstimatedPosition lever={lever} />
           </div>

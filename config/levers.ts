@@ -4,6 +4,7 @@ import { USDC, WETH, WSTETH, YSUSDC6MJD,  } from './assets';
 
 import { stEthSimulator }  from '../leverSimulators/stEthSim';
 import { STETH_LEVER, YIELD_STRATEGY_LEVER } from './contracts';
+import { yieldStrategySimulator } from '../leverSimulators/yieldStrategySim';
 
 interface ILeverCommon {
   leverAddress: string;
@@ -37,7 +38,7 @@ const stEthLeverCommon_: ILeverCommon = {
 
 const strategyLeverCommon_: ILeverCommon = {
   leverAddress : YIELD_STRATEGY_LEVER,
-  leverSimulator: stEthSimulator,
+  leverSimulator: yieldStrategySimulator,
   tradePlatform: TradePlatforms.YIELD,
 }
 

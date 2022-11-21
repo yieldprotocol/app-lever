@@ -11,8 +11,11 @@ const EstimatedPosition = (props: any) => {
   const { input, leverage } = inputState;
 
   const [leverState] = useContext(LeverContext);
-  const { selectedLever, shortAsset, longAsset } = leverState;
+  const { selectedLever, assets } = leverState;
 
+  const shortAsset = assets.get(selectedLever?.baseId);
+  const longAsset = assets.get(selectedLever?.ilkId);
+  
   const {
     netAPR,
     borrowAPR,
