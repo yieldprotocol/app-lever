@@ -52,7 +52,7 @@ export const LEVERS = new Map<string, ILeverRoot>();
 
 LEVERS.set('STETH_01', {
   ...stEthLeverCommon_,
-  id: '001',
+  id: 'STETH__01',
   displayName: 'WETH_STETH DEC_2022',
   maturity: 1672412400,
   investTokenType: TokenType.FYTOKEN,
@@ -64,7 +64,7 @@ LEVERS.set('STETH_01', {
 
 LEVERS.set('STETH_02', {
   ...stEthLeverCommon_,
-  id: '002',
+  id: 'STETH_002',
   displayName: 'WETH_STETH MAR_2023',
   maturity: 1680274800,
   investTokenType: TokenType.FYTOKEN,
@@ -76,7 +76,7 @@ LEVERS.set('STETH_02', {
 
 LEVERS.set('STRATEGY_01', {
   ...strategyLeverCommon_,
-  id: '001',
+  id: 'STRAT_001',
   displayName: 'YIELD_STRATEGY DEC_2023',
   maturity: 1672412400,
   investTokenType: TokenType.FYTOKEN,

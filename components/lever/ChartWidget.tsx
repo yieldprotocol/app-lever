@@ -3,7 +3,7 @@ import HighStock from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
 import { ChartContext } from '../../context/ChartContext';
 import { BorderWrap, Spinner, TopRow } from '../styled';
-import { ILeverContextState, LeverContext } from '../../context/LeverContext';
+import { LeverContext } from '../../context/LeverContext';
 import tw from 'tailwind-styled-components';
 import { InputContext } from '../../context/InputContext';
 
@@ -19,7 +19,7 @@ const Button = tw.button`text-xs bg-primary-800 w-5 dark:text-gray-50 text-gray-
 export const ChartWidget = (props: HighchartsReact.Props) => {
   const chartComponentRef = useRef<HighchartsReact.RefObject>(null);
   const [leverState] = useContext(LeverContext);
-  const { selectedLever } = leverState;
+  const { selectedLever, selectedLongAsset, selectedShortAsset } = leverState;
   const [chartState] = useContext(ChartContext);
   const { prices, pricesAvailable } = chartState;
 
@@ -28,8 +28,6 @@ export const ChartWidget = (props: HighchartsReact.Props) => {
 
   const [condensedView, setCondensedView] = useState<boolean>(false);
   const [forceChart, setForceChart] = useState<boolean>(false);
-
-  const { longAsset, shortAsset} = props;
 
   useEffect(() => {
     setCondensedView(!forceChart && selectedLever && input?.dsp > 0);
@@ -134,7 +132,7 @@ export const ChartWidget = (props: HighchartsReact.Props) => {
 
     series: [
       {
-        name: `${longAsset?.displaySymbol} / ${shortAsset?.displaySymbol}`,
+        name: `${selectedLongAsset?.displaySymbol} / ${selectedShortAsset?.displaySymbol}`,
         data: prices,
         type: 'area',
         threshold: null,
@@ -178,15 +176,15 @@ export const ChartWidget = (props: HighchartsReact.Props) => {
               <div className="flex-grow">
                 <div className="text-start py-4">
                   <div className="flex flex-row gap-2">
-                    <div className="w-6">{shortAsset?.image}</div>
-                    <div className="flex flex-row pl-2"> 1 {shortAsset?.displaySymbol} </div>
+                    <div className="w-6">{selectedShortAsset?.image}</div>
+                    <div className="flex flex-row pl-2"> 1 {selectedShortAsset?.displaySymbol} </div>
                   </div>
                   <div className="flex flex-row gap-2 ">
-                    <div className="w-8 h-8">{longAsset?.image}</div>
+                    <div className="w-8 h-8">{selectedLongAsset?.image}</div>
                     <div className="text-2xl">
                       {prices.length ? Math.round(parseFloat(prices[prices.length - 1][1]) * 1000) / 1000 : '...'}
                     </div>
-                    <div className="text-2xl">{longAsset?.displaySymbol}</div>
+                    <div className="text-2xl">{selectedLongAsset?.displaySymbol}</div>
                   </div>
                 </div>
 

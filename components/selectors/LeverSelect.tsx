@@ -91,9 +91,9 @@ const LeverSelect = () => {
     const list = Array.from(levers.values());
     setPossibleLevers(
       list
-      // .filter(
-      //   (lever_: ILever) => lever_.baseId === selectedShortAsset?.id && lever_.ilkId === selectedLongAsset?.id
-      // )
+      .filter(
+        (lever_: ILever) => (lever_.baseId === selectedShortAsset?.id && lever_.ilkId === selectedLongAsset?.id)
+      )
     );
   }, [selectedShortAsset, selectedLongAsset, levers]);
 
@@ -152,17 +152,17 @@ const LeverSelect = () => {
 
       <div>
         <div className="gap-4">
-          {possibleLevers.map((s: ILever) => (
-            <Container key={s.id}>
+          {possibleLevers.map((l: ILever) => (
+            <Container key={l.id}>
               <div
                 className={`flex flex-row gap-4 p-2 justify-around ${
-                  selectedLever?.id === s.id ? 'bg-primary-900 bg-opacity-25' : 'text-xs'
+                  selectedLever?.id === l.id ? 'bg-primary-900 bg-opacity-25' : 'text-xs'
                 }`}
-                onClick={() => leverActions.selectLever(s)}
+                onClick={() => leverActions.selectLever(l)}
               >
-                <div className="w-6 h-6">{s.tradeImage}</div>
-                <div>{`${selectedShortAsset?.displaySymbol} v ${selectedLongAsset?.displaySymbol} Lever`} </div>
-                <div>{formatDate(s.maturityDate)}</div>
+                <div className="w-6 h-6">{l.tradeImage}</div>
+                <div>{`${l.displayName}`} </div>
+                <div>{formatDate(l.maturityDate)}</div>
                 <div>
                   <InformationCircleIcon className="w-6 h-6 text-gray-500" />
                 </div>
