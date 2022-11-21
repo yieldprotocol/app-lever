@@ -10,6 +10,7 @@ import { IPositionContextState, PositionContext } from '../context/PositionConte
 import { useProvider } from 'wagmi';
 import useInvestDivest from './useInvestDivest';
 import { Provider, W3bNumber } from '../lib/types';
+import { useRouter } from 'next/router';
 
 export type Simulator = (
   inputState: IInputContextState,
@@ -59,7 +60,7 @@ export const NULL_OUTPUT = {
   notification: undefined,
 } as SimulatorOutput;
 
-export interface ILeverSimulation extends Omit<SimulatorOutput, 'investArgs'|'divestArgs'|'notification'> {
+export interface ILeverSimulation extends Omit<SimulatorOutput, 'investArgs' | 'divestArgs' | 'notification'> {
   /**
    * calculated values
    * */
@@ -98,6 +99,12 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
   const { currentTime } = useBlockTime();
   const provider = useProvider();
 
+  const { pathname } = useRouter();
+  // /* If the url references a series/vault...set that one as active */
+  // useEffect(() => {
+  //   pathname &&  console.log(pathname.split('/')[1] ) // setPath(pathname.split('/')[1]);
+  // }, [pathname]); 
+
   // loading flags:
   const [isSimulating, setIsSimulating] = useState<boolean>(false);
 
@@ -128,9 +135,8 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
   const [pnl, setPnl] = useState<number>(0);
   const [maxLeverage, setMaxLeverage] = useState<number>(5);
 
-  const invest = useInvestDivest('invest', investArgs, !isSimulating && input?.dsp > 0, { value: input?.big });
-
-  const divest = useInvestDivest('divest', divestArgs, !isSimulating);
+  const invest = useInvestDivest('invest', investArgs, !isSimulating && input?.dsp > 0 && pathname === '/levers', { value: input?.big }); 
+  const divest = useInvestDivest('divest', divestArgs, !isSimulating && pathname === '/positions' );
 
   /* Use the simulator on each leverage/input change */
   useEffect(() => {
@@ -144,7 +150,6 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
         const simulated = await simulator(inputState, leverState, marketState, positionState, provider);
 
         if (simulated) {
-
           setInvestmentPosition(simulated.investmentPosition);
           setInvestmentAtMaturity(simulated.investmentAtMaturity);
           setInvestmentCurrent(simulated.investmentCurrent);
@@ -210,7 +215,6 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
   }, [input, debouncedLeverage, leverState, marketState, positionState, provider]);
 
   return {
-
     invest,
     divest,
 
@@ -239,6 +243,5 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
     maxLeverage,
 
     isSimulating,
-
   };
 };

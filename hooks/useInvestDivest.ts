@@ -22,6 +22,7 @@ const useInvestDivest = (
     args: txArgs,
     overrides,
     enabled: enabled && !!selectedLever && txArgs.length>0,
+    cacheTime: 0,
   });
 
   const { write, data: writeData } = useContractWrite({ ...config });

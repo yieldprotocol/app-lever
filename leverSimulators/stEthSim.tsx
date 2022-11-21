@@ -28,7 +28,7 @@ export const stEthSimulator: Simulator = async (
 ): Promise<SimulatorOutput | undefined> => {
   
   const output = NULL_OUTPUT;
-  
+
   const input = inputState.input || ZERO_W3N;
   const leverage = inputState.leverage;
   const selectedLever = leverState.selectedLever;
@@ -95,7 +95,6 @@ export const stEthSimulator: Simulator = async (
       output.debtAtMaturity = convertToW3bNumber(debt_, 18, 6);
 
       // - sellFyWeth: FyWEth -> WEth
-      // const obtainedWEth = await selectedLever.marketContract.sellFYTokenPreview(netInvestAmount);
       const netInvestAmount = inputAsFyToken.big.add(toBorrow.big); // .sub(fee); // - netInvestAmount = baseAmount + borrowAmount - fee
       const wethObtained = sellFYToken(
         marketState.sharesReserves,

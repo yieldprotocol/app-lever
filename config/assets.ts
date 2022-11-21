@@ -49,6 +49,7 @@ export const FRAX = '0x313800000000';
 /* Convex Curve LP token assets */
 export const CVX3CRV = '0x313900000000';
 
+
 export const CONVEX_BASED_ASSETS = [
   'CVX3CRV',
   CVX3CRV,
@@ -83,7 +84,7 @@ ASSETS.set(USDC, {
   joinAddress: '0x0d9A1A773be5a83eEbda23bf98efB8585C3ae4f4',
   version: '1',
   name: 'USDC Stable coin',
-  decimals: 18,
+  decimals: 6,
   symbol: 'USDC',
   showToken: true,
   digitFormat: 2,
@@ -240,3 +241,45 @@ ASSETS.set(UNI, {
 
   chartId: 'uniswap'
 });
+
+export const YSUSDC6MMS ="0x333200000000"
+//   "0x333200000000", YSUSDC6MMS 
+//"0xFBc322415CBC532b54749E31979a803009516b5D",
+//   "0x610498E3332740952610Ca3Fc2b627c94C25227D"
+
+export const YSUSDC6MJD = '0x333300000000'
+ASSETS.set( YSUSDC6MJD, {
+  id:YSUSDC6MJD,
+  address: '0x8e8D6aB093905C400D583EfD37fbeEB1ee1c0c39',
+  joinAddress: '0xd947360575E6F01Ce7A210C12F2EE37F5ab12d11',
+  version: '1',
+  name: 'Yield Strategy USDC 6M Jun Dec',
+  decimals: 6,
+  symbol: 'YSUSDC6MJD',
+  showToken: true,
+  digitFormat: 2,
+  tokenType: TokenType.ERC20_PERMIT,
+
+  chartId: ''
+})
+
+export const YSDAI6MMS = "0x333000000000"
+//   "0x333000000000",YSDAI6MMS
+// "0x7ACFe277dEd15CabA6a8Da2972b1eb93fe1e2cCD "
+//   "0xD72eE212244F8A14C9C5e282C51d08caa1c0d604"
+
+
+export const YSDAI6MJD = "0x333100000000"
+//   "0x333100000000", YSDAI6MJD
+// "0x1144e14E9B0AA9e181342c7e6E0a9BaDB4ceD295",
+//   "0xfEC8457d1BDdfc52633Da3323F812FC5c1800f61"
+
+export const YSETH6MMS = "0x333400000000"
+//   "0x333400000000",  YSETH6MMS
+//"0xcf30A5A994f9aCe5832e30C138C9697cda5E1247",
+//   "0xEE508c827a8990c04798B242fa801C5351012B23"
+
+export const YSETH6MJD = "0x333500000000"
+//   "0x333500000000", YSETH6MJD
+//"0x831dF23f7278575BA0b136296a285600cD75d076",
+//   "0x5Bb78E530D9365aeF75664c5093e40B0001F7CCd"

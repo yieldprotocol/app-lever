@@ -26,7 +26,6 @@ export const useCachedState = (key: string, initialValue: any, account?: string)
     }
   };
   const clearAll = () => window.localStorage.clear();
-
   return [storedValue, setValue, clearAll] as const;
 };
 

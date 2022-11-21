@@ -1,17 +1,14 @@
 import { BigNumber, Contract, ethers } from 'ethers';
-import React, { ReactElement, useCallback, useEffect, useReducer, useState } from 'react';
-
+import React, { ReactElement, useEffect, useReducer} from 'react';
 import { ERC20, ERC20Permit, FYToken } from '../contracts/types';
 import { TokenType, W3bNumber } from '../lib/types';
 import { convertToW3bNumber } from '../lib/utils';
-
 import { ASSETS, IAssetRoot, WETH } from '../config/assets';
 import { ILeverRoot, LEVERS } from '../config/levers';
-
-import logoMap from '../config/logos';
-
 import { CAULDRON, LADLE, contractMap } from '../config/contracts';
 import { useAccount, useProvider } from 'wagmi';
+
+import logoMap from '../config/logos';
 
 export interface ILeverContextState {
 
@@ -57,7 +54,6 @@ export interface ILever extends ILeverRoot {
 export interface ILeverPosition {}
 
 const LeverContext = React.createContext<any>({});
-
 const initState: ILeverContextState = {
 
   // contracts: {},
@@ -66,7 +62,6 @@ const initState: ILeverContextState = {
 
   // selectedLever: undefined,
   marketState: undefined,
-
   selectedLever: undefined,
   // selectedPosition: undefined,
 
@@ -122,6 +117,7 @@ const LeverProvider = ({ children }: any) => {
   useEffect(() => { 
     if (provider) {
       Array.from(ASSETS.values()).map(async (asset: IAssetRoot) => {
+        
         // const signer = account && signerData ? signerData : provider;
         const assetContract = contractMap.get(asset.tokenType)!.connect(asset.address, provider);
 
@@ -161,40 +157,40 @@ const LeverProvider = ({ children }: any) => {
       /* connect up relevant contracts */
       Array.from(LEVERS.values()).map(async (lever) => {
 
+        /* Attatch the lever contract */
         const leverContract = contractMap.get(lever.leverAddress).connect(lever.leverAddress, provider);
+        /* Get the base asset info */
+        const {decimals, digitFormat} = ASSETS.get(lever.baseId) as IAssetRoot;
 
         /* Connect the investToken based on investTokenType */ 
         const investTokenContract = contractMap
           .get(lever.investTokenType)!
           .connect(lever.investTokenAddress, provider);
 
-        /* get the oracle address from the cauldron  */
+        /* Get the oracle address and debt (min/max) from the cauldron  */
         const cauldron = contractMap.get(CAULDRON).connect(CAULDRON, provider);
         const [{ oracle, ratio }, debt] = await Promise.all([
           cauldron.spotOracles(lever.baseId, lever.ilkId),
           cauldron.debt(lever.baseId, lever.ilkId),
         ]);
 
-        /* instantiate a oracle contract */
+        /* Instantiate a oracle contract */
         const oracleContract = contractMap.get(TokenType.ORACLE)!.connect(oracle, provider);
-        // const sawpContract = contractFactories[ORACLE].connect(oracle, provider);
-
+        
+        /* if investTokenType is FYTOKEN , use the yield pool as the marketContract */
         let poolContract;
         let poolAddress;
-
-        /* if investTokenType is FYTOKEN , use the yield pool as the marketContract */
         if (lever.investTokenType === TokenType.FYTOKEN) {
           const Ladle = contractMap.get(LADLE).connect(LADLE, provider);
           poolAddress = await Ladle.pools(lever.seriesId);
           poolContract = contractMap.get(TokenType.YIELD_POOL)!.connect(poolAddress, provider);
         }
 
-        /* Collateralisation ratio and loan to vaule */
+        /* Collateralisation ratio and loan to value */
         const minRatio = parseFloat(ethers.utils.formatUnits(ratio, 6));
         const loanToValue = 1 / minRatio;
 
-        /* Calculates the base/fyToken unit selling price */
-        const bestRate = await poolContract.sellFYTokenPreview('1000000000000000000');
+        const bestRate = await  poolContract.sellFYTokenPreview( (10**decimals).toString() );
         const maxBaseIn = await poolContract.getBaseBalance();
 
         const maxDebt = ethers.utils.parseUnits(debt.max.toString(), debt.dec);
@@ -213,11 +209,11 @@ const LeverProvider = ({ children }: any) => {
 
           minRatio,
           loanToValue,
-          bestRate: convertToW3bNumber(bestRate, 18, 6),
+          bestRate: convertToW3bNumber(bestRate, decimals, digitFormat),
 
-          minDebt: convertToW3bNumber(minDebt, 18, 6),
-          maxDebt: convertToW3bNumber(maxDebt, 18, 6),
-          maxBase: convertToW3bNumber(maxBaseIn, 18, 6),
+          minDebt: convertToW3bNumber(minDebt, decimals, digitFormat),
+          maxDebt: convertToW3bNumber(maxDebt, decimals, digitFormat),
+          maxBase: convertToW3bNumber(maxBaseIn, decimals, digitFormat),
 
           // seriesMaturity: 
           tradeImage: logoMap.get('CURVE'),

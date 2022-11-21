@@ -12,8 +12,6 @@ import { Operation, Provider } from '../lib/types';
 /* Swap contract */
 // export const WETH_STETH_STABLESWAP = '0x828b154032950c8ff7cf8085d841723db2696056';
 
-export const STRATEGY_ORACLE = "0x3EA4618cE652eaB330F00935FD075F5Cb614e689"
-
 /**
  Reference simoutput requirements: 
   shortBorrowed: ZERO_W3N,
@@ -30,7 +28,7 @@ export const STRATEGY_ORACLE = "0x3EA4618cE652eaB330F00935FD075F5Cb614e689"
   notification: undefined,
 */
 
-export const strategySimulator: Simulator = async (
+export const notionalSimulator: Simulator = async (
   inputState: IInputContextState,
   leverState: ILeverContextState,
   marketState: IMarketContextState,
@@ -46,46 +44,34 @@ export const strategySimulator: Simulator = async (
   const selectedPosition = positionState.selectedPosition;
 
   if (input.big.gt(ZERO_BN) && provider) {
-    console.log('Fired STRATEGY LEVER....');
-
-    
-
+    console.log('Fired NOTIONAL LEVER....');
   }
 
-
   /** INVEST : 
-        Operation operation,
         bytes6 seriesId,
-        bytes6 strategyId,
-        uint256 amountToInvest,
-        uint256 borrowAmount,
-        uint256 fyTokenToBuy,
-        uint256 minCollateral
+        bytes6 ilkId,
+        uint256 baseAmount,
+        uint256 borrowAmount
   */
   output.investArgs = selectedLever
     ? [
-        Operation.BORROW,
         selectedLever.seriesId,
         selectedLever.ilkId,
-        input.big, //amount user added (eg USDC)
-        output.shortBorrowed.big, // extra borrow required
-        output.shortInvested.big, // fyToken required to buy for the borrow
-        ZERO_BN,
+        input.big,
+        output.shortBorrowed.big,
       ]
     : [];
 
   /** DIVEST :
-        Operation operation,
         bytes12 vaultId,
         bytes6 seriesId,
-        bytes6 strategyId,
+        bytes6 ilkId,
         uint256 ink,
         uint256 art,
-        uint256 minBaseOut
+        uint256 minOut
   */
   output.divestArgs = selectedPosition
     ? [
-        Operation.CLOSE,
         selectedPosition.vaultId,
         selectedPosition.seriesId,
         selectedPosition.ilkId,
