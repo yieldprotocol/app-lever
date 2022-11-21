@@ -260,7 +260,7 @@ ASSETS.set( YSUSDC6MJD, {
   digitFormat: 2,
   tokenType: TokenType.ERC20_PERMIT,
 
-  chartId: 'usd-coin'
+  chartId: ''
 })
 
 export const YSDAI6MMS = "0x333000000000"
