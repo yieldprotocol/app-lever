@@ -231,7 +231,7 @@ export const ChartWidget = (props: HighchartsReact.Props) => {
           {/* </div> */}
         </div>
       )}
-      {!pricesAvailable && <div className="text-xs text-slate-500 p-8"> Price chart not currently available. </div>}
+      {!pricesAvailable && <div className="text-xs text-slate-500 pz-8 py-12"> Price chart not currently available. </div>}
     </BorderWrap>
   );
 };

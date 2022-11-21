@@ -75,6 +75,7 @@ export const yieldStrategySimulator: Simulator = async (
     console.log( inputAsFyToken);
 
     const netInvestAmount = inputAsFyToken.big.add(toBorrow.big); // .sub(fee); // - netInvestAmount = baseAmount + borrowAmount - fee
+    
     const baseObtained = sellFYToken(
       marketState.sharesReserves,
       marketState.fyTokenReserves,
@@ -91,6 +92,7 @@ export const yieldStrategySimulator: Simulator = async (
 
   }
 
+
   /** INVEST : 
         Operation operation,
         bytes6 seriesId,
@@ -105,11 +107,9 @@ export const yieldStrategySimulator: Simulator = async (
         Operation.BORROW,
         selectedLever.seriesId,
         selectedLever.ilkId,
-        input.big, //amount user added (eg USDC)
-
+        input.big, // amount user added (eg USDC)
         output.shortBorrowed.big, // extra borrow required
         output.shortInvested.big, // fyToken required to buy for the borrow
-
         ZERO_BN,
       ]
     : [];

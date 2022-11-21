@@ -1,9 +1,9 @@
 import { ZERO_BN } from '@yield-protocol/ui-math';
 import { ethers } from 'ethers';
-import React, { useContext, useEffect, useReducer} from 'react';
+import React, { useContext, useEffect, useReducer } from 'react';
 import { ZERO_W3N } from '../constants';
 import { W3bNumber } from '../lib/types';
-import { LeverContext } from './LeverContext';
+import { ILeverContextState, LeverContext } from './LeverContext';
 
 export interface IInputContextState {
   input: W3bNumber | undefined;
@@ -69,7 +69,8 @@ const InputProvider = ({ children }: any) => {
   /* LOCAL STATE */
   const [inputState, updateState] = useReducer(inputReducer, initState);
   const [leverState] = useContext(LeverContext);
-  const { selectedLever } = leverState;
+  const { selectedLever, assets } = leverState as ILeverContextState;
+  const shortAsset = assets.get(selectedLever?.baseId!);
 
   /* NOTE: try debounceleverage when using slider - to prevent excessive calcs */
   // const [rawLeverage, setRawLeverage] = useState<number>(0);
@@ -86,7 +87,11 @@ const InputProvider = ({ children }: any) => {
 
   /* ACTIONS TO CHANGE CONTEXT */
   const inputActions = {
-    setInput: (input: number) => updateState({ type: 'SET_INPUT', payload: inputToW3bNumber(input.toString()) }),
+    setInput: (input: number) =>
+      updateState({
+        type: 'SET_INPUT',
+        payload: inputToW3bNumber(input.toString(), shortAsset?.decimals, shortAsset?.digitFormat),
+      }),
     // setLeverage: (leverage: number) => setRawLeverage(leverage),
     setLeverage: (leverage: number) =>
       updateState({ type: 'SET_LEVERAGE', payload: inputToW3bNumber(leverage.toString(), 2) }),
