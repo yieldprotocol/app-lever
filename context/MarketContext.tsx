@@ -110,6 +110,7 @@ const MarketProvider = ({ children }: any) => {
   /* Update market State when selectedLever change */
   useEffect(() => {
     selectedLever && getPoolInfo(selectedLever);
+    console.log( 'updating market ') ;
   }, [selectedLever]);
 
   /* ACTIONS TO CHANGE CONTEXT */

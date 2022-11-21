@@ -39,10 +39,8 @@ const ChartProvider = ({ children }: any) => {
 
   /* STATE from other contexts */
   const [leverState]: [ILeverContextState] = useContext(LeverContext);
-  const { assets, selectedLever } = leverState;
+  const { selectedLongAsset, selectedShortAsset } = leverState;
 
-  const shortAsset = assets.get(selectedLever?.baseId!);
-  const longAsset = assets.get(selectedLever?.ilkId!);
 
   const getPricesPerUsd = async (chartId: string) => {
     console.log('Fetching price data for : ', chartId);
@@ -60,12 +58,12 @@ const ChartProvider = ({ children }: any) => {
 
   /* calculate the price per asset based on usd */
   useEffect(() => {
-    shortAsset &&
-      longAsset &&
+    selectedShortAsset &&
+    selectedLongAsset &&
       (async () => {
         /* get the prices from eithe map or fetched */
-        const shortPerUsd = priceMap.get(shortAsset.chartId) || (await getPricesPerUsd(shortAsset.chartId));
-        const longPerUsd = priceMap.get(longAsset.chartId) || (await getPricesPerUsd(longAsset.chartId));
+        const shortPerUsd = priceMap.get(selectedShortAsset.chartId) || (await getPricesPerUsd(selectedShortAsset.chartId));
+        const longPerUsd = priceMap.get(selectedLongAsset.chartId) || (await getPricesPerUsd(selectedLongAsset.chartId));
         /* Calculate a short/long price */
         const shortLongPrice_ = longPerUsd.map((p, index) => [
           p[0],
@@ -75,7 +73,7 @@ const ChartProvider = ({ children }: any) => {
         const shortLongPrice = shortLongPrice_.filter((v) => v[0] !== undefined && v[1] !== undefined);
         updateState({ type: 'UPDATE_DATA', payload: shortLongPrice });
       })();
-  }, [longAsset, shortAsset]);
+  }, [selectedLongAsset, selectedShortAsset]);
 
   /* ACTIONS TO CHANGE CONTEXT */
   const chartActions = {
