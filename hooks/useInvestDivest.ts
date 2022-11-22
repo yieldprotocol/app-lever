@@ -3,6 +3,7 @@ import { BigNumber } from 'ethers';
 import { useContext } from 'react';
 import { toast } from 'react-toastify';
 import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
+import { InputContext } from '../context/InputContext';
 import { LeverContext } from '../context/LeverContext';
 import useApprove from './useApprove';
 
@@ -15,9 +16,14 @@ const useInvestDivest = (
 
   const [ leverState ] = useContext(LeverContext)
   const { selectedLever, assets } = leverState
-  const {  } =  selectedLever.baseId;
-  // const {} =  useApprove( )
 
+  const [inputState] = useContext(InputContext)
+  const {input} = inputState;
+
+  const shortAsset = assets.get(selectedLever?.baseId); 
+  const {} = useApprove( shortAsset, selectedLever?.leverAddress, input.big ) 
+
+  const hasApproval = false;
 
   const { config,  } = usePrepareContractWrite({
     address: selectedLever?.leverAddress,
@@ -25,7 +31,7 @@ const useInvestDivest = (
     functionName: transactType,
     args: txArgs,
     overrides,
-    enabled: enabled && !!selectedLever && txArgs.length>0,
+    enabled: enabled && !!selectedLever && txArgs.length>0 && input.dsp > 0 && hasApproval,
     cacheTime: 0,
   });
 

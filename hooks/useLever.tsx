@@ -136,9 +136,8 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
   const [pnl, setPnl] = useState<number>(0);
   const [maxLeverage, setMaxLeverage] = useState<number>(5);
 
-  const invest = useInvestDivest('invest', investArgs, !isSimulating && input?.dsp > 0 && pathname === '/lever', {
-    value: shortAsset?.id === WETH ? input?.big : undefined,
-  });
+  const value_ = shortAsset?.id === WETH ? input?.big : undefined;
+  const invest = useInvestDivest('invest', investArgs, !isSimulating && pathname === '/lever', {value: value_});
   const divest = useInvestDivest('divest', divestArgs, !isSimulating && pathname === '/positions');
 
   /* Use the simulator on each leverage/input change */
@@ -166,7 +165,7 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
 
           setInvestArgs(simulated.investArgs);
           setDivestArgs(simulated.divestArgs);
-          
+
           setIsSimulating(false);
 
           /**
@@ -218,7 +217,6 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
   }, [input, debouncedLeverage, leverState, marketState, positionState, provider]);
 
   return {
-    
     invest,
     divest,
 
