@@ -11,6 +11,7 @@ import { useProvider } from 'wagmi';
 import useInvestDivest from './useInvestDivest';
 import { Provider, W3bNumber } from '../lib/types';
 import { useRouter } from 'next/router';
+import { WETH } from '../config/assets';
 
 export type Simulator = (
   inputState: IInputContextState,
@@ -103,7 +104,7 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
   // /* If the url references a series/vault...set that one as active */
   // useEffect(() => {
   //   pathname &&  console.log(pathname.split('/')[1] ) // setPath(pathname.split('/')[1]);
-  // }, [pathname]); 
+  // }, [pathname]);
 
   // loading flags:
   const [isSimulating, setIsSimulating] = useState<boolean>(false);
@@ -135,8 +136,10 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
   const [pnl, setPnl] = useState<number>(0);
   const [maxLeverage, setMaxLeverage] = useState<number>(5);
 
-  const invest = useInvestDivest('invest', investArgs, !isSimulating && input?.dsp > 0 && pathname === '/levers', { value: input?.big }); 
-  const divest = useInvestDivest('divest', divestArgs, !isSimulating && pathname === '/positions' );
+  const invest = useInvestDivest('invest', investArgs, !isSimulating && input?.dsp > 0 && pathname === '/lever', {
+    value: shortAsset?.id === WETH ? input?.big : undefined,
+  });
+  const divest = useInvestDivest('divest', divestArgs, !isSimulating && pathname === '/positions');
 
   /* Use the simulator on each leverage/input change */
   useEffect(() => {
@@ -163,7 +166,7 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
 
           setInvestArgs(simulated.investArgs);
           setDivestArgs(simulated.divestArgs);
-
+          
           setIsSimulating(false);
 
           /**
@@ -215,6 +218,7 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
   }, [input, debouncedLeverage, leverState, marketState, positionState, provider]);
 
   return {
+    
     invest,
     divest,
 

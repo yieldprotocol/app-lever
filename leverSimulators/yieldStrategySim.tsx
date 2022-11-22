@@ -13,7 +13,7 @@ import { convertToW3bNumber } from '../lib/utils';
 /* Swap contract */
 // export const WETH_STETH_STABLESWAP = '0x828b154032950c8ff7cf8085d841723db2696056';
 
-export const STRATEGY_ORACLE = "0x3EA4618cE652eaB330F00935FD075F5Cb614e689"
+export const STRATEGY_ORACLE = '0x3EA4618cE652eaB330F00935FD075F5Cb614e689';
 
 /**
  Reference simoutput requirements: 
@@ -43,11 +43,13 @@ export const yieldStrategySimulator: Simulator = async (
 
   const input = inputState.input || ZERO_W3N;
   const leverage = inputState.leverage;
-  const selectedLever = leverState.selectedLever;
   const selectedPosition = positionState.selectedPosition;
+
+  const { selectedLever, assets } = leverState;
 
   const timeToMaturity = marketState.maturity - currentTime;
   // const yearProportion = timeToMaturity / 31536000;
+  const shortAsset = assets.get(selectedLever?.baseId!);
 
   // console.log( input.dsp, leverage.dsp )
   const inputAsFyToken_ = sellBase(
@@ -59,23 +61,25 @@ export const yieldStrategySimulator: Simulator = async (
     marketState.g1,
     marketState.decimals
   );
-  const inputAsFyToken: W3bNumber = input?.big.gt(ZERO_BN) ? convertToW3bNumber(inputAsFyToken_, 18, 6) : ZERO_W3N;
+  const inputAsFyToken: W3bNumber = input?.big.gt(ZERO_BN)
+    ? convertToW3bNumber(inputAsFyToken_, shortAsset?.decimals, shortAsset?.digitFormat)
+    : ZERO_W3N;
 
   const totalToInvest_ = inputAsFyToken.big.mul(leverage!.big).div(100);
   const totalToInvest: W3bNumber = inputAsFyToken.big.gt(ZERO_BN)
-    ? convertToW3bNumber(totalToInvest_, 18, 6)
+    ? convertToW3bNumber(totalToInvest_, shortAsset?.decimals, shortAsset?.digitFormat)
     : ZERO_W3N;
 
   const toBorrow_ = totalToInvest.big.sub(inputAsFyToken.big);
-  const toBorrow: W3bNumber = inputAsFyToken ? convertToW3bNumber(toBorrow_, 18, 6) : ZERO_W3N;
+  const toBorrow: W3bNumber = inputAsFyToken
+    ? convertToW3bNumber(toBorrow_, shortAsset?.decimals, shortAsset?.digitFormat)
+    : ZERO_W3N;
 
   if (input.big.gt(ZERO_BN) && provider) {
-    
     console.log('Fired STRATEGY LEVER....');
-    console.log( inputAsFyToken);
 
     const netInvestAmount = inputAsFyToken.big.add(toBorrow.big); // .sub(fee); // - netInvestAmount = baseAmount + borrowAmount - fee
-    
+
     const baseObtained = sellFYToken(
       marketState.sharesReserves,
       marketState.fyTokenReserves,
@@ -85,13 +89,15 @@ export const yieldStrategySimulator: Simulator = async (
       marketState.g1,
       marketState.decimals
     );
-    
+
     output.shortBorrowed = toBorrow;
-    output.shortInvested = convertToW3bNumber(baseObtained, 18, 6);
-    output.investmentFee = convertToW3bNumber(output.shortInvested.big.mul(4).div(10000), 18, 6);
-
+    output.shortInvested = convertToW3bNumber(baseObtained, shortAsset?.decimals, shortAsset?.digitFormat);
+    output.investmentFee = convertToW3bNumber(
+      output.shortInvested.big.mul(4).div(10000),
+      shortAsset?.decimals,
+      shortAsset?.digitFormat
+    );
   }
-
 
   /** INVEST : 
         Operation operation,

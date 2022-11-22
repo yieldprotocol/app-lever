@@ -203,7 +203,6 @@ export const ChartWidget = (props: HighchartsReact.Props) => {
             </TopRow>
           </div>
 
-          {/* <div className={`col-span-2 ${condensedView ? 'col-start-3' : 'col-start-1'} `}> */}
           <div
             className={` col-span-2 ${
               condensedView
@@ -225,10 +224,8 @@ export const ChartWidget = (props: HighchartsReact.Props) => {
               </div>
             )}
 
-            {/* <ArrowsPointingOutIcon className='text-size-sm' />  */}
-            {/* <button onClick={()=>setForceChart(!forceChart)}> toggle chart</button> */}
           </div>
-          {/* </div> */}
+
         </div>
       )}
       {!pricesAvailable && <div className="text-xs text-slate-500 pz-8 py-12"> Price chart not currently available. </div>}

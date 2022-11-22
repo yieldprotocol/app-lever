@@ -4,18 +4,22 @@ import { useContext } from 'react';
 import { toast } from 'react-toastify';
 import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
 import { LeverContext } from '../context/LeverContext';
+import useApprove from './useApprove';
 
 const useInvestDivest = (
   transactType: 'invest' | 'divest',
   txArgs: any[],
-  enabled: boolean = false,
+  enabled: boolean,
   overrides: { value: BigNumber } = { value: ZERO_BN },
 ) => {
 
   const [ leverState ] = useContext(LeverContext)
-  const { selectedLever } = leverState
-  
-  const { config } = usePrepareContractWrite({
+  const { selectedLever, assets } = leverState
+  const {  } =  selectedLever.baseId;
+  // const {} =  useApprove( )
+
+
+  const { config,  } = usePrepareContractWrite({
     address: selectedLever?.leverAddress,
     abi: selectedLever?.leverContract.interface as any,
     functionName: transactType,

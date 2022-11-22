@@ -22,8 +22,6 @@ const LeverWidget = (props: any) => {
   const { selectedLever, assets } = leverState as ILeverContextState;
 
   const shortAsset = assets.get(selectedLever?.baseId!);
-
-  const [{ input }] = useContext(InputContext);
   const { address: account } = useAccount();
 
   const { invest, isSimulating, maxLeverage, borrowLimitUsed, shortBorrowed }: ILeverSimulation = props.lever;
@@ -68,9 +66,9 @@ const LeverWidget = (props: any) => {
           disabled={
             !account ||
             !selectedLever ||
-            borrowLimitUsed > 100 ||
-            shortBorrowed.big.gt(selectedLever.maxBase.big) ||
-            input?.big.lt(selectedLever.minDebt.big)
+            borrowLimitUsed > 100 // ||
+            // shortBorrowed.big.gt(selectedLever.maxBase.big) ||
+            // input?.big.lt(selectedLever.minDebt.big)
           } // add in isTransacting check
           // loading={false}
           loading={isSimulating}
