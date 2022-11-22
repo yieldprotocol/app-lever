@@ -75,8 +75,8 @@ const PositionProvider = ({ children }: any) => {
         const divestedFilter_ = contract_.filters.Divested();
 
         const [investedEvents, divestedEvents] = await Promise.all([
-          contract_.queryFilter(investedFilter_, 15990171, 'latest'),
-          contract_.queryFilter(divestedFilter_, 15990171, 'latest'),
+          contract_.queryFilter(investedFilter_, 16016416, 'latest'),
+          contract_.queryFilter(divestedFilter_, 16016416, 'latest'),
         ]);
 
         await Promise.all(

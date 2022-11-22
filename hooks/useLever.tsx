@@ -99,8 +99,8 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
   const debouncedLeverage = useDebounce(leverage, 500);
   const { currentTime } = useBlockTime();
   const provider = useProvider();
-
   const { pathname } = useRouter();
+  
   // /* If the url references a series/vault...set that one as active */
   // useEffect(() => {
   //   pathname &&  console.log(pathname.split('/')[1] ) // setPath(pathname.split('/')[1]);

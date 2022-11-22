@@ -29,8 +29,6 @@ const useInvestDivest = (
     enabled && shortAsset?.id !== WETH // enable
   );
 
-  console.log(  hasApproval )
-
   const { config } = usePrepareContractWrite({
     address: selectedLever?.leverAddress,
     abi: selectedLever?.leverContract.interface as any,
