@@ -1,50 +1,60 @@
+import { TransactionReceipt } from '@ethersproject/providers';
 import { MAX_256, ZERO_BN } from '@yield-protocol/ui-math';
 import { BigNumber } from 'ethers';
 import { useContext, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useAccount, useContractRead, useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
+import { WETH } from '../config/assets';
 import { IAsset, LeverContext } from '../context/LeverContext';
 
 const useApprove = (
   asset: IAsset,
   spenderAddress: string,
-  amount: BigNumber,
-  approveType: 'approve' | 'permit' = 'approve', //default approve
-  enabled: boolean = false
-) => {
+  amountToApprove: BigNumber,
+  enabled: boolean = true,
+  approveType: 'approve' | 'permit' = 'approve', // default approve
+): { approve: any, hasApproval: boolean } => {
+ 
   // () => ERC1155__factory.connect(reqSig.target.address, signer).setApprovalForAll(spender, true)
   // () => ERC20Permit__factory.connect(reqSig.target.address, signer).approve(spender, amount as string),
   // () => ERC20__factory.connect(reqSig.target.address, signer).approve(spender, amount as string),
-
+  
   const { address: account } = useAccount();
-  const [approved, setApproved] = useState<boolean>(false);
+  const [ hasApproval, setHasApproval ] = useState<boolean>(false);
 
-  const { data: approvedAmount } = useContractRead({
+  const { data: allowance } = useContractRead({
     address: asset?.address,
     abi: asset?.assetContract.interface as any,
     functionName: 'allowance',
     args: [account, spenderAddress],
-    enabled: !!asset && !!account && !approved,
+    enabled: enabled && !!account && !!asset && amountToApprove.gt(ZERO_BN),
+    scopeKey: `allowance_${asset?.id}`,
     cacheTime: 10_000,
     onSuccess: (v: any) => console.log('Allowance checked: ', asset.symbol, v.toString()),
   });
 
-  // watch the approved Amount contract reads and update approved accordingly
+  // Watch the approved Amount contract reads and update approved accordingly
   useEffect(() => {
-    approvedAmount! && console.log('Approval > amount: ', (approvedAmount! as BigNumber).gte(amount));
-    (approvedAmount as BigNumber)?.gte(amount) ? setApproved(true) : setApproved(false);
-  }, [approvedAmount]);
+    if (allowance && amountToApprove.gt(ZERO_BN)) {
+      console.log('Allowance >= amount: ', (allowance! as BigNumber).gte(amountToApprove));
+      (allowance as BigNumber).gte(amountToApprove) ? setHasApproval(true) : setHasApproval(false);
+    }
+  }, [allowance, amountToApprove]);
+
+    // No approvals if WETH/ETH is the base asset 
+    useEffect(() => {
+      asset?.id === WETH ? setHasApproval(true): setHasApproval(false)
+    }, [asset]);
 
   const { config } = usePrepareContractWrite({
     address: asset?.address,
     abi: asset?.assetContract.interface as any,
     functionName: 'approve',
-    args: [spenderAddress, amount],
-    enabled: enabled && !!asset && !!spenderAddress && !!account && !approved,
+    args: [spenderAddress, amountToApprove],
+    enabled: !!asset && !!spenderAddress && !!account && !hasApproval,
   });
 
-  const { write, data: writeData } = useContractWrite({ ...config });
-
+  const { write: approve, data: writeData } = useContractWrite({ ...config });
   const {
     data: waitData,
     error: waitError,
@@ -59,13 +69,10 @@ const useApprove = (
   waitData && console.log('WAIT DATA RESULT: ', waitData.status);
   isError && toast.error(`Transaction Error: ${waitError?.message}`);
 
-  const notReadyFn = () => console.log('Transaction not ready');
-  const alreadyApprovedFn = async () => console.log('Already approved');
-
-  /* return either the write fn or an dummy async fn is approval has has been done */
-  const returnFn = approved ? alreadyApprovedFn : write;
-
-  return returnFn || notReadyFn;
+  // const notReadyFn = () => console.log('Transaction not ready');
+  // const alreadyApprovedFn = () => console.log('Already approved');
+  return { approve, hasApproval };
+  
 };
 
 export default useApprove;

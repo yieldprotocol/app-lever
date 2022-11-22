@@ -20,7 +20,7 @@ const LeverWidget = (props: any) => {
   /* Bring in lever context - instead of passing them as props */
   const [leverState] = useContext(LeverContext);
   const { selectedLever, assets } = leverState as ILeverContextState;
-
+  
   const shortAsset = assets.get(selectedLever?.baseId!);
   const { address: account } = useAccount();
 

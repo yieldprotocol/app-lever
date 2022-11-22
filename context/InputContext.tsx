@@ -12,7 +12,7 @@ export interface IInputContextState {
 }
 
 /* Parse the input to W3BNumber based on the selected lever and base */
-const inputToW3bNumber = (input: string, decimals: number = 18, displayDecimals?: number): W3bNumber | undefined => {
+const inputToW3bNumber = (input: string, decimals: number = 18, displayDecimals?: number): W3bNumber => {
   if (input) {
     const input_bn = input ? ethers.utils.parseUnits(input, decimals) : ZERO_BN;
     const input_hstr = ethers.utils.formatUnits(input_bn, decimals); // hStr wil be the same as dsp because it is what the user is entereing.
@@ -29,7 +29,7 @@ const inputToW3bNumber = (input: string, decimals: number = 18, displayDecimals?
       big: input_bn,
     };
   }
-  return undefined;
+  return ZERO_W3N;
 };
 
 const InputContext = React.createContext<any>({});
