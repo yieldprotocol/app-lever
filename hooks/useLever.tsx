@@ -24,14 +24,17 @@ export type Simulator = (
 
 export type SimulatorOutput = {
   /* Borrowing simulation: */
-  shortBorrowed: W3bNumber; // amount of short asset borrowed
+  investmentBorrowed: W3bNumber; // amount of short asset borrowed
+
   debtAtMaturity: W3bNumber; // debt owed at maturity
-  debtCurrent: W3bNumber; // current Value of debt (if settling now )
+  debtCurrent: W3bNumber; // current Value of debt (if settling now)
+
   flashBorrowFee: W3bNumber;
 
   /* Investment simulation: */
   shortInvested: W3bNumber; // TOTAL short-asset used for investment (input + borrow)
-  investmentPosition: W3bNumber; // long-asset obtained
+  
+  investmentLong: W3bNumber; // long-asset obtained
   investmentAtMaturity: W3bNumber; // Est. value of investment at maturity
   investmentCurrent: W3bNumber; // Current value of long asset (if unwinding now)
   investmentFee: W3bNumber;
@@ -46,11 +49,11 @@ export type SimulatorOutput = {
 
 /* TODO this is probably not the best way to initialise simulators */
 export const NULL_OUTPUT = {
-  shortBorrowed: ZERO_W3N,
+  investmentBorrowed: ZERO_W3N,
   debtAtMaturity: ZERO_W3N,
   debtCurrent: ZERO_W3N,
   shortInvested: ZERO_W3N,
-  investmentPosition: ZERO_W3N,
+  investmentLong: ZERO_W3N,
   investmentAtMaturity: ZERO_W3N,
   investmentCurrent: ZERO_W3N,
   flashBorrowFee: ZERO_W3N,
@@ -110,13 +113,13 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
   const [isSimulating, setIsSimulating] = useState<boolean>(false);
 
   // Resutls from simulation:
-  const [investmentPosition, setInvestmentPosition] = useState<W3bNumber>(ZERO_W3N);
+  const [investmentLong, setInvestmentLong] = useState<W3bNumber>(ZERO_W3N);
   const [investmentCurrent, setInvestmentCurrent] = useState<W3bNumber>(ZERO_W3N);
   const [investmentAtMaturity, setInvestmentAtMaturity] = useState<W3bNumber>(ZERO_W3N);
 
   const [debtAtMaturity, setDebtAtMaturity] = useState<W3bNumber>(ZERO_W3N);
   const [shortInvested, setShortInvested] = useState<W3bNumber>(ZERO_W3N);
-  const [shortBorrowed, setShortBorrowed] = useState<W3bNumber>(ZERO_W3N);
+  const [investmentBorrowed, setInvestmentBorrowed] = useState<W3bNumber>(ZERO_W3N);
 
   const [debtCurrent, setDebtCurrent] = useState<W3bNumber>(ZERO_W3N);
 
@@ -152,10 +155,10 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
         const simulated = await simulator(inputState, leverState, marketState, positionState, provider);
 
         if (simulated) {
-          setInvestmentPosition(simulated.investmentPosition);
+          setInvestmentLong(simulated.investmentLong);
           setInvestmentAtMaturity(simulated.investmentAtMaturity);
           setInvestmentCurrent(simulated.investmentCurrent);
-          setShortBorrowed(simulated.shortBorrowed);
+          setInvestmentBorrowed(simulated.investmentBorrowed);
           setShortInvested(simulated.shortInvested);
           setDebtAtMaturity(simulated.debtAtMaturity);
 
@@ -173,7 +176,7 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
            * */
           // alternative: Math.pow(investAtMaturity.dsp/investmentPosition.dsp, oneOverYearProp) - 1
           const investRate = calculateAPR(
-            simulated.investmentPosition.big,
+            simulated.investmentLong.big,
             simulated.investmentAtMaturity.big,
             selectedLever.maturity,
             currentTime
@@ -183,7 +186,7 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
 
           // alternative: Math.pow(debtAtMaturity.dsp/shortBorrowed.dsp, oneOverYearProp) - 1
           const borrowRate = calculateAPR(
-            simulated.shortBorrowed.big,
+            simulated.investmentBorrowed.big,
             simulated.debtAtMaturity.big,
             selectedLever.maturity,
             currentTime
@@ -207,7 +210,7 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
           setMaxLeverage(maxLeverage_);
 
           const borrowLimitUsed_ =
-            (simulated.debtAtMaturity?.dsp! / (simulated.investmentPosition?.dsp! * selectedLever?.loanToValue)) * 100;
+            (simulated.debtAtMaturity?.dsp! / (simulated.investmentLong?.dsp! * selectedLever?.loanToValue)) * 100;
           setBorrowLimitUsed(borrowLimitUsed_);
 
           const pnl_ = isNaN(netAPR - investAPR) ? 0 : netAPR - investAPR;
@@ -221,12 +224,13 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
     divest,
 
     // simulated position
-    investmentPosition,
+    investmentLong,
     investmentAtMaturity,
     investmentCurrent,
 
+    investmentBorrowed,
+
     debtAtMaturity,
-    shortBorrowed,
     shortInvested,
 
     debtCurrent,

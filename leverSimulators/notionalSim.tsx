@@ -58,7 +58,7 @@ export const notionalSimulator: Simulator = async (
         selectedLever.seriesId,
         selectedLever.ilkId,
         input.big,
-        output.shortBorrowed.big,
+        output.investmentBorrowed.big,
       ]
     : [];
 
@@ -75,8 +75,8 @@ export const notionalSimulator: Simulator = async (
         selectedPosition.vaultId,
         selectedPosition.seriesId,
         selectedPosition.ilkId,
-        selectedPosition.investment.big,
-        selectedPosition.debt.big,
+        selectedPosition.investmentLong.big,
+        selectedPosition.investmentDebt.big,
         ZERO_BN,
       ]
     : [];

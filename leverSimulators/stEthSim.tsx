@@ -106,7 +106,7 @@ export const stEthSimulator: Simulator = async (
         marketState.decimals
       );
 
-      output.shortBorrowed = toBorrow;
+      output.investmentBorrowed = toBorrow;
       output.shortInvested = convertToW3bNumber(wethObtained, 18, 6);
       output.investmentFee = convertToW3bNumber(output.shortInvested.big.mul(4).div(10000), 18, 6);
 
@@ -114,11 +114,11 @@ export const stEthSimulator: Simulator = async (
       const boughtStEth = await stableSwap.get_dy(0, 1, wethObtained); // .catch(()=>{console.log('too big'); return ZERO_BN} );
 
       // investPosition (stEth held)
-      output.investmentPosition = convertToW3bNumber(boughtStEth, 18, 6);
+      output.investmentLong = convertToW3bNumber(boughtStEth, 18, 6);
 
       /* added rewards */
       const rewards = parseFloat(investAPY || '0') * yearProportion;
-      const returns = ethers.utils.parseEther((output.investmentPosition.dsp * (1 + rewards / 100)).toString());
+      const returns = ethers.utils.parseEther((output.investmentLong.dsp * (1 + rewards / 100)).toString());
       const returnsLessFees = returns.sub(output.investmentFee.big);
 
       // const stEthPlusReturns = boughtStEth.mul(returns)
@@ -133,15 +133,15 @@ export const stEthSimulator: Simulator = async (
   }
 
   /** INVEST : bytes6 seriesId, uint256 borrowed, uint256 minWeth */
-  output.investArgs = selectedLever ? [selectedLever.seriesId, output.shortBorrowed.big, ZERO_BN] : [];
+  output.investArgs = selectedLever ? [selectedLever.seriesId, output.investmentBorrowed.big, ZERO_BN] : [];
 
   /** DIVEST : bytes12 vaultId, bytes6 seriesId, uint256 ink,uint256 art, uint256 minWeth */
   output.divestArgs = selectedPosition
     ? [
         selectedPosition.vaultId,
         selectedPosition.seriesId,
-        selectedPosition.investment.big,
-        selectedPosition.debt.big,
+        selectedPosition.ink.big,
+        selectedPosition.art.big,
         ZERO_BN,
       ]
     : [];

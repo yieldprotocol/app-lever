@@ -11,22 +11,30 @@ export interface IPositionContextState {
   positions: Map<string, IPosition>;
   selectedPosition: IPosition | undefined;
 }
+export enum PositionStatus {
+  CLOSED='Closed',
+  ACTIVE='Active'
+}
 
 export interface IPosition {
   vaultId: string;
   seriesId: string;
   ilkId: string;
 
-  investment: W3bNumber; // ink
-  debt: W3bNumber; // art
+  shortInvested: W3bNumber; // short asset invested
 
-  amountInvested: W3bNumber;
+  investmentLong: W3bNumber; // resultant long asset obtained
+  investmentBorrowed: W3bNumber; // resultant debt
+
+  ink: W3bNumber; // current collateral 
+  art: W3bNumber; // current debt
 
   investDate: Date;
   divestDate: Date | undefined;
   // lever: ILever;
 
   displayName: string;
+  status: PositionStatus;
 }
 
 const PositionContext = React.createContext<any>({});
@@ -83,31 +91,29 @@ const PositionProvider = ({ children }: any) => {
           investedEvents.map(async (x: any): Promise<any> => {
             const { vaultId, seriesId, investment, debt } = x.args;
             const { ilkId } = await cauldron.vaults(vaultId);
-
+            const { ink, art } = await cauldron.balances(vaultId);
             const tx = await x.getTransaction();
             let { args, value } = contract_.interface.parseTransaction({ data: tx.data, value: tx.value });
-
             const divestEvent = divestedEvents.find((d: any) => d.args.vaultId === vaultId);
             const divestDate = divestEvent ? divestEvent[0] : undefined;
 
-            const vaultInfo = {
+            const positionInfo = {
               vaultId,
               seriesId,
               ilkId,
-
-              investment: convertToW3bNumber(investment, 18, 6),
-              debt: convertToW3bNumber(debt, 18, 6),
-              amountInvested: convertToW3bNumber(args.amountToInvest || value, 18, 6),
-
+              investmentLong: convertToW3bNumber(investment, 18, 6),
+              investmentBorrowed: convertToW3bNumber(debt, 18, 6),
+              shortInvested: convertToW3bNumber(args.amountToInvest || value, 18, 6),
+              ink: convertToW3bNumber(ink, 18, 6),
+              art: convertToW3bNumber(art, 18, 6),
               investDate: new Date(),
               divestDate,
-
+              status: divestEvent ? PositionStatus.CLOSED: PositionStatus.ACTIVE,
               displayName: generateVaultName(vaultId),
-              // decimals: series.decimals,
-            };
+            } as IPosition;
 
-            updateState({ type: 'UPDATE_POSITION', payload: vaultInfo });
-            return vaultInfo;
+            updateState({ type: 'UPDATE_POSITION', payload: positionInfo });
+            return positionInfo;
           })
         );
       });
@@ -121,7 +127,7 @@ const PositionProvider = ({ children }: any) => {
 
   /* ACTIONS TO CHANGE CONTEXT */
   const positionActions = {
-    // updatePositions: () => (positionId: string) => updateState({ type: 'SET_SELECTED_POSITION', payload: positionId }),
+    updatePositions: () => updatePositions(),
     selectPosition: (position: any) => updateState({ type: 'SELECT_POSITION', payload: position })
   };
 

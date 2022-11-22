@@ -77,9 +77,7 @@ export const yieldStrategySimulator: Simulator = async (
 
   if (input.big.gt(ZERO_BN) && provider) {
     console.log('Fired STRATEGY LEVER....');
-
     const netInvestAmount = inputAsFyToken.big.add(toBorrow.big); // .sub(fee); // - netInvestAmount = baseAmount + borrowAmount - fee
-
     const baseObtained = sellFYToken(
       marketState.sharesReserves,
       marketState.fyTokenReserves,
@@ -90,7 +88,7 @@ export const yieldStrategySimulator: Simulator = async (
       marketState.decimals
     );
 
-    output.shortBorrowed = toBorrow;
+    output.investmentBorrowed = toBorrow;
     output.shortInvested = convertToW3bNumber(baseObtained, shortAsset?.decimals, shortAsset?.digitFormat);
     output.investmentFee = convertToW3bNumber(
       output.shortInvested.big.mul(4).div(10000),
@@ -114,7 +112,7 @@ export const yieldStrategySimulator: Simulator = async (
         selectedLever.seriesId,
         selectedLever.ilkId,
         input.big, // amount user added (eg USDC)
-        output.shortBorrowed.big, // extra borrow required
+        output.investmentBorrowed.big, // extra borrow required
         output.shortInvested.big, // fyToken required to buy for the borrow
         ZERO_BN,
       ]
@@ -135,8 +133,8 @@ export const yieldStrategySimulator: Simulator = async (
         selectedPosition.vaultId,
         selectedPosition.seriesId,
         selectedPosition.ilkId,
-        selectedPosition.investment.big,
-        selectedPosition.debt.big,
+        selectedPosition.investmentLong.big,
+        selectedPosition.investmentDebt.big,
         ZERO_BN,
       ]
     : [];

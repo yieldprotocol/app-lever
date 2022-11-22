@@ -20,10 +20,10 @@ const EstimatedPosition = (props: any) => {
     netAPR,
     borrowAPR,
     investAPR,
-    shortBorrowed,
+    investmentBorrowed,
     shortInvested,
     debtAtMaturity,
-    investmentPosition,
+    investmentLong,
     investmentCurrent,
     investmentAtMaturity,
     flashBorrowFee,
@@ -53,10 +53,10 @@ const EstimatedPosition = (props: any) => {
             <Divider />
             <InfoBlock>
               <Label>Short asset borrowed: </Label>
-              <Value>{isSimulating ? <Loader /> : `${shortBorrowed?.dsp} ${shortAsset?.displaySymbol}`}</Value>
+              <Value>{isSimulating ? <Loader /> : `${investmentBorrowed?.dsp} ${shortAsset?.displaySymbol}`}</Value>
 
               <Label>Long asset obtained: </Label>
-              <Value>{isSimulating ? <Loader /> : `${investmentPosition?.dsp} ${longAsset?.displaySymbol}`}</Value>
+              <Value>{isSimulating ? <Loader /> : `${investmentLong?.dsp} ${longAsset?.displaySymbol}`}</Value>
 
               <Label>Total fees: </Label>
               <Value>

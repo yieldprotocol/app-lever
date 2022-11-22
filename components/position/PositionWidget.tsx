@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { useAccount } from 'wagmi';
-import { PositionContext } from '../../context/PositionContext';
+import { PositionContext, PositionStatus } from '../../context/PositionContext';
 import Button from '../common/Button';
 import { BorderWrap, InfoBlock, Inner, Label, TopRow, Value } from '../styled';
 
@@ -16,9 +16,15 @@ const PositionWidget = (props: any) => {
       {selectedPosition ? (
         <>
           <TopRow>
-            <div className="text-lg"> {selectedPosition?.displayName} </div>
+            <div className="text-lg"> {selectedPosition.displayName} </div>
           </TopRow>
-          <Inner>
+
+          <TopRow>
+            <div> Status: </div>
+            <div> {selectedPosition.status} </div>
+          </TopRow>
+
+          <Inner className='pb-4'>
             <InfoBlock>
               <Label>Vault Id: </Label>
               <Value>{selectedPosition.vaultId}</Value>
@@ -30,28 +36,36 @@ const PositionWidget = (props: any) => {
               <Value>{selectedPosition.seriesId} </Value>
 
               <Label>Initial Investment: </Label>
-              <Value>{selectedPosition.amountInvested.dsp} </Value>
+              <Value>{selectedPosition.shortInvested.dsp} </Value>
 
-              <Label>Debt: </Label>
-              <Value>{selectedPosition.debt.dsp} </Value>
+              <Label>Investment Debt: </Label>
+              <Value>{selectedPosition.investmentBorrowed.dsp} </Value>
 
-              <Label>Investment: </Label>
-              <Value>{selectedPosition.investment.dsp}</Value>
+              <Label>Investment Amount: </Label>
+              <Value>{selectedPosition.investmentLong.dsp}</Value>
 
-              <Label>Return if divesting now:</Label>
+              <Label>Current Vault Debt: </Label>
+              <Value>{selectedPosition.art.dsp} </Value>
+
+              <Label>Current Vault Collateral: </Label>
+              <Value>{selectedPosition.ink.dsp}</Value>
+
+              {/* <Label>Return if divesting now:</Label>
               <Value>0 </Value>
 
               <Label>Return if divesting at maturity: </Label>
-              <Value>0</Value>
+              <Value>0</Value> */}
             </InfoBlock>
-            <Button
-              action={() => divest() }
-              disabled={!account}
-              loading={false}
-              // loading={isTransacting}
-            >
-              Divest
-            </Button>
+            {selectedPosition.status === PositionStatus.ACTIVE && (
+              <Button
+                action={() => divest()}
+                disabled={!account}
+                loading={false}
+                // loading={isTransacting}
+              >
+                Divest
+              </Button>
+            )}
           </Inner>
         </>
       ) : (
