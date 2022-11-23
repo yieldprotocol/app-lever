@@ -4,7 +4,7 @@ import { IAsset, ILever, ILeverContextState, LeverContext } from '../../context/
 import { BorderWrap, TopRow } from '../styled';
 
 import { ArrowsRightLeftIcon, HandThumbUpIcon } from '@heroicons/react/24/solid';
-import { ArrowTrendingDownIcon, ArrowTrendingUpIcon, StarIcon } from '@heroicons/react/20/solid';
+import { ArrowTrendingDownIcon, ArrowTrendingUpIcon, CheckBadgeIcon, StarIcon } from '@heroicons/react/20/solid';
 
 import {
   ExclamationTriangleIcon,
@@ -26,18 +26,21 @@ dark:hover:border-green-600
 dark:border-gray-800 
 dark:bg-gray-800 bg-gray-300 border-gray-300 dark:bg-opacity-25 bg-opacity-25`;
 
-enum AssetType { SHORT, LONG}
+enum AssetType {
+  SHORT,
+  LONG,
+}
 
 const assetOption = (asset: IAsset, recommended: boolean, assetType: AssetType) => {
-  const disabled = (assetType === AssetType.SHORT) ? !asset.isShortAsset : !asset.isLongAsset;
+  const isOption = assetType === AssetType.SHORT ? asset.isShortAsset : asset.isLongAsset;
   if (asset)
     return (
       <Listbox.Option as={Fragment} key={asset.id} value={asset}>
-          <div className={`flex flex-row gap-4 align p-2 text-white ${disabled && 'opacity-25'}`}>
-            <div className="w-6">{asset.image}</div>
-            <div>{asset.displaySymbol}</div>
-            { recommended && <StarIcon className='w-4' />  }
-          </div>
+        <div className={`flex flex-row gap-4 align p-2 text-white ${!isOption && 'opacity-25'}`}>
+          <div className="w-6">{asset.image}</div>
+          <div>{asset.displaySymbol}</div>
+          {recommended && <CheckBadgeIcon className="w-4 text-primary-900" />}
+        </div>
       </Listbox.Option>
     );
   return <div> Loading ... </div>;
@@ -47,7 +50,7 @@ const SelectedAssetStyled = ({ asset, assetType }: { asset: IAsset; assetType: A
   if (asset)
     return (
       <Listbox.Button as="div" className="p-2" key={asset.id}>
-        {assetOption(asset, false,  assetType)}
+        {assetOption(asset, false, assetType)}
       </Listbox.Button>
     );
   return <div> Loading ... </div>;
@@ -61,9 +64,7 @@ const ListOptionsStyled = ({ children }: { children: any[] }) => (
       leaveTo="opacity-0"
       className="absolute shadow-lg bg-slate-900 rounded-lg z-50"
     >
-      <Listbox.Options className="overflow-auto max-h-80 flex flex-col">
-        {children}
-      </Listbox.Options>
+      <Listbox.Options className="overflow-auto max-h-80 flex flex-col">{children}</Listbox.Options>
     </Transition>
   </BorderWrap>
 );
@@ -84,6 +85,7 @@ const LeverSelect = () => {
     }
   }, [selectedLever]);
 
+  /* get the list of possible levers, based on the selected short/long asset pair selected */
   useEffect(() => {
     const list = Array.from(levers.values());
     const filteredLevers = list.filter(
@@ -99,11 +101,22 @@ const LeverSelect = () => {
     setRequestedPair([...requestedPairs, `${selectedShortAsset?.symbol}${selectedLongAsset?.symbol}`]);
   };
 
-  const isRecommended = (asset: IAsset, assetType: AssetType) => {
+  /* fn: check if the asset is either a short or a long asset for any existing levers */
+  const isPossible = (asset: IAsset, assetType: AssetType ) => {
 
-    // selectedShortAsset.id 
-    return false;
-  } 
+
+  }
+
+  /** 
+   * fn : Find corresponding assets available from all the levers.
+   * based on the lever pairs, what are the possible (long/short) assets to choose if x is selected as the s(hort/long) asset.
+   * */
+  const isRecommended = (asset: IAsset, assetType: AssetType) => {
+    const list = Array.from(levers.values());
+    return assetType === AssetType.SHORT
+      ? !!list.find((l: ILever) => l.ilkId === selectedLongAsset?.id && l.baseId === asset.id)
+      : !!list.find((l: ILever) => l.baseId === selectedShortAsset?.id && l.ilkId === asset.id);
+  };
 
   return (
     <div className="space-y-4">
@@ -114,16 +127,15 @@ const LeverSelect = () => {
             <ArrowTrendingUpIcon className="h-4 w-4 text-slate-500" />
           </TopRow>
           <Listbox value={selectedLongAsset} onChange={(x: IAsset) => leverActions.selectLong(x)}>
-            
             <SelectedAssetStyled asset={selectedLongAsset!} assetType={AssetType.LONG} />
-            
-            <ListOptionsStyled >
+            <ListOptionsStyled>
               {assetsList
                 .filter((a: IAsset) => a.id !== selectedShortAsset?.id)
                 .filter((a: IAsset) => a.id !== selectedLongAsset?.id)
+                .sort( (a:IAsset, b:IAsset) => Number(b.isLongAsset) - Number(a.isLongAsset))
+                .sort( (a:IAsset, b:IAsset) => Number(isRecommended(b, AssetType.LONG)) - Number(isRecommended(a, AssetType.LONG)))
                 .map((a: IAsset) => assetOption(a, isRecommended(a, AssetType.LONG), AssetType.LONG))}
             </ListOptionsStyled>
-
           </Listbox>
         </Container>
 
@@ -150,6 +162,8 @@ const LeverSelect = () => {
               {assetsList
                 .filter((a: IAsset) => a.id !== selectedShortAsset?.id)
                 .filter((a: IAsset) => a.id !== selectedLongAsset?.id)
+                .sort( (a:IAsset, b:IAsset) => Number(b.isShortAsset) - Number(a.isShortAsset) )
+                .sort( (a:IAsset, b:IAsset) => Number(isRecommended(b, AssetType.SHORT)) - Number(isRecommended(a, AssetType.SHORT)))
                 .map((a: IAsset) => assetOption(a, isRecommended(a, AssetType.SHORT), AssetType.SHORT))}
             </ListOptionsStyled>
           </Listbox>
@@ -195,7 +209,6 @@ const LeverSelect = () => {
                     <StarIconOutline className="w-4 h-4" />
                   )}
                 </div>
-
               </div>
             </Container>
           )}
