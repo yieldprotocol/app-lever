@@ -226,6 +226,7 @@ ASSETS.set(yvUSDC, {
   limitToSeries: ['0x303230350000', '0x303230360000', '0x303230370000', '0x303230380000', '0x303230390000'],
   
   chartId: 'usd-coin',
+  imageId: 'YEARN'
 });
 
 ASSETS.set(UNI, {

@@ -116,7 +116,7 @@ const LeverSelect = () => {
     <div className="space-y-4">
       <div className="flex flex-row space-x-4 ">
         <Container>
-          <TopRow className="p-1 justify-start">
+          <TopRow className="p-1 gap-2 justify-start">
             <div className="flex flex-row text-xs text-slate-500 text-start ">Long</div>
             <ArrowTrendingUpIcon className="h-4 w-4 text-slate-500" />
           </TopRow>
@@ -150,7 +150,7 @@ const LeverSelect = () => {
         </div>
 
         <Container>
-          <TopRow className="p-1 justify-start ">
+          <TopRow className="p-1 gap-2 justify-start ">
             <div className="flex flex-row text-xs text-slate-500 text-start ">Short</div>
             <ArrowTrendingDownIcon className="h-4 w-4 text-slate-500" />
           </TopRow>
