@@ -36,10 +36,10 @@ const assetOption = (asset: IAsset, recommended: boolean, assetType: AssetType) 
   if (asset)
     return (
       <Listbox.Option as={Fragment} key={asset.id} value={asset}>
-        <div className={`flex flex-row gap-4 align p-2 text-white ${!isOption && 'opacity-25'}`}>
+        <div className={`flex flex-row gap-4 align p-2 text-white ${!isOption && 'opacity-50'}`}>
           <div className="w-6">{asset.image}</div>
           <div>{asset.displaySymbol}</div>
-          {recommended && <CheckBadgeIcon className="w-4 text-primary-900" />}
+          {recommended && <CheckBadgeIcon className="w-4 text-primary-500" />}
         </div>
       </Listbox.Option>
     );
