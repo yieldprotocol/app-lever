@@ -20,6 +20,7 @@ export interface IPosition {
   vaultId: string;
   seriesId: string;
   ilkId: string;
+  baseId: string;
 
   shortInvested: W3bNumber; // short asset invested
 
@@ -110,11 +111,12 @@ const PositionProvider = ({ children }: any) => {
               divestEvent ? provider.getBlock(divestEvent?.blockNumber) : undefined
             ])
             
-
             const positionInfo = {
               vaultId,
               seriesId,
               ilkId,
+              baseId: `${seriesId.substring(0, 6)}00000000`,
+
               investmentLong: convertToW3bNumber(investment, 18, 6),
               investmentBorrowed: convertToW3bNumber(debt, 18, 6),
               shortInvested: convertToW3bNumber(args.amountToInvest || value, 18, 6),

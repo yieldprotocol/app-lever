@@ -175,7 +175,11 @@ const LeverSelect = () => {
       </div>
 
       <div>
-        <div className="space-y-2">
+        {  levers.size===0 && 
+            <div> Loading ... </div>
+        }
+
+        <div className="space-y-1">
           {possibleLevers.map((l: ILever) => (
             <ClickableContainer key={l.id}>
               <div
@@ -194,7 +198,7 @@ const LeverSelect = () => {
             </ClickableContainer>
           ))}
 
-          {possibleLevers.length === 0 && (
+          {levers.size>0 && possibleLevers.length === 0 && (
             <ClickableContainer>
               <div className="grid overflow-hidden grid-cols-4 grid-rows-1 p-4">
                 <div className="col-span-1  ">
@@ -202,14 +206,13 @@ const LeverSelect = () => {
                     <ExclamationCircleIcon className="w-10" />
                   </div>
                 </div>
-
                 <div className="col-span-3 gap-2 space-y-2">
                   <div className="flex flex-row justify-end">
                     <div className="text-sm"> There are no strategies available for this pair, yet. </div>
                   </div>
                   <div className="flex flex-row justify-end ">
                     <button
-                      className="flex flex-row text-xs text-slate-500 gap-2 rounded "
+                      className="flex flex-row text-xs text-slate-500 gap-4 rounded "
                       onClick={() => handlePairRequest()}
                     >
                       Are you are interested in adding this pair?

@@ -1,12 +1,13 @@
 import { ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline';
 import { etherscanBlockExplorers, useNetwork } from 'wagmi';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 import { IPositionContextState, PositionContext, PositionStatus } from '../../context/PositionContext';
 import Button from '../common/Button';
 import { BorderWrap, InfoBlock, Inner, Label, TopRow, Value } from '../styled';
 import Link from 'next/link';
 import { abbreviateHash } from '../../utils/appUtils';
+import { IAsset, ILever, ILeverContextState, LeverContext } from '../../context/LeverContext';
 
 const TxInfo = (props: { label: string; date: Date | undefined; txHash: string | undefined }) => {
   const { chain } = useNetwork();
@@ -31,8 +32,30 @@ const TxInfo = (props: { label: string; date: Date | undefined; txHash: string |
 console.log();
 const PositionWidget = (props: any) => {
   const { address: account } = useAccount();
+
+  const [leverState] = useContext(LeverContext);
+  const { levers, assets } = leverState as ILeverContextState;
+
   const [positionState] = useContext(PositionContext);
   const { selectedPosition } = positionState as IPositionContextState;
+
+  const [associatedLever, setLever]= useState<ILever>();
+
+  const [shortAsset, setShortAsset]= useState<IAsset>();
+  const [longAsset, setLongAsset]= useState<IAsset>();
+
+  useEffect(()=> {
+    if (selectedPosition) {
+    const address =  selectedPosition.leverAddress;
+    const seriesId = selectedPosition.seriesId;
+    const leverList = Array.from(levers.values());
+    setLever(leverList.find((l: ILever) => l.leverAddress === address && l.seriesId === seriesId))
+    
+    setShortAsset( assets.get(selectedPosition.baseId )) 
+    setLongAsset( assets.get(selectedPosition.ilkId )) 
+
+    }
+  },[selectedPosition])
 
   const { divest } = props.lever;
 
@@ -41,6 +64,7 @@ const PositionWidget = (props: any) => {
       {selectedPosition ? (
         <>
           <TopRow>
+          <div className="w-8" > {associatedLever?.tradeImage} </div>
           <div className=" text-2xl"> {selectedPosition.displayName} </div>
             <div
               className={`text-xs rounded px-2 ${
@@ -60,26 +84,27 @@ const PositionWidget = (props: any) => {
               <Label>Vault Id: </Label>
               <Value> { abbreviateHash( selectedPosition.vaultId )} </Value>
 
-              <Label>Ilk Id:</Label>
-              <Value> {selectedPosition.ilkId}</Value>
+              <Label>Long Asset :</Label>
+              {/* <Value> <div><div className='w-4'> {longAsset?.image}</div>  {longAsset?.symbol} </div></Value> */}
+              <Value> {longAsset?.name}</Value>
 
               <Label>Series Id: </Label>
               <Value>{selectedPosition.seriesId} </Value>
 
               <Label>Initial Investment: </Label>
-              <Value>{selectedPosition.shortInvested.dsp} </Value>
+              <Value>{selectedPosition.shortInvested.dsp} { shortAsset?.symbol} </Value>
 
               <Label>Investment Debt: </Label>
-              <Value>{selectedPosition.investmentBorrowed.dsp} </Value>
+              <Value>{selectedPosition.investmentBorrowed.dsp} {shortAsset?.symbol} </Value>
 
               <Label>Investment Amount: </Label>
-              <Value>{selectedPosition.investmentLong.dsp}</Value>
+              <Value>{selectedPosition.investmentLong.dsp} {longAsset?.symbol}</Value>
 
               <Label>Current Vault Debt: </Label>
-              <Value>{selectedPosition.art.dsp} </Value>
+              <Value>{selectedPosition.art.dsp} { shortAsset?.symbol} </Value>
 
               <Label>Current Vault Collateral: </Label>
-              <Value>{selectedPosition.ink.dsp}</Value>
+              <Value>{selectedPosition.ink.dsp} { longAsset?.symbol} </Value>
 
               {/* <Label>Return if divesting now:</Label>
               <Value>0 </Value>
