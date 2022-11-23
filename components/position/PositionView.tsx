@@ -6,20 +6,21 @@ import Positions from './Positions';
 import PositionWidget from './PositionWidget';
 
 const PositionView = () => {
-  
   const [leverState] = useContext(LeverContext);
   const simulator = leverState.selectedLever?.leverSimulator;
-  
+
   /* lever is abstracted up here in a higher level to save a few re-renders/calcs */
   const lever = useLever(simulator);
 
   return (
-    <div className="grid overflow-hidden grid-cols-2 grid-rows-2 gap-2">
-      <div className="col-span-1">
-        <Positions />
-      </div>
-      <div className="col-span-1">
-        <PositionWidget lever={lever} />
+    <div className="flex justify-center">
+      <div className="grid max-w-[1000px] h-[1000px] w-full overflow-hidden grid-cols-2 grid-rows-1 gap-2 ">
+        <div className="col-span-1">
+          <Positions />
+        </div>
+        <div className="col-span-1">
+          <PositionWidget lever={lever} />
+        </div>
       </div>
     </div>
   );

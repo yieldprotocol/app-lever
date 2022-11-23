@@ -16,9 +16,9 @@ const LeverView = () => {
   const lever = useLever( simulator );
 
   return (
-    <>
-      <div className="grid overflow-hidden grid-cols-2 grid-rows-2 gap-4">
-        <div className="h-[710px]">
+    <div className="flex align-middle justify-center">
+      <div className="grid overflow-hidden grid-cols-2 grid-rows-2 gap-4 max-w-[1100px] ">
+        <div >
           <LeverWidget lever={lever} />
         </div>
 
@@ -29,8 +29,7 @@ const LeverView = () => {
           </div>
         </div>
       </div>
-      <TenderlyView />
-    </>
+    </div>
   );
 };
 

@@ -1,10 +1,9 @@
 import { ChevronDoubleRightIcon } from '@heroicons/react/24/solid';
 import { useContext } from 'react';
 import tw from 'tailwind-styled-components';
-import { TradePlatforms } from '../../config/levers';
 import { ILever, ILeverContextState, LeverContext } from '../../context/LeverContext';
 import { IPosition, PositionContext, PositionStatus } from '../../context/PositionContext';
-import { BorderWrap, ClearButton, Inner, TopRow } from '../styled';
+import { BorderWrap, Inner, TopRow } from '../styled';
 
 export const Container = tw.button`
 rounded-md
