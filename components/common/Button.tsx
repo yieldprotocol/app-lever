@@ -8,7 +8,6 @@ w-full
 px-4 
 py-2.5
 flex 
-gap-3 
 rounded-lg 
 items-center 
 justify-center 

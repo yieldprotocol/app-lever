@@ -15,7 +15,7 @@ const EstimatedPosition = (props: any) => {
 
   const shortAsset = assets.get(selectedLever?.baseId);
   const longAsset = assets.get(selectedLever?.ilkId);
-  
+
   const {
     netAPR,
     borrowAPR,
@@ -110,18 +110,18 @@ const EstimatedPosition = (props: any) => {
               <Value>{isSimulating ? <Loader /> : Math.round((pnl + Number.EPSILON) * 100) / 100}</Value>
 
               <Label>
-                <div className="flex flex-row gap-2 ">
-                  Investment rate{' '}
+                <div className="flex flex-row ">
+                  Investment rate
                   <div className="w-5">
                     <PlusCircleIcon />
                   </div>
-                </div>
+                </div> 
               </Label>
               <Value>{isSimulating ? <Loader /> : Math.round((investAPR + Number.EPSILON) * 100) / 100} % APR</Value>
 
               <Label>
-                <div className="flex flex-row gap-2">
-                  Borrowing rate{' '}
+                <div className="flex flex-row ">
+                  Borrowing rate
                   <div className="w-5">
                     <MinusCircleIcon />
                   </div>

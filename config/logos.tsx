@@ -14,6 +14,7 @@ import {
   USDTMark,
   WBTCMark,
   WethMark,
+  YieldMark,
 } from '../components/logos';
 
 const logoMap = new Map([
@@ -30,9 +31,10 @@ const logoMap = new Map([
   ['ENS', <ENSMark key="ens" />],
   ['UNI', <UNIMark key="uni" />],
   ['MKR', <MakerMark key="mkr" />],
-  ['Notional', <NotionalMark key="notional" />],
+  ['NOTIONAL', <NotionalMark key="notional" />],
   ['FRAX', <FRAXMark key="frax" />],
-  ['CURVE', <CRVMark key='crv' />]
-]);
+  ['CURVE', <CRVMark key='crv' />],
+  ['YIELD', <YieldMark key='yld' height='90%' />]
+]); 
 
 export default logoMap;

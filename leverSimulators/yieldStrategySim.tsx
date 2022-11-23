@@ -134,7 +134,7 @@ export const yieldStrategySimulator: Simulator = async (
         selectedPosition.seriesId,
         selectedPosition.ilkId,
         selectedPosition.investmentLong.big,
-        selectedPosition.investmentDebt.big,
+        selectedPosition.investmentBorrowed.big,
         ZERO_BN,
       ]
     : [];

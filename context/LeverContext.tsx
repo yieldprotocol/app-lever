@@ -132,9 +132,11 @@ const LeverProvider = ({ children }: any) => {
         const isShortAsset = levers.some((s: ILeverRoot) => s.baseId === asset.id);
         const isLongAsset = levers.some((s: ILeverRoot) => s.ilkId === asset.id);
 
+        const assetImage = logoMap.get(asset.imageId! || displaySymbol)
+
         const connectedAsset = {
           ...asset,
-          image: logoMap.get(displaySymbol),
+          image: assetImage,
           assetContract,
           balance,
           displaySymbol,
@@ -211,6 +213,7 @@ const LeverProvider = ({ children }: any) => {
 
           tradeImage: logoMap.get(lever.tradePlatform),
           maturityDate: new Date(lever.maturity * 1000),
+          
         } as ILever;
 
         updateState({ type: 'UPDATE_LEVERS', payload: connectedLever });

@@ -6,6 +6,7 @@ import { ILeverRoot, LEVERS } from '../config/levers';
 import { W3bNumber } from '../lib/types';
 import { convertToW3bNumber } from '../lib/utils';
 import { generateVaultName } from '../utils/appUtils';
+import { ILever } from './LeverContext';
 
 export interface IPositionContextState {
   positions: Map<string, IPosition>;
@@ -31,7 +32,8 @@ export interface IPosition {
 
   investDate: Date;
   divestDate: Date | undefined;
-  // lever: ILever;
+
+  leverAddress: string;
 
   displayName: string;
   status: PositionStatus;
@@ -110,6 +112,7 @@ const PositionProvider = ({ children }: any) => {
               divestDate,
               status: divestEvent ? PositionStatus.CLOSED: PositionStatus.ACTIVE,
               displayName: generateVaultName(vaultId),
+              leverAddress: lever.leverAddress,
             } as IPosition;
 
             updateState({ type: 'UPDATE_POSITION', payload: positionInfo });

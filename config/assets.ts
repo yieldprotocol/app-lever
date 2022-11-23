@@ -27,6 +27,7 @@ export interface IAssetRoot {
   unwrapHandlerAddresses?: Map<number, string>; // mapping a chain id to the correpsonding unwrap handler address
   proxyId?: string;
 
+  imageId?: string;
   chartId: string;
 }
 
@@ -260,7 +261,8 @@ ASSETS.set( YSUSDC6MJD, {
   digitFormat: 2,
   tokenType: TokenType.ERC20_PERMIT,
 
-  chartId: ''
+  chartId: '',
+  imageId: 'YIELD'
 })
 
 export const YSDAI6MMS = "0x333000000000"

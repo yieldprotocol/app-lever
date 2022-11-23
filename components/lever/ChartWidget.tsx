@@ -175,11 +175,11 @@ export const ChartWidget = (props: HighchartsReact.Props) => {
             <TopRow>
               <div className="flex-grow">
                 <div className="text-start py-4">
-                  <div className="flex flex-row gap-2">
+                  <div className="flex flex-row ">
                     <div className="w-6">{selectedShortAsset?.image}</div>
                     <div className="flex flex-row pl-2"> 1 {selectedShortAsset?.displaySymbol} </div>
                   </div>
-                  <div className="flex flex-row gap-2 ">
+                  <div className="flex flex-row">
                     <div className="w-8 h-8">{selectedLongAsset?.image}</div>
                     <div className="text-2xl">
                       {prices.length ? Math.round(parseFloat(prices[prices.length - 1][1]) * 1000) / 1000 : '...'}
