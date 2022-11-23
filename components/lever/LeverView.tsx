@@ -18,11 +18,11 @@ const LeverView = () => {
   return (
     <>
       <div className="grid overflow-hidden grid-cols-2 grid-rows-2 gap-4">
-        <div className="h-[720px]">
+        <div className="h-[710px]">
           <LeverWidget lever={lever} />
         </div>
 
-        <div className="h-[720px]">
+        <div className="h-[710px]">
           <ChartWidget />
           <div>
             <EstimatedPosition lever={lever} />

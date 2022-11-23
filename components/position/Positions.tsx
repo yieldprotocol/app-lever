@@ -6,7 +6,7 @@ import { ILever, ILeverContextState, LeverContext } from '../../context/LeverCon
 import { IPosition, PositionContext, PositionStatus } from '../../context/PositionContext';
 import { BorderWrap, ClearButton, Inner, TopRow } from '../styled';
 
-export const Container = tw.div`
+export const Container = tw.button`
 rounded-md
 w-full 
 hover:border

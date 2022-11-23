@@ -1,7 +1,7 @@
 import { Fragment, useContext, useEffect, useState } from 'react';
 import tw from 'tailwind-styled-components';
 import { IAsset, ILever, ILeverContextState, LeverContext } from '../../context/LeverContext';
-import { BorderWrap, TopRow } from '../styled';
+import { BorderWrap, ClickableContainer, TopRow } from '../styled';
 
 import { ArrowsRightLeftIcon } from '@heroicons/react/24/solid';
 import { ArrowTrendingDownIcon, ArrowTrendingUpIcon, CheckBadgeIcon, StarIcon } from '@heroicons/react/20/solid';
@@ -11,16 +11,6 @@ import { ExclamationCircleIcon, InformationCircleIcon, StarIcon as StarIconOutli
 import { Listbox, Transition } from '@headlessui/react';
 import { formatDate } from '../../utils/appUtils';
 import { toast } from 'react-toastify';
-
-const Container = tw.div`
-rounded-md
-w-full 
-hover:border
-border 
-hover:border-green-400 
-dark:hover:border-green-600 
-dark:border-gray-800 
-dark:bg-gray-800 bg-gray-300 border-gray-300 dark:bg-opacity-25 bg-opacity-25`;
 
 enum AssetType {
   SHORT,
@@ -32,11 +22,11 @@ const assetOption = (asset: IAsset, recommended: boolean, assetType: AssetType) 
   if (asset)
     return (
       <Listbox.Option as={Fragment} key={asset.id} value={asset}>
-        <div className={`flex flex-row space-x-4 align p-2 text-white ${!isOption && 'opacity-50'}`}>
+        <button className={`flex flex-row space-x-4 align p-2 text-white ${!isOption && 'opacity-50'}`}>
           <div className="w-6">{asset.image}</div>
           <div>{asset.displaySymbol}</div>
           {recommended && <CheckBadgeIcon className="w-4 text-primary-500" />}
-        </div>
+        </button>
       </Listbox.Option>
     );
   return <div> Loading ... </div>;
@@ -111,7 +101,7 @@ const LeverSelect = () => {
   return (
     <div className="space-y-4">
       <div className="flex flex-row space-x-4 ">
-        <Container>
+        <ClickableContainer>
           <TopRow className="p-1 gap-2 justify-start">
             <div className="flex flex-row text-xs text-slate-500 text-start ">Long</div>
             <ArrowTrendingUpIcon className="h-4 w-4 text-slate-500" />
@@ -130,10 +120,10 @@ const LeverSelect = () => {
                 .map((a: IAsset) => assetOption(a, isRecommended(a, AssetType.LONG), AssetType.LONG))}
             </ListOptionsStyled>
           </Listbox>
-        </Container>
+        </ClickableContainer>
 
         <div className="justify-center pt-6 z-20">
-          <div
+          <button
             className="bg-primary-700 rounded-full p-2 border hover:border
             hover:border-green-400  border-transparent"
             onClick={() => {
@@ -142,10 +132,10 @@ const LeverSelect = () => {
             }}
           >
             <ArrowsRightLeftIcon className="h-6 w-6 text-white" />
-          </div>
+          </button>
         </div>
 
-        <Container>
+        <ClickableContainer>
           <TopRow className="p-1 gap-2 justify-start ">
             <div className="flex flex-row text-xs text-slate-500 text-start ">Short</div>
             <ArrowTrendingDownIcon className="h-4 w-4 text-slate-500" />
@@ -164,13 +154,13 @@ const LeverSelect = () => {
                 .map((a: IAsset) => assetOption(a, isRecommended(a, AssetType.SHORT), AssetType.SHORT))}
             </ListOptionsStyled>
           </Listbox>
-        </Container>
+        </ClickableContainer>
       </div>
 
       <div>
         <div className="space-y-2">
           {possibleLevers.map((l: ILever) => (
-            <Container key={l.id}>
+            <ClickableContainer key={l.id}>
               <div
                 className={`flex flex-row p-4 justify-between ${
                   selectedLever?.id === l.id ? 'bg-primary-900 bg-opacity-25 h-14' : 'text-xs opacity-50'
@@ -184,11 +174,11 @@ const LeverSelect = () => {
                   <InformationCircleIcon className="w-6 h-6 text-gray-500" />
                 </div>
               </div>
-            </Container>
+            </ClickableContainer>
           ))}
 
           {possibleLevers.length === 0 && (
-            <Container>
+            <ClickableContainer>
               <div className="grid overflow-hidden grid-cols-4 grid-rows-1 p-4">
                 <div className="col-span-1  ">
                   <div className='flex flex-row justify-center'>
@@ -217,7 +207,7 @@ const LeverSelect = () => {
                   </div>
                 </div>
               </div>
-            </Container>
+            </ClickableContainer>
           )}
         </div>
       </div>

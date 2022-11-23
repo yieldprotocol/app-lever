@@ -36,7 +36,7 @@ const EstimatedPosition = (props: any) => {
   const [showExtra, setShowExtra] = useState<Boolean>(false);
 
   return (
-    <BorderWrap className="pb-6">
+    <BorderWrap className="pb-4">
       <TopRow>Estimated Position Information</TopRow>
       <Inner>
         <InfoBlock>

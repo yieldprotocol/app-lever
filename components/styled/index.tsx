@@ -47,5 +47,12 @@ export const Spinner = tw.div`spinner-border animate-spin inline-block w-6 h-6 b
 
 export const ClearButton = tw.button`text-sm`;
 
-
-
+export const ClickableContainer = tw.button`
+rounded-md
+w-full 
+hover:border
+border 
+hover:border-green-400 
+dark:hover:border-green-600 
+dark:border-gray-800 
+dark:bg-gray-800 bg-gray-300 border-gray-300 dark:bg-opacity-25 bg-opacity-25`;
