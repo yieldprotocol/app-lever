@@ -3,14 +3,10 @@ import tw from 'tailwind-styled-components';
 import { IAsset, ILever, ILeverContextState, LeverContext } from '../../context/LeverContext';
 import { BorderWrap, TopRow } from '../styled';
 
-import { ArrowsRightLeftIcon} from '@heroicons/react/24/solid';
+import { ArrowsRightLeftIcon } from '@heroicons/react/24/solid';
 import { ArrowTrendingDownIcon, ArrowTrendingUpIcon, CheckBadgeIcon, StarIcon } from '@heroicons/react/20/solid';
 
-import {
-  ExclamationCircleIcon,
-  InformationCircleIcon,
-  StarIcon as StarIconOutline,
-} from '@heroicons/react/24/outline';
+import { ExclamationCircleIcon, InformationCircleIcon, StarIcon as StarIconOutline } from '@heroicons/react/24/outline';
 
 import { Listbox, Transition } from '@headlessui/react';
 import { formatDate } from '../../utils/appUtils';
@@ -193,18 +189,17 @@ const LeverSelect = () => {
 
           {possibleLevers.length === 0 && (
             <Container>
-
               <div className="grid overflow-hidden grid-cols-4 grid-rows-1 p-4">
-
-                <div className="col-span-1">
-                    <ExclamationCircleIcon className="w-10" />
+                <div className="col-span-1  ">
+                  <div className='flex flex-row justify-center'>
+                  <ExclamationCircleIcon className="w-10" />
+                  </div>
                 </div>
 
                 <div className="col-span-3 gap-2 space-y-2">
                   <div className="flex flex-row justify-end">
                     <div className="text-sm"> There are no strategies available for this pair, yet. </div>
                   </div>
-
                   <div className="flex flex-row justify-end ">
                     <button
                       className="flex flex-row text-xs text-slate-500 gap-2 rounded "
@@ -222,7 +217,6 @@ const LeverSelect = () => {
                   </div>
                 </div>
               </div>
-
             </Container>
           )}
         </div>
