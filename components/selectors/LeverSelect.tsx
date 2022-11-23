@@ -17,16 +17,28 @@ enum AssetType {
   LONG,
 }
 
+export const Selectable = tw.button`
+flex 
+flex-row 
+space-x-4 
+align 
+p-2 
+text-white
+hover:opacity-100 
+border 
+border-transparent 
+rounded`;
+
 const assetOption = (asset: IAsset, recommended: boolean, assetType: AssetType) => {
   const isOption = assetType === AssetType.SHORT ? asset.isShortAsset : asset.isLongAsset;
   if (asset)
     return (
       <Listbox.Option as={Fragment} key={asset.id} value={asset}>
-        <button className={`flex flex-row space-x-4 align p-2 text-white ${!isOption && 'opacity-50'}`}>
+        <Selectable className={` ${!isOption && 'opacity-50'} hover:border hover:border-primary-500 `}>
           <div className="w-6">{asset.image}</div>
           <div>{asset.displaySymbol}</div>
           {recommended && <CheckBadgeIcon className="w-4 text-primary-500" />}
-        </button>
+        </Selectable>
       </Listbox.Option>
     );
   return <div> Loading ... </div>;
@@ -36,7 +48,12 @@ const SelectedAssetStyled = ({ asset, assetType }: { asset: IAsset; assetType: A
   if (asset)
     return (
       <Listbox.Button as="div" className="p-2" key={asset.id}>
-        {assetOption(asset, false, assetType)}
+        <Listbox.Option as={Fragment} key={asset.id} value={asset}>
+          <Selectable>
+            <div className="w-6">{asset.image}</div>
+            <div>{asset.displaySymbol}</div>
+          </Selectable>
+        </Listbox.Option>
       </Listbox.Button>
     );
   return <div> Loading ... </div>;
@@ -181,8 +198,8 @@ const LeverSelect = () => {
             <ClickableContainer>
               <div className="grid overflow-hidden grid-cols-4 grid-rows-1 p-4">
                 <div className="col-span-1  ">
-                  <div className='flex flex-row justify-center'>
-                  <ExclamationCircleIcon className="w-10" />
+                  <div className="flex flex-row justify-center">
+                    <ExclamationCircleIcon className="w-10" />
                   </div>
                 </div>
 
