@@ -3,11 +3,11 @@ import tw from 'tailwind-styled-components';
 import { IAsset, ILever, ILeverContextState, LeverContext } from '../../context/LeverContext';
 import { BorderWrap, TopRow } from '../styled';
 
-import { ArrowsRightLeftIcon, HandThumbUpIcon } from '@heroicons/react/24/solid';
+import { ArrowsRightLeftIcon} from '@heroicons/react/24/solid';
 import { ArrowTrendingDownIcon, ArrowTrendingUpIcon, CheckBadgeIcon, StarIcon } from '@heroicons/react/20/solid';
 
 import {
-  ExclamationTriangleIcon,
+  ExclamationCircleIcon,
   InformationCircleIcon,
   StarIcon as StarIconOutline,
 } from '@heroicons/react/24/outline';
@@ -174,8 +174,7 @@ const LeverSelect = () => {
       <div>
         <div className="space-y-2">
           {possibleLevers.map((l: ILever) => (
-            <Container key={l.id} >
-              
+            <Container key={l.id}>
               <div
                 className={`flex flex-row p-4 justify-between ${
                   selectedLever?.id === l.id ? 'bg-primary-900 bg-opacity-25 h-14' : 'text-xs opacity-50'
@@ -189,30 +188,41 @@ const LeverSelect = () => {
                   <InformationCircleIcon className="w-6 h-6 text-gray-500" />
                 </div>
               </div>
-
             </Container>
           ))}
 
           {possibleLevers.length === 0 && (
             <Container>
-              <div className="p-3 flex flex-row text-xs justify-between align-middle ">
-                <div className="flex flex-row ">
-                  <div className=" p-1">
-                    <ExclamationTriangleIcon className="w-4 h-4" />
-                  </div>
-                  <div className=" text-sm"> No strategies are available for this pair yet. </div>
+
+              <div className="grid overflow-hidden grid-cols-4 grid-rows-1 p-4">
+
+                <div className="col-span-1">
+                    <ExclamationCircleIcon className="w-10" />
                 </div>
 
-                <div className="text-xs p-1" onClick={() => handlePairRequest()}>
-                  {selectedShortAsset &&
-                  selectedLongAsset &&
-                  requestedPairs.includes(`${selectedShortAsset.symbol}${selectedLongAsset.symbol}`) ? (
-                    <StarIcon className="w-4 h-4" />
-                  ) : (
-                    <StarIconOutline className="w-4 h-4" />
-                  )}
+                <div className="col-span-3 gap-2 space-y-2">
+                  <div className="flex flex-row justify-end">
+                    <div className="text-sm"> There are no strategies available for this pair, yet. </div>
+                  </div>
+
+                  <div className="flex flex-row justify-end ">
+                    <button
+                      className="flex flex-row text-xs text-slate-500 gap-2 rounded "
+                      onClick={() => handlePairRequest()}
+                    >
+                      Are you are interested in adding this pair?
+                      {selectedShortAsset &&
+                      selectedLongAsset &&
+                      requestedPairs.includes(`${selectedShortAsset.symbol}${selectedLongAsset.symbol}`) ? (
+                        <StarIcon className="w-4 h-4" />
+                      ) : (
+                        <StarIconOutline className="w-4 h-4" />
+                      )}
+                    </button>
+                  </div>
                 </div>
               </div>
+
             </Container>
           )}
         </div>
