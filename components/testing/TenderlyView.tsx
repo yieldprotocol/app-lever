@@ -1,3 +1,4 @@
+import { useNetwork, useSwitchNetwork } from 'wagmi';
 import useTestFunctions from '../../hooks/useTestFunctions';
 import Button from '../common/Button';
 
@@ -6,6 +7,9 @@ const TenderlyView = () => {
   /* lever is abstracted up here in the top level to save a few re-renders/calcs */
   const { fillEther, balance, loading } = useTestFunctions();
 
+  // const { chain } = useNetwork()
+  // const { chains, error, isLoading, pendingChainId, switchNetwork } =useSwitchNetwork()
+  
   return (
     <div className="p-32 gap-2 text-white">
       <p className="text-white">Test section: </p>
