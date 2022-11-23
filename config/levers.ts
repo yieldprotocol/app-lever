@@ -42,12 +42,6 @@ const strategyLeverCommon_: ILeverCommon = {
   tradePlatform: TradePlatforms.YIELD,
 }
 
-// const notionalLeverBase_: ILeverCommon = {
-//   leverAddress : NOTIONAL_LEVER,
-//   leverSimulator: stEthSimulator,
-//   tradePlatform: TradePlatforms.NOTIONAL,
-// }
-
 export const LEVERS = new Map<string, ILeverRoot>();
 
 LEVERS.set('STETH_01', {

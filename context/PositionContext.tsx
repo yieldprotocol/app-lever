@@ -1,4 +1,4 @@
-import { BigNumber } from 'ethers';
+import { BigNumber, Contract, Event } from 'ethers';
 import React, { useEffect, useReducer } from 'react';
 import { useAccount, useProvider } from 'wagmi';
 import { CAULDRON, contractMap } from '../config/contracts';
@@ -6,7 +6,6 @@ import { ILeverRoot, LEVERS } from '../config/levers';
 import { W3bNumber } from '../lib/types';
 import { convertToW3bNumber } from '../lib/utils';
 import { generateVaultName } from '../utils/appUtils';
-import { ILever } from './LeverContext';
 
 export interface IPositionContextState {
   positions: Map<string, IPosition>;
@@ -30,8 +29,11 @@ export interface IPosition {
   ink: W3bNumber; // current collateral 
   art: W3bNumber; // current debt
 
-  investDate: Date;
-  divestDate: Date | undefined;
+  investTxDate: Date;
+  divestTxDate: Date | undefined;
+
+  investTxHash: string;
+  divestTxHash: string | undefined;
 
   leverAddress: string;
 
@@ -80,7 +82,7 @@ const PositionProvider = ({ children }: any) => {
 
     if (account) {
       uniqueLevers.map(async (lever: ILeverRoot) => {
-        const contract_ = contractMap.get(lever.leverAddress).connect(lever.leverAddress, provider);
+        const contract_ = contractMap.get(lever.leverAddress).connect(lever.leverAddress, provider) as Contract;
         const investedFilter_ = contract_.filters.Invested(null, null, account, null, null);
         const divestedFilter_ = contract_.filters.Divested();
 
@@ -90,14 +92,24 @@ const PositionProvider = ({ children }: any) => {
         ]);
 
         await Promise.all(
-          investedEvents.map(async (x: any): Promise<any> => {
-            const { vaultId, seriesId, investment, debt } = x.args;
+          investedEvents.map( async (invEvnt: Event ): Promise<any> => {
+            const { vaultId, seriesId, investment, debt } = invEvnt.args as any;
             const { ilkId } = await cauldron.vaults(vaultId);
             const { ink, art } = await cauldron.balances(vaultId);
-            const tx = await x.getTransaction();
+            const tx = await invEvnt.getTransaction();
             let { args, value } = contract_.interface.parseTransaction({ data: tx.data, value: tx.value });
-            const divestEvent = divestedEvents.find((d: any) => d.args.vaultId === vaultId);
-            const divestDate = divestEvent ? divestEvent[0] : undefined;
+            
+            const investTxHash = invEvnt.transactionHash;
+
+            const divestEvent = divestedEvents.find((d: Event) => d?.args?.vaultId === vaultId);
+            const divestTxHash = divestEvent?.transactionHash;
+
+            /* get dates */
+            const [investTxBlock, divestTxBlock ]  = await Promise.all( [
+              provider.getBlock(invEvnt.blockNumber),
+              divestEvent ? provider.getBlock(divestEvent?.blockNumber) : undefined
+            ])
+            
 
             const positionInfo = {
               vaultId,
@@ -108,11 +120,17 @@ const PositionProvider = ({ children }: any) => {
               shortInvested: convertToW3bNumber(args.amountToInvest || value, 18, 6),
               ink: convertToW3bNumber(ink, 18, 6),
               art: convertToW3bNumber(art, 18, 6),
-              investDate: new Date(),
-              divestDate,
+
               status: divestEvent ? PositionStatus.CLOSED: PositionStatus.ACTIVE,
               displayName: generateVaultName(vaultId),
               leverAddress: lever.leverAddress,
+
+              investTxHash,
+              divestTxHash,
+
+              investTxDate: new Date(investTxBlock.timestamp*1000),
+              divestTxDate: divestTxBlock ? new Date(divestTxBlock?.timestamp*1000): undefined,
+
             } as IPosition;
 
             updateState({ type: 'UPDATE_POSITION', payload: positionInfo });
