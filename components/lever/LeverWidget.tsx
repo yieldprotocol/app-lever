@@ -20,14 +20,16 @@ const LeverWidget = (props: any) => {
   /* Bring in lever context - instead of passing them as props */
   const [leverState] = useContext(LeverContext);
   const { selectedLever, assets } = leverState as ILeverContextState;
+ /* bring in input actions */
+  const [,inputActions] = useContext(InputContext);
   
   const shortAsset = assets.get(selectedLever?.baseId!);
   const { address: account } = useAccount();
 
-  const { invest, isSimulating, maxLeverage, borrowLimitUsed, shortBorrowed }: ILeverSimulation = props.lever;
+  const { invest, isSimulating, maxLeverage, borrowLimitUsed}: ILeverSimulation = props.lever;
 
   return (
-    <BorderWrap className="h-full">
+    <BorderWrap className="h-full pb-4">
       <TopRow>
         <div className="text-lg"> Open a Position: </div>
         <ClearButton onClick={() => console.log('actually, this might not do anything? settings?')}>
@@ -45,7 +47,7 @@ const LeverWidget = (props: any) => {
             <div className="flex flex-row justify-between">
               Principle investment
               {selectedLever && shortAsset && (
-                <div className="text-xs text-slate-500">
+                <div className="text-xs text-slate-500" onClick={()=> inputActions.setInput(selectedLever.minDebt.dsp) }>
                   Min: {selectedLever.minDebt.dsp} {shortAsset.displaySymbol}{' '}
                 </div>
               )}

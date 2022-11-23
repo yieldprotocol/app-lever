@@ -6,15 +6,17 @@ import { IPositionContextState, PositionContext, PositionStatus } from '../../co
 import Button from '../common/Button';
 import { BorderWrap, InfoBlock, Inner, Label, TopRow, Value } from '../styled';
 import Link from 'next/link';
+import { abbreviateHash } from '../../utils/appUtils';
 
 const TxInfo = (props: { label: string; date: Date | undefined; txHash: string | undefined }) => {
   const { chain } = useNetwork();
   const {url:baseUrl} = (chain?.id === 1) ? etherscanBlockExplorers.mainnet : etherscanBlockExplorers.arbitrum;
   const url = `${baseUrl}/tx/${props.txHash}`;
   return (
-    <TopRow>
+    <TopRow className="px-4 py-2" >
       <div className={`text-sm`}> {props.label} </div>
       <div className="flex flex-row gap-4">
+        <div className={`text-sm`}> {abbreviateHash(props.txHash!) } </div>
         <div className={`text-sm`}> {props.date?.toDateString()} </div>
         <Link href={url} rel="noopener noreferrer" target="_blank">
           <div className="w-4">
@@ -39,7 +41,7 @@ const PositionWidget = (props: any) => {
       {selectedPosition ? (
         <>
           <TopRow>
-            <div className="text-lg"> {selectedPosition.displayName} </div>
+          <div className=" text-2xl"> {selectedPosition.displayName} </div>
             <div
               className={`text-xs rounded px-2 ${
                 selectedPosition.status === PositionStatus.ACTIVE ? 'bg-emerald-500 ' : 'bg-red-500'
@@ -48,15 +50,15 @@ const PositionWidget = (props: any) => {
               {selectedPosition.status}
             </div>
           </TopRow>
-          <TxInfo label="Invest Date " date={selectedPosition.investTxDate} txHash={selectedPosition.investTxHash} />
+          <TxInfo label="Invest Transaction " date={selectedPosition.investTxDate} txHash={selectedPosition.investTxHash} />
 
           {selectedPosition.divestTxDate && (
-            <TxInfo label="Divest Date " date={selectedPosition.divestTxDate} txHash={selectedPosition.divestTxHash} />
+            <TxInfo label="Divest Transaction " date={selectedPosition.divestTxDate} txHash={selectedPosition.divestTxHash} />
           )}
           <Inner className="pb-4">
             <InfoBlock>
               <Label>Vault Id: </Label>
-              <Value>{selectedPosition.vaultId}</Value>
+              <Value> { abbreviateHash( selectedPosition.vaultId )} </Value>
 
               <Label>Ilk Id:</Label>
               <Value> {selectedPosition.ilkId}</Value>

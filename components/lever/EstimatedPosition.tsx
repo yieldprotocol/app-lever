@@ -36,7 +36,7 @@ const EstimatedPosition = (props: any) => {
   const [showExtra, setShowExtra] = useState<Boolean>(false);
 
   return (
-    <BorderWrap className="pb-2">
+    <BorderWrap className="pb-6">
       <TopRow>Estimated Position Information</TopRow>
       <Inner>
         <InfoBlock>
@@ -107,10 +107,10 @@ const EstimatedPosition = (props: any) => {
               <Value> {isSimulating ? <Loader /> : Math.round((borrowLimitUsed + Number.EPSILON) * 100) / 100} %</Value>
 
               <Label>PnL</Label>
-              <Value>{isSimulating ? <Loader /> : Math.round((pnl + Number.EPSILON) * 100) / 100}</Value>
+              <Value>{isSimulating ? <Loader /> : Math.round((pnl + Number.EPSILON) * 100) / 100} %</Value>
 
               <Label>
-                <div className="flex flex-row ">
+                <div className="flex flex-row gap-2 ">
                   Investment rate
                   <div className="w-5">
                     <PlusCircleIcon />
@@ -120,7 +120,7 @@ const EstimatedPosition = (props: any) => {
               <Value>{isSimulating ? <Loader /> : Math.round((investAPR + Number.EPSILON) * 100) / 100} % APR</Value>
 
               <Label>
-                <div className="flex flex-row ">
+                <div className="flex flex-row gap-2 ">
                   Borrowing rate
                   <div className="w-5">
                     <MinusCircleIcon />

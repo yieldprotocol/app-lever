@@ -173,13 +173,13 @@ export const ChartWidget = (props: HighchartsReact.Props) => {
         <div className={`grid overflow-hidden ${condensedView ? 'grid-rows-1 gap-0' : 'grid-cols-2 gap-2'} `}>
           <div className={`col-span-2`}>
             <TopRow>
-              <div className="flex-grow">
+              <div className="flex-grow ">
                 <div className="text-start py-4">
-                  <div className="flex flex-row ">
+                  <div className="flex flex-row">
                     <div className="w-6">{selectedShortAsset?.image}</div>
                     <div className="flex flex-row pl-2"> 1 {selectedShortAsset?.displaySymbol} </div>
                   </div>
-                  <div className="flex flex-row">
+                  <div className="flex flex-row gap-2">
                     <div className="w-8 h-8">{selectedLongAsset?.image}</div>
                     <div className="text-2xl">
                       {prices.length ? Math.round(parseFloat(prices[prices.length - 1][1]) * 1000) / 1000 : '...'}
@@ -192,7 +192,6 @@ export const ChartWidget = (props: HighchartsReact.Props) => {
                   <div className="flex flex-row justify-between">
                     <div className="text-xs text-slate-500"> x% vs yesterday </div>
                     <div className="flex flex-row gap-2">
-                      {/* <Button onClick={() => handleRangeChange(86400)}> 1d </Button> */}
                       <Button onClick={() => handleRangeChange(604800)}> 1w </Button>
                       <Button onClick={() => handleRangeChange(2628288)}> 1m </Button>
                       <Button onClick={() => handleRangeChange(7890000)}> 3m </Button>

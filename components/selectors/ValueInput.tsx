@@ -39,6 +39,7 @@ export const ValueInput = () => {
       </Inner>
 
       <div className="grow min-w-fit text-left ">
+        
         <div className="px-1">{shortAsset?.displaySymbol}</div>
         {inputState?.input?.hStr !== shortAsset?.balance.hStr && shortAsset?.balance.big.gt(ZERO_BN) && (
           <Button onClick={() => inputActions.setInput(shortAsset?.balance.hStr)}>
