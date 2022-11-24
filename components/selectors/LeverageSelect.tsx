@@ -1,8 +1,8 @@
-import { useContext } from 'react';
+import { ReactNode, useContext } from 'react';
 import tw from 'tailwind-styled-components';
 import { InputContext } from '../../context/InputContext';
 import { Range } from 'react-range';
-import { PauseIcon } from '@heroicons/react/24/solid';
+import { EllipsisVerticalIcon, PauseIcon } from '@heroicons/react/24/solid';
 
 type DivProps = {
   $unFocused?: boolean;
@@ -10,7 +10,7 @@ type DivProps = {
 const Container = tw.div<DivProps>`${(p) =>
   p.$unFocused
     ? 'opacity-60'
-    : ''}  flex rounded-md justify-between p-1 w-full gap-5 align-middle hover:border border hover:border-green-400 dark:hover:border-green-600 dark:border-gray-800 dark:bg-gray-800 bg-gray-300 border-gray-300 dark:bg-opacity-25 bg-opacity-25`;
+    : ''}  flex rounded-md justify-between p-1 w-full gap-5 align-middle hover:border border hover:border-primary-400 dark:hover:border-primary-600 dark:border-gray-800 dark:bg-gray-800 bg-gray-300 border-gray-300 dark:bg-opacity-25 bg-opacity-25`;
 
 const Input = tw.input<any>`
 h-full 
@@ -31,18 +31,41 @@ caret-gray-800
    rounded-lg
 `;
 
-const getColor = (val: number, max: number) => {
+const ThumbStyled = tw.div<any>`
+  bg-primary-600
+  bg-primary-600 
+  p-2
+ rounded-full
+ border 
+ hover:border
+  hover:border-primary-400  border-transparent
+`;
+
+const TrackStyled = tw.div<any>`
+ ${ (props) => getBackgroundColor(props.leverage, props.max)  }
+ h-[10px]
+ rounded-full 
+`;
+
+const getBackgroundColor = (val: number, max: number) => {
   const percent = (val / max) * 100;
+
+  console.log( percent )
   if (max) {
-    if (percent < 33) return '#00000025';
-    if (percent < 50) return '#006B3D';
-    if (percent < 75) return '#FF980E';
-    return '#D3212C';
+    if (percent < 33) return 'bg-slate-800';
+    if (percent < 50) return 'bg-emerald-600';
+    if (percent < 75) return 'bg-orange-600';
+    return 'bg-red-600';
   }
-  return '#00000025';
+  return 'bg-slate-800'
 };
 
-const LeverageSelect = ({ max }: { max:number}) => {
+const Track = ({props, children }: {
+  props: any;
+  children: ReactNode;
+}) => <TrackStyled leverage={props.leverage} max={props.max} >{children}</TrackStyled>;
+
+const LeverageSelect = ({ max }: { max: number }) => {
   const [inputState, inputActions] = useContext(InputContext);
   return (
     <Container className=" align-middle">
@@ -61,55 +84,32 @@ const LeverageSelect = ({ max }: { max:number}) => {
 
       <div className="w-full p-4">
         <div className="p-2">
-        <Range
-          step={0.1}
-          min={1.1}
-          max={max || 5}
-          values={[inputState.leverage?.dsp || '']}
-          onChange={(value) => inputActions.setLeverage(value)}
-          renderTrack={({ props, children }) => (
-            <div
-              {...props}
-              style={{
-                ...props.style,
-                height: '10px',
-                width: '100%',
-                backgroundColor: getColor(inputState.leverage?.dsp, max),
-                borderRadius: '8px',
-              }}
-            >
-              {children}
-            </div>
-          )}
-          renderMark={({ props }) => (
-            <div
-              {...props}
-              style={{
-                ...props.style,
-                height: '2px',
-                width: '2px',
-                backgroundColor: 'teal',
-              }}
-            />
-          )}
-          renderThumb={({ props }) => (
-            <div
-              {...props}
-              style={{
-                ...props.style,
-                height: '44px',
-                width: '44px',
-                backgroundColor: 'teal', //getColor(inputState.leverage?.dsp, max),
-                borderRadius: '100%',
-                // border: '1px solid grey',
-              }}
-            >
-              <div className="pt-3.5 flex flex-row justify-center">
-                <PauseIcon  className="h-4 w-4 text-gray-200" />
-              </div>
-            </div>
-          )}
-        />
+          <Range
+            step={0.1}
+            min={1.1}
+            max={max || 5}
+            values={[inputState.leverage?.dsp || '']}
+            onChange={(value) => inputActions.setLeverage(value)}
+            renderTrack={({ props, children }) => (
+                <TrackStyled {...props} leverage={inputState.leverage?.dsp} max={max} >{children}</TrackStyled>  
+            )}
+            renderMark={({ props }) => (
+              <div
+                {...props}
+                style={{
+                  ...props.style,
+                  height: '2px',
+                  width: '2px',
+                  backgroundColor: 'bg-grey-600',
+                }}
+              />
+            )}
+            renderThumb={({ props }) => (
+                <ThumbStyled {...props}>
+                  <EllipsisVerticalIcon className="h-6 w-6 text-gray-200" />
+                </ThumbStyled>
+            )}
+          />
         </div>
       </div>
     </Container>

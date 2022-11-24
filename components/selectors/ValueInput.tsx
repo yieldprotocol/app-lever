@@ -11,8 +11,8 @@ type DivProps = {
 const Container = tw.div<DivProps>`${(p) =>
   p.$unFocused
     ? 'opacity-60'
-    : ''}  flex rounded-md justify-between p-1 w-full gap-5 align-middle hover:border border hover:border-green-400 dark:hover:border-green-600 dark:border-gray-800 dark:bg-gray-800 bg-gray-300 border-gray-300 dark:bg-opacity-25 bg-opacity-25`;
-const Input = tw.input<any>` rounded-lg h-full text-2xl appearance-none w-full dark:bg-black dark:bg-opacity-0 bg-opacity-0 dark:focus:text-gray-50 focus:text-gray-800 dark:text-gray-300 text-gray-800 py-1 px-2 leading-tight focus:outline-none `;
+    : ''}  flex rounded-md justify-between p-1 w-full gap-5 align-middle hover:border border hover:border-primary-400 dark:hover:border-primary-600 dark:border-gray-800 dark:bg-gray-800 bg-gray-300 border-gray-300 dark:bg-opacity-25 bg-opacity-25`;
+const Input = tw.input<any>`rounded-lg h-full text-2xl appearance-none w-full dark:bg-black dark:bg-opacity-0 bg-opacity-0 dark:focus:text-gray-50 focus:text-gray-800 dark:text-gray-300 text-gray-800 py-1 px-2 leading-tight focus:outline-none `;
 const Inner = tw.div`flex flex-grow text-right text-lg align-middle items-center`;
 const Button = tw.button`float-right flex items-center gap-1 my-[1px] text-xs mr-2 dark:text-gray-300 text-gray-700 hover:text-gray-600 dark:hover:text-gray-400`;
 

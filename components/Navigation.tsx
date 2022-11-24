@@ -22,8 +22,8 @@ const InnerContainer = tw.div`flex py-4 px-10 align-middle relative items-center
 const LinksWrap = tw.div`flex space-x-8`;
 const LinkItem = tw.div<LinkItemProps>`${(p) =>
   p.$current
-    ? 'text-primary-500'
-    : 'dark:text-gray-100 text-gray-800'} hover:text-primary-500 dark:hover:text-primary-400`;
+    ? 'text-primary-600'
+    : 'dark:text-gray-100 text-gray-800'} hover:text-primary-400 dark:hover:text-primary-600`;
 
 const Navigation = () => {
   const router = useRouter();

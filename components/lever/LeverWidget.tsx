@@ -31,9 +31,9 @@ const LeverWidget = (props: any) => {
   return (
     <BorderWrap className="h-full pb-4">
       <TopRow>
-        <div className="text-lg"> Open a Position: </div>
+        <div className="text-lg"> New Position </div>
         <ClearButton onClick={() => console.log('actually, this might not do anything? settings?')}>
-          <CogIcon className="h-6 w-6 text-primary-700" />
+          <CogIcon className="h-6 w-6 text-primary-600" />
         </ClearButton>
       </TopRow>
       <Inner>
@@ -57,7 +57,7 @@ const LeverWidget = (props: any) => {
         </Section>
 
         <Section className={ selectedLever ? 'opacity-100' : 'opacity-25'}>
-          <SectionHead> Leverage:</SectionHead>
+          <SectionHead> Leverage </SectionHead>
           <LeverageSelect max={maxLeverage} />
         </Section>
       </Inner>

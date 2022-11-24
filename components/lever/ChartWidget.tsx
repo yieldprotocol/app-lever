@@ -14,7 +14,7 @@ dark:text-gray-50
 dark:bg-opacity-25 
 `;
 
-const Button = tw.button`text-xs bg-primary-800 w-5 dark:text-gray-50 text-gray-50 rounded hover:opacity-80`;
+const Button = tw.button`text-xs bg-primary-600 w-5 dark:text-gray-50 text-gray-50 rounded hover:opacity-80`;
 
 export const ChartWidget = (props: HighchartsReact.Props) => {
   const chartComponentRef = useRef<HighchartsReact.RefObject>(null);

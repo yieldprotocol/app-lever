@@ -20,7 +20,7 @@ const Toggle: FC<IToggle> = ({ enabled, setEnabled, label }) => (
         <span
           className={`${
             enabled ? 'translate-x-6' : 'translate-x-1'
-          } inline-block w-4 h-4 transform bg-primary-400 rounded-full ease-in-out duration-200`}
+          } inline-block w-4 h-4 transform bg-primary-600 rounded-full ease-in-out duration-200`}
         />
       </Switch>
       <Switch.Label className="text-sm hover:cursor-pointer">{label}</Switch.Label>

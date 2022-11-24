@@ -11,7 +11,7 @@ flex
 rounded-lg 
 items-center 
 justify-center 
-bg-teal-900
+bg-primary-600
 ${(p) => (p.disabled 
   ? " bg-opacity-25 dark:text-gray-500 " 
   : "bg-opacity-100 hover:opacity-80 dark:text-gray-50"

@@ -34,10 +34,10 @@ const assetOption = (asset: IAsset, recommended: boolean, assetType: AssetType) 
   if (asset)
     return (
       <Listbox.Option as={Fragment} key={asset.id} value={asset}>
-        <Selectable className={` ${!isOption && 'opacity-50'} hover:border hover:border-primary-500 `}>
+        <Selectable className={` ${!isOption && 'opacity-50'} hover:border hover:border-primary-600 `}>
           <div className="w-6">{asset.image}</div>
           <div>{asset.displaySymbol}</div>
-          {recommended && <CheckBadgeIcon className="w-4 text-primary-500" />}
+          {recommended && <CheckBadgeIcon className="w-4 text-emerald-600" />}
         </Selectable>
       </Listbox.Option>
     );
@@ -141,8 +141,8 @@ const LeverSelect = () => {
 
         <div className="justify-center pt-6 z-20">
           <button
-            className="bg-primary-700 rounded-full p-2 border hover:border
-            hover:border-green-400  border-transparent"
+            className="bg-primary-600 rounded-full p-2 border hover:border
+            hover:border-primary-400  border-transparent"
             onClick={() => {
               leverActions.selectLong(selectedShortAsset);
               leverActions.selectShort(selectedLongAsset);
@@ -161,7 +161,7 @@ const LeverSelect = () => {
             <SelectedAssetStyled asset={selectedShortAsset!} assetType={AssetType.SHORT} />
             <ListOptionsStyled>
               {assetsList
-                .filter((a: IAsset) => a.isShortAsset )
+                .filter((a: IAsset) => a.isShortAsset)
                 .sort((a: IAsset, b: IAsset) => Number(b.isShortAsset) - Number(a.isShortAsset))
                 .sort(
                   (a: IAsset, b: IAsset) =>
@@ -174,16 +174,15 @@ const LeverSelect = () => {
       </div>
 
       <div>
-        {  levers.size===0 && 
-            <div> Loading ... </div>
-        }
+
+        {levers.size === 0 && <div> Loading ... </div>}
 
         <div className="space-y-1">
           {possibleLevers.map((l: ILever) => (
             <ClickableContainer key={l.id}>
               <div
-                className={`flex flex-row p-4 justify-between ${
-                  selectedLever?.id === l.id ? 'bg-primary-900 bg-opacity-25 h-14' : 'text-xs opacity-50'
+                className={`flex flex-row p-4 justify-between rounded ${
+                  selectedLever?.id === l.id ? 'bg-primary-600 bg-opacity-25 h-14' : 'text-xs opacity-50'
                 }`}
                 onClick={() => leverActions.selectLever(l)}
               >
@@ -197,7 +196,7 @@ const LeverSelect = () => {
             </ClickableContainer>
           ))}
 
-          {levers.size>0 && possibleLevers.length === 0 && (
+          {levers.size > 0 && possibleLevers.length === 0 && (
             <ClickableContainer>
               <div className="grid overflow-hidden grid-cols-4 grid-rows-1 p-4">
                 <div className="col-span-1  ">

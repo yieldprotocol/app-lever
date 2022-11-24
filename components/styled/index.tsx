@@ -52,7 +52,7 @@ rounded-md
 w-full 
 hover:border
 border 
-hover:border-green-400 
-dark:hover:border-green-600 
+hover:border-primaryn-400 
+dark:hover:border-primary-600 
 dark:border-gray-800 
 dark:bg-gray-800 bg-gray-300 border-gray-300 dark:bg-opacity-25 bg-opacity-25`;

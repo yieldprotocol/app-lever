@@ -130,7 +130,7 @@ const EstimatedPosition = (props: any) => {
               <Value>{isSimulating ? <Loader /> : Math.round((borrowAPR + Number.EPSILON) * 100) / 100} % APR</Value>
 
               <Label>Net rate</Label>
-              <Value className={netAPR < 0 ? 'text-red-500 dark:text-red-500' : 'text-green-600 dark:text-green-600 '}>
+              <Value className={netAPR < 0 ? 'text-red-400 dark:text-red-400' : 'text-emerald-600 dark:text-emerald-600 '}>
                 {isSimulating ? <Loader /> : Math.round((netAPR + Number.EPSILON) * 100) / 100} % APR
               </Value>
             </InfoBlock>
