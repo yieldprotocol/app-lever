@@ -40,7 +40,7 @@ const EstimatedPosition = (props: any) => {
       <TopRow>Estimated Position Information</TopRow>
       <Inner>
         <InfoBlock>
-          <Label>Principle Investment:</Label>
+          <Label>Principal Investment:</Label>
           <Value>
             {input?.dsp} {shortAsset?.displaySymbol}
           </Value>

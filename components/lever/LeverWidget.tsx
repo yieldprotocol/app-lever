@@ -45,7 +45,7 @@ const LeverWidget = (props: any) => {
         <Section className={ selectedLever ? 'opacity-100' : 'opacity-25'} >
           <SectionHead>
             <div className="flex flex-row justify-between">
-              Principle investment
+              Principal investment
               {selectedLever && shortAsset && (
                 <div className="text-xs text-slate-500" onClick={()=> inputActions.setInput(selectedLever.minDebt.dsp) }>
                   Min: {selectedLever.minDebt.dsp} {shortAsset.displaySymbol}{' '}
