@@ -49,8 +49,6 @@ const TrackStyled = tw.div<any>`
 
 const getBackgroundColor = (val: number, max: number) => {
   const percent = (val / max) * 100;
-
-  console.log( percent )
   if (max) {
     if (percent < 33) return 'bg-slate-800';
     if (percent < 50) return 'bg-emerald-600';
