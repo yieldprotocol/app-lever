@@ -161,8 +161,7 @@ const LeverSelect = () => {
             <SelectedAssetStyled asset={selectedShortAsset!} assetType={AssetType.SHORT} />
             <ListOptionsStyled>
               {assetsList
-                .filter((a: IAsset) => a.id !== selectedShortAsset?.id)
-                .filter((a: IAsset) => a.id !== selectedLongAsset?.id)
+                .filter((a: IAsset) => a.isShortAsset )
                 .sort((a: IAsset, b: IAsset) => Number(b.isShortAsset) - Number(a.isShortAsset))
                 .sort(
                   (a: IAsset, b: IAsset) =>

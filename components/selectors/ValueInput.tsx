@@ -30,8 +30,12 @@ export const ValueInput = () => {
         <Input
           name="invest_amount"
           type="number"
+          inputMode="decimal"
           value={inputState.input?.dsp || ''}
           onChange={(el: ChangeEvent<HTMLInputElement>) => inputActions.setInput(el.target.value)}
+          onWheelCapture={(e: ChangeEvent<HTMLInputElement>)  => {
+            e.currentTarget.blur()
+          }}
           // onFocus={() => setFocus(true)}
           // onBlur={() => setFocus(false)}
           disabled = { !selectedLever }
