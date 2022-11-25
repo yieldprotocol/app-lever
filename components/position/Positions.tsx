@@ -3,6 +3,7 @@ import { useContext } from 'react';
 import tw from 'tailwind-styled-components';
 import { ILever, ILeverContextState, LeverContext } from '../../context/LeverContext';
 import { IPosition, PositionContext, PositionStatus } from '../../context/PositionContext';
+import StackLogos from '../common/StackLogos';
 import { BorderWrap, Inner, TopRow } from '../styled';
 
 export const Container = tw.button`
@@ -21,17 +22,24 @@ const Positions = () => {
   const { selectPosition } = positionActions;
 
   const [leverState] = useContext(LeverContext);
-  const { levers } = leverState as ILeverContextState;
+  const { levers, assets } = leverState as ILeverContextState;
 
-  const getLever = (address: string, seriesId: string): ILever | undefined => {
-    const leverList = Array.from(levers.values());
-    return leverList.find((l: ILever) => l.leverAddress === address && l.seriesId === seriesId);
-  };
+  // const getLever = (address: string, seriesId: string): ILever | undefined => {
+  //   const leverList = Array.from(levers.values());
+  //   return leverList.find((l: ILever) => l.leverAddress === address && l.seriesId === seriesId);
+  // };
 
   const PositionItem = (props: { position: IPosition }) => {
     const { position } = props;
     const isActive = position.status === PositionStatus.ACTIVE;
     const isSelected = selectedPosition?.vaultId === position.vaultId;
+    
+    const shortAsset = assets.get(position?.baseId);
+    const longAsset = assets.get(position?.ilkId);
+    const lever = Array.from(levers.values()).find(
+      (l: ILever) => l.leverAddress === position.leverAddress && l.seriesId === position.seriesId
+    );
+
     return (
       <Container>
         <div
@@ -47,7 +55,9 @@ const Positions = () => {
         `}
         >
           <div className="flex flex-row gap-4">
-            <div className="h-6"> {getLever(position.leverAddress, position.seriesId)?.tradeImage} </div>
+            <div className="flex flex-row ">
+              <StackLogos logos={[longAsset?.image!, shortAsset?.image!]} size={6} />
+            </div>
             <div>{position.displayName}</div>
           </div>
           {!isSelected ? (

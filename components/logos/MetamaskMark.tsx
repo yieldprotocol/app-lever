@@ -6,8 +6,8 @@ const MetamaskMark = (props: React.SVGProps<SVGSVGElement>) => (
     xmlns="http://www.w3.org/2000/svg"
     x={0}
     y={0}
-    height="90%"
-    width="90%"
+    height="100%"
+    width="100%"
     viewBox="0 0 318.6 318.6"
     xmlSpace="preserve"
     {...props}
