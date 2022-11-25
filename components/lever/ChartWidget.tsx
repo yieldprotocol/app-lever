@@ -6,6 +6,7 @@ import { BorderWrap, Spinner, TopRow } from '../styled';
 import { LeverContext } from '../../context/LeverContext';
 import tw from 'tailwind-styled-components';
 import { InputContext } from '../../context/InputContext';
+import LogoWrap from '../common/LogoWrap';
 
 export const TopRow_ = tw.div`p-0 align-middle text-center items-center rounded-t-lg dark:bg-gray-900 
 bg-gray-100
@@ -176,11 +177,13 @@ export const ChartWidget = (props: HighchartsReact.Props) => {
               <div className="flex-grow ">
                 <div className="text-start py-4">
                   <div className="flex flex-row">
-                    <div className="w-6">{selectedShortAsset?.image}</div>
+                    <LogoWrap size={6} >{selectedShortAsset?.image} </LogoWrap>
+               
                     <div className="flex flex-row pl-2"> 1 {selectedShortAsset?.displaySymbol} </div>
                   </div>
                   <div className="flex flex-row gap-2">
-                    <div className="w-8 h-8">{selectedLongAsset?.image}</div>
+
+                    <LogoWrap size={8}>{selectedLongAsset?.image}</LogoWrap>
                     <div className="text-2xl">
                       {prices.length ? Math.round(parseFloat(prices[prices.length - 1][1]) * 1000) / 1000 : '...'}
                     </div>

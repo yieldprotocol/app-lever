@@ -11,6 +11,7 @@ import { ExclamationCircleIcon, InformationCircleIcon, StarIcon as StarIconOutli
 import { Listbox, Transition } from '@headlessui/react';
 import { formatDate } from '../../utils/appUtils';
 import { toast } from 'react-toastify';
+import LogoWrap from '../common/LogoWrap';
 
 enum AssetType {
   SHORT,
@@ -174,7 +175,6 @@ const LeverSelect = () => {
       </div>
 
       <div>
-
         {levers.size === 0 && <div> Loading ... </div>}
 
         <div className="space-y-1">
@@ -187,7 +187,12 @@ const LeverSelect = () => {
                 onClick={() => leverActions.selectLever(l)}
               >
                 <div className="w-6 h-6">{l.tradeImage}</div>
-                <div>{`${l.displayName}`} </div>
+
+                <div className="flex flex-row gap-2">
+                  <LogoWrap size={8} > {assets.get(l.baseId)!.image} </LogoWrap>
+                  <LogoWrap size={8} > {assets.get(l.ilkId)!.image} </LogoWrap>
+
+                </div>
                 <div>{formatDate(l.maturityDate)}</div>
                 <div>
                   <InformationCircleIcon className="w-6 h-6 text-gray-500" />
