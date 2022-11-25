@@ -128,8 +128,8 @@ const LeverProvider = ({ children }: any) => {
         const balance = convertToW3bNumber(await getBal(asset), asset.decimals, 6);
         
         const levers = Array.from(LEVERS.values());
-        // const isShortAsset = levers.some((s: ILeverRoot) => s.baseId === asset.id);
-        const isShortAsset = asset.isBaseAsset;
+        // const isBaseAsset = levers.some((s: ILeverRoot) => s.baseId === asset.id);
+        const isBaseAsset = asset.isBaseAsset;
         const isLongAsset = levers.some((s: ILeverRoot) => s.ilkId === asset.id);
 
         const displaySymbol = asset.displaySymbol || asset.symbol;
@@ -141,7 +141,7 @@ const LeverProvider = ({ children }: any) => {
           assetContract,
           balance,
           displaySymbol,
-          isShortAsset,
+          isBaseAsset,
           isLongAsset,
         };
 

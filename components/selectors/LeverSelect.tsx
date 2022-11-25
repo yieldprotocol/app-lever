@@ -30,7 +30,7 @@ border-transparent
 rounded`;
 
 const assetOption = (asset: IAsset, recommended: boolean, assetType: AssetType) => {
-  const isOption = assetType === AssetType.SHORT ? asset.isShortAsset : asset.isLongAsset;
+  const isOption = assetType === AssetType.SHORT ? asset.isBaseAsset : asset.isLongAsset;
   if (asset)
     return (
       <Listbox.Option as={Fragment} key={asset.id} value={asset}>
@@ -161,8 +161,8 @@ const LeverSelect = () => {
             <SelectedAssetStyled asset={selectedShortAsset!} assetType={AssetType.SHORT} />
             <ListOptionsStyled>
               {assetsList
-                .filter((a: IAsset) => a.isShortAsset)
-                .sort((a: IAsset, b: IAsset) => Number(b.isShortAsset) - Number(a.isShortAsset))
+                .filter((a: IAsset) => a.isBaseAsset)
+                .sort((a: IAsset, b: IAsset) => Number(b.isBaseAsset) - Number(a.isBaseAsset))
                 .sort(
                   (a: IAsset, b: IAsset) =>
                     Number(isRecommended(b, AssetType.SHORT)) - Number(isRecommended(a, AssetType.SHORT))
