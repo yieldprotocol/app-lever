@@ -126,13 +126,14 @@ const LeverProvider = ({ children }: any) => {
         };
 
         const balance = convertToW3bNumber(await getBal(asset), asset.decimals, 6);
-        const displaySymbol = asset.displaySymbol || asset.symbol;
+        
         const levers = Array.from(LEVERS.values());
-
-        const isShortAsset = levers.some((s: ILeverRoot) => s.baseId === asset.id);
+        // const isShortAsset = levers.some((s: ILeverRoot) => s.baseId === asset.id);
+        const isShortAsset = asset.isBaseAsset;
         const isLongAsset = levers.some((s: ILeverRoot) => s.ilkId === asset.id);
 
-        const assetImage = logoMap.get(asset.imageId! || displaySymbol)
+        const displaySymbol = asset.displaySymbol || asset.symbol;
+        const assetImage = logoMap.get(asset.imageId! || asset.symbol)
 
         const connectedAsset = {
           ...asset,
@@ -157,7 +158,7 @@ const LeverProvider = ({ children }: any) => {
         /* Attatch the lever contract */
         const leverContract = contractMap.get(lever.leverAddress).connect(lever.leverAddress, provider);
         /* Get the base asset info */
-        const { decimals, digitFormat } = ASSETS.get(lever.baseId) as IAssetRoot;
+        const { decimals, displayDigits } = ASSETS.get(lever.baseId) as IAssetRoot;
 
         /* Connect the investToken based on investTokenType */
         const investTokenContract = contractMap.get(lever.investTokenType)!.connect(lever.investTokenAddress, provider);
@@ -205,11 +206,11 @@ const LeverProvider = ({ children }: any) => {
           minRatio,
           loanToValue,
 
-          bestRate: convertToW3bNumber(bestRate, decimals, digitFormat),
+          bestRate: convertToW3bNumber(bestRate, decimals, displayDigits),
 
-          minDebt: convertToW3bNumber(minDebt, decimals, digitFormat),
-          maxDebt: convertToW3bNumber(maxDebt, decimals, digitFormat),
-          maxBase: convertToW3bNumber(maxBaseIn, decimals, digitFormat),
+          minDebt: convertToW3bNumber(minDebt, decimals, displayDigits),
+          maxDebt: convertToW3bNumber(maxDebt, decimals, displayDigits),
+          maxBase: convertToW3bNumber(maxBaseIn, decimals, displayDigits),
 
           tradeImage: logoMap.get(lever.tradePlatform),
           maturityDate: new Date(lever.maturity * 1000),

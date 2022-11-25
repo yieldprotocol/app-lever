@@ -90,7 +90,7 @@ const InputProvider = ({ children }: any) => {
     setInput: (input: number) =>
       updateState({
         type: 'SET_INPUT',
-        payload: inputToW3bNumber(input.toString(), shortAsset?.decimals, shortAsset?.digitFormat),
+        payload: inputToW3bNumber(input.toString(), shortAsset?.decimals, shortAsset?.displayDigits),
       }),
     // setLeverage: (leverage: number) => setRawLeverage(leverage),
     setLeverage: (leverage: number) =>

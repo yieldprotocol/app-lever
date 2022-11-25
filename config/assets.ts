@@ -13,12 +13,11 @@ export interface IAssetRoot {
   symbol: string;
   decimals: number;
 
-  isShortAsset?: boolean;
+  isBaseAsset?: boolean;
   isLongAsset?: boolean;
-
   showToken?: boolean; // Display/hide the token on the UI
 
-  digitFormat: number; // this is the 'reasonable' number of digits to show. accuracy equivalent to +- 1 us cent.
+  displayDigits: number; // this is the 'reasonable' number of digits to show. accuracy equivalent to +- 1 us cent.
   displaySymbol?: string; // override for symbol display
 
   limitToSeries?: string[];
@@ -28,7 +27,7 @@ export interface IAssetRoot {
   proxyId?: string;
 
   imageId?: string;
-  chartId: string;
+  chartId?: string;
 }
 
 export const UNKNOWN = '0x000000000000';
@@ -73,8 +72,10 @@ ASSETS.set(DAI, {
   decimals: 18,
   symbol: 'DAI',
   showToken: true,
-  digitFormat: 2,
+  displayDigits: 2,
   tokenType: TokenType.ERC20_DAI_PERMIT,
+
+  isBaseAsset: true,
 
   chartId: 'dai',
 });
@@ -88,8 +89,10 @@ ASSETS.set(USDC, {
   decimals: 6,
   symbol: 'USDC',
   showToken: true,
-  digitFormat: 2,
+  displayDigits: 2,
   tokenType: TokenType.ERC20_PERMIT,
+
+  isBaseAsset: true,
 
   chartId: 'usd-coin',
 });
@@ -102,10 +105,12 @@ ASSETS.set(WETH, {
   name: 'Wrapped Ether',
   decimals: 18,
   symbol: 'WETH',
-  displaySymbol: 'ETH',
+  displaySymbol: 'WETH',
   showToken: true,
-  digitFormat: 6,
+  displayDigits: 6,
   tokenType: TokenType.ERC20,
+
+  isBaseAsset: true,
 
   chartId: 'weth',
 });
@@ -119,9 +124,11 @@ ASSETS.set(FRAX, {
   decimals: 18,
   symbol: 'FRAX',
   showToken: true,
-  digitFormat: 2,
+  displayDigits: 2,
   tokenType: TokenType.ERC20,
   limitToSeries: [],
+
+  isBaseAsset: true,
 
   chartId: 'frax',
 });
@@ -135,7 +142,7 @@ ASSETS.set(ENS, {
   decimals: 18,
   symbol: 'ENS',
   showToken: true,
-  digitFormat: 2,
+  displayDigits: 2,
   tokenType: TokenType.ERC20_PERMIT,
 
   chartId: 'ethereum-name-service',
@@ -150,7 +157,7 @@ ASSETS.set(WBTC, {
   decimals: 18,
   symbol: 'WBTC',
   showToken: true,
-  digitFormat: 6,
+  displayDigits: 6,
   tokenType: TokenType.ERC20,
 
   chartId: 'wrapped-bitcoin',
@@ -164,10 +171,10 @@ ASSETS.set(WSTETH, {
   version: '1',
   name: 'Wrapped Staked Ether',
   decimals: 18,
-  symbol: 'WSTETH',
-  displaySymbol: 'STETH',
+  symbol: 'wstETH',
+  displaySymbol: 'wstETH',
   showToken: true,
-  digitFormat: 6,
+  displayDigits: 6,
   tokenType: TokenType.ERC20_PERMIT,
   wrapHandlerAddresses: new Map([]),
   unwrapHandlerAddresses: new Map([
@@ -184,11 +191,11 @@ ASSETS.set(STETH, {
   address: '0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84',
   joinAddress: '0x5364d336c2d2391717bD366b29B6F351842D7F82',
   version: '1',
-  name: 'Staked Eth',
+  name: 'Liquid staked Ether 2.0',
   decimals: 18,
-  symbol: 'STETH',
+  symbol: 'stETH',
   showToken: false,
-  digitFormat: 6,
+  displayDigits: 6,
   tokenType: TokenType.ERC20_PERMIT,
   wrapHandlerAddresses: new Map([[1, '0x491aB93faa921C8E634F891F96512Be14fD3DbB1']]),
   unwrapHandlerAddresses: new Map([]),
@@ -196,6 +203,7 @@ ASSETS.set(STETH, {
 
   chartId: 'staked-ether',
 });
+
 
 ASSETS.set(LINK, {
   id: LINK,
@@ -206,7 +214,7 @@ ASSETS.set(LINK, {
   decimals: 18,
   symbol: 'LINK',
   showToken: true,
-  digitFormat: 2,
+  displayDigits: 2,
   tokenType: TokenType.ERC20,
 
   chartId: 'chainlink'
@@ -221,7 +229,7 @@ ASSETS.set(yvUSDC, {
   decimals: 18,
   symbol: 'yvUSDC',
   showToken: true,
-  digitFormat: 2,
+  displayDigits: 2,
   tokenType: TokenType.ERC20,
   limitToSeries: ['0x303230350000', '0x303230360000', '0x303230370000', '0x303230380000', '0x303230390000'],
   
@@ -238,7 +246,7 @@ ASSETS.set(UNI, {
   decimals: 18,
   symbol: 'UNI',
   showToken: true,
-  digitFormat: 4,
+  displayDigits: 4,
   tokenType: TokenType.ERC20_PERMIT,
 
   chartId: 'uniswap'
@@ -259,7 +267,7 @@ ASSETS.set( YSUSDC6MJD, {
   decimals: 6,
   symbol: 'YSUSDC6MJD',
   showToken: true,
-  digitFormat: 2,
+  displayDigits: 2,
   tokenType: TokenType.ERC20_PERMIT,
 
   chartId: '',

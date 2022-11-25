@@ -62,17 +62,17 @@ export const yieldStrategySimulator: Simulator = async (
     marketState.decimals
   );
   const inputAsFyToken: W3bNumber = input?.big.gt(ZERO_BN)
-    ? convertToW3bNumber(inputAsFyToken_, shortAsset?.decimals, shortAsset?.digitFormat)
+    ? convertToW3bNumber(inputAsFyToken_, shortAsset?.decimals, shortAsset?.displayDigits)
     : ZERO_W3N;
 
   const totalToInvest_ = inputAsFyToken.big.mul(leverage!.big).div(100);
   const totalToInvest: W3bNumber = inputAsFyToken.big.gt(ZERO_BN)
-    ? convertToW3bNumber(totalToInvest_, shortAsset?.decimals, shortAsset?.digitFormat)
+    ? convertToW3bNumber(totalToInvest_, shortAsset?.decimals, shortAsset?.displayDigits)
     : ZERO_W3N;
 
   const toBorrow_ = totalToInvest.big.sub(inputAsFyToken.big);
   const toBorrow: W3bNumber = inputAsFyToken
-    ? convertToW3bNumber(toBorrow_, shortAsset?.decimals, shortAsset?.digitFormat)
+    ? convertToW3bNumber(toBorrow_, shortAsset?.decimals, shortAsset?.displayDigits)
     : ZERO_W3N;
 
   if (input.big.gt(ZERO_BN) && provider) {
@@ -89,11 +89,11 @@ export const yieldStrategySimulator: Simulator = async (
     );
 
     output.investmentBorrowed = toBorrow;
-    output.shortInvested = convertToW3bNumber(baseObtained, shortAsset?.decimals, shortAsset?.digitFormat);
+    output.shortInvested = convertToW3bNumber(baseObtained, shortAsset?.decimals, shortAsset?.displayDigits);
     output.investmentFee = convertToW3bNumber(
       output.shortInvested.big.mul(4).div(10000),
       shortAsset?.decimals,
-      shortAsset?.digitFormat
+      shortAsset?.displayDigits
     );
   }
 
