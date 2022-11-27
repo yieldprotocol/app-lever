@@ -38,8 +38,8 @@ const ChartProvider = ({ children }: any) => {
   const [priceMap, setPriceMap] = useState<Map<string, any[]>>(new Map([]));
 
   /* STATE from other contexts */
-  const [leverState]: [ILeverContextState] = useContext(LeverContext);
-  const { selectedLongAsset, selectedShortAsset } = leverState;
+  const [leverState] = useContext(LeverContext);
+  const { selectedLongAsset, selectedShortAsset } = leverState as ILeverContextState;
 
   const getPricesPerUsd = async (chartId: string) => {
     console.log('Fetching price data for : ', chartId);
@@ -61,8 +61,8 @@ const ChartProvider = ({ children }: any) => {
     selectedLongAsset &&
       (async () => {
         /* get the prices from eithe map or fetched */
-        const shortPerUsd = priceMap.get(selectedShortAsset.chartId) || (await getPricesPerUsd(selectedShortAsset.chartId));
-        const longPerUsd = priceMap.get(selectedLongAsset.chartId) || (await getPricesPerUsd(selectedLongAsset.chartId));
+        const shortPerUsd = priceMap.get(selectedShortAsset.chartId!) || (await getPricesPerUsd(selectedShortAsset.chartId!));
+        const longPerUsd = priceMap.get(selectedLongAsset.chartId!) || (await getPricesPerUsd(selectedLongAsset.chartId!));
 
         shortPerUsd.length && longPerUsd.length && updateState({ type: 'UPDATE_AVAILABILITY', payload: true });
         /* Calculate a short/long price */
