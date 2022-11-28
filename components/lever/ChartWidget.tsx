@@ -6,7 +6,6 @@ import { BorderWrap, Spinner, TopRow } from '../styled';
 import { LeverContext } from '../../context/LeverContext';
 import tw from 'tailwind-styled-components';
 import { InputContext } from '../../context/InputContext';
-import LogoWrap from '../common/LogoWrap';
 
 export const TopRow_ = tw.div`p-0 align-middle text-center items-center rounded-t-lg dark:bg-gray-900 
 bg-gray-100
@@ -15,7 +14,7 @@ dark:text-gray-50
 dark:bg-opacity-25 
 `;
 
-const Button = tw.button`text-xs bg-primary-600 w-5 dark:text-gray-50 text-gray-50 rounded hover:opacity-80`;
+const Button = tw.button`text-xs bg-primary-800 w-5 dark:text-gray-50 text-gray-50 rounded hover:opacity-80`;
 
 export const ChartWidget = (props: HighchartsReact.Props) => {
   const chartComponentRef = useRef<HighchartsReact.RefObject>(null);
@@ -175,15 +174,13 @@ export const ChartWidget = (props: HighchartsReact.Props) => {
           <div className={`col-span-2`}>
             <TopRow>
               <div className="flex-grow ">
-                <div className="text-start py-4">
+                <div className="text-start py-4 gap-2">
                   <div className="flex flex-row">
-                    <LogoWrap size={6} >{selectedShortAsset?.image} </LogoWrap>
-               
-                    <div className="flex flex-row pl-2"> 1 {selectedShortAsset?.displaySymbol} </div>
+                    <div className="w-4 mx-2">{selectedShortAsset?.image}</div>
+                    <div className="flex flex-row pl-2"> {selectedShortAsset && `1 ${selectedShortAsset?.displaySymbol}` } </div>
                   </div>
                   <div className="flex flex-row gap-2">
-
-                    <LogoWrap size={8}>{selectedLongAsset?.image}</LogoWrap>
+                    <div className="w-8 h-8">{selectedLongAsset?.image}</div>
                     <div className="text-2xl">
                       {prices.length ? Math.round(parseFloat(prices[prices.length - 1][1]) * 1000) / 1000 : '...'}
                     </div>
