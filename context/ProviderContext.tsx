@@ -24,6 +24,7 @@ braveWallet
 } from '@rainbow-me/rainbowkit/wallets';
 
 import '@rainbow-me/rainbowkit/styles.css';
+import YieldAvatar from '../components/YieldAvatar';
 
 const ProviderContext = ({ children }: { children: ReactNode }) => {
   /* bring in all the settings in case we want to use them settings up the netwrok */
