@@ -46,4 +46,7 @@ export const contractMap = new Map<address|TokenType, any>([
   [TokenType.ERC20_DAI_PERMIT, ERC20Permit__factory],
   [TokenType.ERC20_PERMIT, ERC20Permit__factory],
   [TokenType.ERC20, ERC20__factory],
+
+  /* Temp solution to native token*/
+  [TokenType.NATIVE, ERC20__factory],
 ]);

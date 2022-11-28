@@ -1,10 +1,10 @@
 import { ZERO_BN } from '@yield-protocol/ui-math';
 import { BigNumber } from 'ethers';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
 import { WETH } from '../config/assets';
-import { InputContext } from '../context/InputContext';
+import { IInputContextState, InputContext } from '../context/InputContext';
 import { ILeverContextState, LeverContext } from '../context/LeverContext';
 import { PositionContext } from '../context/PositionContext';
 import useApprove from './useApprove';
@@ -12,8 +12,8 @@ import useApprove from './useApprove';
 const useInvestDivest = (
   transactType: 'invest' | 'divest',
   txArgs: any[],
-  enabled: boolean,
-  overrides: { value: BigNumber } = { value: ZERO_BN }
+  enabled: boolean
+  // overrides: { value: BigNumber } = { value: ZERO_BN }
 ) => {
   const [leverState] = useContext(LeverContext);
   const { selectedLever, assets } = leverState as ILeverContextState;
@@ -21,31 +21,38 @@ const useInvestDivest = (
   const [, positionActions] = useContext(PositionContext);
 
   const [inputState] = useContext(InputContext);
-  const { input } = inputState;
+  const { input, inputNativeToken } = inputState as IInputContextState;
 
   const shortAsset = assets.get(selectedLever?.baseId!);
 
   const { approve, hasApproval } = useApprove(
     shortAsset!, // asset to approve
     selectedLever?.leverAddress!, // spender
-    input?.big, // amountToApprove
+    input?.big!, // amountToApprove
     enabled && shortAsset?.id !== WETH // enable
   );
 
-  const checkEnabled = () : boolean => {
-    const commonChecks = enabled && !!selectedLever && txArgs.length > 0 
-    if( transactType === 'invest') return commonChecks && input?.big.gte(selectedLever.minDebt.big);
-    if( transactType === 'divest') return commonChecks;
-    return false;
-  }
+  const [txnEnabled, setTxnEnabled] = useState<boolean>(false);
+
+  /* set the override to include value if using native token */
+  const overrides = inputNativeToken ? { value: input?.big!, gasLimit: '2000000' } : { gasLimit: '2000000' };
+
+  useEffect(() => {
+    const commonChecks = enabled && !!selectedLever && txArgs.length > 0;
+    const investChecks = commonChecks && input?.big.gte(selectedLever.minDebt.big)!;
+    const divestChecks = commonChecks;
+
+    transactType === 'invest' && investChecks && setTxnEnabled(investChecks);
+    transactType === 'divest' && divestChecks && setTxnEnabled(investChecks);
+  }, [selectedLever, txArgs, enabled, input]);
 
   const { config } = usePrepareContractWrite({
     address: selectedLever?.leverAddress,
     abi: selectedLever?.leverContract.interface as any,
     functionName: transactType,
     args: txArgs,
-    overrides: {...overrides, gasLimit: '2000000'},
-    enabled: checkEnabled(),
+    overrides,
+    enabled: txnEnabled,
     cacheTime: 0,
   });
 
@@ -60,26 +67,36 @@ const useInvestDivest = (
     hash: writeData?.hash,
   });
 
-  useEffect(()=>{ 
-     console.log(status); 
+  useEffect(() => {
+    console.log(status);
     if (waitData?.status === 0) {
-      toast.error(`Transaction Error: ${waitError?.message}`)
+      toast.error(`Transaction Error: ${waitError?.message}`);
     }
     if (waitData?.status === 1) {
       toast.success(`Transaction Complete: ${waitData.transactionHash}`);
       positionActions.updatePositions();
     }
-  },[waitData, status ])
+  }, [waitData, status]);
 
-  const notReady = () => console.log('Not ready: ', txArgs);
+  const invest = async () => {
+    if (write) {
+      if (hasApproval) {
+        console.log('Pre-approved token');
+        write();
+      }
+      if (!hasApproval) {
+        await approve();
+        console.log('Approval complete.');
+        write();
+      }
+    }
+    /* Handle Transaction not ready */
+    if (!write) {
+      console.log('Transaction not ready: ', txArgs);
+    }
+  };
 
-  // const invest = async () => {
-  //   // await approve();
-  //   // console.log( 'Approval done');
-  //   return write;
-  // };
-
-  return write || notReady;
+  return invest;
 };
 
 export default useInvestDivest;

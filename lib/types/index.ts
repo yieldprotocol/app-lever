@@ -9,10 +9,12 @@ export interface W3bNumber {
   big: BigNumber;
 }
 
-/** 
- * General Token types > could have multiple addresses 
+/**
+ * General Token types > could have multiple addresses
  * */
- export enum TokenType {
+
+export enum TokenType {
+  NATIVE,
   ERC20,
   ERC20_PERMIT,
   ERC20_DAI_PERMIT,

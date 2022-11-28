@@ -19,7 +19,7 @@ export interface IMarketContextState {
 
 const initState: IMarketContextState = {
   maturity: 0,
-  decimals:18, 
+  decimals: 18,
   sharesReserves: ZERO_BN,
   fyTokenReserves: ZERO_BN,
   fyTokenRealReserves: ZERO_BN,
@@ -56,17 +56,18 @@ const MarketProvider = ({ children }: any) => {
 
   const getPoolInfo = async (lever: ILever): Promise<IMarketContextState> => {
     /* Get all the data simultanenously in a promise.all */
-    const [baseReserves, fyTokenReserves, totalSupply, ts, g1, g2, maturity, decimals, fyTokenRealReserves] = await Promise.all([
-      lever.poolContract.getBaseBalance(),
-      lever.poolContract.getFYTokenBalance(),
-      lever.poolContract.totalSupply(),   
-      lever.poolContract.ts(),
-      lever.poolContract.g1(),
-      lever.poolContract.g2(),
-      lever.poolContract.maturity(),
-      lever.investTokenContract.decimals(),
-      lever.investTokenContract.balanceOf(lever.poolAddress),
-    ]);
+    const [baseReserves, fyTokenReserves, totalSupply, ts, g1, g2, maturity, decimals, fyTokenRealReserves] =
+      await Promise.all([
+        lever.poolContract.getBaseBalance(),
+        lever.poolContract.getFYTokenBalance(),
+        lever.poolContract.totalSupply(),
+        lever.poolContract.ts(),
+        lever.poolContract.g1(),
+        lever.poolContract.g2(),
+        lever.poolContract.maturity(),
+        lever.fyTokenContract.decimals(),
+        lever.fyTokenContract.balanceOf(lever.poolAddress),
+      ]);
 
     let sharesReserves: BigNumber;
     let c: BigNumber | undefined;
@@ -89,7 +90,7 @@ const MarketProvider = ({ children }: any) => {
     }
 
     const market_ = {
-      maturity : parseInt(maturity),
+      maturity: parseInt(maturity),
       decimals,
       sharesReserves,
       fyTokenReserves,
@@ -110,7 +111,7 @@ const MarketProvider = ({ children }: any) => {
   /* Update market State when selectedLever change */
   useEffect(() => {
     selectedLever && getPoolInfo(selectedLever);
-    console.log( 'updating market ') ;
+    console.log('updating market ');
   }, [selectedLever]);
 
   /* ACTIONS TO CHANGE CONTEXT */
@@ -118,7 +119,11 @@ const MarketProvider = ({ children }: any) => {
     getPoolInfo: async (lever: ILever): Promise<IMarketContextState> => await getPoolInfo(lever),
   };
 
-  return <MarketContext.Provider value={[ marketState as IMarketContextState, marketActions ]}>{children}</MarketContext.Provider>;
+  return (
+    <MarketContext.Provider value={[marketState as IMarketContextState, marketActions]}>
+      {children}
+    </MarketContext.Provider>
+  );
 };
 
 export { MarketContext };

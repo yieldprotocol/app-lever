@@ -9,6 +9,7 @@ export interface IInputContextState {
   input: W3bNumber | undefined;
   leverage: W3bNumber | undefined;
   slippage: number;
+  inputNativeToken: boolean; // if using ETH, for example
 }
 
 /* Parse the input to W3BNumber based on the selected lever and base */
@@ -37,6 +38,7 @@ const initState: IInputContextState = {
   input: ZERO_W3N,
   leverage: inputToW3bNumber('2', 2),
   slippage: 0.001,
+  inputNativeToken: false,
 };
 
 const inputReducer = (state: IInputContextState, action: any) => {
@@ -45,7 +47,8 @@ const inputReducer = (state: IInputContextState, action: any) => {
     case 'SET_INPUT':
       return {
         ...state,
-        input: action.payload,
+        input: action.payload.input,
+        inputNativeToken: action.payload.nativeToken,
       };
 
     case 'SET_SLIPPAGE':
@@ -87,10 +90,10 @@ const InputProvider = ({ children }: any) => {
 
   /* ACTIONS TO CHANGE CONTEXT */
   const inputActions = {
-    setInput: (input: number) =>
+    setInput: (input: number, nativeToken: boolean = false) =>
       updateState({
         type: 'SET_INPUT',
-        payload: inputToW3bNumber(input.toString(), shortAsset?.decimals, shortAsset?.displayDigits),
+        payload: { input: inputToW3bNumber(input.toString(), shortAsset?.decimals, shortAsset?.displayDigits), nativeToken } ,
       }),
     // setLeverage: (leverage: number) => setRawLeverage(leverage),
     setLeverage: (leverage: number) =>

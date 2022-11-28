@@ -31,6 +31,7 @@ export interface IAssetRoot {
 }
 
 export const UNKNOWN = '0x000000000000';
+export const ETH = '0x100000000000';
 
 export const WETH = '0x303000000000';
 export const DAI = '0x303100000000';
@@ -59,14 +60,12 @@ export const CONVEX_BASED_ASSETS = [
 ];
 export const ETH_BASED_ASSETS = ['WETH', 'ETH', WETH];
 export const IGNORE_BASE_ASSETS = ['ENS'];
-
 export const ASSETS = new Map<string, IAssetRoot>();
 
 ASSETS.set(DAI, {
   id: DAI,
   address: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
   joinAddress: '0x4fE92119CDf873Cf8826F4E6EcfD4E578E3D44Dc',
-
   version: '1',
   name: 'Dai stable coin',
   decimals: 18,
@@ -74,9 +73,7 @@ ASSETS.set(DAI, {
   showToken: true,
   displayDigits: 2,
   tokenType: TokenType.ERC20_DAI_PERMIT,
-
   isBaseAsset: true,
-
   chartId: 'dai',
 });
 
@@ -91,10 +88,24 @@ ASSETS.set(USDC, {
   showToken: true,
   displayDigits: 2,
   tokenType: TokenType.ERC20_PERMIT,
-
   isBaseAsset: true,
-
   chartId: 'usd-coin',
+});
+
+ASSETS.set(ETH, {
+  id: ETH,
+  address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', // here we are using the weth address
+  joinAddress: '0x3bDb887Dc46ec0E964Df89fFE2980db0121f0fD0', // here we are using the weth join
+  version: '1',
+  name: 'Ether',
+  decimals: 18,
+  symbol: 'ETH',
+  displaySymbol: 'ETH',
+  showToken: false,
+  displayDigits: 6,
+  tokenType: TokenType.NATIVE,
+  isBaseAsset: false,
+  chartId: 'weth',
 });
 
 ASSETS.set(WETH, {
@@ -109,9 +120,7 @@ ASSETS.set(WETH, {
   showToken: true,
   displayDigits: 6,
   tokenType: TokenType.ERC20,
-
   isBaseAsset: true,
-
   chartId: 'weth',
 });
 
@@ -127,9 +136,7 @@ ASSETS.set(FRAX, {
   displayDigits: 2,
   tokenType: TokenType.ERC20,
   limitToSeries: [],
-
   isBaseAsset: true,
-
   chartId: 'frax',
 });
 
@@ -144,7 +151,6 @@ ASSETS.set(ENS, {
   showToken: true,
   displayDigits: 2,
   tokenType: TokenType.ERC20_PERMIT,
-
   chartId: 'ethereum-name-service',
 });
 
@@ -159,10 +165,8 @@ ASSETS.set(WBTC, {
   showToken: true,
   displayDigits: 6,
   tokenType: TokenType.ERC20,
-
   chartId: 'wrapped-bitcoin',
 });
-
 
 ASSETS.set(WSTETH, {
   id:WSTETH,
@@ -182,7 +186,6 @@ ASSETS.set(WSTETH, {
     [4, '0x64BA0F1D2E5479BF132936328e8c533c95646fE8'],
     [5, '0x9f65A6c2b2F12117573323443C8C2290f4C1e675'],
   ]),
-
   chartId: 'staked-ether', // 'wrapped-steth',
 });
 
@@ -200,7 +203,6 @@ ASSETS.set(STETH, {
   wrapHandlerAddresses: new Map([[1, '0x491aB93faa921C8E634F891F96512Be14fD3DbB1']]),
   unwrapHandlerAddresses: new Map([]),
   proxyId: WSTETH,
-
   chartId: 'staked-ether',
 });
 
@@ -216,7 +218,6 @@ ASSETS.set(LINK, {
   showToken: true,
   displayDigits: 2,
   tokenType: TokenType.ERC20,
-
   chartId: 'chainlink'
 });
 
@@ -232,7 +233,6 @@ ASSETS.set(yvUSDC, {
   displayDigits: 2,
   tokenType: TokenType.ERC20,
   limitToSeries: ['0x303230350000', '0x303230360000', '0x303230370000', '0x303230380000', '0x303230390000'],
-  
   chartId: 'usd-coin',
   imageId: 'YEARN'
 });
@@ -248,14 +248,24 @@ ASSETS.set(UNI, {
   showToken: true,
   displayDigits: 4,
   tokenType: TokenType.ERC20_PERMIT,
-
   chartId: 'uniswap'
 });
 
-export const YSUSDC6MMS ="0x333200000000"
-//   "0x333200000000", YSUSDC6MMS 
-//"0xFBc322415CBC532b54749E31979a803009516b5D",
-//   "0x610498E3332740952610Ca3Fc2b627c94C25227D"
+export const YSDAI6MJD = "0x333100000000"
+ASSETS.set( YSDAI6MJD, {
+  id:YSDAI6MJD,
+  address: '0x1144e14E9B0AA9e181342c7e6E0a9BaDB4ceD295',
+  joinAddress: '0xfEC8457d1BDdfc52633Da3323F812FC5c1800f61',
+  version: '1',
+  name: 'Yield Strategy DAI 6M Jun Dec',
+  decimals: 18,
+  symbol: 'YSDAI6MJD',
+  showToken: true,
+  displayDigits: 2,
+  tokenType: TokenType.ERC20_DAI_PERMIT,
+  chartId: '',
+  imageId: 'YIELD'
+});
 
 export const YSUSDC6MJD = '0x333300000000'
 ASSETS.set( YSUSDC6MJD, {
@@ -269,28 +279,22 @@ ASSETS.set( YSUSDC6MJD, {
   showToken: true,
   displayDigits: 2,
   tokenType: TokenType.ERC20_PERMIT,
-
   chartId: '',
   imageId: 'YIELD'
-})
-
-export const YSDAI6MMS = "0x333000000000"
-//   "0x333000000000",YSDAI6MMS
-// "0x7ACFe277dEd15CabA6a8Da2972b1eb93fe1e2cCD "
-//   "0xD72eE212244F8A14C9C5e282C51d08caa1c0d604"
-
-
-export const YSDAI6MJD = "0x333100000000"
-//   "0x333100000000", YSDAI6MJD
-// "0x1144e14E9B0AA9e181342c7e6E0a9BaDB4ceD295",
-//   "0xfEC8457d1BDdfc52633Da3323F812FC5c1800f61"
-
-export const YSETH6MMS = "0x333400000000"
-//   "0x333400000000",  YSETH6MMS
-//"0xcf30A5A994f9aCe5832e30C138C9697cda5E1247",
-//   "0xEE508c827a8990c04798B242fa801C5351012B23"
+});
 
 export const YSETH6MJD = "0x333500000000"
-//   "0x333500000000", YSETH6MJD
-//"0x831dF23f7278575BA0b136296a285600cD75d076",
-//   "0x5Bb78E530D9365aeF75664c5093e40B0001F7CCd"
+ASSETS.set( YSETH6MJD, {
+  id:YSETH6MJD,
+  address: '0x831dF23f7278575BA0b136296a285600cD75d076',
+  joinAddress: '0x5Bb78E530D9365aeF75664c5093e40B0001F7CCd',
+  version: '1',
+  name: 'Yield Strategy ETH 6M Jun Dec',
+  decimals: 18,
+  symbol: 'YSETH6MJD',
+  showToken: true,
+  displayDigits: 2,
+  tokenType: TokenType.ERC20_PERMIT,
+  chartId: '',
+  imageId: 'YIELD'
+});

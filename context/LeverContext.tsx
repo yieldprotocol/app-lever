@@ -4,7 +4,7 @@ import React, { ReactElement, useEffect, useReducer } from 'react';
 import { ERC20, ERC20Permit, FYToken } from '../contracts/types';
 import { TokenType, W3bNumber } from '../lib/types';
 import { convertToW3bNumber } from '../lib/utils';
-import { ASSETS, IAssetRoot, WETH } from '../config/assets';
+import { ASSETS, ETH, IAssetRoot, WETH } from '../config/assets';
 import { ILeverRoot, LEVERS } from '../config/levers';
 
 import { CAULDRON, LADLE, contractMap } from '../config/contracts';
@@ -29,7 +29,7 @@ export interface IAsset extends IAssetRoot {
 }
 
 export interface ILever extends ILeverRoot {
-  investTokenContract: Contract;
+  fyTokenContract: Contract;
   leverContract: Contract;
   oracleContract: Contract;
   poolContract: Contract;
@@ -115,25 +115,27 @@ const LeverProvider = ({ children }: any) => {
   /* Connect up asset contracts : updates on provider and account changes */
   useEffect(() => {
     if (provider) {
-      Array.from(ASSETS.values()).map(async (asset: IAssetRoot) => {
+      Array.from(ASSETS.values())
+      .map(async (asset: IAssetRoot) => {
         const assetContract = contractMap.get(asset.tokenType)!.connect(asset.address, provider);
         const getBal = (asset: IAssetRoot) => {
-          if (account && asset.tokenType !== TokenType.ERC1155) {
-            if (asset.id !== WETH) return assetContract.balanceOf(account);
-            if (asset.id === WETH) return provider.getBalance(account);
+          if (account) {
+            if (asset.id === ETH) return provider.getBalance(account);
+            if (asset.tokenType !== TokenType.ERC1155) return assetContract.balanceOf(account);
+            if (asset.tokenIdentifier) return assetContract.balanceOf(account, asset.tokenIdentifier);
           }
           return BigNumber.from('0');
         };
 
         const balance = convertToW3bNumber(await getBal(asset), asset.decimals, 6);
-        
+
         const levers = Array.from(LEVERS.values());
         // const isBaseAsset = levers.some((s: ILeverRoot) => s.baseId === asset.id);
         const isBaseAsset = asset.isBaseAsset;
         const isLongAsset = levers.some((s: ILeverRoot) => s.ilkId === asset.id);
 
         const displaySymbol = asset.displaySymbol || asset.symbol;
-        const assetImage = logoMap.get(asset.imageId! || asset.symbol)
+        const assetImage = logoMap.get(asset.imageId! || asset.symbol);
 
         const connectedAsset = {
           ...asset,
@@ -161,7 +163,7 @@ const LeverProvider = ({ children }: any) => {
         const { decimals, displayDigits } = ASSETS.get(lever.baseId) as IAssetRoot;
 
         /* Connect the investToken based on investTokenType */
-        const investTokenContract = contractMap.get(lever.investTokenType)!.connect(lever.investTokenAddress, provider);
+        const fyTokenContract = contractMap.get(TokenType.FYTOKEN)!.connect(lever.fyTokenAddress, provider);
 
         /* Get the oracle address and debt (min/max) from the cauldron  */
         const cauldron = contractMap.get(CAULDRON).connect(CAULDRON, provider);
@@ -176,11 +178,10 @@ const LeverProvider = ({ children }: any) => {
         /* if investTokenType is FYTOKEN , use the yield pool as the marketContract */
         let poolContract;
         let poolAddress;
-        if (lever.investTokenType === TokenType.FYTOKEN) {
-          const Ladle = contractMap.get(LADLE).connect(LADLE, provider);
-          poolAddress = await Ladle.pools(lever.seriesId);
-          poolContract = contractMap.get(TokenType.YIELD_POOL)!.connect(poolAddress, provider);
-        }
+
+        const Ladle = contractMap.get(LADLE).connect(LADLE, provider);
+        poolAddress = await Ladle.pools(lever.seriesId);
+        poolContract = contractMap.get(TokenType.YIELD_POOL)!.connect(poolAddress, provider);
 
         /* Collateralisation ratio and loan to value */
         const minRatio = parseFloat(ethers.utils.formatUnits(ratio, 6));
@@ -197,7 +198,7 @@ const LeverProvider = ({ children }: any) => {
         // const balance = account ? await investTokenContract.balanceOf(account) : BigNumber.from('0');
         const connectedLever = {
           ...lever,
-          investTokenContract,
+          fyTokenContract,
           leverContract,
           oracleContract,
           poolContract,
@@ -214,7 +215,6 @@ const LeverProvider = ({ children }: any) => {
 
           tradeImage: logoMap.get(lever.tradePlatform),
           maturityDate: new Date(lever.maturity * 1000),
-          
         } as ILever;
 
         updateState({ type: 'UPDATE_LEVERS', payload: connectedLever });

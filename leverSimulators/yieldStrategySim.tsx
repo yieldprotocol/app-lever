@@ -7,6 +7,7 @@ import { IMarketContextState } from '../context/MarketContext';
 import { IPositionContextState } from '../context/PositionContext';
 import { Operation, Provider, W3bNumber } from '../lib/types';
 import { convertToW3bNumber } from '../lib/utils';
+import { BigNumber } from 'ethers';
 
 // import { YieldStrategyLever__factory} from '../contracts/types';
 
@@ -78,6 +79,7 @@ export const yieldStrategySimulator: Simulator = async (
   if (input.big.gt(ZERO_BN) && provider) {
     console.log('Fired STRATEGY LEVER....');
     const netInvestAmount = inputAsFyToken.big.add(toBorrow.big); // .sub(fee); // - netInvestAmount = baseAmount + borrowAmount - fee
+    
     const baseObtained = sellFYToken(
       marketState.sharesReserves,
       marketState.fyTokenReserves,
@@ -114,6 +116,11 @@ export const yieldStrategySimulator: Simulator = async (
         input.big, // amount user added (eg USDC)
         output.investmentBorrowed.big, // extra borrow required
         output.shortInvested.big, // fyToken required to buy for the borrow
+        // "0x303030380000",
+        // "0x333500000000",
+        // '8000000000000000000',
+        // '1000000000000000000',
+        // BigNumber.from('10000000000000000000'),
         ZERO_BN,
       ]
     : [];

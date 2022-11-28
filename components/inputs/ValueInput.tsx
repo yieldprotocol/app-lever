@@ -1,8 +1,9 @@
 import { ZERO_BN } from '@yield-protocol/ui-math';
-import { ChangeEvent, useContext } from 'react';
+import { ChangeEvent, useContext, useState } from 'react';
 import tw from 'tailwind-styled-components';
 import { InputContext } from '../../context/InputContext';
 import { LeverContext } from '../../context/LeverContext';
+import { TokenType } from '../../lib/types';
 
 type DivProps = {
   $unFocused?: boolean;
@@ -24,6 +25,8 @@ export const ValueInput = () => {
   const { selectedLever, assets } = leverState;
   const shortAsset = assets.get(selectedLever?.baseId!);
 
+  const [ useNative, setUseNative] = useState<boolean>(true);
+  
   return (
     <Container $unFocused={false}>
       <Inner className="pl-4">
@@ -32,7 +35,7 @@ export const ValueInput = () => {
           type="number"
           inputMode="decimal"
           value={inputState.input?.dsp || ''}
-          onChange={(el: ChangeEvent<HTMLInputElement>) => inputActions.setInput(el.target.value)}
+          onChange={(el: ChangeEvent<HTMLInputElement>) => inputActions.setInput(el.target.value, useNative)}
           onWheelCapture={(e: ChangeEvent<HTMLInputElement>)  => {
             e.currentTarget.blur()
           }}
@@ -43,8 +46,9 @@ export const ValueInput = () => {
       </Inner>
 
       <div className="grow min-w-fit text-left ">
-        
+
         <div className="px-1">{shortAsset?.displaySymbol}</div>
+
         {inputState?.input?.hStr !== shortAsset?.balance.hStr && shortAsset?.balance.big.gt(ZERO_BN) && (
           <Button onClick={() => inputActions.setInput(shortAsset?.balance.hStr)}>
             <div> Use max balance</div>
