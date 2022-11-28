@@ -77,7 +77,7 @@ const ListOptionsStyled = ({ children }: { children: any[] }) => (
 const LeverSelect = () => {
   const [leverState, leverActions] = useContext(LeverContext);
   const { selectedLever, levers, assets, selectedShortAsset, selectedLongAsset } = leverState as ILeverContextState;
-  const assetsList = Array.from(assets.values());
+  const assetsList = Array.from(assets.values()).filter((a:IAsset)=> a.showToken );
 
   const [possibleLevers, setPossibleLevers] = useState<ILever[]>([]);
   const [requestedPairs, setRequestedPair] = useState<string[]>([]);

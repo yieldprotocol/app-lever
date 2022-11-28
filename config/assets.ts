@@ -176,7 +176,7 @@ ASSETS.set(WSTETH, {
   name: 'Wrapped Staked Ether',
   decimals: 18,
   symbol: 'wstETH',
-  displaySymbol: 'wstETH',
+  displaySymbol: 'stETH',
   showToken: true,
   displayDigits: 3,
   tokenType: TokenType.ERC20_PERMIT,
