@@ -8,7 +8,7 @@ function YieldMark(props: ISvgProps) {
   const getProportion = (i: number) => (i * 100) / (props.colors?.length! - 1) || 0;
 
   return (
-    <svg version="1.0" xmlns="http://www.w3.org/2000/svg" height={props.height || '1.75em'} viewBox="0 0 255 252">
+    <svg version="1.0" xmlns="http://www.w3.org/2000/svg" height={props.height || '100%'} width={props.height || '100%'} viewBox="0 0 255 252">
       <g>
         <linearGradient id={props.colors![0]} x1="0%" y1="0%" x2="0%" y2="100%">
           {props.colors &&

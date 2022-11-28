@@ -11,7 +11,8 @@ import { ExclamationCircleIcon, InformationCircleIcon, StarIcon as StarIconOutli
 import { Listbox, Transition } from '@headlessui/react';
 import { formatDate } from '../../utils/appUtils';
 import { toast } from 'react-toastify';
-import LogoWrap from '../common/LogoWrap';
+import LogoWrap from '../common/StackedLogos';
+import StackedLogos from '../common/StackedLogos';
 
 enum AssetType {
   SHORT,
@@ -185,14 +186,11 @@ const LeverSelect = () => {
                   selectedLever?.id === l.id ? 'bg-primary-600 bg-opacity-25 h-14' : 'text-xs opacity-50'
                 }`}
                 onClick={() => leverActions.selectLever(l)}
-              >
-                <div className="w-6 h-6">{l.tradeImage}</div>
-
+              >  
                 <div className="flex flex-row gap-2">
-                  <LogoWrap size={8} > {assets.get(l.baseId)!.image} </LogoWrap>
-                  <LogoWrap size={8} > {assets.get(l.ilkId)!.image} </LogoWrap>
-
+                  <StackedLogos size={6} stackedLogos={[assets.get(l.ilkId)!.image!, assets.get(l.baseId)!.image!]} />
                 </div>
+                {/* <div className="w-6 h-6">{l.tradeImage}</div> */}
                 <div>{formatDate(l.maturityDate)}</div>
                 <div>
                   <InformationCircleIcon className="w-6 h-6 text-gray-500" />

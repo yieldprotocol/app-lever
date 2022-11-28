@@ -30,11 +30,11 @@ export const ValueInput = () => {
   const { selectedLever, assets } = leverState;
   const shortAsset = assets.get(selectedLever?.baseId!);
 
-  const [useNative, setUseNative] = useState<boolean>(true);
+  const [useNative, setUseNative] = useState<boolean>( ); // if WETH default to native else 
 
   useEffect(()=>{
-      console.log( address, balance )
-  },[balance, address ])
+    shortAsset?.id === WETH ?  setUseNative(true) : setUseNative(false)
+  },[ shortAsset ])
 
   return (
     <Container>
@@ -79,7 +79,7 @@ export const ValueInput = () => {
           {inputState?.input?.hStr !== shortAsset?.balance.hStr && shortAsset?.balance.big.gt(ZERO_BN) && (
             <Button onClick={() => inputActions.setInput(useNative ? balance?.formatted : shortAsset?.balance.hStr)}>
               <div> Use max balance</div>
-              <div> {useNative ? balance?.formatted.substring(0,6) : shortAsset?.balance.dsp} </div>
+              <div> { useNative ? balance?.formatted.substring(0,6) : shortAsset?.balance.dsp} </div>
             </Button>
           )}
           {inputState?.input?.hStr === shortAsset?.balance.hStr && shortAsset?.balance.big.gt(ZERO_BN) && (

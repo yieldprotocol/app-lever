@@ -178,7 +178,7 @@ ASSETS.set(WSTETH, {
   symbol: 'wstETH',
   displaySymbol: 'wstETH',
   showToken: true,
-  displayDigits: 6,
+  displayDigits: 3,
   tokenType: TokenType.ERC20_PERMIT,
   wrapHandlerAddresses: new Map([]),
   unwrapHandlerAddresses: new Map([
@@ -187,6 +187,7 @@ ASSETS.set(WSTETH, {
     [5, '0x9f65A6c2b2F12117573323443C8C2290f4C1e675'],
   ]),
   chartId: 'staked-ether', // 'wrapped-steth',
+  proxyId: STETH
 });
 
 ASSETS.set(STETH, {
@@ -198,7 +199,7 @@ ASSETS.set(STETH, {
   decimals: 18,
   symbol: 'stETH',
   showToken: false,
-  displayDigits: 6,
+  displayDigits: 3,
   tokenType: TokenType.ERC20_PERMIT,
   wrapHandlerAddresses: new Map([[1, '0x491aB93faa921C8E634F891F96512Be14fD3DbB1']]),
   unwrapHandlerAddresses: new Map([]),

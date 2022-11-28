@@ -3,7 +3,7 @@ import { useContext } from 'react';
 import tw from 'tailwind-styled-components';
 import { ILever, ILeverContextState, LeverContext } from '../../context/LeverContext';
 import { IPosition, PositionContext, PositionStatus } from '../../context/PositionContext';
-import StackLogos from '../common/StackLogos';
+import StackedLogos from '../common/StackedLogos';
 import { BorderWrap, Inner, TopRow } from '../styled';
 
 export const Container = tw.button`
@@ -56,7 +56,7 @@ const Positions = () => {
         >
           <div className="flex flex-row gap-4">
             <div className="flex flex-row ">
-              <StackLogos logos={[longAsset?.image!, shortAsset?.image!]} size={6} />
+              <StackedLogos size={6} stackedLogos={[longAsset?.image!, shortAsset?.image!]} />
             </div>
             <div>{position.displayName}</div>
           </div>
