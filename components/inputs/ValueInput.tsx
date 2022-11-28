@@ -25,7 +25,7 @@ export const ValueInput = () => {
   const { selectedLever, assets } = leverState;
   const shortAsset = assets.get(selectedLever?.baseId!);
 
-  const [ useNative, setUseNative] = useState<boolean>(true);
+  const [ useNative, setUseNative] = useState<boolean>(false);
   
   return (
     <Container $unFocused={false}>
@@ -48,6 +48,8 @@ export const ValueInput = () => {
       <div className="grow min-w-fit text-left ">
 
         <div className="px-1">{shortAsset?.displaySymbol}</div>
+        <div className="px-1">{shortAsset?.displaySymbol}</div>
+
 
         {inputState?.input?.hStr !== shortAsset?.balance.hStr && shortAsset?.balance.big.gt(ZERO_BN) && (
           <Button onClick={() => inputActions.setInput(shortAsset?.balance.hStr)}>

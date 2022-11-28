@@ -75,18 +75,13 @@ const InputProvider = ({ children }: any) => {
   const { selectedLever, assets } = leverState as ILeverContextState;
   const shortAsset = assets.get(selectedLever?.baseId!);
 
-  /* NOTE: try debounceleverage when using slider - to prevent excessive calcs */
-  // const [rawLeverage, setRawLeverage] = useState<number>(0);
-  // const debouncedLeverage = useDebounce(rawLeverage, 500);
-  // useEffect(()=>{
-  //   updateState({ type: 'SET_LEVERAGE', payload: inputToW3bNumber(debouncedLeverage.toString(), 2) })
-  // },[debouncedLeverage])
-
-  /* Reset Input and leverage when selected lever changes */
-  useEffect(() => {
-    updateState({ type: 'SET_INPUT', payload: initState.input });
-    updateState({ type: 'SET_LEVERAGE', payload: initState.leverage });
-  }, [selectedLever]);
+  /**
+   * Reset Input and leverage when selected lever changes
+   * */
+  // useEffect(() => {
+  //   updateState({ type: 'SET_INPUT', payload: initState.input });
+  //   updateState({ type: 'SET_LEVERAGE', payload: initState.leverage });
+  // }, [selectedLever]);
 
   /* ACTIONS TO CHANGE CONTEXT */
   const inputActions = {
