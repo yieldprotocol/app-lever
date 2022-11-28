@@ -76,9 +76,9 @@ export const ValueInput = () => {
         </div>
 
         <div className="col-span-2 text-start">
-          {inputState?.input?.hStr !== shortAsset?.balance.hStr && shortAsset?.balance.big.gt(ZERO_BN) && (
+          {( inputState?.input?.hStr !== shortAsset?.balance.hStr || inputState?.input.dsp ===0 )  && (
             <Button onClick={() => inputActions.setInput(useNative ? balance?.formatted : shortAsset?.balance.hStr)}>
-              <div> Use max balance</div>
+              <div> Use max balance: </div>
               <div> { useNative ? balance?.formatted.substring(0,6) : shortAsset?.balance.dsp} </div>
             </Button>
           )}
