@@ -66,7 +66,7 @@ const PositionWidget = (props: any) => {
         <>
           <TopRow>
           {/* <div className="w-8" > {associatedLever?.tradeImage} </div> */}
-          <StackedLogos size={8} stackedLogos={[ longAsset?.image!, shortAsset?.image!] } /> 
+          <StackedLogos size={8} logos={[ longAsset?.image!, shortAsset?.image!] } /> 
           <div className=" text-2xl"> {selectedPosition.displayName} </div>
             <div
               className={`text-xs rounded px-2 ${

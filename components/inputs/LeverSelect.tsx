@@ -188,7 +188,7 @@ const LeverSelect = () => {
                 onClick={() => leverActions.selectLever(l)}
               >  
                 <div className="flex flex-row gap-2">
-                  <StackedLogos size={6} stackedLogos={[assets.get(l.ilkId)!.image!, assets.get(l.baseId)!.image!]} />
+                  <StackedLogos size={6} logos={[assets.get(l.ilkId)!.image!, assets.get(l.baseId)!.image!]} />
                 </div>
                 {/* <div className="w-6 h-6">{l.tradeImage}</div> */}
                 <div>{formatDate(l.maturityDate)}</div>

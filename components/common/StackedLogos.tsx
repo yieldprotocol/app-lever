@@ -1,20 +1,20 @@
 import { FC, ReactElement } from 'react';
 
 interface ExtraProps {
-  stackedLogos: ReactElement[];
+  logos: ReactElement[];
   size: number;
 }
 
 const StackedLogos: FC<ExtraProps> = (props) => {
-  const { size, stackedLogos } = props;
+  const { size, logos } = props;
 
   return (
     <div className={` flex flex-row`}>
       <div className={`z-20 bg-slate-900 rounded-full h-${size} w-${size}`}>
-        <div className={`h-${size} w-${size} p-1 rounded-full`}>{stackedLogos?.[0]}</div>
+        <div className={`h-${size} w-${size} p-1 rounded-full`}>{logos?.[0]}</div>
       </div>
-      {stackedLogos?.length > 1 &&
-        stackedLogos
+      {logos?.length > 1 &&
+        logos
           .slice(1)
           .map((logo: ReactElement, i:number) => (
             <div

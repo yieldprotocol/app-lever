@@ -5,6 +5,7 @@ import { LeverContext } from '../../context/LeverContext';
 import { ILeverSimulation } from '../../hooks/useLever';
 import Loader from '../common/Loader';
 import { MinusCircleIcon, PlusCircleIcon } from '@heroicons/react/20/solid';
+import StackedLogos from '../common/StackedLogos';
 
 const EstimatedPosition = (props: any) => {
   const [inputState] = useContext(InputContext);
@@ -37,58 +38,151 @@ const EstimatedPosition = (props: any) => {
 
   return (
     <BorderWrap className="pb-4">
-      <TopRow>Estimated Position Information</TopRow>
+      <TopRow>
+        <div className="flex flex-row gap-4 " >
+          <StackedLogos size={8} logos={[longAsset?.image, shortAsset?.image]} />
+          <div className=" text-lg">Position Estimation</div>
+        </div>
+        
+        <div className="flex flex-row gap-4 " >
+        <div className="py-2 text-sm" > Leverage </div>
+        <div className="text-lg rounded-full bg-primary-500 p-1 px-2"> X {leverage?.dsp || 0} </div>
+        
+        </div>
+      </TopRow>
       <Inner>
         <InfoBlock>
-          <Label>Principal Investment:</Label>
-          <Value>
-            {input?.dsp} {shortAsset?.displaySymbol}
+          <Label className="text-base">Initial Investment</Label>
+          <Value className="text-xl flex flex-row justify-end gap-4">
+            <div>{input?.dsp.toFixed(shortAsset?.displayDigits)} </div>
+            <div className="w-6"> {shortAsset?.image} </div>
           </Value>
-          <Label> Leverage:</Label>
-          <Value> {leverage?.dsp || 0} X </Value>
+
+          {/* <div /> */}
+          {/* <Label className="text-lg" > Leverage </Label>
+          <Value className="text-xl">
+            <div className='flex lex-row justify-end'>
+              <div className="text-lg rounded-full bg-primary-500 p-1 px-2"> X {leverage?.dsp || 0} </div>
+            </div>
+          </Value> */}
+
+          {selectedLever && input?.dsp > 0 && (
+            <>
+              <Label className="text-base">net APR</Label>
+              <Value
+                className={`text-2xl font-extrabold ${
+                  netAPR < 0 ? 'text-red-400 dark:text-red-400' : 'text-emerald-600 dark:text-emerald-600 '
+                }`}
+              >
+                {isSimulating ? <Loader /> : Math.round((netAPR + Number.EPSILON) * 100) / 100}%
+              </Value>
+
+              <Label className="text-base">Borrow Limit Usage</Label>
+              <Value className="text-lg">
+                {isSimulating ? <Loader /> : Math.round((borrowLimitUsed + Number.EPSILON) * 100) / 100} %
+              </Value>
+            </>
+          )}
         </InfoBlock>
 
         {selectedLever && input?.dsp > 0 && (
           <>
             <Divider />
             <InfoBlock>
-              <Label>Short asset borrowed: </Label>
-              <Value>{isSimulating ? <Loader /> : `${investmentBorrowed?.dsp} ${shortAsset?.displaySymbol}`}</Value>
+              <Label>
+                <div className="flex flex-row gap-2 ">
+                  {longAsset.displaySymbol} Obtained
+                  <div className="w-5">
+                    <PlusCircleIcon />
+                  </div>
+                </div>
+              </Label>
+              <Value className="text-xl flex flex-row justify-end gap-2">
+                {isSimulating && <Loader />}
+                {!isSimulating && (
+                  <div className="text-xl flex flex-row justify-end gap-6 ">
+                    <div className="flex flex-row gap-1">
+                      <div className="w-6">{longAsset?.image}</div>
+                      <div>{investmentLong?.dsp} </div>
+                    </div>
 
-              <Label>Long asset obtained: </Label>
-              <Value>{isSimulating ? <Loader /> : `${investmentLong?.dsp} ${longAsset?.displaySymbol}`}</Value>
+                    <div className="flex flex-row gap-2">
+                    <div className="text-xs">earning</div>
+                    <div>{Math.round((investAPR + Number.EPSILON) * 100) / 100}% </div>
+                    <div className="text-xs">APR </div>
+                    </div>
+                  </div>
+                )}
+              </Value>
 
-              <Label>Total fees: </Label>
-              <Value>
-                {isSimulating ? <Loader /> : `${investmentFee?.dsp + flashBorrowFee?.dsp} ${shortAsset?.displaySymbol}`}
+              <Label>
+                <div className="flex flex-row gap-2 ">
+                  {shortAsset.displaySymbol} borrowed
+                  <div className="w-5">
+                    <MinusCircleIcon />
+                  </div>
+                </div>
+              </Label>
+              <Value className="text-xl flex flex-row justify-end gap-2">
+                {isSimulating && <Loader />}
+                {!isSimulating && (
+                  <div className="text-xl flex flex-row justify-end gap-6">
+                    <div className="flex flex-row gap-1">
+                      <div className="w-6">{shortAsset?.image}</div>
+                      <div>{investmentBorrowed?.dsp} </div>
+                    </div>
+                    <div className="flex flex-row gap-2">
+                    <div className="text-sm">@</div>
+                    <div>{Math.round((borrowAPR + Number.EPSILON) * 100) / 100}%</div>
+                    </div>
+                  </div>
+                )}
               </Value>
             </InfoBlock>
 
             {showExtra && (
               <InfoBlock>
                 <div className="text-sm text-start mt-2">Investment</div> <div />
-                <Label className="text-sm">Investment value at maturity: </Label>
+                <Label className="text-sm">Investment value at maturity </Label>
                 <Value className="text-sm">
                   {isSimulating ? <Loader /> : `${investmentAtMaturity?.dsp} ${longAsset?.displaySymbol}`}
                 </Value>
-                <Label className="text-sm">Current investment value: </Label>
+                <Label className="text-sm">Current investment value </Label>
                 <Value className="text-sm">
                   {isSimulating ? <Loader /> : `${investmentCurrent?.dsp} ${shortAsset?.displaySymbol}`}
                 </Value>
-                <Label className="text-sm">Yield fy{shortAsset?.displaySymbol} used for investment:</Label>
+                <Label className="text-sm">Yield fy{shortAsset?.displaySymbol} used for investment</Label>
                 <Value className="text-sm">
                   {isSimulating ? <Loader /> : `${shortInvested?.dsp} FY${shortAsset?.displaySymbol}`}
                 </Value>
                 <div className=" text-sm text-start mt-2">Debt</div> <div />
-                <Label className="text-sm">Borrowed amount owed at maturity:</Label>
+                <Label className="text-sm">Amount owed at series maturity</Label>
                 <Value className="text-sm">
                   {isSimulating ? <Loader /> : `${debtAtMaturity?.dsp} ${shortAsset?.displaySymbol}`}
                 </Value>
-                <div className=" text-sm text-start mt-2">Fees</div> <div />
-                <Label className="text-sm">Flash Borrowing fees: </Label>
+                <div className=" text-sm text-start mt-2">
+                  <div className="flex flex-row gap-2 text-sm ">
+                    Fees
+                    <div className="w-5">
+                      <MinusCircleIcon />
+                    </div>
+                  </div>
+                </div>
+                <div />
+                <Label className="text-sm">Flash Borrowing fees </Label>
                 <Value className="text-sm">{isSimulating ? <Loader /> : flashBorrowFee?.dsp}</Value>
-                <Label className="text-sm">Trading fees: </Label>
+                <Label className="text-sm">Trading fees </Label>
                 <Value className="text-sm">{isSimulating ? <Loader /> : investmentFee?.dsp} </Value>
+                <Label>
+                  <div className="flex flex-row gap-2 text-sm font-bold">Total fees</div>
+                </Label>
+                <Value className="text-sm font-bold ">
+                  {isSimulating ? (
+                    <Loader />
+                  ) : (
+                    `${investmentFee?.dsp + flashBorrowFee?.dsp} ${shortAsset?.displaySymbol}`
+                  )}
+                </Value>
               </InfoBlock>
             )}
 
@@ -100,40 +194,12 @@ const EstimatedPosition = (props: any) => {
                 {showExtra ? 'Show less -' : 'Show Advanced Info +'}
               </button>
             </div>
-            <Divider />
 
-            <InfoBlock>
-              <Label>Borrow Limit Usage</Label>
-              <Value> {isSimulating ? <Loader /> : Math.round((borrowLimitUsed + Number.EPSILON) * 100) / 100} %</Value>
-
+            {/* <Divider /> */}
+            {/* <InfoBlock>
               <Label>PnL</Label>
               <Value>{isSimulating ? <Loader /> : Math.round((pnl + Number.EPSILON) * 100) / 100} %</Value>
-
-              <Label>
-                <div className="flex flex-row gap-2 ">
-                  Investment rate
-                  <div className="w-5">
-                    <PlusCircleIcon />
-                  </div>
-                </div> 
-              </Label>
-              <Value>{isSimulating ? <Loader /> : Math.round((investAPR + Number.EPSILON) * 100) / 100} % APR</Value>
-
-              <Label>
-                <div className="flex flex-row gap-2 ">
-                  Borrowing rate
-                  <div className="w-5">
-                    <MinusCircleIcon />
-                  </div>
-                </div>
-              </Label>
-              <Value>{isSimulating ? <Loader /> : Math.round((borrowAPR + Number.EPSILON) * 100) / 100} % APR</Value>
-
-              <Label>Net rate</Label>
-              <Value className={netAPR < 0 ? 'text-red-400 dark:text-red-400' : 'text-emerald-600 dark:text-emerald-600 '}>
-                {isSimulating ? <Loader /> : Math.round((netAPR + Number.EPSILON) * 100) / 100} % APR
-              </Value>
-            </InfoBlock>
+            </InfoBlock> */}
           </>
         )}
       </Inner>

@@ -56,7 +56,7 @@ const Positions = () => {
         >
           <div className="flex flex-row gap-4">
             <div className="flex flex-row ">
-              <StackedLogos size={6} stackedLogos={[longAsset?.image!, shortAsset?.image!]} />
+              <StackedLogos size={6} logos={[longAsset?.image!, shortAsset?.image!]} />
             </div>
             <div>{position.displayName}</div>
           </div>
