@@ -8,6 +8,7 @@ import { BorderWrap, InfoBlock, Inner, Label, TopRow, Value } from '../styled';
 import Link from 'next/link';
 import { abbreviateHash } from '../../utils/appUtils';
 import { IAsset, ILever, ILeverContextState, LeverContext } from '../../context/LeverContext';
+import StackedLogos from '../common/StackedLogos';
 
 const TxInfo = (props: { label: string; date: Date | undefined; txHash: string | undefined }) => {
   const { chain } = useNetwork();
@@ -64,7 +65,8 @@ const PositionWidget = (props: any) => {
       {selectedPosition ? (
         <>
           <TopRow>
-          <div className="w-8" > {associatedLever?.tradeImage} </div>
+          {/* <div className="w-8" > {associatedLever?.tradeImage} </div> */}
+          <StackedLogos size={8} stackedLogos={[ longAsset?.image!, shortAsset?.image!] } /> 
           <div className=" text-2xl"> {selectedPosition.displayName} </div>
             <div
               className={`text-xs rounded px-2 ${
