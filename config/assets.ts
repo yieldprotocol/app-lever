@@ -203,7 +203,7 @@ ASSETS.set(STETH, {
   tokenType: TokenType.ERC20_PERMIT,
   wrapHandlerAddresses: new Map([[1, '0x491aB93faa921C8E634F891F96512Be14fD3DbB1']]),
   unwrapHandlerAddresses: new Map([]),
-  proxyId: WSTETH,
+  // proxyId: WSTETH,
   chartId: 'staked-ether',
 });
 

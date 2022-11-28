@@ -92,6 +92,7 @@ const ProviderContext = ({ children }: { children: ReactNode }) => {
         chains={chains}
         showRecentTransactions={true}
         modalSize="compact"
+        coolMode
         // avatar={CustomAvatar}
         theme= {myDarkTheme} // { colorTheme === 'dark' ? myDarkTheme : myLightTheme }
       >
