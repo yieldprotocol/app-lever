@@ -133,7 +133,7 @@ export const stEthSimulator: Simulator = async (
   }
 
   /** INVEST : bytes6 seriesId, uint256 borrowed, uint256 minWeth */
-  output.investArgs = selectedLever ? [selectedLever.seriesId, output.investmentBorrowed.big, ZERO_BN] : [];
+  output.investArgs = selectedLever ? [selectedLever.seriesId, input.big, output.investmentBorrowed.big, ZERO_BN] : [];
 
   /** DIVEST : bytes12 vaultId, bytes6 seriesId, uint256 ink,uint256 art, uint256 minWeth */
   output.divestArgs = selectedPosition

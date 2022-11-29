@@ -11,7 +11,8 @@ const nextConfig = {
     ALCHEMY_MAINNET_KEY: process.env.ALCHEMY_MAINNET_KEY,
 
     FORKED_ENV_RPC: process.env.FORKED_ENV_RPC,
-
+    FORKED_ENV_FIRST_BLOCK: process.env.FORKED_ENV_FIRST_BLOCK
+    
   },
   async redirects() {
     return [
