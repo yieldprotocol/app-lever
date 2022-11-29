@@ -67,8 +67,9 @@ const LeverWidget = (props: any) => {
           action={() => invest()}
           disabled={
             !account ||
-            !selectedLever ||
-            borrowLimitUsed > 100 // ||
+            !selectedLever // ||
+            // borrowLimitUsed > 100 // ||
+
             // shortBorrowed.big.gt(selectedLever.maxBase.big) ||
             // input?.big.lt(selectedLever.minDebt.big)
           } // add in isTransacting check

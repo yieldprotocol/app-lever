@@ -11,7 +11,6 @@ import { useProvider } from 'wagmi';
 import useInvestDivest from './useInvestDivest';
 import { Provider, W3bNumber } from '../lib/types';
 import { useRouter } from 'next/router';
-import { WETH } from '../config/assets';
 
 export type Simulator = (
   inputState: IInputContextState,
@@ -36,7 +35,7 @@ export type SimulatorOutput = {
   
   investmentAtMaturity: W3bNumber; // Projected/ Estimated value of investment at maturity
   investmentCurrent: W3bNumber; // Current value of long asset (if unwinding now)
-  investmentFee: W3bNumber; 
+  tradingFee: W3bNumber; 
 
   /* Transaction Arguments */
   investArgs: any[];
@@ -106,7 +105,7 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
   const [debtCurrent, setDebtCurrent] = useState<W3bNumber>(ZERO_W3N);
 
   const [flashBorrowFee, setFlashBorrowFee] = useState<W3bNumber>(ZERO_W3N);
-  const [investmentFee, setInvestmentFee] = useState<W3bNumber>(ZERO_W3N);
+  const [tradingFee, setTradingFee] = useState<W3bNumber>(ZERO_W3N);
 
   const [investArgs, setInvestArgs] = useState<any[]>([]);
   const [divestArgs, setDivestArgs] = useState<any[]>([]);
@@ -121,7 +120,6 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
   const [pnl, setPnl] = useState<number>(0);
   const [maxLeverage, setMaxLeverage] = useState<number>(5);
 
-  const value_ =  shortAsset?.id === WETH ? input?.big : undefined;
   const invest = useInvestDivest('invest', investArgs, !isSimulating && pathname === '/lever' );
   const divest = useInvestDivest('divest', divestArgs, !isSimulating && pathname === '/positions');
 
@@ -147,7 +145,7 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
           setDebtAtMaturity(simulated.debtAtMaturity);
           setDebtCurrent(simulated.debtCurrent);
           setFlashBorrowFee(simulated.flashBorrowFee);
-          setInvestmentFee(simulated.investmentFee);
+          setTradingFee(simulated.tradingFee);
           setInvestArgs(simulated.investArgs);
           setDivestArgs(simulated.divestArgs);
           setIsSimulating(false);
@@ -157,7 +155,6 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
            * Calculate the APR's based on the simulation
            * 
            * */
-
           // alternative: Math.pow(investAtMaturity.dsp/investmentPosition.dsp, oneOverYearProp) - 1
           const investRate = calculateAPR(
             simulated.longAssetObtained.big,
@@ -197,6 +194,9 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
             (simulated.debtAtMaturity?.dsp! / (simulated.longAssetObtained?.dsp! * selectedLever?.loanToValue)) * 100;
           setBorrowLimitUsed(borrowLimitUsed_);
 
+          console.log('debt  ',  simulated.debtAtMaturity?.dsp! )
+          console.log('assetObtained * LTV ',  simulated.longAssetObtained?.dsp! * selectedLever?.loanToValue )
+
           const pnl_ = isNaN(netAPR - investAPR) ? 0 : netAPR - investAPR;
           setPnl(pnl_);
         }
@@ -220,7 +220,7 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
 
     // fees
     flashBorrowFee,
-    investmentFee,
+    tradingFee,
 
     // APRs and calcs
     borrowAPR,

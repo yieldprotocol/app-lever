@@ -21,14 +21,15 @@ const EstimatedPosition = (props: any) => {
     netAPR,
     borrowAPR,
     investAPR,
-    investmentBorrowed,
-    shortInvested,
+    shortAssetBorrowed,
+    shortAssetObtained,
+
     debtAtMaturity,
-    investmentLong,
+    longAssetObtained,
     investmentCurrent,
     investmentAtMaturity,
     flashBorrowFee,
-    investmentFee,
+    tradingFee,
     isSimulating,
     pnl,
     borrowLimitUsed,
@@ -46,7 +47,7 @@ const EstimatedPosition = (props: any) => {
         
         <div className="flex flex-row gap-4 " >
         <div className="py-2 text-sm" > Leverage </div>
-        <div className="text-lg rounded-full bg-primary-500 p-1 px-2"> X {leverage?.dsp || 0} </div>
+        <div className="text-lg rounded-full bg-primary-500 p-1 px-2"> X {leverage?.dsp.toFixed(1) || '0.0'} </div>
         
         </div>
       </TopRow>
@@ -103,7 +104,7 @@ const EstimatedPosition = (props: any) => {
                   <div className="text-xl flex flex-row justify-end gap-6 ">
                     <div className="flex flex-row gap-2">
                       <div className="w-6">{longAsset?.image}</div>
-                      <div>{investmentLong?.dsp} </div>
+                      <div>{longAssetObtained?.dsp} </div>
                     </div>
 
                     <div className="flex flex-row gap-2">
@@ -129,7 +130,7 @@ const EstimatedPosition = (props: any) => {
                   <div className="text-xl flex flex-row justify-end gap-6">
                     <div className="flex flex-row gap-2">
                       <div className="w-6">{shortAsset?.image}</div>
-                      <div>{investmentBorrowed?.dsp} </div>
+                      <div>{shortAssetBorrowed?.dsp} </div>
                     </div>
                     <div className="flex flex-row gap-2">
                     <div className="text-sm">@</div>
@@ -151,10 +152,12 @@ const EstimatedPosition = (props: any) => {
                 <Value className="text-sm">
                   {isSimulating ? <Loader /> : `${investmentCurrent?.dsp} ${shortAsset?.displaySymbol}`}
                 </Value>
-                <Label className="text-sm">Yield fy{shortAsset?.displaySymbol} used for investment</Label>
+
+                {/* <Label className="text-sm">Yield fy{shortAsset?.displaySymbol} used for investment</Label>
                 <Value className="text-sm">
-                  {isSimulating ? <Loader /> : `${shortInvested?.dsp} FY${shortAsset?.displaySymbol}`}
-                </Value>
+                  {isSimulating ? <Loader /> : `${shortAssetObtained?.dsp} FY${shortAsset?.displaySymbol}`}
+                </Value> */}
+
                 <div className=" text-sm text-start mt-2">Debt</div> <div />
                 <Label className="text-sm">Amount owed at series maturity</Label>
                 <Value className="text-sm">
@@ -172,7 +175,7 @@ const EstimatedPosition = (props: any) => {
                 <Label className="text-sm">Flash Borrowing fees </Label>
                 <Value className="text-sm">{isSimulating ? <Loader /> : flashBorrowFee?.dsp}</Value>
                 <Label className="text-sm">Trading fees </Label>
-                <Value className="text-sm">{isSimulating ? <Loader /> : investmentFee?.dsp} </Value>
+                <Value className="text-sm">{isSimulating ? <Loader /> : tradingFee?.dsp} </Value>
                 <Label>
                   <div className="flex flex-row gap-2 text-sm font-bold">Total fees</div>
                 </Label>
@@ -180,7 +183,7 @@ const EstimatedPosition = (props: any) => {
                   {isSimulating ? (
                     <Loader />
                   ) : (
-                    `${investmentFee?.dsp + flashBorrowFee?.dsp} ${shortAsset?.displaySymbol}`
+                    `${tradingFee?.dsp + flashBorrowFee?.dsp} ${shortAsset?.displaySymbol}`
                   )}
                 </Value>
               </InfoBlock>

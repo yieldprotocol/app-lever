@@ -35,7 +35,7 @@ const useInvestDivest = (
   const [txnEnabled, setTxnEnabled] = useState<boolean>(false);
 
   /* set the override to include value if using native token */
-  const overrides = inputNativeToken ? { value: input?.big!, gasLimit: '2000000' } : { gasLimit: '2000000' };
+  const overrides = inputNativeToken && transactType === 'invest' ? { value: input?.big!, gasLimit: '2000000' } : { gasLimit: '2000000' };
 
   useEffect(() => {
     const commonChecks = enabled && !!selectedLever && txArgs.length > 0;

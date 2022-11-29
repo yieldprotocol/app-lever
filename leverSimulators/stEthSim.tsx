@@ -111,7 +111,7 @@ export const stEthSimulator: Simulator = async (
       output.debtAtMaturity = convertToW3bNumber(debtAtMaturity_, 18, 3);
 
       /* Investment */
-      output.investmentFee = convertToW3bNumber(output.shortAssetObtained.big.mul(4).div(10000), 18, 3);
+      output.tradingFee = convertToW3bNumber(output.shortAssetObtained.big.mul(4).div(10000), 18, 3);
 
       const stableSwap = StableSwap__factory.connect(STETH_STABLESWAP, provider);
       const boughtStEth = await stableSwap.get_dy(0, 1, shortObtained_); // .catch(()=>{console.log('too big'); return ZERO_BN} );
@@ -119,19 +119,19 @@ export const stEthSimulator: Simulator = async (
       // investPosition (stEth held)
       output.longAssetObtained = convertToW3bNumber(boughtStEth, 18, 3);
 
-      /* added rewards */
+      /* Added rewards */
       const rewards = parseFloat(investAPY || '0') * yearProportion;
       const returns = ethers.utils.parseEther((output.longAssetObtained.dsp * (1 + rewards / 100)).toString());
-      const returnsLessFees = returns.sub(output.investmentFee.big);
+      const returnsLessFees = returns.sub(output.tradingFee.big);
 
       // const stEthPlusReturns = boughtStEth.mul(returns)
       output.investmentAtMaturity = convertToW3bNumber(returnsLessFees, 18, 3);
 
-      /* check for any swapping costs */
       /* Calculate the value of the investPosition in short terms : via swap */
       const investValue_ = await stableSwap.get_dy(1, 0, boughtStEth); // .catch(()=>{console.log('failed'); return ZERO_BN} );
-      const investValueLessFees = investValue_.sub(output.investmentFee.big);
+      const investValueLessFees = investValue_.sub(output.tradingFee.big);
       output.investmentCurrent = convertToW3bNumber(investValueLessFees, 18, 3);
+
     }
 
     /** INVEST :

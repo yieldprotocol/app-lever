@@ -1,4 +1,4 @@
-import { buyBase, sellBase, sellFYToken, ZERO_BN } from '@yield-protocol/ui-math';
+import { burn, burnFromStrategy, buyBase, fyTokenForMint, sellBase, sellFYToken, ZERO_BN } from '@yield-protocol/ui-math';
 import { IInputContextState } from '../context/InputContext';
 import { ILeverContextState } from '../context/LeverContext';
 import { ZERO_W3N } from '../constants';
@@ -7,6 +7,7 @@ import { IMarketContextState } from '../context/MarketContext';
 import { IPositionContextState } from '../context/PositionContext';
 import { Operation, Provider, W3bNumber } from '../lib/types';
 import { convertToW3bNumber } from '../lib/utils';
+import { ethers } from 'ethers';
 
 // import { YieldStrategyLever__factory} from '../contracts/types';
 
@@ -30,12 +31,12 @@ export const yieldStrategySimulator: Simulator = async (
   const selectedPosition = positionState.selectedPosition;
 
   const { selectedLever, assets } = leverState;
+  const shortAsset = assets.get(selectedLever?.baseId!);
+  const longAsset = assets.get(selectedLever?.ilkId!);
 
   const timeToMaturity = marketState.maturity - currentTime;
-  // const yearProportion = timeToMaturity / 31536000;
-  const shortAsset = assets.get(selectedLever?.baseId!);
+  const yearProportion = timeToMaturity / 31536000;
 
-  // console.log( input.dsp, leverage.dsp )
   const inputAsFyToken_ = sellBase(
     marketState.sharesReserves,
     marketState.fyTokenReserves,
@@ -74,6 +75,8 @@ export const yieldStrategySimulator: Simulator = async (
 
     output.shortAssetBorrowed = borrowAmount;
     output.shortAssetObtained = convertToW3bNumber(shortObtained_, shortAsset?.decimals, shortAsset?.displayDigits);
+    
+    output.flashBorrowFee = ZERO_W3N; // zero flash borrow fees for now.
 
     /* Calculate the resulting debt from the amount borrowed */
     const debtAtMaturity_ = buyBase(
@@ -86,18 +89,54 @@ export const yieldStrategySimulator: Simulator = async (
       marketState.decimals
     );
     output.debtAtMaturity = convertToW3bNumber(debtAtMaturity_, shortAsset?.decimals, shortAsset?.displayDigits);
-    output.investmentFee = convertToW3bNumber(
+    output.tradingFee = convertToW3bNumber(
       output.shortAssetObtained.big.mul(4).div(10000),
       shortAsset?.decimals,
       shortAsset?.displayDigits
     );
 
-    output.longAssetObtained = ZERO_W3N;
+    /* Investment */
+    output.tradingFee = ZERO_W3N;
 
-    output.investmentAtMaturity = ZERO_W3N;
-    output.investmentCurrent = ZERO_W3N;
+    // calculate the LPs returned after  adding shortASsetobtained as liquidity
+   const [lpTokens, returned] = fyTokenForMint(
+    marketState.sharesReserves,
+    marketState.fyTokenRealReserves,
+    marketState.fyTokenReserves,
+    netFytoken,
+    timeToMaturity.toString(),
+    marketState.ts,
+    marketState.g1,
+    marketState.decimals
+   )
+
+    // investPosition (longAsset held)
+    output.longAssetObtained = convertToW3bNumber(lpTokens, longAsset?.decimals, longAsset?.displayDigits);
+    const investAPY = '2.25' // calcStrategyReturns(); 
+
+    /* Added rewards */
+    const rewards = parseFloat(investAPY || '0') * yearProportion;
+
+    const returns = (output.longAssetObtained.dsp * (1 + rewards / 100)).toFixed(longAsset?.decimals)
+    const estimatedReturns = ethers.utils.parseUnits(returns, longAsset?.decimals );
+    const returnsLessFees = estimatedReturns.sub(output.tradingFee.big);
     
+    output.investmentAtMaturity = convertToW3bNumber(returnsLessFees, longAsset?.decimals, longAsset?.displayDigits);
+    
+    /* Calculate the value of the investPosition in short terms : via swap */
+    // const investValue_ = await stableSwap.get_dy(1, 0, boughtStEth); // .catch(()=>{console.log('failed'); return ZERO_BN} );
+    // const investValueLessFees = investValue_.sub(output.investmentFee.big);
+    // output.investmentCurrent = convertToW3bNumber(investValueLessFees, 18, 3);
 
+    // const lpReceived = burnFromStrategy(marketState.strategyPoolBalance, strategy.strategyTotalSupply, lpTokens);
+    const lpReceived = burnFromStrategy(marketState.totalSupply, marketState.totalSupply, lpTokens);
+    const [sharesReceivedFromBurn, fyTokenReceivedFromBurn] = burn(
+      marketState.sharesReserves,
+      marketState.fyTokenRealReserves,
+      marketState.totalSupply,
+      lpReceived
+    );
+    output.investmentCurrent = convertToW3bNumber(sharesReceivedFromBurn.add(fyTokenReceivedFromBurn), shortAsset?.decimals, shortAsset?.displayDigits ) ;
 
     /** INVEST : 
         Operation operation,
@@ -107,7 +146,7 @@ export const yieldStrategySimulator: Simulator = async (
         uint256 borrowAmount,
         uint256 fyTokenToBuy,
         uint256 minCollateral
-  */
+    */
     output.investArgs = selectedLever
       ? [
           Operation.BORROW,
@@ -148,7 +187,6 @@ export const yieldStrategySimulator: Simulator = async (
           ZERO_BN,
         ]
       : [];
-
     return output;
   }
   return undefined;

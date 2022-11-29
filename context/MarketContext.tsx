@@ -10,6 +10,7 @@ export interface IMarketContextState {
   fyTokenReserves: BigNumber;
   fyTokenRealReserves: BigNumber;
   totalSupply: BigNumber;
+  currentSharePrice: BigNumber;
   ts: BigNumber;
   g1: BigNumber;
   g2: BigNumber;
@@ -24,6 +25,7 @@ const initState: IMarketContextState = {
   fyTokenReserves: ZERO_BN,
   fyTokenRealReserves: ZERO_BN,
   totalSupply: ZERO_BN,
+  currentSharePrice: ZERO_BN,
   ts: ZERO_BN,
   g1: ZERO_BN,
   g2: ZERO_BN,
@@ -85,8 +87,8 @@ const MarketProvider = ({ children }: any) => {
       ]);
     } catch (error) {
       sharesReserves = baseReserves;
-      currentSharePrice = ethers.utils.parseUnits('1', 18); // TODO fix this decomals story
-      console.log('using old pool contract that does not include c, mu, and shares');
+      currentSharePrice = ethers.utils.parseUnits('1', decimals); 
+      console.log('Using old pool contract that does not include c, mu, and shares');
     }
 
     const market_ = {
@@ -95,6 +97,7 @@ const MarketProvider = ({ children }: any) => {
       sharesReserves,
       fyTokenReserves,
       fyTokenRealReserves,
+      currentSharePrice,
       totalSupply,
       ts,
       g1,
