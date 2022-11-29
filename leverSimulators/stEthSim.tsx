@@ -15,7 +15,7 @@ import { IMarketContextState } from '../context/MarketContext';
 import { IPositionContextState } from '../context/PositionContext';
 import { Provider, W3bNumber } from '../lib/types';
 
-/* stable swap contract */
+/* Stable Swap Contract */
 export const STETH_STABLESWAP = '0x828b154032950c8ff7cf8085d841723db2696056';
 
 export const stEthSimulator: Simulator = async (
@@ -26,7 +26,6 @@ export const stEthSimulator: Simulator = async (
   provider: Provider,
   currentTime: number = Math.round(new Date().getTime() / 1000)
 ): Promise<SimulatorOutput | undefined> => {
-  
   const input = inputState.input || ZERO_W3N;
   const leverage = inputState.leverage;
   const selectedLever = leverState.selectedLever;
@@ -72,7 +71,7 @@ export const stEthSimulator: Simulator = async (
     /* Calculate the extra amount needed to be borrowed to get to the required fytoken investmeent */
     const borrowAmount_ = totalFyToken.big.sub(inputAsFyToken.big);
     const borrowAmount: W3bNumber = inputAsFyToken ? convertToW3bNumber(borrowAmount_, 18, 3) : ZERO_W3N;
-    
+
     output.shortAssetBorrowed = borrowAmount;
 
     /**
@@ -135,23 +134,28 @@ export const stEthSimulator: Simulator = async (
       output.investmentCurrent = convertToW3bNumber(investValueLessFees, 18, 3);
     }
 
+    /** INVEST :
+     *  bytes6 seriesId, // series id
+     * uint256 baseAmount, // base amount added
+     * uint256 borrowAmount,  // extra base required
+     * uint256 minWeth  // minCollateral to end up with
+     * */
+    output.investArgs = selectedLever
+      ? [selectedLever.seriesId, input.big, output.shortAssetBorrowed.big, ZERO_BN]
+      : [];
 
-  /** INVEST :
-   *  bytes6 seriesId, // series id
-   * uint256 baseAmount, // base amount added
-   * uint256 borrowAmount,  // extra base required
-   * uint256 minWeth  // minCollateral to end up with
-   * */
-  output.investArgs = selectedLever ? [selectedLever.seriesId, input.big, output.shortAssetBorrowed.big, ZERO_BN] : [];
+    /** DIVEST : bytes12 vaultId, bytes6 seriesId, uint256 ink,uint256 art, uint256 minWeth */
+    output.divestArgs = selectedPosition
+      ? [
+          selectedPosition.vaultId,
+          selectedPosition.seriesId,
+          selectedPosition.ink.big,
+          selectedPosition.art.big,
+          ZERO_BN,
+        ]
+      : [];
 
-  /** DIVEST : bytes12 vaultId, bytes6 seriesId, uint256 ink,uint256 art, uint256 minWeth */
-  output.divestArgs = selectedPosition
-    ? [selectedPosition.vaultId, selectedPosition.seriesId, selectedPosition.ink.big, selectedPosition.art.big, ZERO_BN]
-    : [];
-
-  return output;
-
+    return output;
   }
-
-
+  return undefined;
 };

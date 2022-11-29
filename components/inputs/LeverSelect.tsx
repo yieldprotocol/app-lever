@@ -11,7 +11,6 @@ import { ExclamationCircleIcon, InformationCircleIcon, StarIcon as StarIconOutli
 import { Listbox, Transition } from '@headlessui/react';
 import { formatDate } from '../../utils/appUtils';
 import { toast } from 'react-toastify';
-import LogoWrap from '../common/StackedLogos';
 import StackedLogos from '../common/StackedLogos';
 
 enum AssetType {

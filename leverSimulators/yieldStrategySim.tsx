@@ -92,8 +92,11 @@ export const yieldStrategySimulator: Simulator = async (
       shortAsset?.displayDigits
     );
 
+    output.longAssetObtained = ZERO_W3N;
 
-
+    output.investmentAtMaturity = ZERO_W3N;
+    output.investmentCurrent = ZERO_W3N;
+    
 
 
     /** INVEST : 
@@ -148,4 +151,5 @@ export const yieldStrategySimulator: Simulator = async (
 
     return output;
   }
+  return undefined;
 };
