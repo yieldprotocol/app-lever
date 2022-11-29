@@ -54,7 +54,7 @@ const EstimatedPosition = (props: any) => {
         <InfoBlock>
           <Label className="text-base">Initial Investment</Label>
           <Value className="text-xl flex flex-row justify-end gap-4">
-            <div>{input?.dsp.toFixed(shortAsset?.displayDigits)} </div>
+            <div>{input?.dsp.toFixed(shortAsset?.displayDigits || 2)} </div>
             <div className="w-6"> {shortAsset?.image} </div>
           </Value>
 
@@ -101,7 +101,7 @@ const EstimatedPosition = (props: any) => {
                 {isSimulating && <Loader />}
                 {!isSimulating && (
                   <div className="text-xl flex flex-row justify-end gap-6 ">
-                    <div className="flex flex-row gap-1">
+                    <div className="flex flex-row gap-2">
                       <div className="w-6">{longAsset?.image}</div>
                       <div>{investmentLong?.dsp} </div>
                     </div>
@@ -127,7 +127,7 @@ const EstimatedPosition = (props: any) => {
                 {isSimulating && <Loader />}
                 {!isSimulating && (
                   <div className="text-xl flex flex-row justify-end gap-6">
-                    <div className="flex flex-row gap-1">
+                    <div className="flex flex-row gap-2">
                       <div className="w-6">{shortAsset?.image}</div>
                       <div>{investmentBorrowed?.dsp} </div>
                     </div>

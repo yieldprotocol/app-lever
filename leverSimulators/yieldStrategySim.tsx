@@ -115,12 +115,15 @@ export const yieldStrategySimulator: Simulator = async (
         selectedLever.ilkId,
         input.big, // amount user added (eg USDC)
         output.investmentBorrowed.big, // extra borrow required
-        output.shortInvested.big, // fyToken required to buy for the borrow
+        output.shortInvested.big, // fyToken required to buy for the borrow      
         // "0x303030380000",
         // "0x333500000000",
-        // '8000000000000000000',
-        // '1000000000000000000',
-        // BigNumber.from('10000000000000000000'),
+        // '10000000000000000000000',
+        // '10000000000000000000000',
+        // '10000000000000000000000',
+        // '1000000000',
+        // '1000000000',
+        // '1000000000',
         ZERO_BN,
       ]
     : [];
