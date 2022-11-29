@@ -87,9 +87,10 @@ const PositionProvider = ({ children }: any) => {
         const investedFilter_ = contract_.filters.Invested(null, null, account, null, null);
         const divestedFilter_ = contract_.filters.Divested();
 
+        console.log( process.env.FORKED_ENV_FIRST_BLOCK )
         const [investedEvents, divestedEvents] = await Promise.all([
-          contract_.queryFilter(investedFilter_, process.env.FORKED_ENV_FIRST_BLOCK, 'latest'),
-          contract_.queryFilter(divestedFilter_, process.env.FORKED_ENV_FIRST_BLOCK, 'latest'),
+          contract_.queryFilter(investedFilter_, 16067737, 'latest'),
+          contract_.queryFilter(divestedFilter_, 16067737, 'latest'),
         ]);
 
         await Promise.all(
