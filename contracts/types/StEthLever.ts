@@ -31,12 +31,11 @@ import type {
 export interface StEthLeverInterface extends utils.Interface {
   functions: {
     "FLASH_LOAN_RETURN()": FunctionFragment;
-    "approveFyToken(bytes6)": FunctionFragment;
     "cauldron()": FunctionFragment;
     "divest(bytes12,bytes6,uint256,uint256,uint256)": FunctionFragment;
     "giver()": FunctionFragment;
     "ilkId()": FunctionFragment;
-    "invest(bytes6,uint256,uint256)": FunctionFragment;
+    "invest(bytes6,uint256,uint256,uint256)": FunctionFragment;
     "ladle()": FunctionFragment;
     "onFlashLoan(address,address,uint256,uint256,bytes)": FunctionFragment;
     "stableSwap()": FunctionFragment;
@@ -50,7 +49,6 @@ export interface StEthLeverInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "FLASH_LOAN_RETURN"
-      | "approveFyToken"
       | "cauldron"
       | "divest"
       | "giver"
@@ -70,10 +68,6 @@ export interface StEthLeverInterface extends utils.Interface {
     functionFragment: "FLASH_LOAN_RETURN",
     values?: undefined
   ): string;
-  encodeFunctionData(
-    functionFragment: "approveFyToken",
-    values: [PromiseOrValue<BytesLike>]
-  ): string;
   encodeFunctionData(functionFragment: "cauldron", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "divest",
@@ -91,6 +85,7 @@ export interface StEthLeverInterface extends utils.Interface {
     functionFragment: "invest",
     values: [
       PromiseOrValue<BytesLike>,
+      PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>
     ]
@@ -121,10 +116,6 @@ export interface StEthLeverInterface extends utils.Interface {
 
   decodeFunctionResult(
     functionFragment: "FLASH_LOAN_RETURN",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "approveFyToken",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "cauldron", data: BytesLike): Result;
@@ -211,11 +202,6 @@ export interface StEthLever extends BaseContract {
   functions: {
     FLASH_LOAN_RETURN(overrides?: CallOverrides): Promise<[string]>;
 
-    approveFyToken(
-      seriesId: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     cauldron(overrides?: CallOverrides): Promise<[string]>;
 
     divest(
@@ -233,6 +219,7 @@ export interface StEthLever extends BaseContract {
 
     invest(
       seriesId: PromiseOrValue<BytesLike>,
+      baseAmount: PromiseOrValue<BigNumberish>,
       borrowAmount: PromiseOrValue<BigNumberish>,
       minCollateral: PromiseOrValue<BigNumberish>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
@@ -264,11 +251,6 @@ export interface StEthLever extends BaseContract {
 
   FLASH_LOAN_RETURN(overrides?: CallOverrides): Promise<string>;
 
-  approveFyToken(
-    seriesId: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   cauldron(overrides?: CallOverrides): Promise<string>;
 
   divest(
@@ -286,6 +268,7 @@ export interface StEthLever extends BaseContract {
 
   invest(
     seriesId: PromiseOrValue<BytesLike>,
+    baseAmount: PromiseOrValue<BigNumberish>,
     borrowAmount: PromiseOrValue<BigNumberish>,
     minCollateral: PromiseOrValue<BigNumberish>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
@@ -317,11 +300,6 @@ export interface StEthLever extends BaseContract {
   callStatic: {
     FLASH_LOAN_RETURN(overrides?: CallOverrides): Promise<string>;
 
-    approveFyToken(
-      seriesId: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     cauldron(overrides?: CallOverrides): Promise<string>;
 
     divest(
@@ -339,6 +317,7 @@ export interface StEthLever extends BaseContract {
 
     invest(
       seriesId: PromiseOrValue<BytesLike>,
+      baseAmount: PromiseOrValue<BigNumberish>,
       borrowAmount: PromiseOrValue<BigNumberish>,
       minCollateral: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -405,11 +384,6 @@ export interface StEthLever extends BaseContract {
   estimateGas: {
     FLASH_LOAN_RETURN(overrides?: CallOverrides): Promise<BigNumber>;
 
-    approveFyToken(
-      seriesId: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     cauldron(overrides?: CallOverrides): Promise<BigNumber>;
 
     divest(
@@ -427,6 +401,7 @@ export interface StEthLever extends BaseContract {
 
     invest(
       seriesId: PromiseOrValue<BytesLike>,
+      baseAmount: PromiseOrValue<BigNumberish>,
       borrowAmount: PromiseOrValue<BigNumberish>,
       minCollateral: PromiseOrValue<BigNumberish>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
@@ -459,11 +434,6 @@ export interface StEthLever extends BaseContract {
   populateTransaction: {
     FLASH_LOAN_RETURN(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    approveFyToken(
-      seriesId: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     cauldron(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     divest(
@@ -481,6 +451,7 @@ export interface StEthLever extends BaseContract {
 
     invest(
       seriesId: PromiseOrValue<BytesLike>,
+      baseAmount: PromiseOrValue<BigNumberish>,
       borrowAmount: PromiseOrValue<BigNumberish>,
       minCollateral: PromiseOrValue<BigNumberish>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }

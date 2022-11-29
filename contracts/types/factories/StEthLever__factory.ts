@@ -122,19 +122,6 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "bytes6",
-        name: "seriesId",
-        type: "bytes6",
-      },
-    ],
-    name: "approveFyToken",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
     inputs: [],
     name: "cauldron",
     outputs: [
@@ -212,6 +199,11 @@ const _abi = [
         internalType: "bytes6",
         name: "seriesId",
         type: "bytes6",
+      },
+      {
+        internalType: "uint256",
+        name: "baseAmount",
+        type: "uint256",
       },
       {
         internalType: "uint256",
