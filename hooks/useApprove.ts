@@ -1,9 +1,8 @@
 import { ZERO_BN } from '@yield-protocol/ui-math';
 import { BigNumber } from 'ethers';
 import { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
-import { useAccount, useContractRead, useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
-import { WETH } from '../config/assets';
+// import { toast } from 'react-toastify';
+import { useAccount, useContractRead, useContractWrite, usePrepareContractWrite } from 'wagmi';
 import { IAsset } from '../context/LeverContext';
 
 const useApprove = (
@@ -19,7 +18,7 @@ const useApprove = (
   // () => ERC20__factory.connect(reqSig.target.address, signer).approve(spender, amount as string),
   
   const { address: account } = useAccount();
-  const [ hasApproval, setHasApproval ] = useState<boolean>(false);
+  const [ hasApproval, setHasApproval ] = useState<boolean>(true);
 
   const { data: allowance } = useContractRead({
     address: asset?.address,
@@ -53,7 +52,7 @@ const useApprove = (
     enabled: !!asset && !!spenderAddress && !!account  // && !hasApproval,
   });
 
-  const { writeAsync:approve, data: writeData } = useContractWrite({ ...config });
+  const { writeAsync, data: writeData } = useContractWrite({ ...config });
   
   // const {
   //   data: waitData,
@@ -75,6 +74,11 @@ const useApprove = (
   //   writeAsync!();
   //   await 
   // }
+
+  const approve = async () => {
+    await writeAsync!()
+    await writeData?.wait(2);
+  }
 
   return { approve, hasApproval };
   

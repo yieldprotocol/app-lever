@@ -151,7 +151,7 @@ const PositionProvider = ({ children }: any) => {
 
   /* ACTIONS TO CHANGE CONTEXT */
   const positionActions = {
-    updatePositions: () => updatePositions(),
+    updatePositions: () => updatePositions([]),
     selectPosition: (position: any) => updateState({ type: 'SELECT_POSITION', payload: position })
   };
 

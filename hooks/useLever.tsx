@@ -135,6 +135,7 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
         const simulated = await simulator(inputState, leverState, marketState, positionState, provider);
 
         console.log( simulated )
+        
         if (simulated) {
 
           setLongAssetObtained(simulated.longAssetObtained);

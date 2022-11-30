@@ -29,7 +29,7 @@ const useInvestDivest = (
     shortAsset!, // asset to approve
     selectedLever?.leverAddress!, // spender
     input?.big!, // amountToApprove
-    enabled && shortAsset?.id !== WETH // enable
+    enabled && transactType === 'invest'  // enable
   );
 
   const [txnEnabled, setTxnEnabled] = useState<boolean>(false);

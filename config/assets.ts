@@ -116,7 +116,7 @@ ASSETS.set(WETH, {
   name: 'Wrapped Ether',
   decimals: 18,
   symbol: 'WETH',
-  displaySymbol: 'WETH',
+  displaySymbol: 'wETH',
   showToken: true,
   displayDigits: 3,
   tokenType: TokenType.ERC20,

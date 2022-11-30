@@ -1,3 +1,4 @@
+import LogoWrap from '../components/common/logoWrap';
 import {
   CRVMark,
   DaiMark,
@@ -24,7 +25,7 @@ const logoMap = new Map([
   ['WBTC', <WBTCMark key="wbtc" />],
   ['TST', <TSTMark key="tst" />],
   ['ETH', <EthMark key="eth" />],
-  ['WETH', <WethMark key="weth" />],
+  // ['WETH', <WethMark key="weth" />],
   ['USDT', <USDTMark key="usdt" />],
   ['LINK', <LinkMark key="link" />],
   ['wstETH', <StEthMark key="wsteth" />],
@@ -38,9 +39,23 @@ const logoMap = new Map([
   ['CURVE', <CRVMark key="crv" />],
   [
     'YIELD',
-    <YieldMark
-      key="yld"
-      colors={['#f79533', '#f37055', '#ef4e7b', '#a166ab', '#5073b8', '#1098ad', '#07b39b', '#6fba82']}
+    <LogoWrap
+      innerTwStyle="ring-2 bg-white bg-opacity-80"
+      logo={
+        <YieldMark
+          key="yld"
+          colors={['#f79533', '#f37055', '#ef4e7b', '#a166ab', '#5073b8', '#1098ad', '#07b39b', '#6fba82']}
+        />
+      }
+    />,
+  ],
+
+  [
+    'WETH',
+    <LogoWrap
+      outerTwStyle="bg-white bg-opacity-80 border border-white"
+      innerTwStyle="border border-black border-dashed"
+      logo={<EthMark key="weth" />}
     />,
   ],
 ]);

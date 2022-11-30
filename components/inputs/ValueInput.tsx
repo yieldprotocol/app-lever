@@ -55,23 +55,25 @@ export const ValueInput = () => {
           />
         </div>
 
-        <div className="col-span-2 text-start flex flex-row justify-between">
+        <div className="col-span-2 text-start flex justify-between">
           {shortAsset?.id === WETH && (
             <div
               onClick={() => setUseNative(true)}
-              className={`flex flex-row gap-2 ${useNative ? ' text-white' : 'text-gray-500'}`}
+              className={`flex items-center gap-2 ${useNative ? ' text-white' : 'text-gray-500'}`}
             >
               <div className="w-4">{logoMap.get('ETH')}</div>
               <button>ETH </button>
             </div>
           )}
+
           <div
-            className={`flex flex-row gap-2 ${useNative ? 'text-gray-500' : ' text-white'}`}
+            className={`flex items-center gap-2 ${useNative ? 'text-gray-500' : ' text-white'}`}
             onClick={() => setUseNative(false)}
           >
-            <div className="w-4"> {shortAsset?.image} </div>
+            <div className=" w-4"> {shortAsset?.image} </div>
             <button>{shortAsset?.displaySymbol}</button>
           </div>
+
           <div />
         </div>
 
