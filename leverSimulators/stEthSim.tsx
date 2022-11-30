@@ -34,7 +34,6 @@ export const stEthSimulator: Simulator = async (
 
   const output = {} as SimulatorOutput;
 
-
   if (input.big.gt(ZERO_BN) && provider) {
 
     console.log('Fired STETH Lever....');
@@ -165,9 +164,6 @@ export const stEthSimulator: Simulator = async (
 
     return output;
   }
-
-
-
 
   return undefined;
 };

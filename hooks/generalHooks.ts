@@ -1,4 +1,17 @@
 import { useCallback, useEffect, useState, useRef } from 'react';
+import { copyToClipboard } from '../utils/appUtils';
+
+export const useCopy = (value: string) => {
+  const [copied, setCopied] = useState<boolean>(false);
+  const copy = (e: any) => {
+    setCopied(true);
+    copyToClipboard(value);
+  };
+  useEffect(() => {
+    copied && (async () => setTimeout(() => setCopied(false), 5000))();
+  }, [copied]);
+  return { copied, copy };
+};
 
 /* Simple Hook for caching & retrieved data */
 export const useCachedState = (key: string, initialValue: any, account?: string) => {
