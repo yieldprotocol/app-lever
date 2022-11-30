@@ -17,7 +17,7 @@ const TxInfo = (props: { label: string; date: Date | undefined; txHash: string |
   return (
     <TopRow className="px-4 py-2" >
       <div className={`text-sm`}> {props.label} </div>
-      <div className="flex flex-row gap-4">
+      <div className="flex   gap-4">
         <div className={`text-sm`}> {abbreviateHash(props.txHash!) } </div>
         <div className={`text-sm`}> {props.date?.toDateString()} </div>
         <Link href={url} rel="noopener noreferrer" target="_blank">

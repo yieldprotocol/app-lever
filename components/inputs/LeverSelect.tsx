@@ -20,7 +20,7 @@ enum AssetType {
 
 export const Selectable = tw.button`
 flex 
-flex-row 
+  
 space-x-4 
 align 
 p-2 
@@ -118,10 +118,10 @@ const LeverSelect = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-row space-x-4 ">
+      <div className="flex space-x-4 ">
         <ClickableContainer>
           <TopRow className="p-1 gap-2 justify-start">
-            <div className="flex flex-row text-xs text-slate-500 text-start ">Long</div>
+            <div className="flex text-xs text-slate-500 text-start ">Long</div>
             <ArrowTrendingUpIcon className="h-4 w-4 text-slate-500" />
           </TopRow>
           <Listbox value={selectedLongAsset} onChange={(x: IAsset) => leverActions.selectLong(x)}>
@@ -155,7 +155,7 @@ const LeverSelect = () => {
 
         <ClickableContainer>
           <TopRow className="p-1 gap-2 justify-start ">
-            <div className="flex flex-row text-xs text-slate-500 text-start ">Short</div>
+            <div className="flex   text-xs text-slate-500 text-start ">Short</div>
             <ArrowTrendingDownIcon className="h-4 w-4 text-slate-500" />
           </TopRow>
           <Listbox value={selectedShortAsset} onChange={(x: IAsset) => leverActions.selectShort(x)}>
@@ -181,12 +181,12 @@ const LeverSelect = () => {
           {possibleLevers.map((l: ILever) => (
             <ClickableContainer key={l.id}>
               <div
-                className={`flex flex-row p-4 justify-between rounded ${
+                className={`flex p-4 justify-between rounded ${
                   selectedLever?.id === l.id ? 'bg-primary-600 bg-opacity-25 h-14' : 'text-xs opacity-50'
                 }`}
                 onClick={() => leverActions.selectLever(l)}
               >  
-                <div className="flex flex-row gap-2">
+                <div className="flex   gap-2">
                   <StackedLogos size={6} logos={[assets.get(l.ilkId)!.image!, assets.get(l.baseId)!.image!]} />
                 </div>
                 {/* <div className="w-6 h-6">{l.tradeImage}</div> */}
@@ -202,17 +202,17 @@ const LeverSelect = () => {
             <ClickableContainer>
               <div className="grid overflow-hidden grid-cols-4 grid-rows-1 p-4">
                 <div className="col-span-1  ">
-                  <div className="flex flex-row justify-center">
+                  <div className="flex   justify-center">
                     <ExclamationCircleIcon className="w-10" />
                   </div>
                 </div>
                 <div className="col-span-3 gap-2 space-y-2">
-                  <div className="flex flex-row justify-end">
+                  <div className="flex   justify-end">
                     <div className="text-sm"> There are no strategies available for this pair, yet. </div>
                   </div>
-                  <div className="flex flex-row justify-end ">
+                  <div className="flex   justify-end ">
                     <button
-                      className="flex flex-row text-xs text-slate-500 gap-4 rounded "
+                      className="flex   text-xs text-slate-500 gap-4 rounded "
                       onClick={() => handlePairRequest()}
                     >
                       Are you are interested in adding this pair?

@@ -40,12 +40,12 @@ const EstimatedPosition = (props: any) => {
   return (
     <BorderWrap className="pb-4">
       <TopRow>
-        <div className="flex flex-row gap-4 " >
+        <div className="flex   gap-4 " >
           <StackedLogos size={8} logos={[longAsset?.image, shortAsset?.image]} />
           <div className=" text-lg">Position Estimation</div>
         </div>
         
-        <div className="flex flex-row gap-4 " >
+        <div className="flex   gap-4 " >
         <div className="py-2 text-sm" > Leverage </div>
         <div className="text-lg rounded-full bg-primary-500 p-1 px-2"> X {leverage?.dsp.toFixed(1) || '0.0'} </div>
         
@@ -54,7 +54,7 @@ const EstimatedPosition = (props: any) => {
       <Inner>
         <InfoBlock>
           <Label className="text-base">Initial Investment</Label>
-          <Value className="text-xl flex flex-row justify-end gap-4">
+          <Value className="text-xl flex   justify-end gap-4">
             <div>{input?.dsp.toFixed(shortAsset?.displayDigits || 2)} </div>
             <div className="w-6"> {shortAsset?.image} </div>
           </Value>
@@ -91,23 +91,23 @@ const EstimatedPosition = (props: any) => {
             <Divider />
             <InfoBlock>
               <Label>
-                <div className="flex flex-row gap-2 ">
+                <div className="flex   gap-2 ">
                   {longAsset.displaySymbol} Obtained
                   <div className="w-5">
                     <PlusCircleIcon />
                   </div>
                 </div>
               </Label>
-              <Value className="text-xl flex flex-row justify-end gap-2">
+              <Value className="text-xl flex   justify-end gap-2">
                 {isSimulating && <Loader />}
                 {!isSimulating && (
-                  <div className="text-xl flex flex-row justify-end gap-6 ">
-                    <div className="flex flex-row gap-2">
+                  <div className="text-xl flex   justify-end gap-6 ">
+                    <div className="flex   gap-2">
                       <div className="w-6">{longAsset?.image}</div>
                       <div>{longAssetObtained?.dsp} </div>
                     </div>
 
-                    <div className="flex flex-row gap-2">
+                    <div className="flex   gap-2">
                     <div className="text-xs">earning</div>
                     <div>{Math.round((investAPR + Number.EPSILON) * 100) / 100}% </div>
                     <div className="text-xs">APR </div>
@@ -117,22 +117,22 @@ const EstimatedPosition = (props: any) => {
               </Value>
 
               <Label>
-                <div className="flex flex-row gap-2 ">
+                <div className="flex   gap-2 ">
                   {shortAsset.displaySymbol} borrowed
                   <div className="w-5">
                     <MinusCircleIcon />
                   </div>
                 </div>
               </Label>
-              <Value className="text-xl flex flex-row justify-end gap-2">
+              <Value className="text-xl flex   justify-end gap-2">
                 {isSimulating && <Loader />}
                 {!isSimulating && (
-                  <div className="text-xl flex flex-row justify-end gap-6">
-                    <div className="flex flex-row gap-2">
+                  <div className="text-xl flex   justify-end gap-6">
+                    <div className="flex   gap-2">
                       <div className="w-6">{shortAsset?.image}</div>
                       <div>{shortAssetBorrowed?.dsp} </div>
                     </div>
-                    <div className="flex flex-row gap-2">
+                    <div className="flex   gap-2">
                     <div className="text-sm">@</div>
                     <div>{Math.round((borrowAPR + Number.EPSILON) * 100) / 100}%</div>
                     </div>
@@ -164,7 +164,7 @@ const EstimatedPosition = (props: any) => {
                   {isSimulating ? <Loader /> : `${debtAtMaturity?.dsp} ${shortAsset?.displaySymbol}`}
                 </Value>
                 <div className=" text-sm text-start mt-2">
-                  <div className="flex flex-row gap-2 text-sm ">
+                  <div className="flex   gap-2 text-sm ">
                     Fees
                     <div className="w-5">
                       <MinusCircleIcon />
@@ -177,7 +177,7 @@ const EstimatedPosition = (props: any) => {
                 <Label className="text-sm">Trading fees </Label>
                 <Value className="text-sm">{isSimulating ? <Loader /> : tradingFee?.dsp} </Value>
                 <Label>
-                  <div className="flex flex-row gap-2 text-sm font-bold">Total fees</div>
+                  <div className="flex   gap-2 text-sm font-bold">Total fees</div>
                 </Label>
                 <Value className="text-sm font-bold ">
                   {isSimulating ? (

@@ -48,14 +48,14 @@ const Positions = () => {
           rounded-lg
           p-4 
           text-start 
-          flex flex-row 
+          flex   
           justify-between 
           ${isActive || isSelected ? 'opacity-100' : 'opacity-50'} 
           ${isSelected ? 'bg-primary-600 bg-opacity-50 opacity-100' : ''}   
         `}
         >
-          <div className="flex flex-row gap-4">
-            <div className="flex flex-row ">
+          <div className="flex   gap-4">
+            <div className="flex   ">
               <StackedLogos size={6} logos={[longAsset?.image!, shortAsset?.image!]} />
             </div>
             <div>{position.displayName}</div>

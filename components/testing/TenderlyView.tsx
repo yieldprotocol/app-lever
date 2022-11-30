@@ -13,7 +13,7 @@ const TenderlyView = () => {
   return (
     <div className="p-32 gap-2 text-white">
       <p className="text-white">Test section: </p>
-      <div className="flex flex-row gap-8">
+      <div className="flex   gap-8">
         <Button action={() => void fillEther()} disabled={ balance > 100 || loading }> Fund Eth </Button>
         <div>{process.env.FORKED_ENV_RPC}</div>
       </div>
