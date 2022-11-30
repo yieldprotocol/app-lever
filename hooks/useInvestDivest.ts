@@ -32,7 +32,9 @@ const useInvestDivest = (
     enabled && transactType === 'invest'  // enable
   );
 
-  const [txnEnabled, setTxnEnabled] = useState<boolean>(false);
+  console.log('Approval status:',  hasApproval );
+
+  const [ txnEnabled, setTxnEnabled ] = useState<boolean>(false);
 
   /* set the override to include value if using native token */
   const overrides = inputNativeToken && transactType === 'invest' ? { value: input?.big!, gasLimit: '2000000' } : { gasLimit: '2000000' };
@@ -85,7 +87,9 @@ const useInvestDivest = (
         write();
       }
       if (!hasApproval) {
-        await approve();
+        const approvalReceipt = await approve();
+
+        console.log( approvalReceipt )
         console.log('Approval complete.');
         write();
       }

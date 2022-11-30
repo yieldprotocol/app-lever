@@ -39,6 +39,7 @@ const logoMap = new Map([
   ['CURVE', <CRVMark key="crv" />],
   [
     'YIELD',
+    
     <LogoWrap
       outerTwStyle=""
       innerTwStyle=""
@@ -53,7 +54,7 @@ const logoMap = new Map([
   [
     'WETH',
     <LogoWrap
-      outerTwStyle="bg-white bg-opacity-80"
+      outerTwStyle="bg-red bg-opacity-80"
       innerTwStyle="border-black border border-dashed"
       logo={<EthMark key="weth" />}
     />,

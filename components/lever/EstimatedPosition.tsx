@@ -50,14 +50,15 @@ const EstimatedPosition = (props: any) => {
         )}
 
         <div className="flex items-center gap-4">
-          <Value className="text-xl flex justify-end gap-4">
+          <Value className="text-xl flex items-center justify-end gap-2">
+            <div className="w-4"> {shortAsset?.image} </div>
             <div>{input?.dsp.toFixed(shortAsset?.displayDigits || 2)} </div>
-            <div className="w-6"> {shortAsset?.image} </div>
           </Value>
 
-          <div className="flex items-center gap-2">
-            {/* <div className="py-2 text-sm"> Leverage </div> */}
-            <div className="text-lg rounded-full bg-primary-500 p-1 px-2">X {leverage?.dsp.toFixed(1) || '0.0'}</div>
+          <div className="flex items-center gap-2 ">
+            <div className="relative text-lg font-bold min-w-[5em] rounded-full bg-primary-600 p-1 px-2">
+              X {leverage?.dsp.toFixed(1) || '0.0'}
+            </div>
           </div>
         </div>
       </TopRow>
@@ -116,7 +117,7 @@ const EstimatedPosition = (props: any) => {
                 {!isSimulating && (
                   <div className="text-xl flex   justify-end gap-6 ">
                     <div className="flex   gap-2">
-                      <div className="w-6">{longAsset?.image}</div>
+                      <div className="w-4">{longAsset?.image}</div>
                       <div>{longAssetObtained?.dsp} </div>
                     </div>
 
@@ -142,7 +143,7 @@ const EstimatedPosition = (props: any) => {
                 {!isSimulating && (
                   <div className="text-xl flex   justify-end gap-6">
                     <div className="flex   gap-2">
-                      <div className="w-6">{shortAsset?.image}</div>
+                      <div className="w-4">{shortAsset?.image}</div>
                       <div>{shortAssetBorrowed?.dsp} </div>
                     </div>
                     <div className="flex   gap-2">

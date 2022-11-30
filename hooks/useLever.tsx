@@ -133,8 +133,6 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
          * */
         setIsSimulating(true);
         const simulated = await simulator(inputState, leverState, marketState, positionState, provider);
-
-        console.log( simulated )
         
         if (simulated) {
 
@@ -194,9 +192,6 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
           const borrowLimitUsed_ =
             (simulated.debtAtMaturity?.dsp! / (simulated.longAssetObtained?.dsp! * selectedLever?.loanToValue)) * 100;
           setBorrowLimitUsed(borrowLimitUsed_);
-
-          console.log('debt  ',  simulated.debtAtMaturity?.dsp! )
-          console.log('assetObtained * LTV ',  simulated.longAssetObtained?.dsp! * selectedLever?.loanToValue )
 
           const pnl_ = isNaN(netAPR - investAPR) ? 0 : netAPR - investAPR;
           setPnl(pnl_);
