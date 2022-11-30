@@ -133,14 +133,14 @@ export const stEthSimulator: Simulator = async (
     /* Added rewards */
     const rewards = parseFloat(investApy) * yearProportion;
     const returns = ethers.utils.parseEther((output.longAssetObtained.dsp * (1 + rewards / 100)).toString());
-    const returnsLessFees = returns.sub(output.tradingFee.big);
+    const returnsLessFees = returns // .sub(output.tradingFee.big);
 
     // const stEthPlusReturns = boughtStEth.mul(returns)
     output.investmentAtMaturity = convertToW3bNumber(returnsLessFees, 18, 3);
 
     /* Calculate the value of the investPosition in short terms : via swap */
     const investValue_ = await stableSwap.get_dy(1, 0, output.longAssetObtained.big); // .catch(()=>{console.log('failed'); return ZERO_BN} );
-    const investValueLessFees = investValue_.sub(output.tradingFee.big);
+    const investValueLessFees = investValue_ // .sub(output.tradingFee.big);
     output.investmentCurrent = convertToW3bNumber(investValueLessFees, 18, 3);
 
     /**

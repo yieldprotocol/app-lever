@@ -27,7 +27,7 @@ const useApprove = (
     args: [account, spenderAddress],
     enabled: enabled && !!account && !!asset && amountToApprove.gt(ZERO_BN),
     scopeKey: `allowance_${asset?.id}`,
-    cacheTime: 10_000,
+    cacheTime: 20_000,
     onSuccess: (v: any) => console.log('Allowance checked: ', asset.symbol, v.toString()),
   });
 

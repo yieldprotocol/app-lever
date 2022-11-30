@@ -13,6 +13,7 @@ import { useRouter } from 'next/router';
 import useDivest from './useDivest';
 import useInvest from './useInvest';
 import { BigNumber } from 'ethers';
+import { toast } from 'react-toastify';
 
 export type Simulator = (
   inputState: IInputContextState,
@@ -119,12 +120,17 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
         simulation.shortAssetBorrowed!
       ) {
 
-
-        console.log('Sim result: ' , simulation )
+        console.log( 
+          simulation.longAssetObtained,
+          simulation.investmentAtMaturity,
+          selectedLever.maturity,
+          currentTime
+        )
 
       /**
         * Calculate the APR's based on the simulation
         **/
+
         // alternative: Math.pow(investAtMaturity.dsp/investmentPosition.dsp, oneOverYearProp) - 1
         const investRate = calculateAPR(
           simulation.longAssetObtained.big,
@@ -132,7 +138,10 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
           selectedLever.maturity,
           currentTime
         );
-        const investAPR = investRate ? parseFloat(investRate!) : 0;
+
+        console.log( investRate )
+
+        const investAPR = parseFloat(investRate!);
         setInvestAPR(investAPR); // console.log('investAPR: ', investAPR);
 
         // alternative: Math.pow(debtAtMaturity.dsp/shortBorrowed.dsp, oneOverYearProp) - 1
@@ -142,7 +151,7 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
           selectedLever.maturity,
           currentTime
         );
-        const borrowAPR = borrowRate ? parseFloat(borrowRate!) : 0;
+        const borrowAPR = parseFloat(borrowRate!);
         setBorrowAPR(borrowAPR); // console.log('borrowAPR: ', borrowAPR);
 
         const netAPR = leverage.dsp * investAPR - (leverage.dsp - 1) * borrowAPR;
@@ -183,8 +192,15 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
          * */
         setIsSimulating(true);
         const simulated = await simulator(debouncedInputState, leverState, marketState, positionState, provider, positionView);
-        simulated && setSimulation(simulated);
-        setIsSimulating(!simulated);
+
+        if (simulated) { 
+          setSimulation(simulated);
+          setIsSimulating(false);
+        } else { 
+          toast.error('Simulation error')
+          setIsSimulating(false)
+        }
+        
       })();
 
   }, [debouncedInputState, leverState, marketState, positionState, provider, pathname]);

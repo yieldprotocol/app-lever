@@ -47,6 +47,8 @@ export const yieldStrategySimulator: Simulator = async (
   const shortAsset = assets.get(selectedLever?.baseId!);
   const longAsset = assets.get(selectedLever?.ilkId!);
 
+  console.log(shortAsset?.decimals, longAsset?.decimals )
+
   const timeToMaturity = marketState.maturity - currentTime;
   const yearProportion = timeToMaturity / 31536000;
 
@@ -144,10 +146,10 @@ export const yieldStrategySimulator: Simulator = async (
      * output.investmentAtMaturity
      * */
     const rewards = parseFloat(investApy || '0') * yearProportion;
-    const returns = (output.longAssetObtained.dsp * (1 + rewards / 100)).toFixed(longAsset?.decimals);
-    const estimatedReturns = ethers.utils.parseUnits(returns, longAsset?.decimals);
+    const returns = (output.longAssetObtained.dsp * (1 + rewards / 100)).toFixed(longAsset!.decimals);
+    const estimatedReturns = ethers.utils.parseUnits(returns, longAsset!.decimals);
     const returnsLessFees = estimatedReturns.sub(output.tradingFee.big);
-    output.investmentAtMaturity = convertToW3bNumber(returnsLessFees, longAsset?.decimals, longAsset?.displayDigits);
+    output.investmentAtMaturity = convertToW3bNumber(returnsLessFees, longAsset!.decimals, longAsset!.displayDigits);
 
     const lpReceived = burnFromStrategy(marketState.totalSupply, marketState.totalSupply, lpTokens);
     const [sharesReceivedFromBurn, fyTokenReceivedFromBurn] = burn(
@@ -182,6 +184,9 @@ export const yieldStrategySimulator: Simulator = async (
           ZERO_BN,
         ]
       : [];
+
+      console.log( output )
+      return output;
   }
 
   /* Handle the simulation for an existing posiiton/vault */
