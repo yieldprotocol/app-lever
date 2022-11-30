@@ -34,16 +34,16 @@ dark:text-gray-50
 dark:bg-opacity-25
 `;
 
-export const InfoBlock = tw.div`grid grid-cols-2 gap-3 my-6`;
+export const InfoBlock = tw.div<any>`grid grid-cols-2 gap-3 my-6`;
 
-export const Label = tw.div`text-slate-700 dark:text-slate-400 text-left`;
+export const Label = tw.div<any>`text-slate-700 dark:text-slate-400 text-left`;
 export const Value = tw.div<any>`text-black dark:text-white text-right`;
 
 export const Divider = tw.div`border-0.5 border-primary dark:border-primary`;
 export const NotShown = tw.div`invisible`;
 
 // export const Spinner = tw.div`spinner-grow inline-block w-8 h-8 bg-current rounded-full opacity-0" role="status`;
-export const Spinner = tw.div`spinner-border animate-spin inline-block w-6 h-6 border-4 rounded-full border-teal-400 border-t-teal-900`;
+export const Spinner = tw.div<any>`spinner-border animate-spin inline-block w-6 h-6 border-4 rounded-full border-teal-400 border-t-teal-900`;
 
 export const ClearButton = tw.button`text-sm`;
 

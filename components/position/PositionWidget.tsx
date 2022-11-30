@@ -94,13 +94,13 @@ const PositionWidget = (props: any) => {
               <Value>{selectedPosition.seriesId} </Value>
 
               <Label>Initial Investment: </Label>
-              <Value>{selectedPosition.shortInvested.dsp} { shortAsset?.symbol} </Value>
+              <Value>{selectedPosition.shortAssetObtained.dsp} { shortAsset?.symbol} </Value>
 
               <Label>Investment Debt: </Label>
-              <Value>{selectedPosition.investmentBorrowed.dsp} {shortAsset?.symbol} </Value>
+              <Value>{selectedPosition.shortAssetBorrowed.dsp} {shortAsset?.symbol} </Value>
 
               <Label>Investment Amount: </Label>
-              <Value>{selectedPosition.investmentLong.dsp} {longAsset?.symbol}</Value>
+              <Value>{selectedPosition.longAssetObtained.dsp} {longAsset?.symbol}</Value>
 
               <Label>Current Vault Debt: </Label>
               <Value>{selectedPosition.art.dsp} { shortAsset?.symbol} </Value>

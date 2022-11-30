@@ -24,6 +24,8 @@ const EstimatedPosition = (props: any) => {
     shortAssetBorrowed,
     shortAssetObtained,
 
+    notification,
+
     debtAtMaturity,
     longAssetObtained,
     investmentCurrent,
@@ -63,45 +65,25 @@ const EstimatedPosition = (props: any) => {
         </div>
       </TopRow>
 
-      <Inner>
-        <InfoBlock>
-          <>
-            {/* <Label className="text-base">Initial Investment</Label>
-              <Value className="text-xl flex justify-end gap-4">
-                <div>{input?.dsp.toFixed(shortAsset?.displayDigits || 2)} </div>
-                <div className="w-6"> {shortAsset?.image} </div>
-              </Value> */}
+      {selectedLever && notification && <div> {notification.msg} </div>}
+      {!notification && selectedLever && input?.dsp > 0 && (
+        <Inner>
+            <InfoBlock>
+              <Label className="text-base">net APR</Label>
+              <Value
+                className={`text-2xl font-extrabold ${
+                  netAPR < 0 ? 'text-red-400 dark:text-red-400' : 'text-emerald-600 dark:text-emerald-600 '
+                }`}
+              >
+                {isSimulating ? <Loader /> : Math.round((netAPR + Number.EPSILON) * 100) / 100}%
+              </Value>
 
-            {/* <div /> */}
-            {/* <Label className="text-lg" > Leverage </Label>
-          <Value className="text-xl">
-            <div className='flex lex-row justify-end'>
-              <div className="text-lg rounded-full bg-primary-500 p-1 px-2"> X {leverage?.dsp || 0} </div>
-            </div>
-          </Value> */}
+              <Label className="text-base">Borrow Limit Usage</Label>
+              <Value className="text-lg">
+                {isSimulating ? <Loader /> : Math.round((borrowLimitUsed + Number.EPSILON) * 100) / 100} %
+              </Value>
+            </InfoBlock>
 
-            {selectedLever && input?.dsp > 0 && (
-              <>
-                <Label className="text-base">net APR</Label>
-                <Value
-                  className={`text-2xl font-extrabold ${
-                    netAPR < 0 ? 'text-red-400 dark:text-red-400' : 'text-emerald-600 dark:text-emerald-600 '
-                  }`}
-                >
-                  {isSimulating ? <Loader /> : Math.round((netAPR + Number.EPSILON) * 100) / 100}%
-                </Value>
-
-                <Label className="text-base">Borrow Limit Usage</Label>
-                <Value className="text-lg">
-                  {isSimulating ? <Loader /> : Math.round((borrowLimitUsed + Number.EPSILON) * 100) / 100} %
-                </Value>
-              </>
-            )}
-          </>
-        </InfoBlock>
-
-        {selectedLever && input?.dsp > 0 && (
-          <>
             <Divider />
             <InfoBlock>
               <Label>
@@ -205,15 +187,8 @@ const EstimatedPosition = (props: any) => {
                 {showExtra ? 'Show less -' : 'Show Advanced Info +'}
               </button>
             </div>
-
-            {/* <Divider /> */}
-            {/* <InfoBlock>
-              <Label>PnL</Label>
-              <Value>{isSimulating ? <Loader /> : Math.round((pnl + Number.EPSILON) * 100) / 100} %</Value>
-            </InfoBlock> */}
-          </>
-        )}
-      </Inner>
+        </Inner>
+      )}
     </BorderWrap>
   );
 };

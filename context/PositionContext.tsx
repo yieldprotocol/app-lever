@@ -3,6 +3,7 @@ import React, { useEffect, useReducer } from 'react';
 import { useAccount, useProvider } from 'wagmi';
 import { CAULDRON, contractMap } from '../config/contracts';
 import { ILeverRoot, LEVERS } from '../config/levers';
+import { SimulatorOutput } from '../hooks/useLever';
 import { W3bNumber } from '../lib/types';
 import { convertToW3bNumber } from '../lib/utils';
 import { generateVaultName } from '../utils/appUtils';
@@ -17,16 +18,21 @@ export enum PositionStatus {
 }
 
 export interface IPosition {
+  
   vaultId: string;
   seriesId: string;
   ilkId: string;
   baseId: string;
 
-  shortInvested: W3bNumber; // short asset invested
+  shortAssetBorrowed: W3bNumber; // resultant debt === input? 
 
-  investmentLong: W3bNumber; // resultant long asset obtained
-  investmentBorrowed: W3bNumber; // resultant debt
+  debtAtMaturity: W3bNumber; // debt owed at maturity
 
+  // debtCurrent: W3bNumber; // current Value of debt (if settling now)
+  
+  shortAssetObtained: W3bNumber; // TOTAL short-asset used for investment (input + borrow)
+  longAssetObtained: W3bNumber; // long-asset obtained (by using short asset obtained
+  
   ink: W3bNumber; // current collateral 
   art: W3bNumber; // current debt
 
@@ -120,9 +126,10 @@ const PositionProvider = ({ children }: any) => {
               ilkId,
               baseId: `${seriesId.substring(0, 6)}00000000`,
 
-              investmentLong: convertToW3bNumber(investment, 18, 6),
-              investmentBorrowed: convertToW3bNumber(debt, 18, 6),
-              shortInvested: convertToW3bNumber(args.amountToInvest || value, 18, 6),
+              longAssetObtained: convertToW3bNumber(investment, 18, 6),
+              shortAssetBorrowed: convertToW3bNumber(debt, 18, 6),
+              shortAssetObtained: convertToW3bNumber(args.amountToInvest || value, 18, 6),
+
               ink: convertToW3bNumber(ink, 18, 6),
               art: convertToW3bNumber(art, 18, 6),
 

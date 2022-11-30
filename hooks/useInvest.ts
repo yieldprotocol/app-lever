@@ -7,6 +7,7 @@ import { WETH } from '../config/assets';
 import { IInputContextState, InputContext } from '../context/InputContext';
 import { ILeverContextState, LeverContext } from '../context/LeverContext';
 import { PositionContext } from '../context/PositionContext';
+import { useDebounce } from './generalHooks';
 import useApprove from './useApprove';
 
 const useInvest= (
@@ -17,8 +18,13 @@ const useInvest= (
   const [leverState] = useContext(LeverContext);
   const { selectedLever, assets } = leverState as ILeverContextState;
   const [, positionActions] = useContext(PositionContext);
+  
   const [inputState] = useContext(InputContext);
-  const { input, inputNativeToken } = inputState as IInputContextState;
+  const debouncedInputState = useDebounce( inputState, 500 );
+  const { input } = debouncedInputState;
+  const { inputNativeToken } = inputState as IInputContextState;
+  
+
   const shortAsset = assets.get(selectedLever?.baseId!);
 
   const { approve, hasApproval } = useApprove(
