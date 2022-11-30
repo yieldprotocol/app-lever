@@ -40,7 +40,8 @@ const logoMap = new Map([
   [
     'YIELD',
     <LogoWrap
-      innerTwStyle="ring-2 bg-white bg-opacity-80"
+      outerTwStyle=""
+      innerTwStyle=""
       logo={
         <YieldMark
           key="yld"
@@ -49,15 +50,19 @@ const logoMap = new Map([
       }
     />,
   ],
-
   [
     'WETH',
     <LogoWrap
-      outerTwStyle="bg-white bg-opacity-80 border border-white"
-      innerTwStyle="border border-black border-dashed"
+      outerTwStyle="bg-white bg-opacity-80"
+      innerTwStyle="border-black border border-dashed"
       logo={<EthMark key="weth" />}
     />,
   ],
+
+  // [
+  //   'UNI',
+  //   <LogoWrap outerTwStyle="bg-white bg-opacity-80" innerTwStyle="border-pink border" logo={<UNIMark key="uni" />} />,
+  // ],
 ]);
 
 export default logoMap;

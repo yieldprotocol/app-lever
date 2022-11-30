@@ -40,21 +40,20 @@ const EstimatedPosition = (props: any) => {
   return (
     <BorderWrap className="pb-4">
       <TopRow>
-        <div className="flex   gap-4 " >
+        <div className="flex items-center gap-4">
           <StackedLogos size={8} logos={[longAsset?.image, shortAsset?.image]} />
-          <div className=" text-lg">Position Estimation</div>
+          <div className="text-lg">Position Estimation</div>
         </div>
-        
-        <div className="flex   gap-4 " >
-        <div className="py-2 text-sm" > Leverage </div>
-        <div className="text-lg rounded-full bg-primary-500 p-1 px-2"> X {leverage?.dsp.toFixed(1) || '0.0'} </div>
-        
+
+        <div className="flex gap-4">
+          <div className="py-2 text-sm"> Leverage </div>
+          <div className="text-lg rounded-full bg-primary-500 p-1 px-2"> X {leverage?.dsp.toFixed(1) || '0.0'} </div>
         </div>
       </TopRow>
       <Inner>
         <InfoBlock>
           <Label className="text-base">Initial Investment</Label>
-          <Value className="text-xl flex   justify-end gap-4">
+          <Value className="text-xl flex justify-end gap-4">
             <div>{input?.dsp.toFixed(shortAsset?.displayDigits || 2)} </div>
             <div className="w-6"> {shortAsset?.image} </div>
           </Value>
@@ -108,9 +107,9 @@ const EstimatedPosition = (props: any) => {
                     </div>
 
                     <div className="flex   gap-2">
-                    <div className="text-xs">earning</div>
-                    <div>{Math.round((investAPR + Number.EPSILON) * 100) / 100}% </div>
-                    <div className="text-xs">APR </div>
+                      <div className="text-xs">earning</div>
+                      <div>{Math.round((investAPR + Number.EPSILON) * 100) / 100}% </div>
+                      <div className="text-xs">APR </div>
                     </div>
                   </div>
                 )}
@@ -133,8 +132,8 @@ const EstimatedPosition = (props: any) => {
                       <div>{shortAssetBorrowed?.dsp} </div>
                     </div>
                     <div className="flex   gap-2">
-                    <div className="text-sm">@</div>
-                    <div>{Math.round((borrowAPR + Number.EPSILON) * 100) / 100}%</div>
+                      <div className="text-sm">@</div>
+                      <div>{Math.round((borrowAPR + Number.EPSILON) * 100) / 100}%</div>
                     </div>
                   </div>
                 )}
@@ -152,12 +151,10 @@ const EstimatedPosition = (props: any) => {
                 <Value className="text-sm">
                   {isSimulating ? <Loader /> : `${investmentCurrent?.dsp} ${shortAsset?.displaySymbol}`}
                 </Value>
-
                 {/* <Label className="text-sm">Yield fy{shortAsset?.displaySymbol} used for investment</Label>
                 <Value className="text-sm">
                   {isSimulating ? <Loader /> : `${shortAssetObtained?.dsp} FY${shortAsset?.displaySymbol}`}
                 </Value> */}
-
                 <div className=" text-sm text-start mt-2">Debt</div> <div />
                 <Label className="text-sm">Amount owed at series maturity</Label>
                 <Value className="text-sm">
@@ -180,11 +177,7 @@ const EstimatedPosition = (props: any) => {
                   <div className="flex   gap-2 text-sm font-bold">Total fees</div>
                 </Label>
                 <Value className="text-sm font-bold ">
-                  {isSimulating ? (
-                    <Loader />
-                  ) : (
-                    `${tradingFee?.dsp + flashBorrowFee?.dsp} ${shortAsset?.displaySymbol}`
-                  )}
+                  {isSimulating ? <Loader /> : `${tradingFee?.dsp + flashBorrowFee?.dsp} ${shortAsset?.displaySymbol}`}
                 </Value>
               </InfoBlock>
             )}

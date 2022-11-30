@@ -1,4 +1,5 @@
 import { FC, ReactElement } from 'react';
+import LogoWrap from './logoWrap';
 
 interface ExtraProps {
   logos: ReactElement[];
@@ -10,8 +11,14 @@ const StackedLogos: FC<ExtraProps> = (props) => {
 
   return (
     <div className={`flex`}>
-      <div className={`z-20 bg-slate-900 rounded-full h-${size} w-${size}`}>
-        <div className={`h-${size} w-${size} p-1 rounded-full`}>{logos?.[0]}</div>
+      <div className={`z-20 rounded-full h-${size} w-${size}`}>
+        <div className={`h-${size} w-${size}`}>
+          <LogoWrap 
+            outerTwStyle='bg-slate-900 bg-opacity-90'
+            innerTwStyle=''
+            logo={logos?.[0]} 
+          />
+          </div>
       </div>
       {logos?.length > 1 &&
         logos
@@ -26,7 +33,7 @@ const StackedLogos: FC<ExtraProps> = (props) => {
               w-${size}  
               p-1
               rounded-full
-              opacity-30`}
+              opacity-50`}
               key={`${i}`}
             >
               {logo}
