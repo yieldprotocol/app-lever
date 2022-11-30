@@ -3,7 +3,7 @@ import { ZERO_W3N } from '../constants';
 import { IInputContextState, InputContext } from '../context/InputContext';
 import { ILeverContextState, LeverContext } from '../context/LeverContext';
 import { useDebounce } from './generalHooks';
-import useBlockTime from './useBlockTime';
+import {useBlockTime} from './chainHooks';
 import { calculateAPR } from '@yield-protocol/ui-math';
 import { IMarketContextState, MarketContext } from '../context/MarketContext';
 import { IPositionContextState, PositionContext } from '../context/PositionContext';
