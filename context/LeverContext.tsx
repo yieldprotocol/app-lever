@@ -82,13 +82,6 @@ const leverReducer = (state: ILeverContextState, action: any) => {
         selectedLever: action.payload,
       };
 
-    case 'SELECT_ASSET':
-      return {
-        ...state,
-        selectedLongAsset: action.payload.longAsset,
-        selectedShortAsset: action.payload.shortAsset,
-      };
-
     case 'SELECT_LONG':
       return {
         ...state,
@@ -185,10 +178,9 @@ const LeverProvider = ({ children }: any) => {
 
         /* Collateralisation ratio and loan to value */
         const minRatio = parseFloat(ethers.utils.formatUnits(ratio, 6));
-        console.log('MIN RATIO', minRatio);
+        // console.log('MIN RATIO', minRatio);
         const loanToValue = 1 / minRatio;
-
-        console.log('LTV', loanToValue);
+        // console.log('LTV', loanToValue);
 
         const bestRate = await poolContract.sellFYTokenPreview((10 ** decimals).toString());
         const maxBaseIn = await poolContract.getBaseBalance();
@@ -235,6 +227,7 @@ const LeverProvider = ({ children }: any) => {
       console.log('Initial lever selected: ', Array.from(leverState.levers.values())[0]);
     }
   }, [leverState.levers]);
+
 
   /* ACTIONS TO CHANGE CONTEXT */
   const leverActions = {

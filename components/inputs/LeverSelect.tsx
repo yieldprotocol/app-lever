@@ -124,7 +124,7 @@ const LeverSelect = () => {
             <div className="flex text-xs text-slate-500 text-start ">Long</div>
             <ArrowTrendingUpIcon className="h-4 w-4 text-slate-500" />
           </TopRow>
-          <Listbox value={selectedLongAsset} onChange={(x: IAsset) => leverActions.selectLong(x)}>
+          <Listbox value={selectedLongAsset} onChange={(x: IAsset) => leverActions.selectLong(x)  }>
             <SelectedAssetStyled asset={selectedLongAsset!} assetType={AssetType.LONG} />
             <ListOptionsStyled>
               {assetsList

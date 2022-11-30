@@ -9,10 +9,9 @@ import { ILeverContextState, LeverContext } from '../context/LeverContext';
 import { PositionContext } from '../context/PositionContext';
 import useApprove from './useApprove';
 
-const useInvestDivest = (
-  transactType: 'invest' | 'divest',
+const useInvest= (
   txArgs: any[],
-  enabled: boolean = false
+  enabled: boolean
   // overrides: { value: BigNumber } = { value: ZERO_BN }
 ) => {
   const [leverState] = useContext(LeverContext);
@@ -26,29 +25,24 @@ const useInvestDivest = (
     shortAsset!, // asset to approve
     selectedLever?.leverAddress!, // spender
     input?.big!, // amountToApprove
-    ( enabled && transactType === 'invest' )  // enable
+    enabled,
   );
 
-  console.log('Approval status:',  hasApproval );
-
+  /* Logic to enable tx */
   const [ txnEnabled, setTxnEnabled ] = useState<boolean>(false);
-
-  /* set the override to include value if using native token */
-  const overrides = inputNativeToken && transactType === 'invest' ? { value: input?.big!, gasLimit: '2000000' } : { gasLimit: '2000000' };
-
   useEffect(() => {
     const commonChecks = enabled && !!selectedLever && txArgs.length > 0;
     const investChecks = commonChecks && input?.big.gte(selectedLever.minDebt.big)!;
-    const divestChecks = commonChecks;
-
-    transactType === 'invest' && investChecks && setTxnEnabled(investChecks);
-    transactType === 'divest' && divestChecks && setTxnEnabled(divestChecks);
+    investChecks && setTxnEnabled(investChecks);
   }, [selectedLever, txArgs, enabled, input]);
+
+  /* set the override to include value if using native token */
+  const overrides = inputNativeToken ? { value: input?.big!, gasLimit: '2000000' } : { gasLimit: '2000000' };
 
   const { config } = usePrepareContractWrite({
     address: selectedLever?.leverAddress,
     abi: selectedLever?.leverContract.interface as any,
-    functionName: transactType,
+    functionName: 'invest',
     args: txArgs,
     overrides,
     enabled: txnEnabled,
@@ -59,15 +53,13 @@ const useInvestDivest = (
   const {
     data: waitData,
     error: waitError,
-    isError,
-    isLoading,
     status,
   } = useWaitForTransaction({
+    confirmations: 2,
     hash: writeData?.hash,
   });
 
   useEffect(() => {
-    console.log(status);
     if (waitData?.status === 0) {
       toast.error(`Transaction Error: ${waitError?.message}`);
     }
@@ -98,4 +90,4 @@ const useInvestDivest = (
   return invest;
 };
 
-export default useInvestDivest;
+export default useInvest;

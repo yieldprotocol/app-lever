@@ -37,6 +37,7 @@ export interface IPosition {
   divestTxHash: string | undefined;
 
   leverAddress: string;
+  leverContract: Contract;
 
   displayName: string;
   status: PositionStatus;
@@ -83,6 +84,7 @@ const PositionProvider = ({ children }: any) => {
 
     if (account) {
       uniqueLevers.map(async (lever: ILeverRoot) => {
+    
         const contract_ = contractMap.get(lever.leverAddress).connect(lever.leverAddress, provider) as Contract;
         const investedFilter_ = contract_.filters.Invested(null, null, account, null, null);
         const divestedFilter_ = contract_.filters.Divested();
@@ -127,6 +129,7 @@ const PositionProvider = ({ children }: any) => {
               status: divestEvent ? PositionStatus.CLOSED: PositionStatus.ACTIVE,
               displayName: generateVaultName(vaultId),
               leverAddress: lever.leverAddress,
+              leverContract: contract_,
 
               investTxHash,
               divestTxHash,

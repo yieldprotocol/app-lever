@@ -2,7 +2,6 @@ import { TransactionReceipt } from '@ethersproject/providers';
 import { ZERO_BN } from '@yield-protocol/ui-math';
 import { BigNumber } from 'ethers';
 import { useEffect, useState } from 'react';
-// import { toast } from 'react-toastify';
 import { useAccount, useContractRead, useContractWrite, usePrepareContractWrite } from 'wagmi';
 import { IAsset } from '../context/LeverContext';
 
@@ -11,8 +10,9 @@ const useApprove = (
   spenderAddress: string,
   amountToApprove: BigNumber,
   enabled: boolean = true,
-  approveType: 'approve' | 'permit' = 'approve' // default approve
+  approveType: 'approve' | 'permit' = 'approve' 
 ): { approve: () => Promise<TransactionReceipt | undefined>; hasApproval: boolean } => {
+
   // () => ERC1155__factory.connect(reqSig.target.address, signer).setApprovalForAll(spender, true)
   // () => ERC20Permit__factory.connect(reqSig.target.address, signer).approve(spender, amount as string),
   // () => ERC20__factory.connect(reqSig.target.address, signer).approve(spender, amount as string),
@@ -41,14 +41,14 @@ const useApprove = (
 
   const { writeAsync, data: writeData } = useContractWrite({ ...config });
 
-  // Watch the approved Amount contract reads and update approved accordingly
+  /* Watch the approved Amount contract reads and compare with amount and update approved accordingly */
   useEffect(() => {
     if (allowance && amountToApprove.gt(ZERO_BN)) {
-      console.log('Allowance >= amount: ', (allowance! as BigNumber).gte(amountToApprove));
-      (allowance as BigNumber).gte(amountToApprove) ? setHasApproval(true) : setHasApproval(false);
+      const gtAllowance = (allowance! as BigNumber).gte(amountToApprove);
+      gtAllowance ? setHasApproval(true) : setHasApproval(false);
+      console.log('Allowance >= amount: ', gtAllowance);
     }
   }, [allowance, amountToApprove]);
-
 
   const approve = async () => {
     await writeAsync!();
