@@ -2,7 +2,7 @@ import { ZERO_BN } from '@yield-protocol/ui-math';
 import { IInputContextState } from '../context/InputContext';
 import { ILeverContextState } from '../context/LeverContext';
 import { ZERO_W3N } from '../constants';
-import { NULL_OUTPUT, Simulator, SimulatorOutput } from '../hooks/useLever';
+import { Simulator, SimulatorOutput } from '../hooks/useLever';
 import { IMarketContextState } from '../context/MarketContext';
 import { IPositionContextState } from '../context/PositionContext';
 import { Operation, Provider } from '../lib/types';
@@ -36,7 +36,7 @@ export const notionalSimulator: Simulator = async (
   provider: Provider | undefined,
   currentTime: number = Math.round(new Date().getTime() / 1000)
 ): Promise<SimulatorOutput | undefined> => {
-  const output = NULL_OUTPUT;
+  const output = {} as SimulatorOutput;
 
   const input = inputState.input || ZERO_W3N;
   const leverage = inputState.leverage;
@@ -58,7 +58,7 @@ export const notionalSimulator: Simulator = async (
         selectedLever.seriesId,
         selectedLever.ilkId,
         input.big,
-        output.investmentBorrowed.big,
+        output.shortAssetBorrowed.big,
       ]
     : [];
 
