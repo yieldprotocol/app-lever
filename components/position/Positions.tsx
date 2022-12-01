@@ -49,20 +49,21 @@ const Positions = () => {
           rounded-lg
           p-4 
           text-start 
-          flex   
+          flex  
+          items-center 
           justify-between 
           ${isActive || isSelected ? 'opacity-100' : 'opacity-50'} 
           ${isSelected ? 'bg-primary-600 bg-opacity-50 opacity-100' : ''}   
         `}
         >
-          <div className="flex   gap-4">
+          <div className="flex gap-4">
             <div className="flex   ">
               <StackedLogos size={6} logos={[longAsset?.image!, shortAsset?.image!]} />
             </div>
             <div>{position.displayName}</div>
           </div>
           {!isSelected ? (
-            <div className={`text-xs rounded px-2 ${isActive ? 'bg-emerald-500 ' : 'bg-red-500'}`}>
+            <div className={`text-xs rounded-full p-2 ${isActive ? 'bg-emerald-500 ' : 'bg-red-500'}`}>
               {position.status}
             </div>
           ) : (

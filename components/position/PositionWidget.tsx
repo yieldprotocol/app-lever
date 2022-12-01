@@ -1,36 +1,37 @@
-import { ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline';
+import { ArrowRightOnRectangleIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
 import { etherscanBlockExplorers, useNetwork } from 'wagmi';
-import { useContext, useEffect, useState } from 'react';
+import { FC, useContext, useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 import { IPositionContextState, PositionContext, PositionStatus } from '../../context/PositionContext';
 import Button from '../common/Button';
-import { BorderWrap, InfoBlock, Inner, Label, TopRow, Value } from '../styled';
+import { BorderWrap, InfoBlock, Inner, Label, Section, TopRow, Value } from '../styled';
 import Link from 'next/link';
 import { abbreviateHash } from '../../utils/appUtils';
 import { IAsset, ILever, ILeverContextState, LeverContext } from '../../context/LeverContext';
 import StackedLogos from '../common/StackedLogos';
+import { ILeverSimulation } from '../../hooks/useLever';
+import WrapWithLogo from '../common/WrapWithLogo';
 
 const TxInfo = (props: { label: string; date: Date | undefined; txHash: string | undefined }) => {
   const { chain } = useNetwork();
-  const {url:baseUrl} = (chain?.id === 1) ? etherscanBlockExplorers.mainnet : etherscanBlockExplorers.arbitrum;
+  const { url: baseUrl } = chain?.id === 1 ? etherscanBlockExplorers.mainnet : etherscanBlockExplorers.arbitrum;
   const url = `${baseUrl}/tx/${props.txHash}`;
   return (
-    <TopRow className="px-4 py-2" >
+    <div className={`flex justify-between bg-slate-900 bg-opacity-20 py-2 mb-2`}>
       <div className={`text-sm`}> {props.label} </div>
-      <div className="flex   gap-4">
-        <div className={`text-sm`}> {abbreviateHash(props.txHash!) } </div>
-        <div className={`text-sm`}> {props.date?.toDateString()} </div>
+      <div className="flex gap-4">
+        {/* <div className={`text-sm`}> {abbreviateHash(props.txHash!)} </div> */}
+        <div className={`text-xs`}> {props.date?.toDateString()} </div>
         <Link href={url} rel="noopener noreferrer" target="_blank">
           <div className="w-4">
             <ArrowRightOnRectangleIcon />
           </div>
         </Link>
       </div>
-    </TopRow>
+    </div>
   );
 };
 
-console.log();
 const PositionWidget = (props: any) => {
   const { address: account } = useAccount();
 
@@ -40,80 +41,144 @@ const PositionWidget = (props: any) => {
   const [positionState] = useContext(PositionContext);
   const { selectedPosition } = positionState as IPositionContextState;
 
-  const [associatedLever, setLever]= useState<ILever>();
+  const [associatedLever, setAssociatedLever] = useState<ILever>();
+  const [shortAsset, setShortAsset] = useState<IAsset>();
+  const [longAsset, setLongAsset] = useState<IAsset>();
 
-  const [shortAsset, setShortAsset]= useState<IAsset>();
-  const [longAsset, setLongAsset]= useState<IAsset>();
+  const [isClosed, setIsClosed] = useState<boolean>();
+  const [showInfo, setShowInfo] = useState<boolean>(false);
 
-  useEffect(()=> {
+  useEffect(() => {
     if (selectedPosition) {
-    const address =  selectedPosition.leverAddress;
-    const seriesId = selectedPosition.seriesId;
-    const leverList = Array.from(levers.values());
-    setLever(leverList.find((l: ILever) => l.leverAddress === address && l.seriesId === seriesId))
-    
-    setShortAsset( assets.get(selectedPosition.baseId )) 
-    setLongAsset( assets.get(selectedPosition.ilkId )) 
-
+      setAssociatedLever(levers.get(selectedPosition.leverId));
+      setShortAsset(assets.get(selectedPosition.baseId));
+      setLongAsset(assets.get(selectedPosition.ilkId));
+      setIsClosed(selectedPosition.status === PositionStatus.CLOSED);
     }
-  },[selectedPosition])
+  }, [selectedPosition]);
 
-  const { divest } = props.lever;
+  const { divest, investmentAtMaturity, investmentCurrent } = props.lever as ILeverSimulation;
+
+  const InfoLogo: FC<any> = () => <InformationCircleIcon />;
 
   return (
     <BorderWrap>
       {selectedPosition ? (
         <>
           <TopRow>
-          {/* <div className="w-8" > {associatedLever?.tradeImage} </div> */}
-          <StackedLogos size={8} logos={[ longAsset?.image!, shortAsset?.image!] } /> 
-          <div className=" text-2xl"> {selectedPosition.displayName} </div>
-            <div
-              className={`text-xs rounded px-2 ${
-                selectedPosition.status === PositionStatus.ACTIVE ? 'bg-emerald-500 ' : 'bg-red-500'
-              }`}
-            >
-              {selectedPosition.status}
+            {/* <div className="w-8" > {associatedLever?.tradeImage} </div> */}
+            <StackedLogos size={8} logos={[longAsset?.image!, shortAsset?.image!]} />
+            <div className=" text-2xl">
+              {/* <WrapWithLogo logo={<InformationCircleIcon onClick={() => setShowInfo(!showInfo)} />} size={6} logoAfter>
+              {selectedPosition.displayName}
+              </WrapWithLogo> */}
+              {selectedPosition.displayName}
             </div>
+
+            <div className="flex items-center gap-2 ">  
+              <div className={`text-xs rounded-full p-2 ${!isClosed ? 'bg-emerald-500 ' : 'bg-red-500'}`}>
+                {selectedPosition.status}
+              </div>
+              <div className="w-8 h-8"> <InformationCircleIcon onClick={() => setShowInfo(!showInfo)} /> </div>
+            </div>
+            
           </TopRow>
-          <TxInfo label="Invest Transaction " date={selectedPosition.investTxDate} txHash={selectedPosition.investTxHash} />
 
-          {selectedPosition.divestTxDate && (
-            <TxInfo label="Divest Transaction " date={selectedPosition.divestTxDate} txHash={selectedPosition.divestTxHash} />
+          {showInfo && (
+            <TopRow>
+              <div className="text-xs w-full space-y-2">
+                <div className="flex justify-between">
+                  <div>Vault Id </div>
+                  <div> {abbreviateHash(selectedPosition.vaultId)}</div>
+                </div>
+
+                <div className="flex justify-between">
+                  <div> Long asset </div>
+                  <WrapWithLogo logo={longAsset?.image!}> {longAsset?.name} </WrapWithLogo>
+                </div>
+
+                <div className="flex justify-between">
+                  <div> Trading platform </div>
+                  <WrapWithLogo logo={associatedLever?.tradeImage!}> {associatedLever?.tradePlatform} </WrapWithLogo>
+                </div>
+              </div>
+            </TopRow>
           )}
-          <Inner className="pb-4">
-            <InfoBlock>
-              <Label>Vault Id: </Label>
-              <Value> { abbreviateHash( selectedPosition.vaultId )} </Value>
 
-              <Label>Long Asset :</Label>
-              {/* <Value> <div><div className='w-4'> {longAsset?.image}</div>  {longAsset?.symbol} </div></Value> */}
-              <Value> {longAsset?.name}</Value>
+          <Inner className="pb-8">
+            <div className="pb-8">
 
-              <Label>Series Id: </Label>
-              <Value>{selectedPosition.seriesId} </Value>
+              <Section>
+                <div className="text-emerald-500">
+                  <TxInfo
+                    label="Invested"
+                    date={selectedPosition.investTxDate}
+                    txHash={selectedPosition.investTxHash}
+                  />
+                </div>
 
-              <Label>Initial Investment: </Label>
-              <Value>{selectedPosition.shortAssetObtained.dsp} { shortAsset?.symbol} </Value>
+                <div className="text-sm space-y-2">
+                  <div className="flex justify-between">
+                    <Label> Initial Investment </Label>
+                    <div className="flex gap-4">
+                      <WrapWithLogo logo={shortAsset?.image!}> {selectedPosition.shortAssetObtained.dsp} </WrapWithLogo>
+                      <div> @ 2 X leverage</div>
+                    </div>
+                  </div>
 
-              <Label>Investment Debt: </Label>
-              <Value>{selectedPosition.shortAssetBorrowed.dsp} {shortAsset?.symbol} </Value>
+                  <div className="flex justify-between">
+                    <Label> {longAsset?.displaySymbol} position aquired </Label>
+                    <WrapWithLogo logo={longAsset?.image!}> {selectedPosition.longAssetObtained.dsp}</WrapWithLogo>
+                  </div>
+                </div>
+              </Section>
 
-              <Label>Investment Amount: </Label>
-              <Value>{selectedPosition.longAssetObtained.dsp} {longAsset?.symbol}</Value>
+              <Section>
+                {!isClosed && (
 
-              <Label>Current Vault Debt: </Label>
-              <Value>{selectedPosition.art.dsp} { shortAsset?.symbol} </Value>
+                  <div className='text-sm' >
+                    <div className={`flex justify-between bg-slate-900 bg-opacity-20 py-2 mb-2`}>
+                      <div  className='text-emerald-500' >Projections</div>
+                    </div>
 
-              <Label>Current Vault Collateral: </Label>
-              <Value>{selectedPosition.ink.dsp} { longAsset?.symbol} </Value>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <Label> Estimated {longAsset?.displaySymbol} at maturity</Label>
+                        <WrapWithLogo logo={longAsset?.image!}> {investmentAtMaturity?.dsp}</WrapWithLogo>
+                      </div>
+                      <div className="flex justify-between">
+                        <Label> {shortAsset?.displaySymbol} return if divesting now </Label>
+                        <WrapWithLogo logo={shortAsset?.image!}> {investmentCurrent?.dsp}</WrapWithLogo>
+                      </div>
+                    </div>
+                  </div>
 
-              {/* <Label>Return if divesting now:</Label>
-              <Value>0 </Value>
+                )}
 
-              <Label>Return if divesting at maturity: </Label>
-              <Value>0</Value> */}
-            </InfoBlock>
+                {isClosed && (
+                  <>
+                  <div className="text-red-500">
+                    <TxInfo
+                      label="Divested"
+                      date={selectedPosition.divestTxDate}
+                      txHash={selectedPosition.divestTxHash}
+                    />
+                  </div>
+
+                    <div className="text-sm space-y-2">
+                      <div className="flex justify-between">
+                        <Label> {shortAsset?.displaySymbol} returned </Label>
+                        <WrapWithLogo logo={shortAsset?.image!}> {selectedPosition.divestReturn?.dsp}</WrapWithLogo>
+                      </div>
+                      {/* <div className="flex justify-between">
+                        <Label> {shortAsset?.displaySymbol} return if divesting now </Label>
+                        <WrapWithLogo logo={shortAsset?.image!}> {investmentCurrent?.dsp}</WrapWithLogo>
+                      </div> */}
+                    </div>
+                  </>
+                )}
+              </Section>
+            </div>
             {selectedPosition.status === PositionStatus.ACTIVE && (
               <Button
                 action={() => divest()}

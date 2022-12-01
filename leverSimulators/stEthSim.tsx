@@ -12,7 +12,7 @@ import { BigNumber, ethers } from 'ethers';
 
 import { StableSwap__factory } from '../contracts/types';
 import { IMarketContextState } from '../context/MarketContext';
-import { IPositionContextState } from '../context/PositionContext';
+import { IPositionContextState, PositionStatus } from '../context/PositionContext';
 import { Provider, W3bNumber } from '../lib/types';
 
 /* Stable Swap Contract */
@@ -166,7 +166,7 @@ export const stEthSimulator: Simulator = async (
   }
 
   /* Handle the simulation for an existing posiiton/vault */
-  if (existingPositionSim && selectedPosition) {
+  if (existingPositionSim && selectedPosition?.status === PositionStatus.ACTIVE) {
     
     /* try the simulation, catch any unknown errors */
     console.log('Running STETH Lever POSITION simulator....');

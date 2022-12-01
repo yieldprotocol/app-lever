@@ -1,3 +1,4 @@
+import { ZERO_BN } from '@yield-protocol/ui-math';
 import { BigNumber, Contract, Event } from 'ethers';
 import React, { useEffect, useReducer } from 'react';
 import { useAccount, useProvider } from 'wagmi';
@@ -26,12 +27,13 @@ export interface IPosition {
 
   shortAssetBorrowed: W3bNumber; // resultant debt === input? 
 
-  debtAtMaturity: W3bNumber; // debt owed at maturity
-
+  // debtAtMaturity: W3bNumber; // debt owed at maturity
   // debtCurrent: W3bNumber; // current Value of debt (if settling now)
   
   shortAssetObtained: W3bNumber; // TOTAL short-asset used for investment (input + borrow)
   longAssetObtained: W3bNumber; // long-asset obtained (by using short asset obtained
+
+  divestReturn: W3bNumber;
   
   ink: W3bNumber; // current collateral 
   art: W3bNumber; // current debt
@@ -120,6 +122,9 @@ const PositionProvider = ({ children }: any) => {
               provider.getBlock(invEvnt.blockNumber),
               divestEvent ? provider.getBlock(divestEvent?.blockNumber) : undefined
             ])
+
+            const divestReturn_ = divestEvent?.args && divestEvent?.args.profit || ZERO_BN;
+            // const divestReturnAPR = 
             
             const positionInfo = {
               vaultId,
@@ -130,6 +135,8 @@ const PositionProvider = ({ children }: any) => {
               longAssetObtained: convertToW3bNumber(investment, 18, 6),
               shortAssetBorrowed: convertToW3bNumber(debt, 18, 6),
               shortAssetObtained: convertToW3bNumber(args.amountToInvest || value, 18, 6),
+
+              divestReturn: convertToW3bNumber(divestReturn_, 18, 6),
 
               ink: convertToW3bNumber(ink, 18, 6),
               art: convertToW3bNumber(art, 18, 6),
