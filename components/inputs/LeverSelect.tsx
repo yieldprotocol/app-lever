@@ -83,22 +83,25 @@ const LeverSelect = () => {
 
   /* When the selected lever changes, make sure the selected assets match */
   useEffect(() => {
-    if (selectedLever) {
+    if ( selectedLever ) {
       leverActions.selectShort(assets.get(selectedLever.baseId));
       leverActions.selectLong(assets.get(selectedLever.ilkId));
     }
   }, [selectedLever]);
 
-  /* get the list of possible levers, based on the selected short/long asset pair selected */
+  /* Get the list of possible levers, based on the selected short/long asset pair selected */
   useEffect(() => {
     const list = Array.from(levers.values());
     const filteredLevers = list.filter(
       (lever_: ILever) => lever_.baseId === selectedShortAsset?.id && lever_.ilkId === selectedLongAsset?.id
     );
     setPossibleLevers(filteredLevers);
+
     /* select the first on the list, of the list is blank deselect the strategy */
-    filteredLevers.length > 0 ? leverActions.selectLever(filteredLevers[0]) : leverActions.selectLever(undefined);
+    // filteredLevers.length > 0 ? leverActions.selectLever(filteredLevers[0]) : leverActions.selectLever(undefined);
+
   }, [selectedShortAsset, selectedLongAsset, levers]);
+
 
   const handlePairRequest = () => {
     toast.info('Trading pair requested.');

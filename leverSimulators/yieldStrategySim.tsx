@@ -47,8 +47,6 @@ export const yieldStrategySimulator: Simulator = async (
   const shortAsset = assets.get(selectedLever?.baseId!);
   const longAsset = assets.get(selectedLever?.ilkId!);
 
-  console.log(shortAsset?.decimals, longAsset?.decimals )
-
   const timeToMaturity = marketState.maturity - currentTime;
   const yearProportion = timeToMaturity / 31536000;
 

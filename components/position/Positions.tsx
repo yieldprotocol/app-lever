@@ -24,15 +24,10 @@ const Positions = () => {
   const [leverState, leverActions] = useContext(LeverContext);
   const { levers, assets } = leverState as ILeverContextState;
 
-  // const getLever = (address: string, seriesId: string): ILever | undefined => {
-  //   const leverList = Array.from(levers.values());
-  //   return leverList.find((l: ILever) => l.leverAddress === address && l.seriesId === seriesId);
-  // };
-
   const handleSelectPosition = (position: IPosition) => {
     selectPosition( position );
     const associatedLever = levers.get(position.leverId);
-    leverActions.selectLever(associatedLever); 
+    leverActions.selectLever(associatedLever);
   }
 
   const PositionItem = (props: { position: IPosition }) => {
@@ -42,9 +37,9 @@ const Positions = () => {
     
     const shortAsset = assets.get(position?.baseId);
     const longAsset = assets.get(position?.ilkId);
-    const lever = Array.from(levers.values()).find(
-      (l: ILever) => l.leverAddress === position.leverAddress && l.seriesId === position.seriesId
-    );
+    // const lever = Array.from(levers.values()).find(
+    //   (l: ILever) => l.leverAddress === position.leverAddress && l.seriesId === position.seriesId
+    // );
 
     return (
       <Container>

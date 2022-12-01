@@ -11,6 +11,7 @@ import { CAULDRON, LADLE, contractMap } from '../config/contracts';
 import { useAccount, useProvider } from 'wagmi';
 
 import logoMap from '../config/logos';
+import { useLever } from '../hooks/useLever';
 
 export interface ILeverContextState {
   assets: Map<string, IAsset>;
@@ -219,15 +220,14 @@ const LeverProvider = ({ children }: any) => {
 
   /* Set the initial selected lever if there is no lever selected */
   useEffect(() => {
-    if (leverState.levers.size && !leverState.selectedLever) {
+    if (leverState.levers.size && leverState.selectedLever === undefined) {
       updateState({
         type: 'SELECT_LEVER',
-        payload: Array.from(leverState.levers.values())[0], // Take the first lever as default
+        payload: leverState.levers.get('STETH_02') //   Array.from(leverState.levers.values())[0], // Take the first lever as default
       });
-      console.log('Initial lever selected: ', Array.from(leverState.levers.values())[0]);
+      console.log('Initial lever selected: ',  leverState.levers.get('STETH_02') ); // Array.from(leverState.levers.values()).[0]);
     }
   }, [leverState.levers]);
-
 
   /* ACTIONS TO CHANGE CONTEXT */
   const leverActions = {
