@@ -215,8 +215,6 @@ const EstimatedPosition = (props: any) => {
             </Value>
           </InfoBlock> */}
 
-          <Divider />
-
 
           {showExtra && (
 
