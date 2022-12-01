@@ -1,4 +1,4 @@
-import { ArrowRightOnRectangleIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
+import { ArrowRightOnRectangleIcon, ArrowTrendingUpIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
 import { etherscanBlockExplorers, useNetwork } from 'wagmi';
 import { FC, useContext, useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
@@ -139,8 +139,8 @@ const PositionWidget = (props: any) => {
               <Section>
                 {!isClosed && (
                   <div className='text-base' >
-                    <div className={`flex justify-between bg-slate-900 bg-opacity-20 py-2 mb-2`}>
-                      <div  className='text-emerald-500' >Projections</div>
+                    <div className={`flex text-sm bg-slate-900 bg-opacity-20 py-2 mb-2 text-emerald-500`}>
+                     Projections
                     </div>
 
                     <div className="space-y-4">
