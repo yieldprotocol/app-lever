@@ -117,12 +117,15 @@ const PositionWidget = (props: any) => {
                   />
                 </div>
 
-                <div className="text-sm space-y-2">
+                <div className="text-base space-y-4">
                   <div className="flex justify-between">
-                    <Label> Initial Investment </Label>
+                    <Label> Principal investment </Label>
                     <div className="flex gap-4">
                       <WrapWithLogo logo={shortAsset?.image!}> {selectedPosition.shortAssetInput.dsp} </WrapWithLogo>
-                      <div> @ {selectedPosition.leverage.toFixed(1)} X leverage</div>
+                      <div className="flex gap-2" >
+                         <div className="flex px-3 font-bold rounded-full min-w-3em bg-primary-600 justify-between">x {selectedPosition.leverage.toFixed(1)}</div>
+                         leverage
+                         </div>
                     </div>
                   </div>
 
@@ -135,12 +138,12 @@ const PositionWidget = (props: any) => {
 
               <Section>
                 {!isClosed && (
-                  <div className='text-sm' >
+                  <div className='text-base' >
                     <div className={`flex justify-between bg-slate-900 bg-opacity-20 py-2 mb-2`}>
                       <div  className='text-emerald-500' >Projections</div>
                     </div>
 
-                    <div className="space-y-2">
+                    <div className="space-y-4">
                       <div className="flex justify-between">
                         <Label> Estimated {longAsset?.displaySymbol} at maturity</Label>
                         <WrapWithLogo logo={longAsset?.image!}> {investmentAtMaturity?.dsp}</WrapWithLogo>
@@ -163,7 +166,7 @@ const PositionWidget = (props: any) => {
                     />
                   </div>
 
-                    <div className="text-sm space-y-2">
+                    <div className="text-base space-y-4">
                       <div className="flex justify-between">
                         <Label> {shortAsset?.displaySymbol} returned </Label>
                         <WrapWithLogo logo={shortAsset?.image!}> {selectedPosition.divestReturn?.dsp}</WrapWithLogo>

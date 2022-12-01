@@ -117,9 +117,7 @@ const PositionProvider = ({ children }: any) => {
             
             const longAssetObtained_ = convertToW3bNumber(investment, 18, 6);
             
-
             const shortAssetInput_ = convertToW3bNumber(args.baseAmount, 18, 6);
-            
             const shortAssetBorrowed_ = convertToW3bNumber(args.borrowAmount, 18, 6);
 
             const debtAtMaturity_ = convertToW3bNumber(debt, 18, 6);

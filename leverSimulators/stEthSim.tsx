@@ -180,9 +180,7 @@ export const stEthSimulator: Simulator = async (
 
     output.longAssetObtained = selectedPosition.longAssetObtained;
     output.shortAssetObtained = selectedPosition.shortAssetObtained;
-    
     output.shortAssetInput = selectedPosition.shortAssetObtained;
-
     output.debtAtMaturity = selectedPosition.debtAtMaturity;
     output.shortAssetBorrowed = selectedPosition.shortAssetBorrowed;
 
