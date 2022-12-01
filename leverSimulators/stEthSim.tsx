@@ -22,14 +22,19 @@ export const STETH_STABLESWAP = '0x828b154032950c8ff7cf8085d841723db2696056';
  * CURVE API interaction:
  * */
 const getCurveProtocolInfo = async (): Promise<[string, BigNumber]> => {
+  
+  console.log( 'Waiting for curve...')
   await curve.init('Infura', { network: 'homestead', apiKey: '2af222f674024a0f84b5f0aad0da72a2' }, { chainId: 1 });
+  console.log( 'curve connection initiated.' );
+  
   /* StETH APY */
+  console.log( 'Getting curve data...' );
   const steth = curve && curve.getPool('steth');
   const rewardsApy = await steth.stats.rewardsApy();
   const investApy = rewardsApy[0].apy.toString();
   const parameters = await steth.stats.parameters();
   const investFee = ethers.utils.parseUnits(parameters.fee, '18');
-
+  
   return [investApy, investFee];
 };
 

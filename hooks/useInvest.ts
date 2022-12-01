@@ -60,7 +60,6 @@ const useInvest= (
     error: waitError,
     status,
   } = useWaitForTransaction({
-    confirmations: 2,
     hash: writeData?.hash,
   });
 
@@ -86,6 +85,7 @@ const useInvest= (
         write();
       }
     }
+
     /* Handle Transaction not ready */
     if (!write) {
       console.log('Transaction not ready: ', txArgs);

@@ -2,6 +2,7 @@ import { TransactionReceipt } from '@ethersproject/providers';
 import { ZERO_BN } from '@yield-protocol/ui-math';
 import { BigNumber } from 'ethers';
 import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import { useAccount, useContractRead, useContractWrite, usePrepareContractWrite } from 'wagmi';
 import { IAsset } from '../context/LeverContext';
 
@@ -53,7 +54,10 @@ const useApprove = (
   const approve = async () => {
     await writeAsync!();
     const txReceipt = await writeData?.wait();
-    if (txReceipt && txReceipt.status === 1) setHasApproval(true);
+    if (txReceipt && txReceipt.status === 1) {
+      toast.success('Token approval complete.')
+      setHasApproval(true)
+    };
     return txReceipt;
   };
 
