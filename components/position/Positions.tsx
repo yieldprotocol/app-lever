@@ -21,13 +21,19 @@ const Positions = () => {
   const { positions, selectedPosition } = positionState;
   const { selectPosition } = positionActions;
 
-  const [leverState] = useContext(LeverContext);
+  const [leverState, leverActions] = useContext(LeverContext);
   const { levers, assets } = leverState as ILeverContextState;
 
   // const getLever = (address: string, seriesId: string): ILever | undefined => {
   //   const leverList = Array.from(levers.values());
   //   return leverList.find((l: ILever) => l.leverAddress === address && l.seriesId === seriesId);
   // };
+
+  const handleSelectPosition = (position: IPosition) => {
+    selectPosition( position );
+    const associatedLever = levers.get(position.leverId);
+    leverActions.selectLever(associatedLever); 
+  }
 
   const PositionItem = (props: { position: IPosition }) => {
     const { position } = props;
@@ -84,7 +90,7 @@ const Positions = () => {
       </TopRow>
       <Inner className="pb-4 space-y-2">
         {Array.from(positions.values()).map((p: any) => (
-          <div onClick={() => selectPosition(p)} key={p.vaultId}>
+          <div onClick={() => handleSelectPosition(p)} key={p.vaultId}>
             <PositionItem position={p} />
           </div>
         ))}

@@ -21,8 +21,7 @@ const useInvest= (
   
   const [inputState] = useContext(InputContext);
   const debouncedInputState = useDebounce( inputState, 500 );
-  const { input } = debouncedInputState;
-  const { inputNativeToken } = inputState as IInputContextState;
+  const { input, inputNativeToken  } = debouncedInputState;
   
 
   const shortAsset = assets.get(selectedLever?.baseId!);
@@ -31,7 +30,7 @@ const useInvest= (
     shortAsset!, // asset to approve
     selectedLever?.leverAddress!, // spender
     input?.big!, // amountToApprove
-    enabled,
+    enabled && inputNativeToken,
   );
 
   /* Logic to enable tx */

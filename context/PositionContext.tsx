@@ -42,6 +42,7 @@ export interface IPosition {
   investTxHash: string;
   divestTxHash: string | undefined;
 
+  leverId: string;
   leverAddress: string;
   leverContract: Contract;
 
@@ -135,6 +136,8 @@ const PositionProvider = ({ children }: any) => {
 
               status: divestEvent ? PositionStatus.CLOSED: PositionStatus.ACTIVE,
               displayName: generateVaultName(vaultId),
+
+              leverId: lever.id,
               leverAddress: lever.leverAddress,
               leverContract: contract_,
 

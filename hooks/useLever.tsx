@@ -111,6 +111,7 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
   const divest = useDivest(simulation?.divestArgs || [], pathname === '/positions');
 
   useEffect(() => {
+
     if (
         selectedLever &&
         simulation &&
@@ -119,13 +120,6 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
         simulation.debtAtMaturity! &&
         simulation.shortAssetBorrowed!
       ) {
-
-        console.log( 
-          simulation.longAssetObtained,
-          simulation.investmentAtMaturity,
-          selectedLever.maturity,
-          currentTime
-        )
 
       /**
         * Calculate the APR's based on the simulation
@@ -139,9 +133,7 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
           currentTime
         );
 
-        console.log( investRate )
-
-        const investAPR = parseFloat(investRate!);
+        const investAPR = parseFloat(investRate! || '0');
         setInvestAPR(investAPR); // console.log('investAPR: ', investAPR);
 
         // alternative: Math.pow(debtAtMaturity.dsp/shortBorrowed.dsp, oneOverYearProp) - 1
@@ -151,7 +143,7 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
           selectedLever.maturity,
           currentTime
         );
-        const borrowAPR = parseFloat(borrowRate!);
+        const borrowAPR = parseFloat(borrowRate! || '0');
         setBorrowAPR(borrowAPR); // console.log('borrowAPR: ', borrowAPR);
 
         const netAPR = leverage.dsp * investAPR - (leverage.dsp - 1) * borrowAPR;
@@ -192,15 +184,9 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
          * */
         setIsSimulating(true);
         const simulated = await simulator(debouncedInputState, leverState, marketState, positionState, provider, positionView);
+        simulated && setSimulation(simulated)
+        setIsSimulating(false);
 
-        if (simulated) { 
-          setSimulation(simulated);
-          setIsSimulating(false);
-        } else { 
-          toast.error('Simulation error')
-          setIsSimulating(false)
-        }
-        
       })();
 
   }, [debouncedInputState, leverState, marketState, positionState, provider, pathname]);
