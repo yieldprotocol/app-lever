@@ -68,20 +68,22 @@ const PositionWidget = (props: any) => {
           <TopRow>
             {/* <div className="w-8" > {associatedLever?.tradeImage} </div> */}
             <StackedLogos size={8} logos={[longAsset?.image!, shortAsset?.image!]} />
-            <div className=" text-2xl">
+            <div className="text-2xl">
               {/* <WrapWithLogo logo={<InformationCircleIcon onClick={() => setShowInfo(!showInfo)} />} size={6} logoAfter>
               {selectedPosition.displayName}
               </WrapWithLogo> */}
               {selectedPosition.displayName}
             </div>
 
-            <div className="flex items-center gap-2 ">  
+            <div className="flex items-center gap-2 ">
               <div className={`text-xs rounded-full p-2 ${!isClosed ? 'bg-emerald-500 ' : 'bg-red-500'}`}>
                 {selectedPosition.status}
               </div>
-              <div className="w-8 h-8"> <InformationCircleIcon onClick={() => setShowInfo(!showInfo)} /> </div>
+              <div className="w-8 h-8">
+                {' '}
+                <InformationCircleIcon onClick={() => setShowInfo(!showInfo)} />{' '}
+              </div>
             </div>
-            
           </TopRow>
 
           {showInfo && (
@@ -107,7 +109,6 @@ const PositionWidget = (props: any) => {
 
           <Inner className="pb-8">
             <div className="pb-8">
-
               <Section>
                 <div className="text-emerald-500">
                   <TxInfo
@@ -121,36 +122,47 @@ const PositionWidget = (props: any) => {
                   <div className="flex justify-between">
                     <Label> Principal investment </Label>
                     <div className="flex gap-4">
-                      <WrapWithLogo logo={shortAsset?.image!}> {selectedPosition.shortAssetInput.dsp} </WrapWithLogo>
-                      <div className="flex gap-2" >
-                         <div className="flex px-3 font-bold rounded-full min-w-3em bg-primary-600 justify-between">x {selectedPosition.leverage.toFixed(1)}</div>
-                         leverage
-                         </div>
+                      <WrapWithLogo logo={shortAsset?.image!}>
+                        <div className="text-xl">{selectedPosition.shortAssetInput.dsp.toFixed(2)} </div>
+                      </WrapWithLogo>
+                      <div className=" items-center ">
+                        <div className="flex gap-2 px-3 font-bold justify-between rounded-full min-w-3em bg-primary-600 ">
+                          {selectedPosition.leverage.toFixed(1)} X
+                        </div>                 
+                      </div>
                     </div>
                   </div>
 
                   <div className="flex justify-between">
                     <Label> {longAsset?.displaySymbol} position aquired </Label>
-                    <WrapWithLogo logo={longAsset?.image!}> {selectedPosition.longAssetObtained.dsp}</WrapWithLogo>
+                    <WrapWithLogo logo={longAsset?.image!}>
+                      <div className="text-xl">{selectedPosition.longAssetObtained.dsp}</div>
+                    </WrapWithLogo>
                   </div>
                 </div>
               </Section>
 
               <Section>
                 {!isClosed && (
-                  <div className='text-base' >
+                  <div className="text-base">
                     <div className={`flex text-sm bg-slate-900 bg-opacity-20 py-2 mb-2 text-emerald-500`}>
-                     Projections
+                      Projections
                     </div>
 
                     <div className="space-y-4">
                       <div className="flex justify-between">
                         <Label> Estimated {longAsset?.displaySymbol} at maturity</Label>
-                        <WrapWithLogo logo={longAsset?.image!}> {investmentAtMaturity?.dsp}</WrapWithLogo>
+
+                        <WrapWithLogo logo={longAsset?.image!}>
+                          <div className="text-xl">{investmentAtMaturity?.dsp}</div>
+                        </WrapWithLogo>
                       </div>
                       <div className="flex justify-between">
                         <Label> {shortAsset?.displaySymbol} return if divesting now </Label>
-                        <WrapWithLogo logo={shortAsset?.image!}> {investmentCurrent?.dsp}</WrapWithLogo>
+
+                        <WrapWithLogo logo={shortAsset?.image!}>
+                          <div className="text-xl">{investmentCurrent?.dsp}</div>
+                        </WrapWithLogo>
                       </div>
                     </div>
                   </div>
@@ -158,18 +170,21 @@ const PositionWidget = (props: any) => {
 
                 {isClosed && (
                   <>
-                  <div className="text-red-500">
-                    <TxInfo
-                      label="Divested"
-                      date={selectedPosition.divestTxDate}
-                      txHash={selectedPosition.divestTxHash}
-                    />
-                  </div>
+                    <div className="text-red-500">
+                      <TxInfo
+                        label="Divested"
+                        date={selectedPosition.divestTxDate}
+                        txHash={selectedPosition.divestTxHash}
+                      />
+                    </div>
 
                     <div className="text-base space-y-4">
                       <div className="flex justify-between">
                         <Label> {shortAsset?.displaySymbol} returned </Label>
-                        <WrapWithLogo logo={shortAsset?.image!}> {selectedPosition.divestReturn?.dsp}</WrapWithLogo>
+
+                        <WrapWithLogo logo={shortAsset?.image!}>
+                          <div className="text-xl"> {selectedPosition.divestReturn?.dsp}</div>
+                        </WrapWithLogo>
                       </div>
                       {/* <div className="flex justify-between">
                         <Label> {shortAsset?.displaySymbol} return if divesting now </Label>
