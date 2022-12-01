@@ -68,6 +68,8 @@ export const stEthSimulator: Simulator = async (
     const [investApy, investFee] = await getCurveProtocolInfo();
     output.tradingFee = convertToW3bNumber(investFee, 18, 3);
 
+    output.shortAssetInput = convertToW3bNumber(input.big, 18, 3);
+
     /* Calculate the fyToken value of the base added (input) */
     const inputAsFyToken_ = sellBase(
       marketState.sharesReserves,
@@ -178,6 +180,9 @@ export const stEthSimulator: Simulator = async (
 
     output.longAssetObtained = selectedPosition.longAssetObtained;
     output.shortAssetObtained = selectedPosition.shortAssetObtained;
+    
+    output.shortAssetInput = selectedPosition.shortAssetObtained;
+
     output.debtAtMaturity = selectedPosition.debtAtMaturity;
     output.shortAssetBorrowed = selectedPosition.shortAssetBorrowed;
 

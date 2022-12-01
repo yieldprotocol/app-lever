@@ -57,6 +57,8 @@ export const yieldStrategySimulator: Simulator = async (
 
     const [investApy, investFee] = await getStrategyInfo();
 
+    output.shortAssetInput = convertToW3bNumber(input.big, 18, 3);
+
     /**
      * output.shortAssetBorrowed
      * */
@@ -196,6 +198,8 @@ export const yieldStrategySimulator: Simulator = async (
     const [investApy, investFee] = await getStrategyInfo();
     output.tradingFee = convertToW3bNumber(investFee, 18, 3);
 
+    output.shortAssetInput = selectedPosition.shortAssetObtained;
+    output.shortAssetInput = selectedPosition.shortAssetInput;
     output.longAssetObtained = selectedPosition.longAssetObtained;
     output.shortAssetObtained = selectedPosition.shortAssetObtained;
     output.debtAtMaturity = selectedPosition.debtAtMaturity;

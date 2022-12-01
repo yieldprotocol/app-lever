@@ -121,8 +121,8 @@ const PositionWidget = (props: any) => {
                   <div className="flex justify-between">
                     <Label> Initial Investment </Label>
                     <div className="flex gap-4">
-                      <WrapWithLogo logo={shortAsset?.image!}> {selectedPosition.shortAssetObtained.dsp} </WrapWithLogo>
-                      <div> @ 2 X leverage</div>
+                      <WrapWithLogo logo={shortAsset?.image!}> {selectedPosition.shortAssetInput.dsp} </WrapWithLogo>
+                      <div> @ {selectedPosition.leverage.toFixed(1)} X leverage</div>
                     </div>
                   </div>
 
@@ -135,7 +135,6 @@ const PositionWidget = (props: any) => {
 
               <Section>
                 {!isClosed && (
-
                   <div className='text-sm' >
                     <div className={`flex justify-between bg-slate-900 bg-opacity-20 py-2 mb-2`}>
                       <div  className='text-emerald-500' >Projections</div>
@@ -152,7 +151,6 @@ const PositionWidget = (props: any) => {
                       </div>
                     </div>
                   </div>
-
                 )}
 
                 {isClosed && (

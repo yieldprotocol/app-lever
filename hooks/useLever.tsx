@@ -28,10 +28,12 @@ export type Simulator = (
 export type SimulatorOutput = {
   
   /* Borrowing simulation: */
+  shortAssetInput: W3bNumber;
+
   shortAssetBorrowed: W3bNumber; // Amount of short asset borrowed
   debtAtMaturity: W3bNumber; // debt owed at maturity
-  debtCurrent: W3bNumber; // current Value of debt (if settling now)
   
+  debtCurrent: W3bNumber; // current Value of debt (if settling now)
   flashBorrowFee: W3bNumber;
   shortAssetObtained: W3bNumber; // TOTAL short-asset available for investment (input + borrow)
 

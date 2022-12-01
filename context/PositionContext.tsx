@@ -25,15 +25,17 @@ export interface IPosition {
   ilkId: string;
   baseId: string;
 
-  shortAssetBorrowed: W3bNumber; // resultant debt === input? 
+  shortAssetInput: W3bNumber;
 
-  // debtAtMaturity: W3bNumber; // debt owed at maturity
+  shortAssetBorrowed: W3bNumber; // resultant debt === input? 
+  debtAtMaturity: W3bNumber; // debt owed at maturity
+
   // debtCurrent: W3bNumber; // current Value of debt (if settling now)
-  
   shortAssetObtained: W3bNumber; // TOTAL short-asset used for investment (input + borrow)
   longAssetObtained: W3bNumber; // long-asset obtained (by using short asset obtained
 
   divestReturn: W3bNumber;
+  leverage: number;
   
   ink: W3bNumber; // current collateral 
   art: W3bNumber; // current debt
@@ -106,35 +108,53 @@ const PositionProvider = ({ children }: any) => {
 
         await Promise.all(
           investedEvents.map( async (invEvnt: Event ): Promise<any> => {
+            
             const { vaultId, seriesId, investment, debt } = invEvnt.args as any;
             const { ilkId } = await cauldron.vaults(vaultId);
             const { ink, art } = await cauldron.balances(vaultId);
             const tx = await invEvnt.getTransaction();
             let { args, value } = contract_.interface.parseTransaction({ data: tx.data, value: tx.value });
             
+            const longAssetObtained_ = convertToW3bNumber(investment, 18, 6);
+            
+
+            const shortAssetInput_ = convertToW3bNumber(args.baseAmount, 18, 6);
+            
+            const shortAssetBorrowed_ = convertToW3bNumber(args.borrowAmount, 18, 6);
+
+            const debtAtMaturity_ = convertToW3bNumber(debt, 18, 6);
+   
+            const totalShort_ = args.baseAmount.add(args.borrowAmount);
+            const shortAssetObtained_ = convertToW3bNumber(totalShort_, 18, 6);
+            
+            const leverage_ = shortAssetObtained_.dsp/shortAssetInput_.dsp
+
             const investTxHash = invEvnt.transactionHash;
 
             const divestEvent = divestedEvents.find((d: Event) => d?.args?.vaultId === vaultId);
             const divestTxHash = divestEvent?.transactionHash;
-
             /* get dates */
             const [investTxBlock, divestTxBlock ]  = await Promise.all( [
               provider.getBlock(invEvnt.blockNumber),
               divestEvent ? provider.getBlock(divestEvent?.blockNumber) : undefined
             ])
-
             const divestReturn_ = divestEvent?.args && divestEvent?.args.profit || ZERO_BN;
-            // const divestReturnAPR = 
             
-            const positionInfo = {
+            const positionInfo: IPosition = {
               vaultId,
               seriesId,
               ilkId,
               baseId: `${seriesId.substring(0, 6)}00000000`,
 
-              longAssetObtained: convertToW3bNumber(investment, 18, 6),
-              shortAssetBorrowed: convertToW3bNumber(debt, 18, 6),
-              shortAssetObtained: convertToW3bNumber(args.amountToInvest || value, 18, 6),
+              longAssetObtained: longAssetObtained_,
+              
+              shortAssetInput: shortAssetInput_  , 
+              shortAssetBorrowed: shortAssetBorrowed_, //  convertToW3bNumber(args.borrowAmount, 18, 6),
+              debtAtMaturity: debtAtMaturity_,
+
+              shortAssetObtained: shortAssetObtained_,
+              
+              leverage: leverage_,
 
               divestReturn: convertToW3bNumber(divestReturn_, 18, 6),
 
