@@ -1,12 +1,13 @@
 import { useContext, useState } from 'react';
 import { InputContext } from '../../context/InputContext';
-import { BorderWrap, Divider, InfoBlock, Inner, Label, TopRow, Value } from '../styled';
+import { BorderWrap, Divider, InfoBlock, Inner, Label, Section, TopRow, Value } from '../styled';
 import { LeverContext } from '../../context/LeverContext';
 import { ILeverSimulation } from '../../hooks/useLever';
 import Loader from '../common/Loader';
 import { MinusCircleIcon, PlusCircleIcon } from '@heroicons/react/20/solid';
 import StackedLogos from '../common/StackedLogos';
 import { ZERO_BN } from '@yield-protocol/ui-math';
+import WrapWithLogo from '../common/WrapWithLogo';
 
 const EstimatedPosition = (props: any) => {
   const [inputState] = useContext(InputContext);
@@ -23,7 +24,7 @@ const EstimatedPosition = (props: any) => {
     borrowAPR,
     investAPR,
     shortAssetBorrowed,
-    shortAssetObtained,
+    shortAssetInput,
 
     notification,
 
@@ -46,7 +47,7 @@ const EstimatedPosition = (props: any) => {
         {selectedLever ? (
           <div className="flex items-center gap-4">
             <StackedLogos size={8} logos={[longAsset?.image, shortAsset?.image]} />
-            <div className="text-lg">Lever Simulator</div>
+            { !input.big.gt(ZERO_BN) &&  <div className="text-lg text-slate-400">Position Simulator</div> }
           </div>
         ) : (
           <div />
@@ -54,7 +55,7 @@ const EstimatedPosition = (props: any) => {
 
         <div className="flex items-center gap-4">
           {input.big.gt(ZERO_BN) && (
-            <Value className="text-xl flex items-center justify-end gap-2">
+            <Value className="text-2xl flex items-center justify-end gap-2">
               <div className="w-4"> {shortAsset?.image} </div>
               <div>{input?.dsp.toFixed(2)} </div>
             </Value>
@@ -74,8 +75,8 @@ const EstimatedPosition = (props: any) => {
 
       {!notification && selectedLever && input?.dsp > 0 && (
         <Inner>
-          <InfoBlock>
-            <Label className="text-base">net APR</Label>
+          <InfoBlock className='px-2'>
+            <Label className="text-sm">Net return rate</Label>
             <Value
               className={`text-2xl font-extrabold ${
                 netAPR < 0 ? 'text-red-400 dark:text-red-400' : 'text-emerald-600 dark:text-emerald-600 '
@@ -84,20 +85,116 @@ const EstimatedPosition = (props: any) => {
               {isSimulating ? <Loader /> : Math.round((netAPR + Number.EPSILON) * 100) / 100}%
             </Value>
 
-            <Label className="text-base">Borrow Limit Usage</Label>
+            <Label className="text-sm">Borrow Limit Usage</Label>
             <Value className="text-lg">
               {isSimulating ? <Loader /> : Math.round((borrowLimitUsed + Number.EPSILON) * 100) / 100} %
             </Value>
           </InfoBlock>
 
-          <Divider />
-          <InfoBlock>
+          {/* <Divider /> */}
+
+          <Section className='mb-8'>
+            <div className={`flex justify-between bg-slate-900 bg-opacity-20 py-2 mb-2 text-sm`}>Overview</div>
+            {isSimulating && <Loader />}
+
+            {!isSimulating && (
+              <div className="space-y-2" >
+                <div className="flex items-center gap-2 justify-between ">
+                  <div className="flex items-center gap-2 text-sm text-slate-400 ">
+                    <div className='text-sm'> {shortAsset.displaySymbol}</div>
+                    <div> provided by user</div>
+                  </div>
+                  <div className="flex text-lg items-center gap-2">
+                    <div className="w-4">{shortAsset?.image}</div>
+                    <div>{shortAssetInput?.dsp.toFixed(2)} </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 justify-between">
+
+                  <div className="flex text-sm gap-2 items-center text-slate-400 ">
+                    <div className='text-sm'> {shortAsset.displaySymbol}  </div>
+                    <div> borrowed from Yield Protocol </div>
+                    <div className="text-xs border rounded-full min-w-2em px-2">@ {Math.round((borrowAPR + Number.EPSILON) * 100) / 100}%</div>
+
+                  </div>
+
+                  <div className="text-2xl flex items-center justify-end gap-2">
+                    <div className="flex items-center text-lg gap-2">
+                      <div className="w-4">{shortAsset?.image}</div>
+                      <div>{shortAssetBorrowed?.dsp} </div>
+                    </div>
+                  </div>
+
+                </div>
+
+                <div className="flex items-center gap-2 justify-between">
+                  <div className="flex items-center gap-2 text-sm text-slate-400">
+                  
+                  <div className='text-sm'>{longAsset?.displaySymbol}</div>
+                    <div className="flex items-center gap-2">
+                       holdings in
+                      <WrapWithLogo logo={selectedLever?.tradeImage}> {selectedLever?.tradePlatform} </WrapWithLogo>
+                    </div>
+                    <div className="text-xs border rounded-full min-w-2em px-2"> earning {Math.round((investAPR + Number.EPSILON) * 100) / 100}%</div>
+
+                  </div>
+
+                  <div className="flex  items-center text-lg gap-2">
+                    <div className="w-4">{longAsset?.image}</div>
+                    <div> {longAssetObtained?.dsp} </div>
+
+                  </div>
+                </div>
+              </div>
+            )}
+          </Section>
+
+          {/* <InfoBlock>
+            <Label>
+              <div className="flex text-sm gap-2 ">{shortAsset.displaySymbol} provided</div>
+            </Label>
+            <Value className="text-xl flex items-center justify-end gap-2">
+              {isSimulating && <Loader />}
+              {!isSimulating && (
+                <div className="text-xl flex  items-center justify-end gap-2">
+                  <div className="flex text-lg items-center gap-2">
+                    <div className="w-4">{shortAsset?.image}</div>
+                    <div>{shortAssetInput?.dsp.toFixed(2)} </div>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs">
+                    <div>Provided </div>
+                  </div>
+                </div>
+              )}
+            </Value>
+
+            <Label>
+              <div className="flex gap-2 ">
+                {shortAsset.displaySymbol} borrowed
+       
+              </div>
+            </Label>
+            <Value className="text-xl flex items-center justify-end gap-2">
+              {isSimulating && <Loader />}
+              {!isSimulating && (
+                <div className="text-xl flex items-center justify-end gap-2">
+                  <div className="flex items-center text-lg gap-2">
+                    <div className="w-4">{shortAsset?.image}</div>
+                    <div>{shortAssetBorrowed?.dsp} </div>
+                  </div>
+                  <div className="flex text-xs gap-2 items-center">
+                    <div> borrowed @</div>
+                    <div className="text-sm">{Math.round((borrowAPR + Number.EPSILON) * 100) / 100}%</div>
+                  </div>
+                </div>
+              )}
+            </Value>
+
             <Label>
               <div className="flex   gap-2 ">
                 {longAsset.displaySymbol} Obtained
-                {/* <div className="w-5">
-                  <PlusCircleIcon />
-                </div> */}
+  
               </div>
             </Label>
             <Value className="text-xl flex items-center  justify-end gap-2">
@@ -110,39 +207,19 @@ const EstimatedPosition = (props: any) => {
                   </div>
 
                   <div className="flex items-center gap-2 text-xs">
-                    <div >earning</div>
-                    <div className='text-sm'>{Math.round((investAPR + Number.EPSILON) * 100) / 100}% </div>
+                    <div>earning</div>
+                    <div className="text-sm">{Math.round((investAPR + Number.EPSILON) * 100) / 100}% </div>
                   </div>
                 </div>
               )}
             </Value>
+          </InfoBlock> */}
 
-            <Label>
-              <div className="flex gap-2 ">
-                {shortAsset.displaySymbol} borrowed
-                {/* <div className="w-5">
-                  <MinusCircleIcon />
-                </div> */}
-              </div>
-            </Label>
-            <Value className="text-xl flex items-center justify-end gap-2">
-              {isSimulating && <Loader />}
-              {!isSimulating && (
-                <div className="text-xl flex items-center justify-end gap-2">
-                  <div className="flex items-center text-lg gap-2">
-                    <div className="w-4">{shortAsset?.image}</div>
-                    <div>{shortAssetBorrowed?.dsp} </div>
-                  </div>
-                  <div className="flex text-xs gap-2 items-center">
-                    <div>@</div>
-                    <div className='text-sm'>{Math.round((borrowAPR + Number.EPSILON) * 100) / 100}%</div>
-                  </div>
-                </div>
-              )}
-            </Value>
-          </InfoBlock>
+          <Divider />
+
 
           {showExtra && (
+
             <InfoBlock>
               <div className="text-sm text-start mt-2">Investment</div> <div />
               <Label className="text-sm">Investment value at maturity </Label>
@@ -184,12 +261,12 @@ const EstimatedPosition = (props: any) => {
             </InfoBlock>
           )}
 
-          <div className="mb-2">
+          <div className="m-2">
             <button
               className="text-xs text-slate-700 dark:text-slate-400 text-left"
               onClick={() => setShowExtra(!showExtra)}
             >
-              {showExtra ? 'Show less -' : 'Show Advanced Info +'}
+              {showExtra ? 'Show less -' : 'Show Extra Info +'}
             </button>
           </div>
         </Inner>
