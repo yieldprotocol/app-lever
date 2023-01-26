@@ -40,7 +40,7 @@ export type SimulatorOutput = {
   /* Investment simulation: */
   longAssetObtained: W3bNumber; // long-asset obtained (by using short asset obtained
   investmentAtMaturity: W3bNumber; // Projected/ Estimated value of investment at maturity
-  investmentCurrent: W3bNumber; // Current value of long asset (if unwinding now)
+  investmentValue: W3bNumber; // value of long asset at maturity (if unwinding now)
   tradingFee: W3bNumber;
 
   /* Transaction Arguments */

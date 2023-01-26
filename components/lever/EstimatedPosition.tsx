@@ -30,7 +30,7 @@ const EstimatedPosition = (props: any) => {
 
     debtAtMaturity,
     longAssetObtained,
-    investmentCurrent,
+    investmentValue,
     investmentAtMaturity,
     flashBorrowFee,
     tradingFee,
@@ -77,13 +77,14 @@ const EstimatedPosition = (props: any) => {
       {!notification && selectedLever && input?.dsp > 0 && (
         <Inner>
           <InfoBlock className='px-2'>
-            <Label className="text-sm">Net return rate</Label>
+            <Label className="text-sm">Net return rate </Label>
             <Value
               className={`text-2xl font-extrabold ${
                 netAPR < 0 ? 'text-red-400 dark:text-red-400' : 'text-emerald-600 dark:text-emerald-600 '
               }`}
             >
-              {isSimulating ? <Loader /> : Math.round((netAPR + Number.EPSILON) * 100) / 100}%
+              {isSimulating ? <Loader /> : Math.round((netAPR + Number.EPSILON) * 100) / 100}%  <span className='text-xs font-bold'>APR</span>
+              
             </Value>
 
             <Label className="text-sm">Borrow Limit Usage</Label>
@@ -220,13 +221,13 @@ const EstimatedPosition = (props: any) => {
 
             <InfoBlock>
               <div className="text-sm text-start mt-2">Investment</div> <div />
-              <Label className="text-sm">Investment value at maturity </Label>
+              <Label className="text-sm">Investment at maturity </Label>
               <Value className="text-sm">
                 {isSimulating ? <Loader /> : `${investmentAtMaturity?.dsp} ${longAsset?.displaySymbol}`}
               </Value>
-              <Label className="text-sm">Current investment value </Label>
+              <Label className="text-sm">Estimated value at maturity</Label>
               <Value className="text-sm">
-                {isSimulating ? <Loader /> : `${investmentCurrent?.dsp} ${shortAsset?.displaySymbol}`}
+                {isSimulating ? <Loader /> : `${investmentValue?.dsp} ${shortAsset?.displaySymbol}`}
               </Value>
               {/* <Label className="text-sm">Yield fy{shortAsset?.displaySymbol} used for investment</Label>
                 <Value className="text-sm">

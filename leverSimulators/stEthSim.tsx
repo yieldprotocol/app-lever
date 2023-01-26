@@ -146,9 +146,10 @@ export const stEthSimulator: Simulator = async (
     output.investmentAtMaturity = convertToW3bNumber(returnsLessFees, 18, 3);
 
     /* Calculate the value of the investPosition in short terms : via swap */
-    const investValue_ = await stableSwap.get_dy(1, 0, output.longAssetObtained.big); // .catch(()=>{console.log('failed'); return ZERO_BN} );
+    const investValue_ = await stableSwap.get_dy(1, 0, output.investmentAtMaturity.big); // .catch(()=>{console.log('failed'); return ZERO_BN} );
     const investValueLessFees = investValue_ // .sub(output.tradingFee.big);
-    output.investmentCurrent = convertToW3bNumber(investValueLessFees, 18, 3);
+    
+    output.investmentValue = convertToW3bNumber(investValueLessFees, 18, 3);
 
     /**
      * INVEST ARGS :
@@ -200,9 +201,9 @@ export const stEthSimulator: Simulator = async (
     output.investmentAtMaturity = convertToW3bNumber(returnsLessFees, 18, 3);
 
     /* Calculate the value of the investPosition in short terms : via swap */
-    const investValue_ = await stableSwap.get_dy(1, 0, selectedPosition.longAssetObtained.big); // .catch(()=>{console.log('failed'); return ZERO_BN} );
+    const investValue_ = await stableSwap.get_dy(1, 0, output.investmentAtMaturity.big); // .catch(()=>{console.log('failed'); return ZERO_BN} );
     const investValueLessFees = investValue_// .sub(investFee);
-    output.investmentCurrent = convertToW3bNumber(investValueLessFees, 18, 3);
+    output.investmentValue = convertToW3bNumber(investValueLessFees, 18, 3);
 
     /**
      * DIVEST ARGS:

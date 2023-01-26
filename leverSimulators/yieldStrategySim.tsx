@@ -158,7 +158,7 @@ export const yieldStrategySimulator: Simulator = async (
       marketState.totalSupply,
       lpReceived
     );
-    output.investmentCurrent = convertToW3bNumber(
+    output.investmentValue = convertToW3bNumber(
       sharesReceivedFromBurn.add(fyTokenReceivedFromBurn),
       shortAsset?.decimals,
       shortAsset?.displayDigits
@@ -220,7 +220,7 @@ export const yieldStrategySimulator: Simulator = async (
 
     // const investValue_ = await stableSwap.get_dy(1, 0, selectedPosition.longAssetObtained.big); // .catch(()=>{console.log('failed'); return ZERO_BN} );
     // const investValueLessFees = investValue_.sub(investFee);
-    // output.investmentCurrent = convertToW3bNumber(investValueLessFees, 18, 3);
+    // output.investmentValue = convertToW3bNumber(investValueLessFees, 18, 3);
 
 
     /** DIVEST :
