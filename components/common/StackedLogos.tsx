@@ -11,7 +11,7 @@ const StackedLogos: FC<ExtraProps> = (props) => {
 
   return (
     <div className={`flex`}>
-      <div className={`z-20 rounded-full h-${size} w-${size}`}>
+      <div className={`z-10 rounded-full h-${size} w-${size}`}>
         <div className={`h-${size} w-${size}`}>
           <LogoWrap 
             outerTwStyle='bg-slate-900 bg-opacity-90'
@@ -26,7 +26,7 @@ const StackedLogos: FC<ExtraProps> = (props) => {
           .map((logo: ReactElement, i:number) => (
             <div
               className={`
-              z-10 
+              z-5
               -ml-3
               mt-1
               h-${size} 

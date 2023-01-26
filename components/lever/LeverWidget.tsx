@@ -38,14 +38,18 @@ const LeverWidget = (props: any) => {
       </TopRow>
       <Inner>
         <Section>
-          <SectionHead>yLever Strategy </SectionHead>
+          <SectionHead>              
+             <div className="flex justify-between">
+              <div> Lever Strategy </div>
+            </div>
+            </SectionHead>
           <LeverSelect />
         </Section>
 
         <Section className={ selectedLever ? 'opacity-100' : 'opacity-25'} >
           <SectionHead>
-            <div className="flex   justify-between">
-              Principal investment
+            <div className="flex justify-between">
+              <div> Investment </div>
               {selectedLever && shortAsset && (
                 <div className="text-xs text-slate-500" onClick={()=> inputActions.setInput(selectedLever.minDebt.dsp) }>
                   Min: {selectedLever.minDebt.dsp} {shortAsset.displaySymbol}{' '}

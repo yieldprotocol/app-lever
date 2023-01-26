@@ -48,6 +48,7 @@ const EstimatedPosition = (props: any) => {
           <div className="flex items-center gap-4">
             <StackedLogos size={8} logos={[longAsset?.image, shortAsset?.image]} />
             { !input.big.gt(ZERO_BN) &&  <div className="text-lg text-slate-400">Position Simulator</div> }
+            { input.big.gt(ZERO_BN) &&  <div className="text-lg text-slate-400">Simulation</div> }
           </div>
         ) : (
           <div />

@@ -1,17 +1,18 @@
 import { Fragment, useContext, useEffect, useState } from 'react';
 import tw from 'tailwind-styled-components';
 import { IAsset, ILever, ILeverContextState, LeverContext } from '../../context/LeverContext';
-import { BorderWrap, ClickableContainer, TopRow } from '../styled';
+import { BorderWrap, ClickableContainer, Section, SectionHead, TopRow } from '../styled';
 
 import { ArrowsRightLeftIcon } from '@heroicons/react/24/solid';
 import { ArrowTrendingDownIcon, ArrowTrendingUpIcon, CheckBadgeIcon, StarIcon } from '@heroicons/react/20/solid';
 
-import { ExclamationCircleIcon, InformationCircleIcon, StarIcon as StarIconOutline } from '@heroicons/react/24/outline';
+import { ExclamationCircleIcon, InformationCircleIcon, StarIcon as StarIconOutline, XCircleIcon } from '@heroicons/react/24/outline';
 
 import { Listbox, Transition } from '@headlessui/react';
 import { formatDate } from '../../utils/appUtils';
 import { toast } from 'react-toastify';
 import StackedLogos from '../common/StackedLogos';
+import Modal from '../common/Modal';
 
 enum AssetType {
   SHORT,
@@ -76,14 +77,17 @@ const ListOptionsStyled = ({ children }: { children: any[] }) => (
 const LeverSelect = () => {
   const [leverState, leverActions] = useContext(LeverContext);
   const { selectedLever, levers, assets, selectedShortAsset, selectedLongAsset } = leverState as ILeverContextState;
-  const assetsList = Array.from(assets.values()).filter((a:IAsset)=> a.showToken );
+  const assetsList = Array.from(assets.values()).filter((a: IAsset) => a.showToken);
 
+  const [allLevers, setAllLevers] = useState<ILever[]>([]);
   const [possibleLevers, setPossibleLevers] = useState<ILever[]>([]);
   const [requestedPairs, setRequestedPair] = useState<string[]>([]);
 
+  const [showAllLevers, setShowAllLevers] = useState(false);
+
   /* When the selected lever changes, make sure the selected assets match */
   useEffect(() => {
-    if ( selectedLever ) {
+    if (selectedLever) {
       leverActions.selectShort(assets.get(selectedLever.baseId));
       leverActions.selectLong(assets.get(selectedLever.ilkId));
     }
@@ -92,6 +96,7 @@ const LeverSelect = () => {
   /* Get the list of possible levers, based on the selected short/long asset pair selected */
   useEffect(() => {
     const list = Array.from(levers.values());
+    setAllLevers(list);
     const filteredLevers = list.filter(
       (lever_: ILever) => lever_.baseId === selectedShortAsset?.id && lever_.ilkId === selectedLongAsset?.id
     );
@@ -99,9 +104,7 @@ const LeverSelect = () => {
 
     /* select the first on the list, of the list is blank deselect the strategy */
     // filteredLevers.length > 0 ? leverActions.selectLever(filteredLevers[0]) : leverActions.selectLever(undefined);
-
   }, [selectedShortAsset, selectedLongAsset, levers]);
-
 
   const handlePairRequest = () => {
     toast.info('Trading pair requested.');
@@ -119,15 +122,57 @@ const LeverSelect = () => {
       : !!list.find((l: ILever) => l.baseId === selectedShortAsset?.id && l.ilkId === asset.id);
   };
 
+  const ModalSelector = () => {
+    return (
+      <Modal isOpen={showAllLevers} setIsOpen={() => setShowAllLevers(!showAllLevers)}>
+        <Section className={selectedLever ? 'opacity-100' : 'opacity-25'}>
+        <SectionHead>              
+             <div className="flex justify-between">
+              <div> All Yield Levers </div>
+              <XCircleIcon className="w-6 h-6 text-gray-500" onClick={()=>setShowAllLevers(false)}/>
+     
+            </div>
+            
+            </SectionHead>
+          <div className="space-y-1">
+            {allLevers.map((l: ILever) => (
+               <ClickableContainer key={l.id}>
+              <div
+                className={`flex p-4 justify-between rounded ${
+                  selectedLever?.id === l.id ? 'bg-primary-600 bg-opacity-25' : 'opacity-50'
+                }`}
+                onClick={() => leverActions.selectLever(l)}
+              >
+                <div className="flex   gap-2">
+                  <StackedLogos size={6} logos={[assets.get(l.ilkId)!.image!, assets.get(l.baseId)!.image!]} />
+                </div>
+                {/* <div className="w-6 h-6">{l.tradeImage}</div> */}
+                <div>{formatDate(l.maturityDate)}</div>
+                <div>
+                  <InformationCircleIcon className="w-6 h-6 text-gray-500" onClick={() => console.log('eomtignd')} />
+                </div>
+              </div>
+              </ClickableContainer>
+            ))}
+          </div>
+        </Section>
+      </Modal>
+    );
+  };
+
   return (
+    <>
+     <ModalSelector />
+   
     <div className="space-y-4">
+     
       <div className="flex space-x-4 ">
         <ClickableContainer>
           <TopRow className="p-1 gap-2 justify-start">
             <div className="flex text-xs text-slate-500 text-start ">Long</div>
             <ArrowTrendingUpIcon className="h-4 w-4 text-slate-500" />
           </TopRow>
-          <Listbox value={selectedLongAsset} onChange={(x: IAsset) => leverActions.selectLong(x)  }>
+          <Listbox value={selectedLongAsset} onChange={(x: IAsset) => leverActions.selectLong(x)}>
             <SelectedAssetStyled asset={selectedLongAsset!} assetType={AssetType.LONG} />
             <ListOptionsStyled>
               {assetsList
@@ -185,10 +230,10 @@ const LeverSelect = () => {
             <ClickableContainer key={l.id}>
               <div
                 className={`flex p-4 justify-between rounded ${
-                  selectedLever?.id === l.id ? 'bg-primary-600 bg-opacity-25 h-14' : 'text-xs opacity-50'
+                  selectedLever?.id === l.id ? 'bg-primary-600 bg-opacity-25' : 'opacity-50'
                 }`}
                 onClick={() => leverActions.selectLever(l)}
-              >  
+              >
                 <div className="flex   gap-2">
                   <StackedLogos size={6} logos={[assets.get(l.ilkId)!.image!, assets.get(l.baseId)!.image!]} />
                 </div>
@@ -205,15 +250,15 @@ const LeverSelect = () => {
             <ClickableContainer>
               <div className="grid overflow-hidden grid-cols-4 grid-rows-1 p-4">
                 <div className="col-span-1  ">
-                  <div className="flex   justify-center">
+                  <div className="flex ">
                     <ExclamationCircleIcon className="w-10" />
                   </div>
                 </div>
                 <div className="col-span-3 gap-2 space-y-2">
-                  <div className="flex   justify-end">
+                  <div className="flex justify-end">
                     <div className="text-sm"> There are no strategies available for this pair, yet. </div>
                   </div>
-                  <div className="flex   justify-end ">
+                  <div className="flex justify-end ">
                     <button
                       className="flex   text-xs text-slate-500 gap-4 rounded "
                       onClick={() => handlePairRequest()}
@@ -234,7 +279,15 @@ const LeverSelect = () => {
           )}
         </div>
       </div>
+
+      <div className="flex justify-end">
+        <button className="flex text-xs text-slate-500 justify-end hover:text-white" onClick={() => setShowAllLevers(true)}>
+          see all available levers
+        </button>
+      </div>
+
     </div>
+    </>
   );
 };
 
