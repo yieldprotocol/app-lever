@@ -7,6 +7,8 @@ import { LeverContext } from '../../context/LeverContext';
 import tw from 'tailwind-styled-components';
 import { InputContext } from '../../context/InputContext';
 
+import { MagnifyingGlassMinusIcon, MagnifyingGlassPlusIcon } from '@heroicons/react/24/outline';
+
 export const TopRow_ = tw.div`p-0 align-middle text-center items-center rounded-t-lg dark:bg-gray-900 
 bg-gray-100
 bg-opacity-25
@@ -196,6 +198,8 @@ export const ChartWidget = (props: HighchartsReact.Props) => {
                       <Button onClick={() => handleRangeChange(2628288)}> 1m </Button>
                       <Button onClick={() => handleRangeChange(7890000)}> 3m </Button>
                     </div>
+                    {/* <div className="w-5"><MagnifyingGlassMinusIcon  className='text-white' onClick={()=>setForceChart(false)} /> </div> */}
+                    {/* <div className="w-5"><MagnifyingGlassPlusIcon  className='text-white' onClick={()=>setForceChart(true)} /> </div> */}
                   </div>
                 )}
               </div>
@@ -210,6 +214,7 @@ export const ChartWidget = (props: HighchartsReact.Props) => {
             } `}
           >
             {prices.length ? (
+
               <HighchartsReact
                 highcharts={HighStock}
                 constructorType={'stockChart'}
@@ -217,14 +222,13 @@ export const ChartWidget = (props: HighchartsReact.Props) => {
                 ref={chartComponentRef}
                 {...props}
               />
+              
             ) : (
               <div className="p-4">
                 <Spinner />
               </div>
             )}
-
           </div>
-
         </div>
       )}
       {!pricesAvailable && <div className="text-xs text-slate-500 pz-8 py-12"> Price chart not currently available. </div>}

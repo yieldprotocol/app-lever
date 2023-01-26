@@ -26,7 +26,7 @@ const LeverWidget = (props: any) => {
   const shortAsset = assets.get(selectedLever?.baseId!);
   const { address: account } = useAccount();
 
-  const { invest, isSimulating, maxLeverage, borrowLimitUsed}: ILeverSimulation = props.lever;
+  const { invest, isSimulating, maxLeverage }: ILeverSimulation = props.lever;
 
   return (
     <BorderWrap className="h-full pb-4">
@@ -71,13 +71,8 @@ const LeverWidget = (props: any) => {
           action={() => invest()}
           disabled={
             !account ||
-            !selectedLever // ||
-            // borrowLimitUsed > 100 // ||
-
-            // shortBorrowed.big.gt(selectedLever.maxBase.big) ||
-            // input?.big.lt(selectedLever.minDebt.big)
+            !selectedLever 
           } // add in isTransacting check
-          // loading={false}
           loading={isSimulating}
         >
           {!account ? 'Connect Wallet' : 'Trade'}
