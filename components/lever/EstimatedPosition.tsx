@@ -125,7 +125,6 @@ const EstimatedPosition = (props: any) => {
                       <div>{shortAssetBorrowed?.dsp} </div>
                     </div>
                   </div>
-
                 </div>
 
                 <div className="flex items-center gap-2 justify-between">
@@ -133,7 +132,7 @@ const EstimatedPosition = (props: any) => {
                   
                   <div className='text-sm'>{longAsset?.displaySymbol}</div>
                     <div className="flex items-center gap-2">
-                       holdings in
+                      bought on
                       <WrapWithLogo logo={selectedLever?.tradeImage}> {selectedLever?.tradePlatform} </WrapWithLogo>
                     </div>
                     <div className="text-xs border rounded-full min-w-2em px-2"> earning {Math.round((investAPR + Number.EPSILON) * 100) / 100}%</div>
@@ -264,7 +263,7 @@ const EstimatedPosition = (props: any) => {
               className="text-xs text-slate-700 dark:text-slate-400 text-left"
               onClick={() => setShowExtra(!showExtra)}
             >
-              {showExtra ? 'Show less -' : 'Show Extra Info +'}
+              {showExtra ? 'Show less -' : 'Show More Info +'}
             </button>
           </div>
         </Inner>

@@ -67,7 +67,7 @@ const LeverageSelect = ({ max }: { max: number }) => {
   const [inputState, inputActions] = useContext(InputContext);
   return (
     <Container className=" align-middle">
-      <div className="w-1/4 flex flex-grow ">
+      <div className="w-1/4 flex flex-grow min-w-[120px] ">
         <div className=" px-2 py-4"> X </div>
         <Input
           className=" before:content: "

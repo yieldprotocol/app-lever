@@ -31,15 +31,15 @@ const LeverWidget = (props: any) => {
   return (
     <BorderWrap className="h-full pb-4">
       <TopRow>
-        <div className="text-lg"> New Position </div>
+        <div className="text-lg"> Open a New Position </div>
         <ClearButton onClick={() => console.log('actually, this might not do anything? settings?')}>
           <CogIcon className="h-6 w-6 text-primary-600" />
         </ClearButton>
       </TopRow>
       <Inner>
         <Section>
-          <SectionHead>Lever Strategy </SectionHead>
-          <LeverSelect  />
+          <SectionHead>yLever Strategy </SectionHead>
+          <LeverSelect />
         </Section>
 
         <Section className={ selectedLever ? 'opacity-100' : 'opacity-25'} >
