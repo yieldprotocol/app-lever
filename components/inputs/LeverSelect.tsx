@@ -6,7 +6,12 @@ import { BorderWrap, ClickableContainer, Section, SectionHead, TopRow } from '..
 import { ArrowsRightLeftIcon } from '@heroicons/react/24/solid';
 import { ArrowTrendingDownIcon, ArrowTrendingUpIcon, CheckBadgeIcon, StarIcon } from '@heroicons/react/20/solid';
 
-import { ExclamationCircleIcon, InformationCircleIcon, StarIcon as StarIconOutline, XCircleIcon } from '@heroicons/react/24/outline';
+import {
+  ExclamationCircleIcon,
+  InformationCircleIcon,
+  StarIcon as StarIconOutline,
+  XCircleIcon,
+} from '@heroicons/react/24/outline';
 
 import { Listbox, Transition } from '@headlessui/react';
 import { formatDate } from '../../utils/appUtils';
@@ -121,21 +126,18 @@ const LeverSelect = () => {
       : !!list.find((l: ILever) => l.baseId === selectedShortAsset?.id && l.ilkId === asset.id);
   };
 
-  const ModalSelector = () => {
-    return (
-      <Modal isOpen={showAllLevers} setIsOpen={() => setShowAllLevers(!showAllLevers)}>
-        <Section className={selectedLever ? 'opacity-100' : 'opacity-25'}>
-        <SectionHead>              
-             <div className="flex justify-between">
-              <div> All Yield Levers </div>
-              <XCircleIcon className="w-6 h-6 text-gray-500" onClick={()=>setShowAllLevers(false)}/>
-     
-            </div>
-            
-            </SectionHead>
-          <div className="space-y-1">
-            {allLevers.map((l: ILever) => (
-               <ClickableContainer key={l.id}>
+  const ModalSelector = () => (
+    <Modal isOpen={showAllLevers} setIsOpen={() => setShowAllLevers(!showAllLevers)}>
+      <Section className={selectedLever ? 'opacity-100' : 'opacity-25'}>
+        <SectionHead>
+          <div className="flex justify-between">
+            <div> All Yield Levers </div>
+            <XCircleIcon className="w-6 h-6 text-gray-500" onClick={() => setShowAllLevers(false)} />
+          </div>
+        </SectionHead>
+        <div className="space-y-1">
+          {allLevers.map((l: ILever) => (
+            <ClickableContainer key={l.id}>
               <div
                 className={`flex p-4 justify-between rounded ${
                   selectedLever?.id === l.id ? 'bg-primary-600 bg-opacity-25' : 'opacity-50'
@@ -151,141 +153,141 @@ const LeverSelect = () => {
                   <InformationCircleIcon className="w-6 h-6 text-gray-500" onClick={() => console.log('eomtignd')} />
                 </div>
               </div>
-              </ClickableContainer>
-            ))}
-          </div>
-        </Section>
-      </Modal>
-    );
-  };
+            </ClickableContainer>
+          ))}
+        </div>
+      </Section>
+    </Modal>
+  );
 
   return (
     <>
-     <ModalSelector />
-   
-    <div className="space-y-4">
-     
-      <div className="flex space-x-4 ">
-        <ClickableContainer>
-          <TopRow className="p-1 gap-2 justify-start">
-            <div className="flex text-xs text-slate-500 text-start ">Long</div>
-            <ArrowTrendingUpIcon className="h-4 w-4 text-slate-500" />
-          </TopRow>
-          <Listbox value={selectedLongAsset} onChange={(x: IAsset) => leverActions.selectLong(x)}>
-            <SelectedAssetStyled asset={selectedLongAsset!} assetType={AssetType.LONG} />
-            <ListOptionsStyled>
-              {assetsList
-                .filter((a: IAsset) => a.id !== selectedShortAsset?.id)
-                .filter((a: IAsset) => a.id !== selectedLongAsset?.id)
-                .sort((a: IAsset, b: IAsset) => Number(b.isLongAsset) - Number(a.isLongAsset))
-                .sort(
-                  (a: IAsset, b: IAsset) =>
-                    Number(isRecommended(b, AssetType.LONG)) - Number(isRecommended(a, AssetType.LONG))
-                )
-                .map((a: IAsset) => assetOption(a, isRecommended(a, AssetType.LONG), AssetType.LONG))}
-            </ListOptionsStyled>
-          </Listbox>
-        </ClickableContainer>
+      <ModalSelector />
 
-        <div className="justify-center pt-6 z-20">
-          <button
-            className="bg-primary-600 rounded-full p-2 border hover:border
+      <div className="space-y-4">
+        <div className="flex space-x-4 ">
+          <ClickableContainer>
+            <TopRow className="p-1 gap-2 justify-start">
+              <div className="flex text-xs text-slate-500 text-start ">Long</div>
+              <ArrowTrendingUpIcon className="h-4 w-4 text-slate-500" />
+            </TopRow>
+            <Listbox value={selectedLongAsset} onChange={(x: IAsset) => leverActions.selectLong(x)}>
+              <SelectedAssetStyled asset={selectedLongAsset!} assetType={AssetType.LONG} />
+              <ListOptionsStyled>
+                {assetsList
+                  .filter((a: IAsset) => a.id !== selectedShortAsset?.id)
+                  .filter((a: IAsset) => a.id !== selectedLongAsset?.id)
+                  .sort((a: IAsset, b: IAsset) => Number(b.isLongAsset) - Number(a.isLongAsset))
+                  .sort(
+                    (a: IAsset, b: IAsset) =>
+                      Number(isRecommended(b, AssetType.LONG)) - Number(isRecommended(a, AssetType.LONG))
+                  )
+                  .map((a: IAsset) => assetOption(a, isRecommended(a, AssetType.LONG), AssetType.LONG))}
+              </ListOptionsStyled>
+            </Listbox>
+          </ClickableContainer>
+
+          <div className="justify-center pt-6 z-20">
+            <button
+              className="bg-primary-600 rounded-full p-2 border hover:border
             hover:border-primary-400  border-transparent"
-            onClick={() => {
-              leverActions.selectLong(selectedShortAsset);
-              leverActions.selectShort(selectedLongAsset);
-            }}
+              onClick={() => {
+                leverActions.selectLong(selectedShortAsset);
+                leverActions.selectShort(selectedLongAsset);
+              }}
+            >
+              <ArrowsRightLeftIcon className="h-6 w-6 text-white" />
+            </button>
+          </div>
+
+          <ClickableContainer>
+            <TopRow className="p-1 gap-2 justify-start ">
+              <div className="flex   text-xs text-slate-500 text-start ">Short</div>
+              <ArrowTrendingDownIcon className="h-4 w-4 text-slate-500" />
+            </TopRow>
+            <Listbox value={selectedShortAsset} onChange={(x: IAsset) => leverActions.selectShort(x)}>
+              <SelectedAssetStyled asset={selectedShortAsset!} assetType={AssetType.SHORT} />
+              <ListOptionsStyled>
+                {assetsList
+                  .filter((a: IAsset) => a.isBaseAsset)
+                  .sort((a: IAsset, b: IAsset) => Number(b.isBaseAsset) - Number(a.isBaseAsset))
+                  .sort(
+                    (a: IAsset, b: IAsset) =>
+                      Number(isRecommended(b, AssetType.SHORT)) - Number(isRecommended(a, AssetType.SHORT))
+                  )
+                  .map((a: IAsset) => assetOption(a, isRecommended(a, AssetType.SHORT), AssetType.SHORT))}
+              </ListOptionsStyled>
+            </Listbox>
+          </ClickableContainer>
+        </div>
+
+        <div>
+          {levers.size === 0 && <div> Loading ... </div>}
+
+          <div className="space-y-1">
+            {possibleLevers.map((l: ILever) => (
+              <ClickableContainer key={l.id}>
+                <div
+                  className={`flex p-4 justify-between rounded ${
+                    selectedLever?.id === l.id ? 'bg-primary-600 bg-opacity-25' : 'opacity-50'
+                  }`}
+                  onClick={() => leverActions.selectLever(l)}
+                >
+                  <div className="flex   gap-2">
+                    <StackedLogos size={6} logos={[assets.get(l.ilkId)!.image!, assets.get(l.baseId)!.image!]} />
+                  </div>
+                  {/* <div className="w-6 h-6">{l.tradeImage}</div> */}
+                  <div>{formatDate(l.maturityDate)}</div>
+                  <div>
+                    <InformationCircleIcon className="w-6 h-6 text-gray-500" />
+                  </div>
+                </div>
+              </ClickableContainer>
+            ))}
+
+            {levers.size > 0 && possibleLevers.length === 0 && (
+              <ClickableContainer>
+                <div className="grid overflow-hidden grid-cols-4 grid-rows-1 p-4">
+                  <div className="col-span-1  ">
+                    <div className="flex ">
+                      <ExclamationCircleIcon className="w-10" />
+                    </div>
+                  </div>
+                  <div className="col-span-3 gap-2 space-y-2">
+                    <div className="flex justify-end">
+                      <div className="text-sm"> There are no strategies available for this pair, yet. </div>
+                    </div>
+                    <div className="flex justify-end ">
+                      <button
+                        className="flex   text-xs text-slate-500 gap-4 rounded "
+                        onClick={() => handlePairRequest()}
+                      >
+                        Are you are interested in adding this pair?
+                        {selectedShortAsset &&
+                        selectedLongAsset &&
+                        requestedPairs.includes(`${selectedShortAsset.symbol}${selectedLongAsset.symbol}`) ? (
+                          <StarIcon className="w-4 h-4" />
+                        ) : (
+                          <StarIconOutline className="w-4 h-4" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </ClickableContainer>
+            )}
+          </div>
+        </div>
+
+        <div className="flex justify-end">
+          <button
+            className="flex text-xs text-slate-500 justify-end hover:text-white"
+            onClick={() => setShowAllLevers(true)}
           >
-            <ArrowsRightLeftIcon className="h-6 w-6 text-white" />
+            see all available levers
           </button>
         </div>
-
-        <ClickableContainer>
-          <TopRow className="p-1 gap-2 justify-start ">
-            <div className="flex   text-xs text-slate-500 text-start ">Short</div>
-            <ArrowTrendingDownIcon className="h-4 w-4 text-slate-500" />
-          </TopRow>
-          <Listbox value={selectedShortAsset} onChange={(x: IAsset) => leverActions.selectShort(x)}>
-            <SelectedAssetStyled asset={selectedShortAsset!} assetType={AssetType.SHORT} />
-            <ListOptionsStyled>
-              {assetsList
-                .filter((a: IAsset) => a.isBaseAsset)
-                .sort((a: IAsset, b: IAsset) => Number(b.isBaseAsset) - Number(a.isBaseAsset))
-                .sort(
-                  (a: IAsset, b: IAsset) =>
-                    Number(isRecommended(b, AssetType.SHORT)) - Number(isRecommended(a, AssetType.SHORT))
-                )
-                .map((a: IAsset) => assetOption(a, isRecommended(a, AssetType.SHORT), AssetType.SHORT))}
-            </ListOptionsStyled>
-          </Listbox>
-        </ClickableContainer>
       </div>
-
-      <div>
-        {levers.size === 0 && <div> Loading ... </div>}
-
-        <div className="space-y-1">
-          {possibleLevers.map((l: ILever) => (
-            <ClickableContainer key={l.id}>
-              <div
-                className={`flex p-4 justify-between rounded ${
-                  selectedLever?.id === l.id ? 'bg-primary-600 bg-opacity-25' : 'opacity-50'
-                }`}
-                onClick={() => leverActions.selectLever(l)}
-              >
-                <div className="flex   gap-2">
-                  <StackedLogos size={6} logos={[assets.get(l.ilkId)!.image!, assets.get(l.baseId)!.image!]} />
-                </div>
-                {/* <div className="w-6 h-6">{l.tradeImage}</div> */}
-                <div>{formatDate(l.maturityDate)}</div>
-                <div>
-                  <InformationCircleIcon className="w-6 h-6 text-gray-500" />
-                </div>
-              </div>
-            </ClickableContainer>
-          ))}
-
-          {levers.size > 0 && possibleLevers.length === 0 && (
-            <ClickableContainer>
-              <div className="grid overflow-hidden grid-cols-4 grid-rows-1 p-4">
-                <div className="col-span-1  ">
-                  <div className="flex ">
-                    <ExclamationCircleIcon className="w-10" />
-                  </div>
-                </div>
-                <div className="col-span-3 gap-2 space-y-2">
-                  <div className="flex justify-end">
-                    <div className="text-sm"> There are no strategies available for this pair, yet. </div>
-                  </div>
-                  <div className="flex justify-end ">
-                    <button
-                      className="flex   text-xs text-slate-500 gap-4 rounded "
-                      onClick={() => handlePairRequest()}
-                    >
-                      Are you are interested in adding this pair?
-                      {selectedShortAsset &&
-                      selectedLongAsset &&
-                      requestedPairs.includes(`${selectedShortAsset.symbol}${selectedLongAsset.symbol}`) ? (
-                        <StarIcon className="w-4 h-4" />
-                      ) : (
-                        <StarIconOutline className="w-4 h-4" />
-                      )}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </ClickableContainer>
-          )}
-        </div>
-      </div>
-
-      <div className="flex justify-end">
-        <button className="flex text-xs text-slate-500 justify-end hover:text-white" onClick={() => setShowAllLevers(true)}>
-          see all available levers
-        </button>
-      </div>
-
-    </div>
     </>
   );
 };
