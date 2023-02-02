@@ -24,6 +24,86 @@ const _abi = [
     type: "error",
   },
   {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "enum YieldLeverBase.Operation",
+        name: "operation",
+        type: "uint8",
+      },
+      {
+        indexed: true,
+        internalType: "bytes12",
+        name: "vaultId",
+        type: "bytes12",
+      },
+      {
+        indexed: false,
+        internalType: "bytes6",
+        name: "seriesId",
+        type: "bytes6",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "investor",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "profit",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "debt",
+        type: "uint256",
+      },
+    ],
+    name: "Divested",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "bytes12",
+        name: "vaultId",
+        type: "bytes12",
+      },
+      {
+        indexed: false,
+        internalType: "bytes6",
+        name: "seriesId",
+        type: "bytes6",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "investor",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "investment",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "debt",
+        type: "uint256",
+      },
+    ],
+    name: "Invested",
+    type: "event",
+  },
+  {
     inputs: [],
     name: "FLASH_LOAN_RETURN",
     outputs: [
@@ -34,32 +114,6 @@ const _abi = [
       },
     ],
     stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "bytes6",
-        name: "seriesId",
-        type: "bytes6",
-      },
-    ],
-    name: "approveFyToken",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "joinAddress",
-        type: "address",
-      },
-    ],
-    name: "approveJoin",
-    outputs: [],
-    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -78,9 +132,9 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "bytes6",
-        name: "ilkId",
-        type: "bytes6",
+        internalType: "bytes12",
+        name: "vaultId",
+        type: "bytes12",
       },
       {
         internalType: "bytes6",
@@ -88,19 +142,19 @@ const _abi = [
         type: "bytes6",
       },
       {
-        internalType: "bytes12",
-        name: "vaultId",
-        type: "bytes12",
+        internalType: "bytes6",
+        name: "ilkId",
+        type: "bytes6",
       },
       {
-        internalType: "uint128",
+        internalType: "uint256",
         name: "ink",
-        type: "uint128",
+        type: "uint256",
       },
       {
-        internalType: "uint128",
+        internalType: "uint256",
         name: "art",
-        type: "uint128",
+        type: "uint256",
       },
       {
         internalType: "uint256",
@@ -159,23 +213,23 @@ const _abi = [
     inputs: [
       {
         internalType: "bytes6",
-        name: "ilkId",
-        type: "bytes6",
-      },
-      {
-        internalType: "bytes6",
         name: "seriesId",
         type: "bytes6",
       },
       {
-        internalType: "uint128",
-        name: "baseAmount",
-        type: "uint128",
+        internalType: "bytes6",
+        name: "ilkId",
+        type: "bytes6",
       },
       {
-        internalType: "uint128",
+        internalType: "uint256",
+        name: "baseAmount",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
         name: "borrowAmount",
-        type: "uint128",
+        type: "uint256",
       },
     ],
     name: "invest",
@@ -186,7 +240,7 @@ const _abi = [
         type: "bytes12",
       },
     ],
-    stateMutability: "nonpayable",
+    stateMutability: "payable",
     type: "function",
   },
   {
@@ -289,7 +343,7 @@ const _abi = [
       },
       {
         internalType: "address",
-        name: "",
+        name: "token",
         type: "address",
       },
       {
@@ -320,39 +374,21 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [
+    inputs: [],
+    name: "weth",
+    outputs: [
       {
-        internalType: "bytes6",
-        name: "ilkId",
-        type: "bytes6",
-      },
-      {
-        components: [
-          {
-            internalType: "contract FlashJoin",
-            name: "join",
-            type: "address",
-          },
-          {
-            internalType: "uint40",
-            name: "maturity",
-            type: "uint40",
-          },
-          {
-            internalType: "uint16",
-            name: "currencyId",
-            type: "uint16",
-          },
-        ],
-        internalType: "struct YieldNotionalLever.IlkInfo",
-        name: "underlying",
-        type: "tuple",
+        internalType: "contract IWETH9",
+        name: "",
+        type: "address",
       },
     ],
-    name: "setIlkInfo",
-    outputs: [],
-    stateMutability: "nonpayable",
+    stateMutability: "view",
     type: "function",
+  },
+  {
+    stateMutability: "payable",
+    type: "receive",
   },
 ];
 

@@ -9,11 +9,16 @@ import type {
   CallOverrides,
   ContractTransaction,
   Overrides,
+  PayableOverrides,
   PopulatedTransaction,
   Signer,
   utils,
 } from "ethers";
-import type { FunctionFragment, Result } from "@ethersproject/abi";
+import type {
+  FunctionFragment,
+  Result,
+  EventFragment,
+} from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
 import type {
   TypedEventFilter,
@@ -23,42 +28,24 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export declare namespace YieldNotionalLever {
-  export type IlkInfoStruct = {
-    join: PromiseOrValue<string>;
-    maturity: PromiseOrValue<BigNumberish>;
-    currencyId: PromiseOrValue<BigNumberish>;
-  };
-
-  export type IlkInfoStructOutput = [string, number, number] & {
-    join: string;
-    maturity: number;
-    currencyId: number;
-  };
-}
-
 export interface NotionalLeverInterface extends utils.Interface {
   functions: {
     "FLASH_LOAN_RETURN()": FunctionFragment;
-    "approveFyToken(bytes6)": FunctionFragment;
-    "approveJoin(address)": FunctionFragment;
     "cauldron()": FunctionFragment;
-    "divest(bytes6,bytes6,bytes12,uint128,uint128,uint256)": FunctionFragment;
+    "divest(bytes12,bytes6,bytes6,uint256,uint256,uint256)": FunctionFragment;
     "giver()": FunctionFragment;
     "ilkInfo(bytes6)": FunctionFragment;
-    "invest(bytes6,bytes6,uint128,uint128)": FunctionFragment;
+    "invest(bytes6,bytes6,uint256,uint256)": FunctionFragment;
     "ladle()": FunctionFragment;
     "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "onERC1155Received(address,address,uint256,uint256,bytes)": FunctionFragment;
     "onFlashLoan(address,address,uint256,uint256,bytes)": FunctionFragment;
-    "setIlkInfo(bytes6,(address,uint40,uint16))": FunctionFragment;
+    "weth()": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
       | "FLASH_LOAN_RETURN"
-      | "approveFyToken"
-      | "approveJoin"
       | "cauldron"
       | "divest"
       | "giver"
@@ -68,20 +55,12 @@ export interface NotionalLeverInterface extends utils.Interface {
       | "onERC1155BatchReceived"
       | "onERC1155Received"
       | "onFlashLoan"
-      | "setIlkInfo"
+      | "weth"
   ): FunctionFragment;
 
   encodeFunctionData(
     functionFragment: "FLASH_LOAN_RETURN",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "approveFyToken",
-    values: [PromiseOrValue<BytesLike>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "approveJoin",
-    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "cauldron", values?: undefined): string;
   encodeFunctionData(
@@ -140,21 +119,10 @@ export interface NotionalLeverInterface extends utils.Interface {
       PromiseOrValue<BytesLike>
     ]
   ): string;
-  encodeFunctionData(
-    functionFragment: "setIlkInfo",
-    values: [PromiseOrValue<BytesLike>, YieldNotionalLever.IlkInfoStruct]
-  ): string;
+  encodeFunctionData(functionFragment: "weth", values?: undefined): string;
 
   decodeFunctionResult(
     functionFragment: "FLASH_LOAN_RETURN",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "approveFyToken",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "approveJoin",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "cauldron", data: BytesLike): Result;
@@ -175,10 +143,45 @@ export interface NotionalLeverInterface extends utils.Interface {
     functionFragment: "onFlashLoan",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "setIlkInfo", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "weth", data: BytesLike): Result;
 
-  events: {};
+  events: {
+    "Divested(uint8,bytes12,bytes6,address,uint256,uint256)": EventFragment;
+    "Invested(bytes12,bytes6,address,uint256,uint256)": EventFragment;
+  };
+
+  getEvent(nameOrSignatureOrTopic: "Divested"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Invested"): EventFragment;
 }
+
+export interface DivestedEventObject {
+  operation: number;
+  vaultId: string;
+  seriesId: string;
+  investor: string;
+  profit: BigNumber;
+  debt: BigNumber;
+}
+export type DivestedEvent = TypedEvent<
+  [number, string, string, string, BigNumber, BigNumber],
+  DivestedEventObject
+>;
+
+export type DivestedEventFilter = TypedEventFilter<DivestedEvent>;
+
+export interface InvestedEventObject {
+  vaultId: string;
+  seriesId: string;
+  investor: string;
+  investment: BigNumber;
+  debt: BigNumber;
+}
+export type InvestedEvent = TypedEvent<
+  [string, string, string, BigNumber, BigNumber],
+  InvestedEventObject
+>;
+
+export type InvestedEventFilter = TypedEventFilter<InvestedEvent>;
 
 export interface NotionalLever extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -209,22 +212,12 @@ export interface NotionalLever extends BaseContract {
   functions: {
     FLASH_LOAN_RETURN(overrides?: CallOverrides): Promise<[string]>;
 
-    approveFyToken(
-      seriesId: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    approveJoin(
-      joinAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     cauldron(overrides?: CallOverrides): Promise<[string]>;
 
     divest(
-      ilkId: PromiseOrValue<BytesLike>,
-      seriesId: PromiseOrValue<BytesLike>,
       vaultId: PromiseOrValue<BytesLike>,
+      seriesId: PromiseOrValue<BytesLike>,
+      ilkId: PromiseOrValue<BytesLike>,
       ink: PromiseOrValue<BigNumberish>,
       art: PromiseOrValue<BigNumberish>,
       minOut: PromiseOrValue<BigNumberish>,
@@ -245,11 +238,11 @@ export interface NotionalLever extends BaseContract {
     >;
 
     invest(
-      ilkId: PromiseOrValue<BytesLike>,
       seriesId: PromiseOrValue<BytesLike>,
+      ilkId: PromiseOrValue<BytesLike>,
       baseAmount: PromiseOrValue<BigNumberish>,
       borrowAmount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     ladle(overrides?: CallOverrides): Promise<[string]>;
@@ -274,38 +267,24 @@ export interface NotionalLever extends BaseContract {
 
     onFlashLoan(
       initiator: PromiseOrValue<string>,
-      arg1: PromiseOrValue<string>,
+      token: PromiseOrValue<string>,
       borrowAmount: PromiseOrValue<BigNumberish>,
       fee: PromiseOrValue<BigNumberish>,
       data: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    setIlkInfo(
-      ilkId: PromiseOrValue<BytesLike>,
-      underlying: YieldNotionalLever.IlkInfoStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+    weth(overrides?: CallOverrides): Promise<[string]>;
   };
 
   FLASH_LOAN_RETURN(overrides?: CallOverrides): Promise<string>;
 
-  approveFyToken(
-    seriesId: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  approveJoin(
-    joinAddress: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   cauldron(overrides?: CallOverrides): Promise<string>;
 
   divest(
-    ilkId: PromiseOrValue<BytesLike>,
-    seriesId: PromiseOrValue<BytesLike>,
     vaultId: PromiseOrValue<BytesLike>,
+    seriesId: PromiseOrValue<BytesLike>,
+    ilkId: PromiseOrValue<BytesLike>,
     ink: PromiseOrValue<BigNumberish>,
     art: PromiseOrValue<BigNumberish>,
     minOut: PromiseOrValue<BigNumberish>,
@@ -326,11 +305,11 @@ export interface NotionalLever extends BaseContract {
   >;
 
   invest(
-    ilkId: PromiseOrValue<BytesLike>,
     seriesId: PromiseOrValue<BytesLike>,
+    ilkId: PromiseOrValue<BytesLike>,
     baseAmount: PromiseOrValue<BigNumberish>,
     borrowAmount: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   ladle(overrides?: CallOverrides): Promise<string>;
@@ -355,38 +334,24 @@ export interface NotionalLever extends BaseContract {
 
   onFlashLoan(
     initiator: PromiseOrValue<string>,
-    arg1: PromiseOrValue<string>,
+    token: PromiseOrValue<string>,
     borrowAmount: PromiseOrValue<BigNumberish>,
     fee: PromiseOrValue<BigNumberish>,
     data: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  setIlkInfo(
-    ilkId: PromiseOrValue<BytesLike>,
-    underlying: YieldNotionalLever.IlkInfoStruct,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  weth(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
     FLASH_LOAN_RETURN(overrides?: CallOverrides): Promise<string>;
 
-    approveFyToken(
-      seriesId: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    approveJoin(
-      joinAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     cauldron(overrides?: CallOverrides): Promise<string>;
 
     divest(
-      ilkId: PromiseOrValue<BytesLike>,
-      seriesId: PromiseOrValue<BytesLike>,
       vaultId: PromiseOrValue<BytesLike>,
+      seriesId: PromiseOrValue<BytesLike>,
+      ilkId: PromiseOrValue<BytesLike>,
       ink: PromiseOrValue<BigNumberish>,
       art: PromiseOrValue<BigNumberish>,
       minOut: PromiseOrValue<BigNumberish>,
@@ -407,8 +372,8 @@ export interface NotionalLever extends BaseContract {
     >;
 
     invest(
-      ilkId: PromiseOrValue<BytesLike>,
       seriesId: PromiseOrValue<BytesLike>,
+      ilkId: PromiseOrValue<BytesLike>,
       baseAmount: PromiseOrValue<BigNumberish>,
       borrowAmount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -436,41 +401,59 @@ export interface NotionalLever extends BaseContract {
 
     onFlashLoan(
       initiator: PromiseOrValue<string>,
-      arg1: PromiseOrValue<string>,
+      token: PromiseOrValue<string>,
       borrowAmount: PromiseOrValue<BigNumberish>,
       fee: PromiseOrValue<BigNumberish>,
       data: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<string>;
 
-    setIlkInfo(
-      ilkId: PromiseOrValue<BytesLike>,
-      underlying: YieldNotionalLever.IlkInfoStruct,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    weth(overrides?: CallOverrides): Promise<string>;
   };
 
-  filters: {};
+  filters: {
+    "Divested(uint8,bytes12,bytes6,address,uint256,uint256)"(
+      operation?: PromiseOrValue<BigNumberish> | null,
+      vaultId?: PromiseOrValue<BytesLike> | null,
+      seriesId?: null,
+      investor?: PromiseOrValue<string> | null,
+      profit?: null,
+      debt?: null
+    ): DivestedEventFilter;
+    Divested(
+      operation?: PromiseOrValue<BigNumberish> | null,
+      vaultId?: PromiseOrValue<BytesLike> | null,
+      seriesId?: null,
+      investor?: PromiseOrValue<string> | null,
+      profit?: null,
+      debt?: null
+    ): DivestedEventFilter;
+
+    "Invested(bytes12,bytes6,address,uint256,uint256)"(
+      vaultId?: PromiseOrValue<BytesLike> | null,
+      seriesId?: null,
+      investor?: PromiseOrValue<string> | null,
+      investment?: null,
+      debt?: null
+    ): InvestedEventFilter;
+    Invested(
+      vaultId?: PromiseOrValue<BytesLike> | null,
+      seriesId?: null,
+      investor?: PromiseOrValue<string> | null,
+      investment?: null,
+      debt?: null
+    ): InvestedEventFilter;
+  };
 
   estimateGas: {
     FLASH_LOAN_RETURN(overrides?: CallOverrides): Promise<BigNumber>;
 
-    approveFyToken(
-      seriesId: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    approveJoin(
-      joinAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     cauldron(overrides?: CallOverrides): Promise<BigNumber>;
 
     divest(
-      ilkId: PromiseOrValue<BytesLike>,
-      seriesId: PromiseOrValue<BytesLike>,
       vaultId: PromiseOrValue<BytesLike>,
+      seriesId: PromiseOrValue<BytesLike>,
+      ilkId: PromiseOrValue<BytesLike>,
       ink: PromiseOrValue<BigNumberish>,
       art: PromiseOrValue<BigNumberish>,
       minOut: PromiseOrValue<BigNumberish>,
@@ -485,11 +468,11 @@ export interface NotionalLever extends BaseContract {
     ): Promise<BigNumber>;
 
     invest(
-      ilkId: PromiseOrValue<BytesLike>,
       seriesId: PromiseOrValue<BytesLike>,
+      ilkId: PromiseOrValue<BytesLike>,
       baseAmount: PromiseOrValue<BigNumberish>,
       borrowAmount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     ladle(overrides?: CallOverrides): Promise<BigNumber>;
@@ -514,39 +497,25 @@ export interface NotionalLever extends BaseContract {
 
     onFlashLoan(
       initiator: PromiseOrValue<string>,
-      arg1: PromiseOrValue<string>,
+      token: PromiseOrValue<string>,
       borrowAmount: PromiseOrValue<BigNumberish>,
       fee: PromiseOrValue<BigNumberish>,
       data: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    setIlkInfo(
-      ilkId: PromiseOrValue<BytesLike>,
-      underlying: YieldNotionalLever.IlkInfoStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
+    weth(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
     FLASH_LOAN_RETURN(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    approveFyToken(
-      seriesId: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    approveJoin(
-      joinAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     cauldron(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     divest(
-      ilkId: PromiseOrValue<BytesLike>,
-      seriesId: PromiseOrValue<BytesLike>,
       vaultId: PromiseOrValue<BytesLike>,
+      seriesId: PromiseOrValue<BytesLike>,
+      ilkId: PromiseOrValue<BytesLike>,
       ink: PromiseOrValue<BigNumberish>,
       art: PromiseOrValue<BigNumberish>,
       minOut: PromiseOrValue<BigNumberish>,
@@ -561,11 +530,11 @@ export interface NotionalLever extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     invest(
-      ilkId: PromiseOrValue<BytesLike>,
       seriesId: PromiseOrValue<BytesLike>,
+      ilkId: PromiseOrValue<BytesLike>,
       baseAmount: PromiseOrValue<BigNumberish>,
       borrowAmount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     ladle(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -590,17 +559,13 @@ export interface NotionalLever extends BaseContract {
 
     onFlashLoan(
       initiator: PromiseOrValue<string>,
-      arg1: PromiseOrValue<string>,
+      token: PromiseOrValue<string>,
       borrowAmount: PromiseOrValue<BigNumberish>,
       fee: PromiseOrValue<BigNumberish>,
       data: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    setIlkInfo(
-      ilkId: PromiseOrValue<BytesLike>,
-      underlying: YieldNotionalLever.IlkInfoStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+    weth(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

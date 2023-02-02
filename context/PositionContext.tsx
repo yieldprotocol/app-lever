@@ -95,6 +95,8 @@ const PositionProvider = ({ children }: any) => {
 
     if (account) {
       uniqueLevers.map(async (lever: ILeverRoot) => {
+
+        console.log( lever.leverAddress )
     
         const contract_ = contractMap.get(lever.leverAddress).connect(lever.leverAddress, provider) as Contract;
         const investedFilter_ = contract_.filters.Invested(null, null, account, null, null);

@@ -1,10 +1,14 @@
 import { Simulator } from '../hooks/useLever';
 import { TokenType } from '../lib/types';
-import { DAI, USDC, WETH, WSTETH, YSDAI6MJD, YSETH6MJD, YSUSDC6MJD,  } from './assets';
+import { DAI, FUSDC2303, USDC, WETH, WSTETH, YSDAI6MJD, YSETH6MJD, YSUSDC6MJD,  } from './assets';
 
+
+import { STETH_LEVER, YIELD_STRATEGY_LEVER, NOTIONAL_LEVER } from './contracts';
+
+/* import the simulators */
 import { stEthSimulator }  from '../leverSimulators/stEthSim';
-import { STETH_LEVER, YIELD_STRATEGY_LEVER } from './contracts';
 import { yieldStrategySimulator } from '../leverSimulators/yieldStrategySim';
+import { notionalSimulator } from '../leverSimulators/notionalSim';
 
 interface ILeverCommon {
   leverAddress: string;
@@ -36,6 +40,12 @@ const stEthLeverCommon_: ILeverCommon = {
   tradePlatform: TradePlatforms.CURVE,
 }
 
+const notionalLeverCommon_: ILeverCommon = {
+  leverAddress : NOTIONAL_LEVER,
+  leverSimulator: notionalSimulator,
+  tradePlatform: TradePlatforms.NOTIONAL,
+}
+
 const strategyLeverCommon_: ILeverCommon = {
   leverAddress : YIELD_STRATEGY_LEVER,
   leverSimulator: yieldStrategySimulator,
@@ -56,26 +66,39 @@ export const LEVERS = new Map<string, ILeverRoot>();
 //   baseId: WETH,
 // });
 
-LEVERS.set('STETH_02', {
-  ...stEthLeverCommon_,
-  id: 'STETH_02',
-  displayName: 'STETH <> ETH',
-  maturity: 1680274800,
-  fyTokenAddress: '0x0FBd5ca8eE61ec921B3F61B707f1D7D64456d2d1',
-  seriesId: '0x303030390000',
-  ilkId: WSTETH,
-  baseId: WETH,
-});
+// LEVERS.set('STETH_02', {
+//   ...stEthLeverCommon_,
+//   id: 'STETH_02',
+//   displayName: 'STETH <> ETH',
+//   maturity: 1680274800,
+//   fyTokenAddress: '0x0FBd5ca8eE61ec921B3F61B707f1D7D64456d2d1',
+//   seriesId: '0x303030390000',
+//   ilkId: WSTETH,
+//   baseId: WETH,
+// });
 
-LEVERS.set('STETH_03', {
-  ...stEthLeverCommon_,
-  id: 'STETH_03',
-  displayName: 'STETH <> ETH',
-  maturity: 1688137200,
-  fyTokenAddress: '0x124c9F7E97235Fe3E35820f95D10aFfCe4bE9168',
-  seriesId: '0x0030ff00028b',
-  ilkId: WSTETH,
-  baseId: WETH,
+// LEVERS.set('STETH_03', {
+//   ...stEthLeverCommon_,
+//   id: 'STETH_03',
+//   displayName: 'STETH <> ETH',
+//   maturity: 1688137200,
+//   fyTokenAddress: '0x124c9F7E97235Fe3E35820f95D10aFfCe4bE9168',
+//   seriesId: '0x0030ff00028b',
+//   ilkId: WSTETH,
+//   baseId: WETH,
+// });
+
+
+
+LEVERS.set('FUSDC_2303', {
+  ...notionalLeverCommon_,
+  id: 'FUSDC_2303',
+  displayName: 'FUSDC_2303 <> USDC',
+  maturity: 1680274800,
+  fyTokenAddress: '0x22E1e5337C5BA769e98d732518b2128dE14b553C',
+  seriesId: '0x303230390000',
+  ilkId: FUSDC2303,
+  baseId: USDC,
 });
 
 // LEVERS.set('STRATEGY_01', {
