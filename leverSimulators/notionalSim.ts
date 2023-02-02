@@ -17,16 +17,40 @@ import { Operation, Provider, W3bNumber } from '../lib/types';
 import { convertToW3bNumber } from '../lib/utils';
 import { BigNumber, ethers } from 'ethers';
 
-// import { YieldStrategyLever__factory} from '../contracts/types';
+import { request, gql } from 'graphql-request';
 
 /* Swap contract */
 export const NOTIONAL_ORACLE = '';
 
-const getStrategyInfo = async (): Promise<[string, BigNumber]> => {
+/**
+ * NOTIONAL interaction:
+ * get apy and fee
+ * */
+const getNotionalInfo = async (): Promise<[string, BigNumber]> => {
+  // import { YieldStrategyLever__factory} from '../contracts/types';
+
+  const query = gql`
+    {
+      markets{
+        lastImpliedRate
+        oracleRate
+        currency{underlyingSymbol}
+        marketIndex
+        maturity
+      }
+    }
+  `;
+
+  const response = await request('https://thegraph.com/hosted-service/subgraph/notional-finance/mainnet-v2', query)
+  console.log(response);
+
   const investApy = '3.3';
   const investFee = ZERO_BN;
+
   return [investApy, investFee];
 };
+
+
 
 export const notionalSimulator: Simulator = async (
   inputState: IInputContextState,
@@ -37,7 +61,6 @@ export const notionalSimulator: Simulator = async (
   existingPositionSim: boolean = false,
   currentTime: number = Math.round(new Date().getTime() / 1000)
 ): Promise<SimulatorOutput | undefined> => {
-  
   const output = {} as SimulatorOutput;
 
   const input = inputState.input || ZERO_W3N;
@@ -52,11 +75,10 @@ export const notionalSimulator: Simulator = async (
   const yearProportion = timeToMaturity / 31536000;
 
   if (!existingPositionSim && input?.big.gt(ZERO_BN)) {
+    /* try the simulation, catch any unknown errors */
+    console.log('Running STRATEGY Lever simulator...');
 
-     /* try the simulation, catch any unknown errors */
-     console.log('Running STRATEGY Lever simulator...');
-
-    const [investApy, investFee] = await getStrategyInfo();
+    const [investApy, investFee] = await getNotionalInfo();
 
     output.shortAssetInput = convertToW3bNumber(input.big, 18, 3);
 
@@ -186,8 +208,8 @@ export const notionalSimulator: Simulator = async (
         ]
       : [];
 
-      console.log( output )
-      return output;
+    console.log(output);
+    return output;
   }
 
   /* Handle the simulation for an existing posiiton/vault */
@@ -196,7 +218,7 @@ export const notionalSimulator: Simulator = async (
     console.log('Running STRATEGY Lever POSITION simulator...');
 
     /* get the curve info */
-    const [investApy, investFee] = await getStrategyInfo();
+    const [investApy, investFee] = await getNotionalInfo();
     output.tradingFee = convertToW3bNumber(investFee, 18, 3);
 
     output.shortAssetInput = selectedPosition.shortAssetObtained;
@@ -222,7 +244,6 @@ export const notionalSimulator: Simulator = async (
     // const investValue_ = await stableSwap.get_dy(1, 0, selectedPosition.longAssetObtained.big); // .catch(()=>{console.log('failed'); return ZERO_BN} );
     // const investValueLessFees = investValue_.sub(investFee);
     // output.investmentValue = convertToW3bNumber(investValueLessFees, 18, 3);
-
 
     /** DIVEST :
       Operation operation,
