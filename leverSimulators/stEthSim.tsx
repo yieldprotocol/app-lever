@@ -38,6 +38,22 @@ const getCurveProtocolInfo = async (): Promise<[string, BigNumber]> => {
   return [investApy, investFee];
 };
 
+const emptySimulation: SimulatorOutput = {
+  debtCurrent: ZERO_W3N,    
+  debtAtMaturity: ZERO_W3N,
+  shortAssetInput: ZERO_W3N,
+  shortAssetBorrowed: ZERO_W3N,
+  shortAssetObtained: ZERO_W3N,
+  longAssetObtained: ZERO_W3N,
+  investmentAtMaturity: ZERO_W3N,
+  investmentValue: ZERO_W3N,
+  tradingFee: ZERO_W3N,
+  flashBorrowFee: ZERO_W3N,
+  investArgs: [],
+  divestArgs: [],
+  notification: undefined,
+}
+
 export const stEthSimulator: Simulator = async (
   inputState: IInputContextState,
   leverState: ILeverContextState,
@@ -62,12 +78,11 @@ export const stEthSimulator: Simulator = async (
 
     /* try the simulation, catch any unknown errors */
     console.log('Running STETH Lever simulator....');
-    const output = {} as SimulatorOutput;
+    const output = emptySimulation;
 
     /* get the curve info */
     const [investApy, investFee] = await getCurveProtocolInfo();
     output.tradingFee = convertToW3bNumber(investFee, 18, 3);
-
     output.shortAssetInput = convertToW3bNumber(input.big, 18, 3);
 
     /* Calculate the fyToken value of the base added (input) */
@@ -121,14 +136,13 @@ export const stEthSimulator: Simulator = async (
     const debtAtMaturity_ = buyBase(
       marketState.sharesReserves,
       marketState.fyTokenReserves,
-
       output.shortAssetBorrowed.big,
-
       timeToMaturity.toString(),
       marketState.ts,
       marketState.g1,
       marketState.decimals
     );
+
     output.debtAtMaturity = convertToW3bNumber(debtAtMaturity_, 18, 3);
 
     /* Investment */
@@ -173,7 +187,7 @@ export const stEthSimulator: Simulator = async (
     
     /* try the simulation, catch any unknown errors */
     console.log('Running STETH Lever POSITION simulator....');
-    const output = {} as SimulatorOutput;
+    const output = emptySimulation;
 
     /* get the curve info */
     const [investApy, investFee] = await getCurveProtocolInfo();

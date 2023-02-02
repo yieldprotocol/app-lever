@@ -28,20 +28,19 @@ export type Simulator = (
 export type SimulatorOutput = {
   
   /* Borrowing simulation: */
-  shortAssetInput: W3bNumber;
-
+  shortAssetInput: W3bNumber; // amount of short asset input 
   shortAssetBorrowed: W3bNumber; // Amount of short asset borrowed
   debtAtMaturity: W3bNumber; // debt owed at maturity
-  
   debtCurrent: W3bNumber; // current Value of debt (if settling now)
   flashBorrowFee: W3bNumber;
+  
   shortAssetObtained: W3bNumber; // TOTAL short-asset available for investment (input + borrow)
 
   /* Investment simulation: */
-  longAssetObtained: W3bNumber; // long-asset obtained (by using short asset obtained
+  longAssetObtained: W3bNumber; // TOTAL long-asset obtained (by using short asset obtained )
   investmentAtMaturity: W3bNumber; // Projected/ Estimated value of investment at maturity
-  investmentValue: W3bNumber; // value of long asset at maturity (if unwinding now)
-  tradingFee: W3bNumber;
+  investmentValue: W3bNumber; // Value of long asset at maturity (assuminig no price/rate change)
+  tradingFee: W3bNumber; // fee for trading long asset
 
   /* Transaction Arguments */
   investArgs: (string | BigNumber | Operation)[] | undefined;
@@ -74,7 +73,7 @@ export interface ILeverSimulation extends SimulatorOutput  {
 
 export const useLever = (simulator: Simulator): ILeverSimulation => {
   /* Bring in context*/
-  const [leverState, leverActions]: [ILeverContextState, any] = useContext(LeverContext);
+  const [ leverState, leverActions ]: [ILeverContextState, any] = useContext(LeverContext);
   const { selectedLever, assets } = leverState;
   // const shortAsset = assets.get(selectedLever?.baseId!);
 
