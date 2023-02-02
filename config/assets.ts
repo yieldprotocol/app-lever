@@ -299,3 +299,20 @@ ASSETS.set( YSETH6MJD, {
   chartId: '',
   imageId: 'YIELD'
 });
+
+export const FUSDC2303 = '0x323600000000';
+ASSETS.set(FUSDC2303, {
+  id: FUSDC2303,
+  address: '0x1344A36A1B56144C3Bc62E7757377D288fDE0369',
+  joinAddress: '0x3FdDa15EccEE67248048a560ab61Dd2CdBDeA5E6',
+  version: '1',
+  name: 'Notional fCash USDC March 23',
+  decimals: 8,
+  symbol: 'fUSDC2303',
+  showToken: true,
+  displayDigits: 2,
+  tokenType: TokenType.ERC1155,
+  tokenIdentifier: 844854911827969,
+  // limitToSeries: ['0x303230390000'],
+});
+
