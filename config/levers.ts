@@ -88,8 +88,6 @@ export const LEVERS = new Map<string, ILeverRoot>();
 //   baseId: WETH,
 // });
 
-
-
 LEVERS.set('FUSDC_2303', {
   ...notionalLeverCommon_,
   id: 'FUSDC_2303',
@@ -100,6 +98,18 @@ LEVERS.set('FUSDC_2303', {
   ilkId: FUSDC2303,
   baseId: USDC,
 });
+
+// LEVERS.set('FUSDC_2306', {
+//   ...notionalLeverCommon_,
+//   id: 'FUSDC_2306',
+//   displayName: 'FUSDC_2306 <> USDC',
+//   maturity: 1680274800,
+//   fyTokenAddress: '0x22E1e5337C5BA769e98d732518b2128dE14b553C',
+//   seriesId: '0x303230390000',
+//   ilkId: FUSDC2306,
+//   baseId: USDC,
+// });
+
 
 // LEVERS.set('STRATEGY_01', {
 //   ...strategyLeverCommon_,

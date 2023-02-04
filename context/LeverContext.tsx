@@ -223,9 +223,9 @@ const LeverProvider = ({ children }: any) => {
     if (leverState.levers.size && leverState.selectedLever === undefined) {
       updateState({
         type: 'SELECT_LEVER',
-        payload: leverState.levers.get('STETH_02') //   Array.from(leverState.levers.values())[0], // Take the first lever as default
+        payload: leverState.levers.get('STETH_02') || leverState.levers.get('FUSDC_2303')  //   Array.from(leverState.levers.values())[0], // Take the first lever as default
       });
-      console.log('Initial lever selected: ',  leverState.levers.get('STETH_02') ); // Array.from(leverState.levers.values()).[0]);
+      console.log('Initial lever selected'); // Array.from(leverState.levers.values()).[0]);
     }
   }, [leverState.levers]);
 

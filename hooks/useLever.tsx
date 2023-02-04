@@ -23,17 +23,16 @@ export type Simulator = (
   provider: Provider,
   existingPositionSim?: boolean,
   currentTime?: number
-) => Promise<SimulatorOutput| undefined>;
+) => Promise<SimulatorOutput | undefined>;
 
 export type SimulatorOutput = {
-  
   /* Borrowing simulation: */
-  shortAssetInput: W3bNumber; // amount of short asset input 
+  shortAssetInput: W3bNumber; // amount of short asset input
   shortAssetBorrowed: W3bNumber; // Amount of short asset borrowed
   debtAtMaturity: W3bNumber; // debt owed at maturity
   debtCurrent: W3bNumber; // current Value of debt (if settling now)
   flashBorrowFee: W3bNumber;
-  
+
   shortAssetObtained: W3bNumber; // TOTAL short-asset available for investment (input + borrow)
 
   /* Investment simulation: */
@@ -50,8 +49,7 @@ export type SimulatorOutput = {
   notification: Notification | undefined;
 };
 
-export interface ILeverSimulation extends SimulatorOutput  {
-
+export interface ILeverSimulation extends SimulatorOutput {
   /**
    * calculated values
    * */
@@ -73,14 +71,15 @@ export interface ILeverSimulation extends SimulatorOutput  {
 
 export const useLever = (simulator: Simulator): ILeverSimulation => {
   /* Bring in context*/
-  const [ leverState, leverActions ]: [ILeverContextState, any] = useContext(LeverContext);
+  const [leverState, leverActions]: [ILeverContextState, any] = useContext(LeverContext);
   const { selectedLever, assets } = leverState;
+
   // const shortAsset = assets.get(selectedLever?.baseId!);
 
   const [inputState] = useContext(InputContext);
   /* add in debounced leverage when using slider and input - to prevent excessive calcs */
-  const debouncedInputState = useDebounce( inputState, 500 );
-  const { input, leverage} = debouncedInputState;
+  const debouncedInputState = useDebounce(inputState, 500);
+  const { input, leverage } = debouncedInputState;
 
   const [marketState] = useContext(MarketContext);
   const [positionState]: [IPositionContextState, any] = useContext(PositionContext);
@@ -111,85 +110,83 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
   const invest = useInvest(simulation?.investArgs || [], pathname === '/lever');
   const divest = useDivest(simulation?.divestArgs || [], pathname === '/positions');
 
-  useEffect(() => {
+  /**
+   * Calculate the APR's based on the simulation
+   **/
+  const calcAPRs = (sim: SimulatorOutput) => {
 
-    if (
-        selectedLever &&
-        simulation &&
-        simulation.longAssetObtained! &&
-        simulation.investmentAtMaturity! &&
-        simulation.debtAtMaturity! &&
-        simulation.shortAssetBorrowed!
-      ) {
+    console.log(sim.longAssetObtained.dsp, sim.investmentAtMaturity.dsp  )
+    // alternative: Math.pow(investAtMaturity.dsp/investmentPosition.dsp, oneOverYearProp) - 1
+    const investRate = calculateAPR(
+      sim.longAssetObtained.big,
+      sim.investmentAtMaturity.big,
+      selectedLever!.maturity,
+      currentTime
+    );
 
-      /**
-        * Calculate the APR's based on the simulation
-        **/
+    const investAPR = parseFloat(investRate! || '0');
+    setInvestAPR(investAPR); // console.log('investAPR: ', investAPR);
 
-        // alternative: Math.pow(investAtMaturity.dsp/investmentPosition.dsp, oneOverYearProp) - 1
-        const investRate = calculateAPR(
-          simulation.longAssetObtained.big,
-          simulation.investmentAtMaturity.big,
-          selectedLever.maturity,
-          currentTime
-        );
+    // alternative: Math.pow(debtAtMaturity.dsp/shortBorrowed.dsp, oneOverYearProp) - 1
+    const borrowRate = calculateAPR(
+      sim.shortAssetBorrowed.big,
+      sim.debtAtMaturity.big,
+      selectedLever!.maturity,
+      currentTime
+    );
+    const borrowAPR = parseFloat(borrowRate! || '0');
+    setBorrowAPR(borrowAPR); // console.log('borrowAPR: ', borrowAPR);
 
-        const investAPR = parseFloat(investRate! || '0');
-        setInvestAPR(investAPR); // console.log('investAPR: ', investAPR);
+    const netAPR = leverage.dsp * investAPR - (leverage.dsp - 1) * borrowAPR;
+    setNetAPR(netAPR); // console.log('nettAPR: ', netAPR);
 
-        // alternative: Math.pow(debtAtMaturity.dsp/shortBorrowed.dsp, oneOverYearProp) - 1
-        const borrowRate = calculateAPR(
-          simulation.shortAssetBorrowed.big,
-          simulation.debtAtMaturity.big,
-          selectedLever.maturity,
-          currentTime
-        );
-        const borrowAPR = parseFloat(borrowRate! || '0');
-        setBorrowAPR(borrowAPR); // console.log('borrowAPR: ', borrowAPR);
+    /**
+     * Calculate:
+     * maxLeverage >  shortInvested  shortBorrowed
+     * Borrowing limit >  ( debtAtMaturity / ( investPosition * LTV )  )   =
+     * pnl : pos/prin - 1)
+     */
+    const inp_rat = input?.dsp > 0 ? input.dsp * selectedLever!.bestRate.dsp : 0;
+    const inp_ltv = input?.dsp > 0 ? input.dsp * selectedLever!.loanToValue : 0;
+    const maxLeverage_ = inp_rat / (inp_rat - inp_ltv); // input*rate / input*rate - input*LTV
+    setMaxLeverage(maxLeverage_);
 
-        const netAPR = leverage.dsp * investAPR - (leverage.dsp - 1) * borrowAPR;
-        setNetAPR(netAPR); // console.log('nettAPR: ', netAPR);
+    const borrowLimitUsed_ =
+      (sim.debtAtMaturity.dsp! / (sim.longAssetObtained.dsp! * selectedLever!.loanToValue)) * 100;
+    setBorrowLimitUsed(borrowLimitUsed_);
 
-        /**
-         * Calculate:
-         * maxLeverage >  shortInvested  shortBorrowed
-         * Borrowing limit >  ( debtAtMaturity / ( investPosition * LTV )  )   =
-         * pnl : pos/prin - 1)
-         */
-        const inp_rat = input?.dsp > 0 ? input.dsp * selectedLever.bestRate.dsp : 0;
-        const inp_ltv = input?.dsp > 0 ? input.dsp * selectedLever.loanToValue : 0;
-        const maxLeverage_ = inp_rat / (inp_rat - inp_ltv); // input*rate / input*rate - input*LTV
-        setMaxLeverage(maxLeverage_);
+    const pnl_ = isNaN(netAPR - investAPR) ? 0 : netAPR - investAPR;
+    setPnl(pnl_);
 
-        const borrowLimitUsed_ =
-          (simulation.debtAtMaturity.dsp! / (simulation.longAssetObtained.dsp! * selectedLever.loanToValue)) * 100;
-        setBorrowLimitUsed(borrowLimitUsed_);
-
-        const pnl_ = isNaN(netAPR - investAPR) ? 0 : netAPR - investAPR;
-        setPnl(pnl_);
-    }
-  }, [simulation, selectedLever]);
+    setSimulation(sim)
+  };
 
   /* Use the simulator on each leverage/input change */
   useEffect(() => {
- 
-    const positionView = (pathname === '/positions');
-
+    const positionView = pathname === '/positions';
     leverState.selectedLever &&
-    debouncedInputState.leverage &&
-    provider &&
-    ( debouncedInputState.input.big.gt(ZERO_BN) || positionState.selectedPosition ) &&
+      debouncedInputState.leverage &&
+      provider &&
+      (debouncedInputState.input.big.gt(ZERO_BN) || positionState.selectedPosition) &&
       (async () => {
         /**
          * Simulate investment and set parameters locally
          * */
         setIsSimulating(true);
-        const simulated = await simulator(debouncedInputState, leverState, marketState, positionState, provider, positionView);
-        simulated && setSimulation(simulated)
+        const simulated = await simulator(
+          debouncedInputState,
+          leverState,
+          marketState,
+          positionState,
+          provider,
+          positionView
+        );
+        // simulated && setSimulation(simulated);
+        simulated && calcAPRs(simulated);
+
         setIsSimulating(false);
-
+        console.log('ok,...simulated');
       })();
-
   }, [debouncedInputState, leverState, marketState, positionState, provider, pathname]);
 
   return {
