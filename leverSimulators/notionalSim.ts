@@ -195,13 +195,10 @@ export const notionalSimulator: Simulator = async (
     */
     output.investArgs = selectedLever
       ? [
-          Operation.BORROW,
           selectedLever.seriesId,
           selectedLever.ilkId,
           input.big, // amount user added (eg USDC)
           output.shortAssetBorrowed.big, // extra borrow required
-          output.shortAssetObtained.big, // fyToken required to buy for the borrow      //  totalFytoken
-          ZERO_BN,
         ]
       : [];
 
