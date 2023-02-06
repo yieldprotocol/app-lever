@@ -45,7 +45,6 @@ export const UNI = '0x313000000000';
 export const yvUSDC = '0x303900000000';
 export const FRAX = '0x313800000000';
 
-/* Notional fCash assets */
 
 /* Convex Curve LP token assets */
 export const CVX3CRV = '0x313900000000';
@@ -300,6 +299,8 @@ ASSETS.set( YSETH6MJD, {
   imageId: 'YIELD'
 });
 
+/* NOTIONAL ASSETS */
+
 export const FUSDC2303 = '0x323600000000';
 ASSETS.set(FUSDC2303, {
   id: FUSDC2303,
@@ -316,3 +317,82 @@ ASSETS.set(FUSDC2303, {
   // limitToSeries: ['0x303230390000'],
 });
 
+export const FETH2303 = '0x323900000000';
+ASSETS.set(FETH2303, {
+  id: FETH2303,
+  address: '0x1344A36A1B56144C3Bc62E7757377D288fDE0369',
+  joinAddress: '0xC4cb2489a845384277564613A0906f50dD66e482',
+  version: '1',
+  name: 'Notional fCash ETH March 23',
+  decimals: 8,
+  symbol: 'fETH2303',
+  showToken: true,
+  displayDigits: 6,
+  tokenType: TokenType.ERC1155,
+  tokenIdentifier: 281904958406657,
+  // limitToSeries: ['0x303030390000'],
+});
+
+export const FDAI2303 = '0x323500000000';
+ASSETS.set(FDAI2303, {
+  id: FDAI2303,
+  address: '0x1344A36A1B56144C3Bc62E7757377D288fDE0369',
+  joinAddress: '0xE6A63e2166fcEeB447BFB1c0f4f398083214b7aB',
+  version: '1',
+  name: 'Notional fCash DAI March 23',
+  decimals: 8,
+  symbol: 'fDAI2303',
+  showToken: true,
+  displayDigits: 2,
+  tokenType: TokenType.ERC1155,
+  tokenIdentifier: 563379935117313,
+  // limitToSeries: ['0x303130390000'],
+});
+
+export const FDAI2306 = '0x40311200028B';
+ASSETS.set(FDAI2306, {
+  id: FDAI2306,
+  address: '0x1344A36A1B56144C3Bc62E7757377D288fDE0369',
+  joinAddress: '0xe295111049A6665b35C054e3D0e896816bD12b2C',
+  version: '1',
+  name: 'Notional fCash DAI June 23',
+  decimals: 8,
+  symbol: 'fDAI2306',
+  showToken: true,
+  displayDigits: 2,
+  tokenType: TokenType.ERC1155,
+  tokenIdentifier: 563381925773313,
+  // limitToSeries: ['0x0031FF00028B'],
+});
+
+export const FUSDC2306 = '0x40321200028B'; 
+ASSETS.set(FUSDC2306, {
+  id: FUSDC2306,
+  address: '0x1344A36A1B56144C3Bc62E7757377D288fDE0369',
+  joinAddress: '0x53B0C1b8fEB4dEcdcc068367119110E20c3BCBD3',
+  version: '1',
+  name: 'Notional fCash USDC June 23',
+  decimals: 8,
+  symbol: 'fUSDC2306',
+  showToken: true,
+  displayDigits: 2,
+  tokenType: TokenType.ERC1155,
+  tokenIdentifier: 844856902483969,
+  // limitToSeries: ['0x0032FF00028B'],
+}); 
+
+export const FETH2306 = '0x40301200028B';
+ASSETS.set(FETH2306, {
+  id: FETH2306,
+  address: '0x1344A36A1B56144C3Bc62E7757377D288fDE0369',
+  joinAddress: '0x067Fb37Dd51a4eF6Fea0E006CaF689Db6c705812',
+  version: '1',
+  name: 'Notional fCash ETH June 23',
+  decimals: 8,
+  symbol: 'fETH2306',
+  showToken: true,
+  displayDigits: 6,
+  tokenType: TokenType.ERC1155,
+  tokenIdentifier: 281906949062657,  
+  // limitToSeries: ['0x0030FF00028B'],
+});

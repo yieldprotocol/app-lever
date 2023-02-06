@@ -183,6 +183,7 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
         );
         // simulated && setSimulation(simulated);
         simulated && calcAPRs(simulated);
+        
 
         setIsSimulating(false);
         console.log('ok,...simulated');
