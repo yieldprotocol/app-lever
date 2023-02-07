@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import HighStock from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
-import { ChartContext } from '../../context/ChartContext';
-import { BorderWrap, Spinner, TopRow } from '../styled';
-import { LeverContext } from '../../context/LeverContext';
+import { ChartContext } from '../../../context/ChartContext';
+import { BorderWrap, Spinner, TopRow } from '../../styled';
+import { LeverContext } from '../../../context/LeverContext';
 import tw from 'tailwind-styled-components';
-import { InputContext } from '../../context/InputContext';
+import { InputContext } from '../../../context/InputContext';
 
 import { MagnifyingGlassMinusIcon, MagnifyingGlassPlusIcon } from '@heroicons/react/24/outline';
 

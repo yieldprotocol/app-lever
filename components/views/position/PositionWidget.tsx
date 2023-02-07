@@ -2,15 +2,15 @@ import { ArrowRightOnRectangleIcon, ArrowTrendingUpIcon, InformationCircleIcon }
 import { etherscanBlockExplorers, useNetwork } from 'wagmi';
 import { FC, useContext, useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
-import { IPositionContextState, PositionContext, PositionStatus } from '../../context/PositionContext';
-import Button from '../common/Button';
-import { BorderWrap, InfoBlock, Inner, Label, Section, TopRow, Value } from '../styled';
+import { IPositionContextState, PositionContext, PositionStatus } from '../../../context/PositionContext';
+import Button from '../../common/Button';
+import { BorderWrap, InfoBlock, Inner, Label, Section, TopRow, Value } from '../../styled';
 import Link from 'next/link';
-import { abbreviateHash } from '../../utils/appUtils';
-import { IAsset, ILever, ILeverContextState, LeverContext } from '../../context/LeverContext';
-import StackedLogos from '../common/StackedLogos';
-import { ILeverSimulation } from '../../hooks/useLever';
-import WrapWithLogo from '../common/WrapWithLogo';
+import { abbreviateHash } from '../../../utils/appUtils';
+import { IAsset, ILever, ILeverContextState, LeverContext } from '../../../context/LeverContext';
+import StackedLogos from '../../common/StackedLogos';
+import { ILeverSimulation } from '../../../hooks/useLever';
+import WrapWithLogo from '../../common/WrapWithLogo';
 
 const TxInfo = (props: { label: string; date: Date | undefined; txHash: string | undefined }) => {
   const { chain } = useNetwork();

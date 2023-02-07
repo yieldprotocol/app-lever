@@ -1,6 +1,6 @@
 import { useContext } from 'react';
-import { LeverContext } from '../../context/LeverContext';
-import { useLever } from '../../hooks/useLever';
+import { LeverContext } from '../../../context/LeverContext';
+import { useLever } from '../../../hooks/useLever';
 
 import Positions from './Positions';
 import PositionWidget from './PositionWidget';

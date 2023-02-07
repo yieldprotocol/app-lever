@@ -1,7 +1,7 @@
 import { useContext } from 'react';
-import { LeverContext } from '../../context/LeverContext';
-import { useLever } from '../../hooks/useLever';
-import TenderlyView from '../testing/TenderlyView';
+import { LeverContext } from '../../../context/LeverContext';
+import { useLever } from '../../../hooks/useLever';
+import TenderlyView from '../../testing/TenderlyView';
 
 import { ChartWidget } from './ChartWidget';
 import EstimatedPosition from './EstimatedPosition';

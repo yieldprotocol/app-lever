@@ -1,13 +1,13 @@
 import { useContext, useState } from 'react';
-import { InputContext } from '../../context/InputContext';
-import { BorderWrap, Divider, InfoBlock, Inner, Label, Section, TopRow, Value } from '../styled';
-import { LeverContext } from '../../context/LeverContext';
-import { ILeverSimulation } from '../../hooks/useLever';
-import Loader from '../common/Loader';
+import { InputContext } from '../../../context/InputContext';
+import { BorderWrap, Divider, InfoBlock, Inner, Label, Section, TopRow, Value } from '../../styled';
+import { LeverContext } from '../../../context/LeverContext';
+import { ILeverSimulation } from '../../../hooks/useLever';
+import Loader from '../../common/Loader';
 import { MinusCircleIcon, PlusCircleIcon } from '@heroicons/react/20/solid';
-import StackedLogos from '../common/StackedLogos';
+import StackedLogos from '../../common/StackedLogos';
 import { ZERO_BN } from '@yield-protocol/ui-math';
-import WrapWithLogo from '../common/WrapWithLogo';
+import WrapWithLogo from '../../common/WrapWithLogo';
 
 const EstimatedPosition = (props: any) => {
   const [inputState] = useContext(InputContext);
