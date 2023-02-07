@@ -76,9 +76,6 @@ const getNotionalInfo = async (symbol: NotionalSymbols, maturity: number): Promi
   const investFee = ZERO_BN;
   const notionalMaturity = response.data.markets[0].maturity;
 
-  console.log('Notional maturity', notionalMaturity);
-  console.log('Notional APY', investApy, '%');
-
   return [investApy, investFee, notionalMaturity];
 };
 
@@ -122,7 +119,7 @@ export const notionalSimulator: Simulator = async (
     shortAssetObtained,
     flashBorrowFee,
 
-    _blankSimOutput
+    _blankSimOutput,
   } = await _simCommon(inputState, leverState, marketState, positionState, currentTime);
   // } = await _simCommon(inputState, leverState, marketState, positionState, provider, existingPositionSim, currentTime);
 
@@ -153,9 +150,8 @@ export const notionalSimulator: Simulator = async (
      * INVESTMENT SECTION
      *
      * */
-    /* Get the apy/fee for a specific notional market */
-    console.log('Symbol', shortAsset?.symbol);
 
+    /* Get the apy/fee for a specific notional market */
     const [investApy, investFee, notionalMaturity] = await getNotionalInfo(
       shortAsset?.symbol as NotionalSymbols,
       marketState.maturity
@@ -187,7 +183,6 @@ export const notionalSimulator: Simulator = async (
     const returns = (output.longAssetObtained.dsp * (1 + rewards / 100)).toFixed(longAsset!.decimals);
     const estimatedReturns = ethers.utils.parseUnits(returns, longAsset!.decimals);
     const returnsLessFees = estimatedReturns.sub(output.tradingFee.big);
-
     output.investmentAtMaturity = convertToW3bNumber(returnsLessFees, longAsset!.decimals, longAsset!.displayDigits);
 
     /**
@@ -210,7 +205,6 @@ export const notionalSimulator: Simulator = async (
         ]
       : [];
 
-    console.log(output);
     return output;
   }
 
@@ -218,19 +212,20 @@ export const notionalSimulator: Simulator = async (
    *  EXISTIING NOTIONAL POSITION SIMULATION
    */
   if (existingPositionSim && selectedPosition) {
-    
     /* try the simulation, catch any unknown errors */
     console.log('Running STRATEGY Lever EXISTING POSITION simulator...');
 
-
     /* Get the current Notional info */
-    const [investApy, investFee] = await getNotionalInfo(shortAsset?.symbol as NotionalSymbols, marketState.maturity);
+    const [investApy, investFee, notionalMaturity] = await getNotionalInfo(
+      shortAsset?.symbol as NotionalSymbols,
+      marketState.maturity
+    );
 
     /* Get any trading fees to close position */
     output.tradingFee = convertToW3bNumber(investFee, longAsset?.decimals, longAsset?.displayDigits);
 
-    console.log( selectedPosition );
-    
+    console.log(selectedPosition);
+
     /* Get the info about selected position from the _simCommon */
     output.shortAssetInput = selectedPosition.shortAssetObtained;
     output.shortAssetInput = selectedPosition.shortAssetInput;
@@ -247,11 +242,21 @@ export const notionalSimulator: Simulator = async (
     // const stEthPlusReturns = boughtStEth.mul(returns)
     output.investmentAtMaturity = convertToW3bNumber(returnsLessFees, longAsset?.decimals, longAsset?.displayDigits);
 
-    /* Calculate the value of the investPosition in short terms : via swap */
+    /**
+     * Calculate how much will be returned if divesting now
+     **/
+    const block = await provider.getBlock('latest');
+    const [shortAssetFromLend] = await notionalContract.getDepositFromfCashLend(
+      getNotionalAssetCode(shortAsset?.symbol as NotionalSymbols),
+      selectedPosition.longAssetObtained.big, // total to *base* invest
+      notionalMaturity,
+      0,
+      block.timestamp
+    ); // .catch(()=>{console.log('failed'); return ZERO_BN} );
 
-    // const investValue_ = await stableSwap.get_dy(1, 0, selectedPosition.longAssetObtained.big); // .catch(()=>{console.log('failed'); return ZERO_BN} );
-    // const investValueLessFees = investValue_.sub(investFee);
-    // output.investmentValue = convertToW3bNumber(investValueLessFees, 18, 3);
+    const investValue_ = await shortAssetFromLend;
+    const investValueLessFees = investValue_.sub(investFee);
+    output.investmentValue = convertToW3bNumber(investValueLessFees, shortAsset?.decimals, shortAsset?.displayDigits);
 
     /** DIVEST :
       Operation operation,

@@ -58,7 +58,6 @@ const PositionWidget = (props: any) => {
   }, [selectedPosition]);
 
   const { divest, investmentAtMaturity, investmentValue } = props.lever as ILeverSimulation;
-
   const InfoLogo: FC<any> = () => <InformationCircleIcon />;
 
   return (
@@ -152,14 +151,12 @@ const PositionWidget = (props: any) => {
                     <div className="space-y-4">
                       <div className="flex justify-between">
                         <Label> Estimated {longAsset?.displaySymbol} at maturity</Label>
-
                         <WrapWithLogo logo={longAsset?.image!}>
                           <div className="text-xl">{investmentAtMaturity?.dsp}</div>
                         </WrapWithLogo>
                       </div>
                       <div className="flex justify-between">
                         <Label> {shortAsset?.displaySymbol} return if divesting now </Label>
-
                         <WrapWithLogo logo={shortAsset?.image!}>
                           <div className="text-xl">{investmentValue?.dsp}</div>
                         </WrapWithLogo>
