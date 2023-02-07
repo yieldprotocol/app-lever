@@ -56,7 +56,6 @@ export const yieldStrategySimulator: Simulator = async (
      console.log('Running STRATEGY Lever simulator...');
 
     const [investApy, investFee] = await getStrategyInfo();
-
     output.shortAssetInput = convertToW3bNumber(input.big, 18, 3);
 
     /**
@@ -164,7 +163,7 @@ export const yieldStrategySimulator: Simulator = async (
       shortAsset?.displayDigits
     );
 
-    /** INVEST : 
+    /** INVEST :
         Operation operation,
         bytes6 seriesId,
         bytes6 strategyId,
@@ -197,6 +196,8 @@ export const yieldStrategySimulator: Simulator = async (
     /* get the curve info */
     const [investApy, investFee] = await getStrategyInfo();
     output.tradingFee = convertToW3bNumber(investFee, 18, 3);
+
+    console.log( selectedPosition )
 
     output.shortAssetInput = selectedPosition.shortAssetObtained;
     output.shortAssetInput = selectedPosition.shortAssetInput;

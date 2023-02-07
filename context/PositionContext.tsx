@@ -1,6 +1,6 @@
 import { ZERO_BN } from '@yield-protocol/ui-math';
 import { BigNumber, Contract, Event } from 'ethers';
-import React, { useEffect, useReducer } from 'react';
+import React, { useContext, useEffect, useReducer } from 'react';
 import { useAccount, useProvider } from 'wagmi';
 import { CAULDRON, contractMap } from '../config/contracts';
 import { ILeverRoot, LEVERS } from '../config/levers';
@@ -8,6 +8,7 @@ import { SimulatorOutput } from '../hooks/useLever';
 import { W3bNumber } from '../lib/types';
 import { convertToW3bNumber } from '../lib/utils';
 import { generateVaultName } from '../utils/appUtils';
+import { ILeverContextState, LeverContext } from './LeverContext';
 
 export interface IPositionContextState {
   positions: Map<string, IPosition>;
@@ -80,6 +81,11 @@ const positionReducer = (state: IPositionContextState, action: any) => {
 };
 
 const PositionProvider = ({ children }: any) => {
+
+  /* STATE FROM CONTEXT */
+  const [leverState] = useContext(LeverContext);
+  const { assetRoots } = leverState as ILeverContextState;
+  
   /* LOCAL STATE */
   const [positionState, updateState] = useReducer(positionReducer, initState);
 
@@ -95,14 +101,10 @@ const PositionProvider = ({ children }: any) => {
 
     if (account) {
       uniqueLevers.map(async (lever: ILeverRoot) => {
-
-        console.log( lever.leverAddress )
     
         const contract_ = contractMap.get(lever.leverAddress).connect(lever.leverAddress, provider) as Contract;
         const investedFilter_ = contract_.filters.Invested(null, null, account, null, null);
         const divestedFilter_ = contract_.filters.Divested();
-
-        console.log('Fork first block: ', process.env.FORKED_ENV_FIRST_BLOCK );
         
         const [investedEvents, divestedEvents] = await Promise.all([
           contract_.queryFilter(investedFilter_, parseInt(process.env.FORKED_ENV_FIRST_BLOCK!.toString()), 'latest'),
@@ -114,19 +116,23 @@ const PositionProvider = ({ children }: any) => {
             
             const { vaultId, seriesId, investment, debt } = invEvnt.args as any;
             const { ilkId } = await cauldron.vaults(vaultId);
+            const baseId = `${seriesId.substring(0, 6)}00000000`
+
             const { ink, art } = await cauldron.balances(vaultId);
             const tx = await invEvnt.getTransaction();
             let { args, value } = contract_.interface.parseTransaction({ data: tx.data, value: tx.value });
-            
-            const longAssetObtained_ = convertToW3bNumber(investment, 18, 6);
-            
-            const shortAssetInput_ = convertToW3bNumber(args.baseAmount, 18, 6);
-            const shortAssetBorrowed_ = convertToW3bNumber(args.borrowAmount, 18, 6);
 
-            const debtAtMaturity_ = convertToW3bNumber(debt, 18, 6);
+            const longAsset = assetRoots.get(ilkId);
+            const shortAsset = assetRoots.get(baseId);
+            
+            const longAssetObtained_ = convertToW3bNumber(investment, longAsset?.decimals, longAsset?.displayDigits);
+            const shortAssetInput_ = convertToW3bNumber(args.baseAmount, shortAsset?.decimals, shortAsset?.displayDigits);
+            const shortAssetBorrowed_ = convertToW3bNumber(args.borrowAmount, shortAsset?.decimals, shortAsset?.displayDigits);
+
+            const debtAtMaturity_ = convertToW3bNumber(debt, shortAsset?.decimals, shortAsset?.displayDigits);
    
             const totalShort_ = args.baseAmount.add(args.borrowAmount);
-            const shortAssetObtained_ = convertToW3bNumber(totalShort_, 18, 6);
+            const shortAssetObtained_ = convertToW3bNumber(totalShort_, shortAsset?.decimals, shortAsset?.displayDigits);
             
             const leverage_ = shortAssetObtained_.dsp/shortAssetInput_.dsp
 
@@ -134,7 +140,8 @@ const PositionProvider = ({ children }: any) => {
 
             const divestEvent = divestedEvents.find((d: Event) => d?.args?.vaultId === vaultId);
             const divestTxHash = divestEvent?.transactionHash;
-            /* get dates */
+            
+            /* Get invest/divest dates */
             const [investTxBlock, divestTxBlock ]  = await Promise.all( [
               provider.getBlock(invEvnt.blockNumber),
               divestEvent ? provider.getBlock(divestEvent?.blockNumber) : undefined
@@ -145,7 +152,7 @@ const PositionProvider = ({ children }: any) => {
               vaultId,
               seriesId,
               ilkId,
-              baseId: `${seriesId.substring(0, 6)}00000000`,
+              baseId,
 
               longAssetObtained: longAssetObtained_,
               
@@ -156,11 +163,10 @@ const PositionProvider = ({ children }: any) => {
               shortAssetObtained: shortAssetObtained_,
               
               leverage: leverage_,
+              divestReturn: convertToW3bNumber(divestReturn_, shortAsset?.decimals, shortAsset?.displayDigits),
 
-              divestReturn: convertToW3bNumber(divestReturn_, 18, 6),
-
-              ink: convertToW3bNumber(ink, 18, 6),
-              art: convertToW3bNumber(art, 18, 6),
+              ink: convertToW3bNumber(ink, longAsset?.decimals, longAsset?.displayDigits),
+              art: convertToW3bNumber(art, shortAsset?.decimals, shortAsset?.displayDigits),
 
               status: divestEvent ? PositionStatus.CLOSED: PositionStatus.ACTIVE,
               displayName: generateVaultName(vaultId),
@@ -187,7 +193,7 @@ const PositionProvider = ({ children }: any) => {
 
   /* update the positions if the account/contracts change */
   useEffect(() => {
-    updatePositions();
+    account && updatePositions();
   }, [account]);
 
   /* ACTIONS TO CHANGE CONTEXT */

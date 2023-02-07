@@ -20,22 +20,6 @@ import { BigNumber, ethers } from 'ethers';
 import { ApolloClient, InMemoryCache, ApolloProvider, gql } from '@apollo/client';
 import { _simCommon } from './_simCommon';
 
-const emptySimulation: SimulatorOutput = {
-  debtCurrent: ZERO_W3N,
-  debtAtMaturity: ZERO_W3N,
-  shortAssetInput: ZERO_W3N,
-  shortAssetBorrowed: ZERO_W3N,
-  shortAssetObtained: ZERO_W3N,
-  longAssetObtained: ZERO_W3N,
-  investmentAtMaturity: ZERO_W3N,
-  investmentValue: ZERO_W3N,
-  tradingFee: ZERO_W3N,
-  flashBorrowFee: ZERO_W3N,
-  investArgs: [],
-  divestArgs: [],
-  notification: undefined,
-};
-
 const client = new ApolloClient({
   uri: 'https://api.thegraph.com/subgraphs/name/notional-finance/mainnet-v2',
   cache: new InMemoryCache(),
@@ -45,6 +29,7 @@ enum NotionalSymbols {
   USDC = 'USDC',
   WBTC = 'WBTC',
   DAI = 'DAI',
+  WETH = 'WETH',
   ETH = 'ETH',
 }
 
@@ -52,16 +37,17 @@ enum NotionalSymbols {
  * NOTIONAL interaction:
  * get apy and fee
  * */
-const getNotionalInfo = async (symbol: NotionalSymbols, maturity: number): Promise<[string, BigNumber]> => {
+const getNotionalInfo = async (symbol: NotionalSymbols, maturity: number): Promise<[string, BigNumber, number]> => {
+  /* use ETH instead of WETH */
+  const symbol_ = symbol !== NotionalSymbols.WETH ? symbol : NotionalSymbols.ETH;
+
   // get a maturity window to check for a corresponding notional market
   const maturityMin = maturity - 15 * 86400; // +- x  days before
   const maturityMax = maturity + 15 * 86400; // +-  x days after
 
-  console.log(maturityMin, maturityMax);
-
   const response = await client.query({
     query: gql`
-    query getMarkets($symbol: String = ${symbol}, $minMaturity: Int = ${maturityMin}, $maxMaturity: Int = ${maturityMax}) {
+    query getMarkets($symbol: String = ${symbol_}, $minMaturity: Int = ${maturityMin}, $maxMaturity: Int = ${maturityMax}) {
       markets(
         first: 5,
         where: {
@@ -88,9 +74,21 @@ const getNotionalInfo = async (symbol: NotionalSymbols, maturity: number): Promi
 
   const investApy = ((response.data.markets[0].oracleRate * 100) / 1e9).toString();
   const investFee = ZERO_BN;
+  const notionalMaturity = response.data.markets[0].maturity;
+
+  console.log('Notional maturity', notionalMaturity);
   console.log('Notional APY', investApy, '%');
 
-  return [investApy, investFee];
+  return [investApy, investFee, notionalMaturity];
+};
+
+const getNotionalAssetCode = (symbol: NotionalSymbols): number => {
+  if (symbol === NotionalSymbols.ETH) return 1;
+  if (symbol === NotionalSymbols.WETH) return 1;
+  if (symbol === NotionalSymbols.DAI) return 2;
+  if (symbol === NotionalSymbols.USDC) return 3;
+  if (symbol === NotionalSymbols.WBTC) return 4;
+  return 0;
 };
 
 export const notionalSimulator: Simulator = async (
@@ -102,7 +100,6 @@ export const notionalSimulator: Simulator = async (
   existingPositionSim: boolean = false,
   currentTime: number = Math.round(new Date().getTime() / 1000)
 ): Promise<SimulatorOutput | undefined> => {
-
   /* Notional Contract for getting trade info */
   const NOTIONAL_CONTRACT = '0x1344A36A1B56144C3Bc62E7757377D288fDE0369';
   const notionalContract = new ethers.Contract(NOTIONAL_CONTRACT, NOTIONAL_ABI, provider);
@@ -124,10 +121,17 @@ export const notionalSimulator: Simulator = async (
     shortAssetBorrowed,
     shortAssetObtained,
     flashBorrowFee,
-  } = await _simCommon(inputState, leverState, marketState, positionState, provider, existingPositionSim, currentTime);
 
-  const output = emptySimulation;
+    _blankSimOutput
+  } = await _simCommon(inputState, leverState, marketState, positionState, currentTime);
+  // } = await _simCommon(inputState, leverState, marketState, positionState, provider, existingPositionSim, currentTime);
 
+  /* starts with blank output */
+  const output = _blankSimOutput;
+
+  /**
+   * NEW POSITION SIMULATION
+   * */
   if (!existingPositionSim && input?.big.gt(ZERO_BN)) {
     /* try the simulation, catch any unknown errors */
     console.log('Running NOTIONAL Lever simulator...');
@@ -150,7 +154,12 @@ export const notionalSimulator: Simulator = async (
      *
      * */
     /* Get the apy/fee for a specific notional market */
-    const [investApy, investFee] = await getNotionalInfo(shortAsset?.symbol as NotionalSymbols, marketState.maturity);
+    console.log('Symbol', shortAsset?.symbol);
+
+    const [investApy, investFee, notionalMaturity] = await getNotionalInfo(
+      shortAsset?.symbol as NotionalSymbols,
+      marketState.maturity
+    );
 
     /**
      * output.tradingFee
@@ -162,9 +171,9 @@ export const notionalSimulator: Simulator = async (
      **/
     const block = await provider.getBlock('latest');
     const [longAssetObtained_] = await notionalContract.getfCashLendFromDeposit(
-      3,
+      getNotionalAssetCode(shortAsset?.symbol as NotionalSymbols),
       shortAssetObtained.big, // total to *base* invest
-      1679616000,
+      notionalMaturity,
       0,
       block.timestamp,
       true
@@ -175,23 +184,22 @@ export const notionalSimulator: Simulator = async (
      * output.investmentAtMaturity
      * */
     const rewards = parseFloat(investApy || '0') * yearProportion;
-    const returns = (output.longAssetObtained.dsp * (1 + rewards / 100)).toFixed(longAsset!.decimals);    
+    const returns = (output.longAssetObtained.dsp * (1 + rewards / 100)).toFixed(longAsset!.decimals);
     const estimatedReturns = ethers.utils.parseUnits(returns, longAsset!.decimals);
     const returnsLessFees = estimatedReturns.sub(output.tradingFee.big);
-    
+
     output.investmentAtMaturity = convertToW3bNumber(returnsLessFees, longAsset!.decimals, longAsset!.displayDigits);
 
-    /* The investment value of the notional asset at maturity is the same as the  cToken 1:1 */
+    /**
+     * The investment value of the notional asset at maturity is the same as the  cToken 1:1
+     * */
     output.investmentValue = output.investmentAtMaturity;
 
     /** INVEST : 
-        Operation operation,
         bytes6 seriesId,
         bytes6 strategyId,
         uint256 amountToInvest,
         uint256 borrowAmount,
-        uint256 fyTokenToBuy,
-        uint256 minCollateral
     */
     output.investArgs = selectedLever
       ? [
@@ -206,16 +214,24 @@ export const notionalSimulator: Simulator = async (
     return output;
   }
 
-  /* Handle the simulation for an existing posiiton/vault */
+  /**
+   *  EXISTIING NOTIONAL POSITION SIMULATION
+   */
   if (existingPositionSim && selectedPosition) {
+    
     /* try the simulation, catch any unknown errors */
-    console.log('Running STRATEGY Lever POSITION simulator...');
+    console.log('Running STRATEGY Lever EXISTING POSITION simulator...');
 
-    /* get the curve info */
+
+    /* Get the current Notional info */
     const [investApy, investFee] = await getNotionalInfo(shortAsset?.symbol as NotionalSymbols, marketState.maturity);
 
-    output.tradingFee = convertToW3bNumber(investFee, 18, 3);
+    /* Get any trading fees to close position */
+    output.tradingFee = convertToW3bNumber(investFee, longAsset?.decimals, longAsset?.displayDigits);
 
+    console.log( selectedPosition );
+    
+    /* Get the info about selected position from the _simCommon */
     output.shortAssetInput = selectedPosition.shortAssetObtained;
     output.shortAssetInput = selectedPosition.shortAssetInput;
     output.longAssetObtained = selectedPosition.longAssetObtained;
@@ -223,16 +239,13 @@ export const notionalSimulator: Simulator = async (
     output.debtAtMaturity = selectedPosition.debtAtMaturity;
     output.shortAssetBorrowed = selectedPosition.shortAssetBorrowed;
 
-    const timeToMaturity = marketState.maturity - currentTime;
-    const yearProportion = timeToMaturity / 31536000;
-
-    /* Added rewards */
+    /* Add extra rewards to be incurred until end of period */
     const rewards = parseFloat(investApy || '0') * yearProportion;
     const returns = ethers.utils.parseEther((selectedPosition.longAssetObtained.dsp * (1 + rewards / 100)).toString());
     const returnsLessFees = returns.sub(investFee);
 
     // const stEthPlusReturns = boughtStEth.mul(returns)
-    output.investmentAtMaturity = convertToW3bNumber(returnsLessFees, 18, 3);
+    output.investmentAtMaturity = convertToW3bNumber(returnsLessFees, longAsset?.decimals, longAsset?.displayDigits);
 
     /* Calculate the value of the investPosition in short terms : via swap */
 
@@ -251,7 +264,6 @@ export const notionalSimulator: Simulator = async (
     */
     output.divestArgs = selectedPosition
       ? [
-          Operation.CLOSE,
           selectedPosition.vaultId,
           selectedPosition.seriesId,
           selectedPosition.ilkId,

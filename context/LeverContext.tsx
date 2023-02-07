@@ -11,9 +11,11 @@ import { CAULDRON, LADLE, contractMap } from '../config/contracts';
 import { useAccount, useProvider } from 'wagmi';
 
 import logoMap from '../config/logos';
-import { useLever } from '../hooks/useLever';
 
 export interface ILeverContextState {
+  assetRoots: Map<string, IAssetRoot>;
+  leverRoots: Map<string, ILeverRoot>;
+
   assets: Map<string, IAsset>;
   levers: Map<string, ILever>;
 
@@ -53,6 +55,9 @@ export interface ILeverPosition {}
 
 const LeverContext = React.createContext<any>({});
 const initState: ILeverContextState = {
+  assetRoots: ASSETS,
+  leverRoots: LEVERS,
+
   assets: new Map<string, IAsset>(),
   levers: new Map<string, ILever>(),
 
@@ -122,7 +127,6 @@ const LeverProvider = ({ children }: any) => {
         };
 
         const balance = convertToW3bNumber(await getBal(asset), asset.decimals, 6);
-
         const levers = Array.from(LEVERS.values());
         // const isBaseAsset = levers.some((s: ILeverRoot) => s.baseId === asset.id);
         const isBaseAsset = asset.isBaseAsset;
@@ -223,7 +227,7 @@ const LeverProvider = ({ children }: any) => {
     if (leverState.levers.size && leverState.selectedLever === undefined) {
       updateState({
         type: 'SELECT_LEVER',
-        payload: leverState.levers.get('STETH_02') || leverState.levers.get('FUSDC_2303')  //   Array.from(leverState.levers.values())[0], // Take the first lever as default
+        payload: leverState.levers.get('STETH_02') || leverState.levers.get('FETH_2303')  //   Array.from(leverState.levers.values())[0], // Take the first lever as default
       });
       console.log('Initial lever selected'); // Array.from(leverState.levers.values()).[0]);
     }

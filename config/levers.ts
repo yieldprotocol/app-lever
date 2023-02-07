@@ -1,6 +1,6 @@
 import { Simulator } from '../hooks/useLever';
 import { TokenType } from '../lib/types';
-import { DAI, FDAI2303, FDAI2306, FETH2303, FETH2306, FUSDC2303, FUSDC2306, USDC, WETH, WSTETH, YSDAI6MJD, YSETH6MJD, YSUSDC6MJD,  } from './assets';
+import { DAI, FDAI2303, FDAI2306, FETH2303, FETH2306, FUSDC2303, FUSDC2306, USDC, WETH } from './assets';
 
 
 import { STETH_LEVER, YIELD_STRATEGY_LEVER, NOTIONAL_LEVER } from './contracts';

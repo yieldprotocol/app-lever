@@ -11,7 +11,7 @@ import { IPositionContextState, PositionStatus } from '../context/PositionContex
 import { Provider, W3bNumber } from '../lib/types';
 import { SimulatorOutput } from '../hooks/useLever';
 
-const emptySimulation: SimulatorOutput = {
+const blankSimOutput: SimulatorOutput = {
   debtCurrent: ZERO_W3N,
   debtAtMaturity: ZERO_W3N,
   shortAssetInput: ZERO_W3N,
@@ -44,6 +44,8 @@ export interface ISimCommonFragment {
 
   yearProportion: number;
   timeToMaturity: number;
+
+  _blankSimOutput: SimulatorOutput;
 }
 
 export const _simCommon = async (
@@ -51,12 +53,11 @@ export const _simCommon = async (
   leverState: ILeverContextState,
   marketState: IMarketContextState,
   positionState: IPositionContextState,
-  provider: Provider,
-  existingPositionSim: boolean = false,
+  // provider: Provider,
+  // existingPositionSim: boolean = false,
   currentTime: number = Math.round(new Date().getTime() / 1000)
 ): Promise<ISimCommonFragment> => {
-  const output: SimulatorOutput = emptySimulation;
-
+  
   const input = inputState.input;
   const leverage = inputState.leverage;
   const selectedLever = leverState.selectedLever;
@@ -135,8 +136,10 @@ export const _simCommon = async (
   return {
     input,
     leverage,
+
     selectedLever,
     selectedPosition,
+
     yearProportion,
     timeToMaturity,
 
@@ -148,5 +151,7 @@ export const _simCommon = async (
 
     shortAsset,
     longAsset,
+
+    _blankSimOutput: blankSimOutput,
   };
 };

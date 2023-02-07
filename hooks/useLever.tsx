@@ -47,6 +47,7 @@ export type SimulatorOutput = {
 
   /* simulation instance notifcation */
   notification: Notification | undefined;
+  
 };
 
 export interface ILeverSimulation extends SimulatorOutput {
@@ -164,11 +165,13 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
   /* Use the simulator on each leverage/input change */
   useEffect(() => {
     const positionView = pathname === '/positions';
+
     leverState.selectedLever &&
       debouncedInputState.leverage &&
       provider &&
       (debouncedInputState.input.big.gt(ZERO_BN) || positionState.selectedPosition) &&
       (async () => {
+        console.log( 'asdasds')
         /**
          * Simulate investment and set parameters locally
          * */
@@ -184,7 +187,6 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
         // simulated && setSimulation(simulated);
         simulated && calcAPRs(simulated);
         
-
         setIsSimulating(false);
         console.log('ok,...simulated');
       })();
