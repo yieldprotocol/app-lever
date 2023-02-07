@@ -65,12 +65,8 @@ const PositionWidget = (props: any) => {
       {selectedPosition ? (
         <>
           <TopRow>
-            {/* <div className="w-8" > {associatedLever?.tradeImage} </div> */}
             <StackedLogos size={8} logos={[longAsset?.image!, shortAsset?.image!]} />
             <div className="text-2xl">
-              {/* <WrapWithLogo logo={<InformationCircleIcon onClick={() => setShowInfo(!showInfo)} />} size={6} logoAfter>
-              {selectedPosition.displayName}
-              </WrapWithLogo> */}
               {selectedPosition.displayName}
             </div>
 
@@ -126,7 +122,7 @@ const PositionWidget = (props: any) => {
                       <div className=" items-center ">
                         <div className="flex gap-2 px-3 font-bold justify-between rounded-full min-w-3em bg-primary-600 ">
                           {selectedPosition.leverage.toFixed(1)} X
-                        </div>                 
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -141,20 +137,14 @@ const PositionWidget = (props: any) => {
               </Section>
 
               <Section>
-  
-                <div className={`flex text-sm bg-slate-900 bg-opacity-20 py-2 mb-2 text-red-500`}>
-                      Borrowed
-                  </div>
-
+                <div className={`flex text-sm bg-slate-900 bg-opacity-20 py-2 mb-2 text-red-500`}>Borrowed</div>
                 <div className="text-base space-y-4">
-
                   <div className="flex justify-between">
                     <Label> Debt at maturity </Label>
                     <WrapWithLogo logo={shortAsset?.image!}>
                       <div className="text-xl">{selectedPosition.debtAtMaturity.dsp}</div>
                     </WrapWithLogo>
                   </div>
-
                 </div>
               </Section>
 
@@ -200,10 +190,6 @@ const PositionWidget = (props: any) => {
                           <div className="text-xl"> {selectedPosition.divestReturn?.dsp}</div>
                         </WrapWithLogo>
                       </div>
-                      {/* <div className="flex justify-between">
-                        <Label> {shortAsset?.displaySymbol} return if divesting now </Label>
-                        <WrapWithLogo logo={shortAsset?.image!}> {investmentValue?.dsp}</WrapWithLogo>
-                      </div> */}
                     </div>
                   </>
                 )}
@@ -214,7 +200,6 @@ const PositionWidget = (props: any) => {
                 action={() => divest()}
                 disabled={!account}
                 loading={false}
-                // loading={isTransacting}
               >
                 Divest
               </Button>

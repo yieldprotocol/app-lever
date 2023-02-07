@@ -204,7 +204,8 @@ export const notionalSimulator: Simulator = async (
           output.shortAssetBorrowed.big, // extra borrow required
         ]
       : [];
-
+      
+    console.log('INVEST OUTPUT', output);
     return output;
   }
 
@@ -223,8 +224,6 @@ export const notionalSimulator: Simulator = async (
 
     /* Get any trading fees to close position */
     output.tradingFee = convertToW3bNumber(investFee, longAsset?.decimals, longAsset?.displayDigits);
-
-    console.log(selectedPosition);
 
     /* Get the info about selected position from the _simCommon */
     output.shortAssetInput = selectedPosition.shortAssetObtained;
