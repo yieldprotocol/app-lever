@@ -94,7 +94,7 @@ export const notionalSimulator: Simulator = async (
   marketState: IMarketContextState,
   positionState: IPositionContextState,
   provider: Provider,
-  existingPositionSim: boolean = false,
+  existingPositionView: boolean = false,
   currentTime: number = Math.round(new Date().getTime() / 1000)
 ): Promise<SimulatorOutput | undefined> => {
   /* Notional Contract for getting trade info */
@@ -129,7 +129,7 @@ export const notionalSimulator: Simulator = async (
   /**
    * NEW POSITION SIMULATION
    * */
-  if (!existingPositionSim && input?.big.gt(ZERO_BN)) {
+  if (!existingPositionView && input?.big.gt(ZERO_BN)) {
     /* try the simulation, catch any unknown errors */
     console.log('Running NOTIONAL Lever simulator...');
 
@@ -211,7 +211,7 @@ export const notionalSimulator: Simulator = async (
   /**
    *  EXISTIING NOTIONAL POSITION SIMULATION
    */
-  if (existingPositionSim && selectedPosition) {
+  if (existingPositionView && selectedPosition) {
     /* try the simulation, catch any unknown errors */
     console.log('Running STRATEGY Lever EXISTING POSITION simulator...');
 

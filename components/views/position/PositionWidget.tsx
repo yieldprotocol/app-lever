@@ -79,7 +79,6 @@ const PositionWidget = (props: any) => {
                 {selectedPosition.status}
               </div>
               <div className="w-8 h-8">
-                {' '}
                 <InformationCircleIcon onClick={() => setShowInfo(!showInfo)} />{' '}
               </div>
             </div>
@@ -138,6 +137,24 @@ const PositionWidget = (props: any) => {
                       <div className="text-xl">{selectedPosition.longAssetObtained.dsp}</div>
                     </WrapWithLogo>
                   </div>
+                </div>
+              </Section>
+
+              <Section>
+  
+                <div className={`flex text-sm bg-slate-900 bg-opacity-20 py-2 mb-2 text-red-500`}>
+                      Borrowed
+                  </div>
+
+                <div className="text-base space-y-4">
+
+                  <div className="flex justify-between">
+                    <Label> Debt at maturity </Label>
+                    <WrapWithLogo logo={shortAsset?.image!}>
+                      <div className="text-xl">{selectedPosition.debtAtMaturity.dsp}</div>
+                    </WrapWithLogo>
+                  </div>
+
                 </div>
               </Section>
 
