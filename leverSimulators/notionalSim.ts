@@ -235,8 +235,9 @@ export const notionalSimulator: Simulator = async (
     output.shortAssetBorrowed = selectedPosition.shortAssetBorrowed;
 
     /* Add extra rewards to be incurred until end of period */
-    const rewards = parseFloat(investApy || '0') * yearProportion;
-    const returns = ethers.utils.parseEther((selectedPosition.longAssetObtained.dsp * (1 + rewards / 100)).toString());
+    // const rewards = parseFloat(investApy || '0') * yearProportion;
+    // const returns = ethers.utils.parseEther((selectedPosition.longAssetObtained.dsp * (1 + rewards / 100)).toString());
+    const returns = selectedPosition.longAssetObtained.big // ethers.utils.parseEther((selectedPosition.longAssetObtained.dsp * (1 + rewards / 100)).toString());
     const returnsLessFees = returns.sub(investFee);
 
     // const stEthPlusReturns = boughtStEth.mul(returns)
