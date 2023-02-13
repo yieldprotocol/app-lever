@@ -193,6 +193,7 @@ const PositionWidget = (props: any) => {
                     </div>
                   </>
                 )}
+                
               </Section>
             </div>
             {selectedPosition.status === PositionStatus.ACTIVE && (

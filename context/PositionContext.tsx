@@ -110,6 +110,8 @@ const PositionProvider = ({ children }: any) => {
           contract_.queryFilter(divestedFilter_, parseInt(process.env.FORKED_ENV_FIRST_BLOCK!.toString()), 'latest'),
         ]);
 
+        console.log( divestedEvents )
+
         await Promise.all(
           investedEvents.map( async (invEvnt: Event ): Promise<any> => {
             
@@ -164,7 +166,7 @@ const PositionProvider = ({ children }: any) => {
               shortAssetObtained: shortAssetObtained_,
               
               leverage: leverage_,
-              divestReturn: convertToW3bNumber(divestReturn_, shortAsset?.decimals, shortAsset?.displayDigits),
+              divestReturn: convertToW3bNumber(divestReturn_, longAsset?.decimals, longAsset?.displayDigits),
 
               ink: convertToW3bNumber(ink, longAsset?.decimals, longAsset?.displayDigits),
               art: convertToW3bNumber(art, shortAsset?.decimals, shortAsset?.displayDigits),
