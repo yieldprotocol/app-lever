@@ -83,7 +83,7 @@ const PositionProvider = ({ children }: any) => {
 
   /* STATE FROM CONTEXT */
   const [leverState] = useContext(LeverContext);
-  const { assetRoots } = leverState as ILeverContextState;
+  const { assetRoots, leverRoots } = leverState as ILeverContextState;
   
   /* LOCAL STATE */
   const [positionState, updateState] = useReducer(positionReducer, initState);
@@ -114,11 +114,13 @@ const PositionProvider = ({ children }: any) => {
           investedEvents.map( async (invEvnt: Event ): Promise<any> => {
             
             const { vaultId, seriesId, investment, debt } = invEvnt.args as any;
-            const { ilkId } = await cauldron.vaults(vaultId);
-            const baseId = `${seriesId.substring(0, 6)}00000000`
+            const [{ilkId}, {ink, art}, tx, {baseId} ] = await Promise.all([
+              cauldron.vaults(vaultId),
+              cauldron.balances(vaultId),
+              invEvnt.getTransaction(),
+              cauldron.series(seriesId)
+            ])
 
-            const { ink, art } = await cauldron.balances(vaultId);
-            const tx = await invEvnt.getTransaction();
             let { args, value } = contract_.interface.parseTransaction({ data: tx.data, value: tx.value });
 
             const longAsset = assetRoots.get(ilkId);
