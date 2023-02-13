@@ -22,8 +22,8 @@ const Positions = () => {
   const { positions, selectedPosition } = positionState;
   const { selectPosition } = positionActions;
 
-  const [inputActions] = useContext(InputContext);
-  const [leverState, leverActions] = useContext(LeverContext);
+  const [,inputActions] = useContext(InputContext);
+  const [leverState] = useContext(LeverContext);
   const { levers, assets } = leverState as ILeverContextState;
 
   const handleSelectPosition = (position: IPosition) => {
