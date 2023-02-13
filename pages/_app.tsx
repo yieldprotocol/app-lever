@@ -20,9 +20,9 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
   return (
     <ProviderContext>
       <LeverProvider>
-        <MarketProvider>
           <PositionProvider>
             <InputProvider>
+            <MarketProvider>
               <ChartProvider>
                 <ToastContainer
                   position="bottom-right"
@@ -37,9 +37,9 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
                   <Component {...pageProps} />
                 </DynamicLayout>
               </ChartProvider>
+              </MarketProvider>
             </InputProvider>
           </PositionProvider>
-        </MarketProvider>
       </LeverProvider>
     </ProviderContext>
   );

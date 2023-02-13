@@ -54,7 +54,7 @@ const MarketProvider = ({ children }: any) => {
   const [marketState, updateState] = useReducer(marketReducer, initState);
 
   /* STATE from other contexts */
-  const [inputState]: [IInputContextState] = useContext(InputContext);
+  const [inputState] = useContext(InputContext);
   const { selectedLever } = inputState;
 
   const getPoolInfo = async (lever: ILever): Promise<IMarketContextState> => {

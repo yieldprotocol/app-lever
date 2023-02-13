@@ -4,7 +4,6 @@ import React, { useContext, useEffect, useReducer } from 'react';
 import { useAccount, useProvider } from 'wagmi';
 import { CAULDRON, contractMap } from '../config/contracts';
 import { ILeverRoot, LEVERS } from '../config/levers';
-import { SimulatorOutput } from '../hooks/useLever';
 import { W3bNumber } from '../lib/types';
 import { convertToW3bNumber } from '../lib/utils';
 import { generateVaultName } from '../utils/appUtils';
