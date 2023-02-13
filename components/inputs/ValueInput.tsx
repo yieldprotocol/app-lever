@@ -25,9 +25,10 @@ export const ValueInput = () => {
   const { data:balance } = useBalance({address});
 
   const [inputState, inputActions] = useContext(InputContext);
+  const {selectedLever} = inputState; 
 
   const [leverState] = useContext(LeverContext);
-  const { selectedLever, assets } = leverState;
+  const { assets } = leverState;
   const shortAsset = assets.get(selectedLever?.baseId!);
 
   const [useNative, setUseNative] = useState<boolean>( ); // if WETH default to native else 

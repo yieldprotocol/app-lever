@@ -1,6 +1,7 @@
 import { ZERO_BN } from '@yield-protocol/ui-math';
 import { BigNumber, ethers } from 'ethers';
 import React, { useContext, useEffect, useMemo, useReducer } from 'react';
+import { IInputContextState, InputContext } from './InputContext';
 import { ILeverContextState, ILever, LeverContext } from './LeverContext';
 
 export interface IMarketContextState {
@@ -53,8 +54,8 @@ const MarketProvider = ({ children }: any) => {
   const [marketState, updateState] = useReducer(marketReducer, initState);
 
   /* STATE from other contexts */
-  const [leverState]: [ILeverContextState] = useContext(LeverContext);
-  const { selectedLever } = leverState;
+  const [inputState]: [IInputContextState] = useContext(InputContext);
+  const { selectedLever } = inputState;
 
   const getPoolInfo = async (lever: ILever): Promise<IMarketContextState> => {
     /* Get all the data simultanenously in a promise.all */

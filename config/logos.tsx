@@ -39,7 +39,6 @@ const logoMap = new Map([
   ['CURVE', <CRVMark key="crv" />],
   [
     'YIELD',
-
     <LogoWrap
       outerTwStyle=""
       innerTwStyle=""

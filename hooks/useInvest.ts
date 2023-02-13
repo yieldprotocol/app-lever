@@ -16,10 +16,11 @@ const useInvest= (
   // overrides: { value: BigNumber } = { value: ZERO_BN }
 ) => {
   const [leverState] = useContext(LeverContext);
-  const { selectedLever, assets } = leverState as ILeverContextState;
+  const { assets } = leverState as ILeverContextState;
   const [, positionActions] = useContext(PositionContext);
   
   const [inputState] = useContext(InputContext);
+  const { selectedLever } = inputState
   const debouncedInputState = useDebounce( inputState, 500 );
   const { input, inputNativeToken  } = debouncedInputState;
   

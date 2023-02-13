@@ -1,6 +1,7 @@
 import { ChevronDoubleRightIcon } from '@heroicons/react/24/solid';
 import { useContext } from 'react';
 import tw from 'tailwind-styled-components';
+import { InputContext } from '../../../context/InputContext';
 import { ILever, ILeverContextState, LeverContext } from '../../../context/LeverContext';
 import { IPosition, PositionContext, PositionStatus } from '../../../context/PositionContext';
 import StackedLogos from '../../common/StackedLogos';
@@ -21,13 +22,14 @@ const Positions = () => {
   const { positions, selectedPosition } = positionState;
   const { selectPosition } = positionActions;
 
+  const [inputActions] = useContext(InputContext);
   const [leverState, leverActions] = useContext(LeverContext);
   const { levers, assets } = leverState as ILeverContextState;
 
   const handleSelectPosition = (position: IPosition) => {
     selectPosition( position );
     const associatedLever = levers.get(position.leverId);
-    leverActions.selectLever(associatedLever);
+    inputActions.selectLever(associatedLever);
   }
 
   const PositionItem = (props: { position: IPosition }) => {

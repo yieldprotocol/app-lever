@@ -3,13 +3,15 @@ import { ethers } from 'ethers';
 import React, { useContext, useEffect, useReducer } from 'react';
 import { ZERO_W3N } from '../constants';
 import { W3bNumber } from '../lib/types';
-import { ILeverContextState, LeverContext } from './LeverContext';
+import { ILever, ILeverContextState, LeverContext } from './LeverContext';
 
 export interface IInputContextState {
   input: W3bNumber | undefined;
   leverage: W3bNumber | undefined;
   slippage: number;
   inputNativeToken: boolean; // if using ETH, for example
+
+  selectedLever: ILever | undefined;
 }
 
 /* Parse the input to W3BNumber based on the selected lever and base */
@@ -39,6 +41,7 @@ const initState: IInputContextState = {
   leverage: inputToW3bNumber('2', 2),
   slippage: 0.001,
   inputNativeToken: false,
+  selectedLever: undefined,
 };
 
 const inputReducer = (state: IInputContextState, action: any) => {
@@ -63,6 +66,18 @@ const inputReducer = (state: IInputContextState, action: any) => {
         leverage: action.payload,
       };
 
+    case 'SELECT_LEVER':
+      return {
+        ...state,
+        selectedLever: action.payload,
+        /**
+         * Reset Input and leverage when selected lever changes
+         * */
+        input: ZERO_W3N,
+        leverage: inputToW3bNumber('2', 2),
+        inputNativeToken: false,
+      };
+
     default:
       return state;
   }
@@ -72,28 +87,30 @@ const InputProvider = ({ children }: any) => {
   /* LOCAL STATE */
   const [inputState, updateState] = useReducer(inputReducer, initState);
   const [leverState] = useContext(LeverContext);
-  const { selectedLever, assets } = leverState as ILeverContextState;
-  const shortAsset = assets.get(selectedLever?.baseId!);
 
-  /**
-   * Reset Input and leverage when selected lever changes
-   * */
-  // useEffect(() => {
-  //   updateState({ type: 'SET_INPUT', payload: initState.input });
-  //   updateState({ type: 'SET_LEVERAGE', payload: initState.leverage });
-  // }, [selectedLever]);
+  /* Set the initial selected lever if there is no lever selected */
+  useEffect(() => {
+    if (leverState.levers.size && leverState.selectedLever === undefined) {
+      updateState({
+        type: 'SELECT_LEVER',
+        payload: leverState.levers.get('STETH_02') || leverState.levers.get('FETH_2303'), //   Array.from(leverState.levers.values())[0], // Take the first lever as default
+      });
+      console.log('Initial lever selected'); // Array.from(leverState.levers.values()).[0]);
+    }
+  }, [leverState.levers]);
 
   /* ACTIONS TO CHANGE CONTEXT */
   const inputActions = {
     setInput: (input: number, nativeToken: boolean = false) =>
       updateState({
         type: 'SET_INPUT',
-        payload: { input: inputToW3bNumber(input.toString(), shortAsset?.decimals, shortAsset?.displayDigits), nativeToken } ,
+        payload: { input: inputToW3bNumber(input.toString(), 18, 2), nativeToken },
       }),
-    // setLeverage: (leverage: number) => setRawLeverage(leverage),
+
     setLeverage: (leverage: number) =>
       updateState({ type: 'SET_LEVERAGE', payload: inputToW3bNumber(leverage.toString(), 2) }),
     setSlippage: (slippagePercent: number) => updateState({ type: 'SET_SLIPPAGE', payload: slippagePercent / 100 }),
+    selectLever: (lever: ILever) => updateState({ type: 'SELECT_LEVER', payload: lever }),
   };
 
   return <InputContext.Provider value={[inputState, inputActions]}>{children}</InputContext.Provider>;

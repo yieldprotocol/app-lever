@@ -43,7 +43,9 @@ export const yieldStrategySimulator: Simulator = async (
   const leverage = inputState.leverage;
   const selectedPosition = positionState.selectedPosition;
 
-  const { selectedLever, assets } = leverState;
+  const { assets } = leverState;
+  const { selectedLever} = inputState;
+
   const shortAsset = assets.get(selectedLever?.baseId!);
   const longAsset = assets.get(selectedLever?.ilkId!);
 

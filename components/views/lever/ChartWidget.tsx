@@ -3,11 +3,10 @@ import HighStock from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
 import { ChartContext } from '../../../context/ChartContext';
 import { BorderWrap, Spinner, TopRow } from '../../styled';
-import { LeverContext } from '../../../context/LeverContext';
+import { IAsset, LeverContext } from '../../../context/LeverContext';
 import tw from 'tailwind-styled-components';
 import { InputContext } from '../../../context/InputContext';
 
-import { MagnifyingGlassMinusIcon, MagnifyingGlassPlusIcon } from '@heroicons/react/24/outline';
 
 export const TopRow_ = tw.div`p-0 align-middle text-center items-center rounded-t-lg dark:bg-gray-900 
 bg-gray-100
@@ -20,17 +19,26 @@ const Button = tw.button`text-xs bg-primary-800 w-5 dark:text-gray-50 text-gray-
 
 export const ChartWidget = (props: HighchartsReact.Props) => {
   const chartComponentRef = useRef<HighchartsReact.RefObject>(null);
-  const [leverState] = useContext(LeverContext);
-  const { selectedLever, selectedLongAsset, selectedShortAsset } = leverState;
+
   const [chartState] = useContext(ChartContext);
   const { prices, pricesAvailable } = chartState;
 
+  const [leverState] = useContext(LeverContext);
+  const { assets } = leverState;
   const [inputState] = useContext(InputContext);
-  const { input } = inputState;
+  const { input, selectedLever } = inputState;
+
+  const [longAsset, setLongAsset] = useState<IAsset>();
+  const [shortAsset, setShortAsset] = useState<IAsset>();
+  useEffect(()=>{
+    if ( assets.size && selectedLever) {
+      setShortAsset(assets.get(selectedLever.baseId) );
+      setLongAsset(assets.get(selectedLever.ilkId));
+    }
+  },[selectedLever, assets])
 
   const [condensedView, setCondensedView] = useState<boolean>(false);
   const [forceChart, setForceChart] = useState<boolean>(false);
-
   useEffect(() => {
     setCondensedView(!forceChart && selectedLever && input?.dsp > 0);
   }, [input, selectedLever, forceChart]);
@@ -134,7 +142,7 @@ export const ChartWidget = (props: HighchartsReact.Props) => {
 
     series: [
       {
-        name: `${selectedLongAsset?.displaySymbol} / ${selectedShortAsset?.displaySymbol}`,
+        name: `${longAsset?.displaySymbol} / ${shortAsset?.displaySymbol}`,
         data: prices,
         type: 'area',
         threshold: null,
@@ -178,15 +186,15 @@ export const ChartWidget = (props: HighchartsReact.Props) => {
               <div className="flex-grow ">
                 <div className="text-start py-4 gap-2">
                   <div className="flex items-center">
-                    <div className="w-4 mx-2">{selectedShortAsset?.image}</div>
-                    <div className="flex pl-2"> {selectedShortAsset && `1 ${selectedShortAsset?.displaySymbol}` } </div>
+                    <div className="w-4 mx-2">{shortAsset?.image}</div>
+                    <div className="flex pl-2"> {shortAsset && `1 ${shortAsset?.displaySymbol}` } </div>
                   </div>
                   <div className="flex  gap-2">
-                    <div className="w-8 h-8">{selectedLongAsset?.image}</div>
+                    <div className="w-8 h-8">{longAsset?.image}</div>
                     <div className="text-2xl">
                       {prices.length ? Math.round(parseFloat(prices[prices.length - 1][1]) * 1000) / 1000 : '...'}
                     </div>
-                    <div className="text-2xl">{selectedLongAsset?.displaySymbol}</div>
+                    <div className="text-2xl">{longAsset?.displaySymbol}</div>
                   </div>
                 </div>
 

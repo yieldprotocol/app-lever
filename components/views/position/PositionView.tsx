@@ -1,4 +1,5 @@
 import { useContext } from 'react';
+import { InputContext } from '../../../context/InputContext';
 import { LeverContext } from '../../../context/LeverContext';
 import { useLever } from '../../../hooks/useLever';
 
@@ -6,8 +7,8 @@ import Positions from './Positions';
 import PositionWidget from './PositionWidget';
 
 const PositionView = () => {
-  const [leverState] = useContext(LeverContext);
-  const simulator = leverState.selectedLever?.leverSimulator;
+  const [inputState] = useContext(InputContext);
+  const simulator = inputState.selectedLever?.leverSimulator;
 
   /* lever is abstracted up here in a higher level to save a few re-renders/calcs */
   const lever = useLever(simulator);

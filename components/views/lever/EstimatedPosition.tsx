@@ -11,11 +11,9 @@ import WrapWithLogo from '../../common/WrapWithLogo';
 
 const EstimatedPosition = (props: any) => {
   const [inputState] = useContext(InputContext);
-  const { input, leverage } = inputState;
-
+  const { input, leverage, selectedLever } = inputState;
   const [leverState] = useContext(LeverContext);
-  const { selectedLever, assets } = leverState;
-
+  const { assets } = leverState;
   const shortAsset = assets.get(selectedLever?.baseId);
   const longAsset = assets.get(selectedLever?.ilkId);
 

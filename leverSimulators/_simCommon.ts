@@ -60,10 +60,12 @@ export const _simCommon = async (
   
   const input = inputState.input;
   const leverage = inputState.leverage;
-  const selectedLever = leverState.selectedLever;
+  const selectedLever = inputState.selectedLever;
+
   const selectedPosition = positionState.selectedPosition;
   const timeToMaturity = marketState.maturity - currentTime;
   const yearProportion = timeToMaturity / 31536000;
+  
   const shortAsset = leverState.assets.get(selectedLever!.baseId);
   const longAsset = leverState.assets.get(selectedLever!.ilkId);
 

@@ -19,10 +19,6 @@ export interface ILeverContextState {
   assets: Map<string, IAsset>;
   levers: Map<string, ILever>;
 
-  selectedLever: ILever | undefined;
-
-  selectedShortAsset: IAsset | undefined;
-  selectedLongAsset: IAsset | undefined;
 }
 
 export interface IAsset extends IAssetRoot {
@@ -61,10 +57,6 @@ const initState: ILeverContextState = {
   assets: new Map<string, IAsset>(),
   levers: new Map<string, ILever>(),
 
-  selectedLever: undefined,
-
-  selectedShortAsset: undefined,
-  selectedLongAsset: undefined,
 };
 
 const leverReducer = (state: ILeverContextState, action: any) => {
@@ -80,24 +72,6 @@ const leverReducer = (state: ILeverContextState, action: any) => {
       return {
         ...state,
         assets: new Map(state.assets.set(action.payload.id, action.payload)),
-      };
-
-    case 'SELECT_LEVER':
-      return {
-        ...state,
-        selectedLever: action.payload,
-      };
-
-    case 'SELECT_LONG':
-      return {
-        ...state,
-        selectedLongAsset: action.payload,
-      };
-
-    case 'SELECT_SHORT':
-      return {
-        ...state,
-        selectedShortAsset: action.payload,
       };
 
     default:
@@ -222,22 +196,9 @@ const LeverProvider = ({ children }: any) => {
     }
   }, [provider]);
 
-  /* Set the initial selected lever if there is no lever selected */
-  useEffect(() => {
-    if (leverState.levers.size && leverState.selectedLever === undefined) {
-      updateState({
-        type: 'SELECT_LEVER',
-        payload: leverState.levers.get('STETH_02') || leverState.levers.get('FETH_2303')  //   Array.from(leverState.levers.values())[0], // Take the first lever as default
-      });
-      console.log('Initial lever selected'); // Array.from(leverState.levers.values()).[0]);
-    }
-  }, [leverState.levers]);
-
   /* ACTIONS TO CHANGE CONTEXT */
   const leverActions = {
-    selectShort: (asset: IAsset) => updateState({ type: 'SELECT_SHORT', payload: asset }),
-    selectLong: (asset: ILever) => updateState({ type: 'SELECT_LONG', payload: asset }),
-    selectLever: (lever: ILever) => updateState({ type: 'SELECT_LEVER', payload: lever }),
+    // add in any if required
   };
 
   return (

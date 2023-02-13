@@ -18,6 +18,8 @@ import { formatDate } from '../../utils/appUtils';
 import { toast } from 'react-toastify';
 import StackedLogos from '../common/StackedLogos';
 import Modal from '../common/Modal';
+import LeverSelectModal from './LeverSelectModal';
+import { IInputContextState, InputContext } from '../../context/InputContext';
 
 enum AssetType {
   SHORT,
@@ -79,35 +81,40 @@ const ListOptionsStyled = ({ children }: { children: any[] }) => (
 );
 
 const LeverSelect = () => {
-  const [leverState, leverActions] = useContext(LeverContext);
-  const { selectedLever, levers, assets, selectedShortAsset, selectedLongAsset } = leverState as ILeverContextState;
+  const [leverState] = useContext(LeverContext);
+  const { levers, assets } = leverState as ILeverContextState;
   const assetsList = Array.from(assets.values()).filter((a: IAsset) => a.showToken);
 
-  const [allLevers, setAllLevers] = useState<ILever[]>([]);
+  const [inputState, inputActions] = useContext(InputContext);
+  const { selectedLever } = inputState as IInputContextState;
+
   const [possibleLevers, setPossibleLevers] = useState<ILever[]>([]);
   const [requestedPairs, setRequestedPair] = useState<string[]>([]);
 
   const [showAllLevers, setShowAllLevers] = useState(false);
 
+  const [selectedShortAsset, setSelectedShortAsset] = useState<IAsset>();
+  const [selectedLongAsset, setSelectedLongAsset] = useState<IAsset>();
+
   /* When the selected lever changes, make sure the selected assets match */
   useEffect(() => {
     if (selectedLever) {
-      leverActions.selectShort(assets.get(selectedLever.baseId));
-      leverActions.selectLong(assets.get(selectedLever.ilkId));
+      setSelectedShortAsset(assets.get(selectedLever.baseId));
+      setSelectedLongAsset(assets.get(selectedLever.ilkId));
     }
   }, [selectedLever]);
 
   /* Get the list of possible levers, based on the selected short/long asset pair selected */
   useEffect(() => {
     const list = Array.from(levers.values());
-    setAllLevers(list);
     const filteredLevers = list.filter(
-      (lever_: ILever) => lever_.baseId === selectedShortAsset?.id && lever_.ilkId === selectedLongAsset?.id
+      (lever_: ILever) => lever_.baseId === selectedShortAsset?.id  // && lever_.ilkId === selectedLongAsset?.id
     );
     setPossibleLevers(filteredLevers);
 
     /* select the first on the list, of the list is blank deselect the strategy */
-    // filteredLevers.length > 0 ? leverActions.selectLever(filteredLevers[0]) : leverActions.selectLever(undefined);
+    filteredLevers.length > 0 ? inputActions.selectLever(filteredLevers[0]) : inputActions.selectLever(undefined);
+
   }, [selectedShortAsset, selectedLongAsset, levers]);
 
   const handlePairRequest = () => {
@@ -126,44 +133,21 @@ const LeverSelect = () => {
       : !!list.find((l: ILever) => l.baseId === selectedShortAsset?.id && l.ilkId === asset.id);
   };
 
-  const ModalSelector = () => (
-    <Modal isOpen={showAllLevers} setIsOpen={() => setShowAllLevers(!showAllLevers)}>
-      <Section className={selectedLever ? 'opacity-100' : 'opacity-25'}>
-        <SectionHead>
-          <div className="flex justify-between">
-            <div> All Yield Levers </div>
-            <XCircleIcon className="w-6 h-6 text-gray-500" onClick={() => setShowAllLevers(false)} />
-          </div>
-        </SectionHead>
-        <div className="space-y-1">
-          {allLevers.map((l: ILever) => (
-            <ClickableContainer key={l.id}>
-              <div
-                className={`flex p-4 justify-between rounded ${
-                  selectedLever?.id === l.id ? 'bg-primary-600 bg-opacity-25' : 'opacity-50'
-                }`}
-                onClick={() => leverActions.selectLever(l)}
-              >
-                <div className="flex   gap-2">
-                  <StackedLogos size={6} logos={[assets.get(l.ilkId)!.image!, assets.get(l.baseId)!.image!]} />
-                </div>
-                {/* <div className="w-6 h-6">{l.tradeImage}</div> */}
-                <div>{formatDate(l.maturityDate)}</div>
-                <div>
-                  <InformationCircleIcon className="w-6 h-6 text-gray-500" onClick={() => console.log('eomtignd')} />
-                </div>
-              </div>
-            </ClickableContainer>
-          ))}
-        </div>
-      </Section>
-    </Modal>
-  );
+  const handleSelectLong = (asset: IAsset) => {
+    setSelectedLongAsset(asset)
+  }
+
+  const handleSelectShort = (asset: IAsset) => {
+    setSelectedShortAsset(asset)
+  }
+
+  const handleSelectLever = (lever: ILever) => {
+    inputActions.selectLever(lever);
+  }
 
   return (
     <>
-      <ModalSelector />
-
+      <LeverSelectModal  />
       <div className="space-y-4">
         <div className="flex space-x-4 ">
           <ClickableContainer>
@@ -171,7 +155,7 @@ const LeverSelect = () => {
               <div className="flex text-xs text-slate-500 text-start ">Long</div>
               <ArrowTrendingUpIcon className="h-4 w-4 text-slate-500" />
             </TopRow>
-            <Listbox value={selectedLongAsset} onChange={(x: IAsset) => leverActions.selectLong(x)}>
+            <Listbox value={selectedLongAsset} onChange={(x: IAsset) => handleSelectLong(x)}>
               <SelectedAssetStyled asset={selectedLongAsset!} assetType={AssetType.LONG} />
               <ListOptionsStyled>
                 {assetsList
@@ -187,7 +171,7 @@ const LeverSelect = () => {
             </Listbox>
           </ClickableContainer>
 
-          <div className="justify-center pt-6 z-20">
+          {/* <div className="justify-center pt-6 z-20">
             <button
               className="bg-primary-600 rounded-full p-2 border hover:border
             hover:border-primary-400  border-transparent"
@@ -198,14 +182,14 @@ const LeverSelect = () => {
             >
               <ArrowsRightLeftIcon className="h-6 w-6 text-white" />
             </button>
-          </div>
+          </div> */}
 
           <ClickableContainer>
             <TopRow className="p-1 gap-2 justify-start ">
               <div className="flex   text-xs text-slate-500 text-start ">Short</div>
               <ArrowTrendingDownIcon className="h-4 w-4 text-slate-500" />
             </TopRow>
-            <Listbox value={selectedShortAsset} onChange={(x: IAsset) => leverActions.selectShort(x)}>
+            <Listbox value={selectedShortAsset} onChange={(x: IAsset) => handleSelectShort(x)}>
               <SelectedAssetStyled asset={selectedShortAsset!} assetType={AssetType.SHORT} />
               <ListOptionsStyled>
                 {assetsList
@@ -223,7 +207,6 @@ const LeverSelect = () => {
 
         <div>
           {levers.size === 0 && <div> Loading ... </div>}
-
           <div className="space-y-1">
             {possibleLevers.map((l: ILever) => (
               <ClickableContainer key={l.id}>
@@ -231,7 +214,7 @@ const LeverSelect = () => {
                   className={`flex p-4 justify-between rounded ${
                     selectedLever?.id === l.id ? 'bg-primary-600 bg-opacity-25' : 'opacity-50'
                   }`}
-                  onClick={() => leverActions.selectLever(l)}
+                  onClick={() => handleSelectLever(l)}
                 >
                   <div className="flex   gap-2">
                     <StackedLogos size={6} logos={[assets.get(l.ilkId)!.image!, assets.get(l.baseId)!.image!]} />

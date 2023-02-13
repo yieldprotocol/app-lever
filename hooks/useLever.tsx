@@ -71,13 +71,12 @@ export interface ILeverSimulation extends SimulatorOutput {
 }
 
 export const useLever = (simulator: Simulator): ILeverSimulation => {
+  
   /* Bring in context*/
-  const [leverState, leverActions]: [ILeverContextState, any] = useContext(LeverContext);
-  const { selectedLever, assets } = leverState;
-
-  // const shortAsset = assets.get(selectedLever?.baseId!);
-
+  const [leverState] = useContext(LeverContext);
   const [inputState] = useContext(InputContext);
+  const {selectedLever} = inputState;
+  
   /* add in debounced leverage when using slider and input - to prevent excessive calcs */
   const debouncedInputState = useDebounce(inputState, 500);
   const { input, leverage } = debouncedInputState;
@@ -166,7 +165,7 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
   useEffect(() => {
     const positionView = pathname === '/positions';
 
-    leverState.selectedLever &&
+    inputState.selectedLever &&
       debouncedInputState.leverage &&
       provider &&
       (debouncedInputState.input.big.gt(ZERO_BN) || positionState.selectedPosition) &&
@@ -177,7 +176,7 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
          * */
         setIsSimulating(true);
         const simulated = await simulator(
-          debouncedInputState,
+          inputState,
           leverState,
           marketState,
           positionState,
@@ -190,7 +189,7 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
         setIsSimulating(false);
         console.log('ok,...simulated');
       })();
-  }, [debouncedInputState, leverState, marketState, positionState, provider, pathname]);
+  }, [debouncedInputState, leverState, marketState, positionState, provider, pathname, inputState]);
 
   return {
     invest,

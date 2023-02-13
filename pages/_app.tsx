@@ -22,8 +22,8 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
       <LeverProvider>
         <MarketProvider>
           <PositionProvider>
-            <ChartProvider>
-              <InputProvider>
+            <InputProvider>
+              <ChartProvider>
                 <ToastContainer
                   position="bottom-right"
                   pauseOnHover
@@ -36,8 +36,8 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
                 <DynamicLayout>
                   <Component {...pageProps} />
                 </DynamicLayout>
-              </InputProvider>
-            </ChartProvider>
+              </ChartProvider>
+            </InputProvider>
           </PositionProvider>
         </MarketProvider>
       </LeverProvider>

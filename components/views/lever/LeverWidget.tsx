@@ -19,9 +19,10 @@ const ClearButton = tw.button`text-sm`;
 const LeverWidget = (props: any) => {
   /* Bring in lever context - instead of passing them as props */
   const [leverState] = useContext(LeverContext);
-  const { selectedLever, assets } = leverState as ILeverContextState;
+  const { assets } = leverState as ILeverContextState;
  /* bring in input actions */
-  const [,inputActions] = useContext(InputContext);
+  const [inputState,inputActions] = useContext(InputContext);
+  const { selectedLever } = inputState
   
   const shortAsset = assets.get(selectedLever?.baseId!);
   const { address: account } = useAccount();

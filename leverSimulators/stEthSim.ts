@@ -66,7 +66,7 @@ export const stEthSimulator: Simulator = async (
 
   const input = inputState.input;
   const leverage = inputState.leverage;
-  const selectedLever = leverState.selectedLever;
+  const selectedLever = inputState.selectedLever;
   const selectedPosition = positionState.selectedPosition;
 
   const stableSwap = StableSwap__factory.connect(STETH_STABLESWAP, provider);

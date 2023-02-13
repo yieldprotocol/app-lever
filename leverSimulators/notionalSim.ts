@@ -190,7 +190,8 @@ export const notionalSimulator: Simulator = async (
      * */
     output.investmentValue = output.investmentAtMaturity;
 
-    /** INVEST : 
+    /**
+     * INVEST : 
         bytes6 seriesId,
         bytes6 strategyId,
         uint256 amountToInvest,
