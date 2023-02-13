@@ -93,8 +93,29 @@ const LeverSelect = () => {
 
   const [showAllLevers, setShowAllLevers] = useState(false);
 
+  const [ shortAssetList, setShortAssetList ] = useState<IAsset[]>([]);
+  const [ longAssetList, setLongAssetList ] = useState<IAsset[]>([]);
+
   const [selectedShortAsset, setSelectedShortAsset] = useState<IAsset>();
   const [selectedLongAsset, setSelectedLongAsset] = useState<IAsset>();
+
+  /* set the short and long asset lists */
+  useEffect(() => { 
+
+    const shortAssetList_ = assetsList
+      .filter((a: IAsset) => a.isBaseAsset)
+      .sort((a: IAsset, b: IAsset) => Number(b.isBaseAsset) - Number(a.isBaseAsset))
+      .sort(
+        (a: IAsset, b: IAsset) =>
+          Number(isRecommended(b, AssetType.SHORT)) - Number(isRecommended(a, AssetType.SHORT))
+      )
+      .map((a: IAsset) => assetOption(a, isRecommended(a, AssetType.SHORT), AssetType.SHORT));
+
+  
+
+    // setShortAssetList(shortAssetList_);
+
+  },[assetsList]);
 
   /* When the selected lever changes, make sure the selected assets match */
   useEffect(() => {
@@ -111,9 +132,8 @@ const LeverSelect = () => {
       (lever_: ILever) => lever_.baseId === selectedShortAsset?.id  // && lever_.ilkId === selectedLongAsset?.id
     );
     setPossibleLevers(filteredLevers);
-
-    /* select the first on the list, of the list is blank deselect the strategy */
-    filteredLevers.length > 0 ? inputActions.selectLever(filteredLevers[0]) : inputActions.selectLever(undefined);
+    /* Select the first on the list, of the list is blank deselect the strategy */
+    // filteredLevers.length > 0 ? inputActions.selectLever(filteredLevers[0]) : inputActions.selectLever(undefined);
 
   }, [selectedShortAsset, selectedLongAsset, levers]);
 

@@ -2,13 +2,13 @@ import { useContext } from 'react';
 import tw from 'tailwind-styled-components';
 import Button from '../../common/Button';
 
-import LeverageSelect from '../../inputs/LeverageSelect';
+import LeverageSelect from '../../inputsSelectors/LeverageSelect';
 
 import { CogIcon } from '@heroicons/react/24/solid';
 
-import { ValueInput } from '../../inputs/ValueInput';
+import { ValueInput } from '../../inputsSelectors/ValueInput';
 import { ILeverContextState, LeverContext } from '../../../context/LeverContext';
-import LeverSelect from '../../inputs/LeverSelect';
+import LeverSelect from '../../inputsSelectors/LeverSelect';
 import { ILeverSimulation } from '../../../hooks/useLever';
 import { BorderWrap, TopRow, Inner, Section, SectionHead } from '../../styled';
 import { InputContext } from '../../../context/InputContext';

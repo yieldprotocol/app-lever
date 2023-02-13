@@ -28,6 +28,7 @@ export interface IAssetRoot {
 
   imageId?: string;
   chartId?: string;
+  groupingId?: string;
 }
 
 export const UNKNOWN = '0x000000000000';
@@ -248,7 +249,7 @@ ASSETS.set(UNI, {
   showToken: true,
   displayDigits: 4,
   tokenType: TokenType.ERC20_PERMIT,
-  chartId: 'uniswap'
+  chartId: 'uniswap',
 });
 
 export const YSDAI6MJD = "0x333100000000"
@@ -264,7 +265,8 @@ ASSETS.set( YSDAI6MJD, {
   displayDigits: 2,
   tokenType: TokenType.ERC20_DAI_PERMIT,
   chartId: 'YIELD',
-  imageId: 'YIELD'
+  imageId: 'YIELD',
+  groupingId: 'Yield Strategy Tokens'
 });
 
 export const YSUSDC6MJD = '0x333300000000'
@@ -280,7 +282,8 @@ ASSETS.set( YSUSDC6MJD, {
   displayDigits: 2,
   tokenType: TokenType.ERC20_PERMIT,
   chartId: 'YIELD',
-  imageId: 'YIELD'
+  imageId: 'YIELD',
+  groupingId: 'Yield Strategy Tokens'
 });
 
 export const YSETH6MJD = "0x333500000000"
@@ -296,11 +299,11 @@ ASSETS.set( YSETH6MJD, {
   displayDigits: 2,
   tokenType: TokenType.ERC20_PERMIT,
   chartId: 'YIELD',
-  imageId: 'YIELD'
+  imageId: 'YIELD',
+  groupingId: 'Yield Strategy Tokens'
 });
 
 /* NOTIONAL ASSETS */
-
 export const FUSDC2303 = '0x323600000000';
 ASSETS.set(FUSDC2303, {
   id: FUSDC2303,
@@ -316,7 +319,8 @@ ASSETS.set(FUSDC2303, {
   tokenIdentifier: 844854911827969,
   // limitToSeries: ['0x303230390000'],
   chartId: 'FCASH',
-  imageId: 'NOTIONAL'
+  imageId: 'NOTIONAL',
+  groupingId: 'fUSDC'
 });
 
 export const FETH2303 = '0x323900000000';
@@ -334,7 +338,8 @@ ASSETS.set(FETH2303, {
   tokenIdentifier: 281904958406657,
   // limitToSeries: ['0x303030390000'],
   chartId: 'FCASH',
-  imageId: 'NOTIONAL'
+  imageId: 'NOTIONAL',
+  groupingId: 'fETH'
 });
 
 export const FDAI2303 = '0x323500000000';
@@ -352,7 +357,8 @@ ASSETS.set(FDAI2303, {
   tokenIdentifier: 563379935117313,
   // limitToSeries: ['0x303130390000'],
   chartId: 'FCASH',
-  imageId: 'NOTIONAL'
+  imageId: 'NOTIONAL',
+  groupingId: 'fDAI'
 });
 
 export const FDAI2306 = '0x40311200028B';
@@ -370,7 +376,8 @@ ASSETS.set(FDAI2306, {
   tokenIdentifier: 563381925773313,
   // limitToSeries: ['0x0031FF00028B'],
   chartId: 'FCASH',
-  imageId: 'NOTIONAL'
+  imageId: 'NOTIONAL',
+  groupingId: 'fDAI'
 });
 
 export const FUSDC2306 = '0x40321200028B'; 
@@ -388,7 +395,8 @@ ASSETS.set(FUSDC2306, {
   tokenIdentifier: 844856902483969,
   // limitToSeries: ['0x0032FF00028B'],
   chartId: 'FCASH',
-  imageId: 'NOTIONAL'
+  imageId: 'NOTIONAL',
+  groupingId: 'fUSDC'
 });
 
 export const FETH2306 = '0x40301200028B';
@@ -406,5 +414,6 @@ ASSETS.set(FETH2306, {
   tokenIdentifier: 281906949062657,  
   // limitToSeries: ['0x0030FF00028B'],
   chartId: 'FCASH',
-  imageId: 'NOTIONAL'
+  imageId: 'NOTIONAL',
+  groupingId: 'fETH'
 });

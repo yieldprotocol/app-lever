@@ -86,25 +86,29 @@ const inputReducer = (state: IInputContextState, action: any) => {
 const InputProvider = ({ children }: any) => {
   /* LOCAL STATE */
   const [inputState, updateState] = useReducer(inputReducer, initState);
+  const {selectedLever} = inputState
   const [leverState] = useContext(LeverContext);
+  const {assetRoots, levers} = leverState;
+  
+  const longAsset = assetRoots.get(selectedLever?.ilkId);
 
   /* Set the initial selected lever if there is no lever selected */
   useEffect(() => {
-    if (leverState.levers.size && leverState.selectedLever === undefined) {
+    if (levers.size && selectedLever === undefined) {
       updateState({
         type: 'SELECT_LEVER',
-        payload: leverState.levers.get('STETH_02') || leverState.levers.get('FETH_2303'), //   Array.from(leverState.levers.values())[0], // Take the first lever as default
+        payload: levers.get('STETH_02') || levers.get('FETH_2303'), //   Array.from(leverState.levers.values())[0], // Take the first lever as default
       });
       console.log('Initial lever selected'); // Array.from(leverState.levers.values()).[0]);
     }
-  }, [leverState.levers]);
+  }, [levers, selectedLever]);
 
   /* ACTIONS TO CHANGE CONTEXT */
   const inputActions = {
     setInput: (input: number, nativeToken: boolean = false) =>
       updateState({
         type: 'SET_INPUT',
-        payload: { input: inputToW3bNumber(input.toString(), 18, 2), nativeToken },
+        payload: { input: inputToW3bNumber(input.toString(), longAsset.decimals , longAsset.displayDecimals), nativeToken },
       }),
 
     setLeverage: (leverage: number) =>

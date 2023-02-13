@@ -28,7 +28,7 @@ export const LADLE = '0x6cB18fF2A33e981D1e38A663Ca056c0a5265066A';
  * Lever contract addresses
  * */
 export const STETH_LEVER = '0x40f0b18c7a41c04f848c033ed7f9178d9c5a80d8';
-export const NOTIONAL_LEVER = '0xc1ee6b26c12d07cc2656226a307f11b76952abeb';
+export const NOTIONAL_LEVER = '0xc7d44b22506c45567d1dd959a2edd25ad7a185ac';
 export const YIELD_STRATEGY_LEVER = '0x5582b8398fb586f1b79edd1a6e83f1c5aa558955';
 // export const EULER_LEVER = '';
 
