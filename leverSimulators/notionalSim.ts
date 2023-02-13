@@ -274,7 +274,7 @@ export const notionalSimulator: Simulator = async (
           selectedPosition.seriesId,
           selectedPosition.ilkId,
           selectedPosition.longAssetObtained.big,
-          selectedPosition.shortAssetBorrowed.big,
+          selectedPosition.debtAtMaturity.big,
           ZERO_BN,
         ]
       : [];
