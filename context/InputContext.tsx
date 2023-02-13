@@ -90,7 +90,7 @@ const InputProvider = ({ children }: any) => {
   const [leverState] = useContext(LeverContext);
   const {assetRoots, levers} = leverState;
   
-  const longAsset = assetRoots.get(selectedLever?.ilkId);
+  const shortAsset = assetRoots.get(selectedLever?.baseId);
 
   /* Set the initial selected lever if there is no lever selected */
   useEffect(() => {
@@ -108,7 +108,7 @@ const InputProvider = ({ children }: any) => {
     setInput: (input: number, nativeToken: boolean = false) =>
       updateState({
         type: 'SET_INPUT',
-        payload: { input: inputToW3bNumber(input.toString(), longAsset.decimals , longAsset.displayDecimals), nativeToken },
+        payload: { input: inputToW3bNumber(input.toString(), shortAsset.decimals , shortAsset.displayDecimals), nativeToken },
       }),
 
     setLeverage: (leverage: number) =>
