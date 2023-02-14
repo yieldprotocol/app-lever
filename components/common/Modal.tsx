@@ -3,18 +3,16 @@ import { Fragment, FC, ReactNode } from 'react';
 
 export interface IModal {
   isOpen: boolean;
-  setIsOpen: (isOpen:boolean) => void;
+  setIsOpen: (open:boolean) => void;
   children: ReactNode;
 }
 
 const Modal: FC<IModal> = ({ isOpen, setIsOpen, children }) => {
-  const closeModal = () => {
-    setIsOpen(false);
-  };
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="fixed inset-0 z-10 overflow-y-auto" onClose={closeModal}>
+
+      <Dialog open={isOpen} as="div" className="fixed inset-0 z-10 overflow-y-auto" onClose={() => setIsOpen(false)}>
         <div className="min-h-screen px-4 text-center">
           <Transition.Child
             as={Fragment}

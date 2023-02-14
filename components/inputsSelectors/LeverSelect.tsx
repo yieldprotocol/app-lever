@@ -1,7 +1,7 @@
 import { Fragment, useContext, useEffect, useState } from 'react';
 import tw from 'tailwind-styled-components';
 import { IAsset, ILever, ILeverContextState, LeverContext } from '../../context/LeverContext';
-import { BorderWrap, ClickableContainer, Section, SectionHead, TopRow } from '../styled';
+import { BorderWrap, ClickableContainer, Section, SectionHead, Spinner, TopRow } from '../styled';
 
 import { ArrowsRightLeftIcon } from '@heroicons/react/24/solid';
 import { ArrowTrendingDownIcon, ArrowTrendingUpIcon, CheckBadgeIcon, StarIcon } from '@heroicons/react/20/solid';
@@ -20,6 +20,7 @@ import StackedLogos from '../common/StackedLogos';
 import Modal from '../common/Modal';
 import LeverSelectModal from './LeverSelectModal';
 import { IInputContextState, InputContext } from '../../context/InputContext';
+import Loader from '../common/Loader';
 
 enum AssetType {
   SHORT,
@@ -49,7 +50,7 @@ const assetOption = (asset: IAsset, recommended: boolean, assetType: AssetType) 
         </Selectable>
       </Listbox.Option>
     );
-  return <div> Loading ... </div>;
+  return <Spinner />;
 };
 
 const SelectedAssetStyled = ({ asset, assetType }: { asset: IAsset; assetType: AssetType }) => {
@@ -64,7 +65,7 @@ const SelectedAssetStyled = ({ asset, assetType }: { asset: IAsset; assetType: A
         </Listbox.Option>
       </Listbox.Button>
     );
-  return <div> Loading ... </div>;
+  return <Spinner />;
 };
 
 const ListOptionsStyled = ({ children }: { children: any[] }) => (
@@ -87,6 +88,8 @@ const LeverSelect = () => {
   const [inputState, inputActions] = useContext(InputContext);
   const { selectedLever } = inputState;
   const { selectLever } = inputActions;
+
+  const [showModal, setShowModal] = useState(false);
 
   const [possibleLevers, setPossibleLevers] = useState<ILever[]>([]);
   const [requestedPairs, setRequestedPair] = useState<string[]>([]);
@@ -197,7 +200,8 @@ const LeverSelect = () => {
 
   return (
     <>
-      <LeverSelectModal />
+      <LeverSelectModal showModal={showModal} setShowModal={setShowModal} />
+
       <div className="space-y-4">
         <div className="flex space-x-4 ">
           <ClickableContainer>
@@ -241,7 +245,8 @@ const LeverSelect = () => {
         </div>
 
         <div>
-          {levers.size === 0 && <div> Loading ... </div>}
+
+          {levers.size === 0 && <Spinner />}
           <div className="space-y-1">
             {possibleLevers.map((l: ILever) => (
               <ClickableContainer key={l.id}>
@@ -300,9 +305,9 @@ const LeverSelect = () => {
         <div className="flex justify-end">
           <button
             className="flex text-xs text-slate-500 justify-end hover:text-white"
-            // onClick={() => setShowAllLevers(true)}
+            onClick={() => setShowModal(true)}
           >
-            see all available levers
+            See all available levers
           </button>
         </div>
       </div>

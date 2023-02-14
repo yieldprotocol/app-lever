@@ -37,9 +37,6 @@ const EstimatedPosition = (props: any) => {
     borrowLimitUsed,
   }: ILeverSimulation = props.lever;
 
-  console.log( investAPR )
-
-
   const [showExtra, setShowExtra] = useState<Boolean>(false);
 
   return (

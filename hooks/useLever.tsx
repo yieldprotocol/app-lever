@@ -47,7 +47,6 @@ export type SimulatorOutput = {
 
   /* simulation instance notifcation */
   notification: Notification | undefined;
-  
 };
 
 export interface ILeverSimulation extends SimulatorOutput {
@@ -71,15 +70,14 @@ export interface ILeverSimulation extends SimulatorOutput {
 }
 
 export const useLever = (simulator: Simulator): ILeverSimulation => {
-  
   /* Bring in context*/
   const [leverState] = useContext(LeverContext);
   const [inputState] = useContext(InputContext);
-  const {selectedLever} = inputState;
-  
-  /* add in debounced leverage when using slider and input - to prevent excessive calcs */
-  const debouncedInputState = useDebounce(inputState, 500);
-  const { input, leverage } = debouncedInputState;
+  const { input, leverage, selectedLever } = inputState;
+
+  /* Add in debounced leverage when using slider and input - to prevent excessive calcs */
+  const debouncedInput = useDebounce(input, 500);
+  const debouncedLeverage = useDebounce(leverage, 500);
 
   const [marketState] = useContext(MarketContext);
   const [positionState]: [IPositionContextState, any] = useContext(PositionContext);
@@ -114,8 +112,7 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
    * Calculate the APR's based on the simulation
    **/
   const calcAPRs = (sim: SimulatorOutput) => {
-
-    console.log(sim.longAssetObtained.dsp, sim.investmentAtMaturity.dsp  )
+    console.log(sim.longAssetObtained.dsp, sim.investmentAtMaturity.dsp);
     // alternative: Math.pow(investAtMaturity.dsp/investmentPosition.dsp, oneOverYearProp) - 1
     const investRate = calculateAPR(
       sim.longAssetObtained.big,
@@ -158,38 +155,34 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
     const pnl_ = isNaN(netAPR - investAPR) ? 0 : netAPR - investAPR;
     setPnl(pnl_);
 
-    setSimulation(sim)
+    setSimulation(sim);
   };
 
   /* Use the simulator on each leverage/input change */
   useEffect(() => {
     const positionView = pathname === '/positions';
 
-    inputState.selectedLever &&
-      debouncedInputState.leverage &&
+    if (
+      selectedLever &&
+      debouncedLeverage &&
       provider &&
-      (debouncedInputState.input.big.gt(ZERO_BN) || positionState.selectedPosition) &&
+      (debouncedInput.big.gt(ZERO_BN) || positionState.selectedPosition)
+    ) {
       (async () => {
-        console.log( 'asdasds')
+        console.log('asdasds');
         /**
          * Simulate investment and set parameters locally
          * */
         setIsSimulating(true);
-        const simulated = await simulator(
-          inputState,
-          leverState,
-          marketState,
-          positionState,
-          provider,
-          positionView
-        );
+        const simulated = await simulator(inputState, leverState, marketState, positionState, provider, positionView);
         // simulated && setSimulation(simulated);
         simulated && calcAPRs(simulated);
         
         setIsSimulating(false);
         console.log('ok,...simulated');
       })();
-  }, [debouncedInputState, leverState, marketState, positionState, provider, pathname, inputState]);
+    }
+  }, [debouncedInput, debouncedLeverage, leverState, marketState, positionState, provider, pathname, selectedLever]);
 
   return {
     invest,

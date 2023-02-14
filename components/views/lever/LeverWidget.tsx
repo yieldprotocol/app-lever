@@ -42,6 +42,9 @@ const LeverWidget = (props: any) => {
           <SectionHead>              
              <div className="flex justify-between">
               <div> Lever Strategy </div>
+              {/* <button className="text-xs text-slate-500" onClick={()=> console.log( 'sdfsd') }>
+                  See all available levers
+                </button> */}
             </div>
             </SectionHead>
           <LeverSelect />
@@ -52,9 +55,9 @@ const LeverWidget = (props: any) => {
             <div className="flex justify-between">
               <div> Investment </div>
               {selectedLever && shortAsset && (
-                <div className="text-xs text-slate-500" onClick={()=> inputActions.setInput(selectedLever.minDebt.dsp) }>
+                <button className="text-xs text-slate-500" onClick={()=> inputActions.setInput(selectedLever.minDebt.dsp) }>
                   Min: {selectedLever.minDebt.dsp} {shortAsset.displaySymbol}{' '}
-                </div>
+                </button>
               )}
             </div>
           </SectionHead>
