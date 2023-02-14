@@ -266,7 +266,7 @@ ASSETS.set( YSDAI6MJD, {
   tokenType: TokenType.ERC20_DAI_PERMIT,
   chartId: 'YIELD',
   imageId: 'YIELD',
-  groupingId: 'Yield Strategy Tokens'
+  groupingId: 'Yield Tokens'
 });
 
 export const YSUSDC6MJD = '0x333300000000'
@@ -283,7 +283,7 @@ ASSETS.set( YSUSDC6MJD, {
   tokenType: TokenType.ERC20_PERMIT,
   chartId: 'YIELD',
   imageId: 'YIELD',
-  groupingId: 'Yield Strategy Tokens'
+  groupingId: 'Yield Tokens'
 });
 
 export const YSETH6MJD = "0x333500000000"
@@ -300,7 +300,7 @@ ASSETS.set( YSETH6MJD, {
   tokenType: TokenType.ERC20_PERMIT,
   chartId: 'YIELD',
   imageId: 'YIELD',
-  groupingId: 'Yield Strategy Tokens'
+  groupingId: 'Yield Tokens'
 });
 
 /* NOTIONAL ASSETS */
@@ -320,7 +320,7 @@ ASSETS.set(FUSDC2303, {
   // limitToSeries: ['0x303230390000'],
   chartId: 'FCASH',
   imageId: 'NOTIONAL',
-  groupingId: 'fUSDC'
+  groupingId: 'Notional USDC'
 });
 
 export const FETH2303 = '0x323900000000';
@@ -339,7 +339,7 @@ ASSETS.set(FETH2303, {
   // limitToSeries: ['0x303030390000'],
   chartId: 'FCASH',
   imageId: 'NOTIONAL',
-  groupingId: 'fETH'
+  groupingId: 'Notional ETH'
 });
 
 export const FDAI2303 = '0x323500000000';
@@ -358,7 +358,7 @@ ASSETS.set(FDAI2303, {
   // limitToSeries: ['0x303130390000'],
   chartId: 'FCASH',
   imageId: 'NOTIONAL',
-  groupingId: 'fDAI'
+  groupingId: 'Notional DAI'
 });
 
 export const FDAI2306 = '0x40311200028b';
@@ -377,7 +377,7 @@ ASSETS.set(FDAI2306, {
   // limitToSeries: ['0x0031FF00028B'],
   chartId: 'FCASH',
   imageId: 'NOTIONAL',
-  groupingId: 'fDAI'
+  groupingId: 'Notional DAI'
 });
 
 export const FUSDC2306 = '0x40321200028b'; 
@@ -396,7 +396,7 @@ ASSETS.set(FUSDC2306, {
   // limitToSeries: ['0x0032FF00028B'],
   chartId: 'FCASH',
   imageId: 'NOTIONAL',
-  groupingId: 'fUSDC'
+  groupingId: 'Notional USDC'
 });
 
 export const FETH2306 = '0x40301200028b';
@@ -415,5 +415,5 @@ ASSETS.set(FETH2306, {
   // limitToSeries: ['0x0030FF00028B'],
   chartId: 'FCASH',
   imageId: 'NOTIONAL',
-  groupingId: 'fETH'
+  groupingId: 'Notional ETH'
 });

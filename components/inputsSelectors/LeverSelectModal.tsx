@@ -20,19 +20,16 @@ import StackedLogos from '../common/StackedLogos';
 import Modal from '../common/Modal';
 import  { IInputContextState, InputContext } from '../../context/InputContext';
 
-
 const LeverSelectModal = () => {
   const [leverState, leverActions] = useContext(LeverContext);
   const {  levers, assets } = leverState as ILeverContextState;
   const assetsList = Array.from(assets.values()).filter((a: IAsset) => a.showToken);
-
 
   const [inputState, inputActions] = useContext(InputContext);
   const { selectedLever } = inputState as IInputContextState;
 
   const [allLevers, setAllLevers] = useState<ILever[]>([]);
   const [showAllLevers, setShowAllLevers] = useState(false);
-
 
   return (
     <Modal isOpen={showAllLevers} setIsOpen={() => setShowAllLevers(!showAllLevers)}>

@@ -44,7 +44,7 @@ const assetOption = (asset: IAsset, recommended: boolean, assetType: AssetType) 
       <Listbox.Option as={Fragment} key={asset.id} value={asset}>
         <Selectable className={` ${!isOption && 'opacity-50'} hover:border hover:border-primary-600 `}>
           <div className="w-6">{asset.image}</div>
-          <div>{asset.displaySymbol}</div>
+          <div>{asset.groupingId ? asset.groupingId : asset.displaySymbol}</div>
           {recommended && <CheckBadgeIcon className="w-4 text-emerald-600" />}
         </Selectable>
       </Listbox.Option>
@@ -59,7 +59,7 @@ const SelectedAssetStyled = ({ asset, assetType }: { asset: IAsset; assetType: A
         <Listbox.Option as={Fragment} key={asset.id} value={asset}>
           <Selectable>
             <div className="w-6">{asset.image}</div>
-            <div>{asset.displaySymbol}</div>
+            <div>{asset.groupingId ? asset.groupingId : asset.displaySymbol}</div>
           </Selectable>
         </Listbox.Option>
       </Listbox.Button>
@@ -83,7 +83,6 @@ const ListOptionsStyled = ({ children }: { children: any[] }) => (
 const LeverSelect = () => {
   const [leverState] = useContext(LeverContext);
   const { levers, assets } = leverState as ILeverContextState;
-  const assetsList = Array.from(assets.values()).filter((a: IAsset) => a.showToken);
 
   const [inputState, inputActions] = useContext(InputContext);
   const { selectedLever } = inputState as IInputContextState;
@@ -91,31 +90,43 @@ const LeverSelect = () => {
   const [possibleLevers, setPossibleLevers] = useState<ILever[]>([]);
   const [requestedPairs, setRequestedPair] = useState<string[]>([]);
 
-  const [showAllLevers, setShowAllLevers] = useState(false);
-
-  const [ shortAssetList, setShortAssetList ] = useState<IAsset[]>([]);
-  const [ longAssetList, setLongAssetList ] = useState<IAsset[]>([]);
+  const [shortAssetList, setShortAssetList] = useState<IAsset[]>([]);
+  const [longAssetList, setLongAssetList] = useState<IAsset[]>([]);
 
   const [selectedShortAsset, setSelectedShortAsset] = useState<IAsset>();
   const [selectedLongAsset, setSelectedLongAsset] = useState<IAsset>();
 
-  /* set the short and long asset lists */
-  useEffect(() => { 
+  /** Create a list of recommended assets */
+  useEffect(() => {
+    /* Filter all the assets with a unique groupingId ( or undefined groupId ) */
+    const assetsSet = new Set();
+    const assetsList = Array.from(assets.values())
+      .filter((a: IAsset) => a.showToken)
+      .filter((asset: IAsset) => {
+        if (asset.groupingId != undefined && assetsSet.has(asset.groupingId)) {
+          return false;
+        }
+        assetsSet.add(asset.groupingId);
+        return true;
+      });
+
+    const longAssetList_ = assetsList
+      .filter((a: IAsset) => a.id !== selectedShortAsset?.id)
+      .filter((a: IAsset) => a.id !== selectedLongAsset?.id)
+      .sort((a: IAsset, b: IAsset) => Number(b.isLongAsset) - Number(a.isLongAsset))
+      .sort(
+        (a: IAsset, b: IAsset) => Number(isRecommended(b, AssetType.LONG)) - Number(isRecommended(a, AssetType.LONG))
+      );
+    setLongAssetList(longAssetList_);
 
     const shortAssetList_ = assetsList
       .filter((a: IAsset) => a.isBaseAsset)
       .sort((a: IAsset, b: IAsset) => Number(b.isBaseAsset) - Number(a.isBaseAsset))
       .sort(
-        (a: IAsset, b: IAsset) =>
-          Number(isRecommended(b, AssetType.SHORT)) - Number(isRecommended(a, AssetType.SHORT))
-      )
-      .map((a: IAsset) => assetOption(a, isRecommended(a, AssetType.SHORT), AssetType.SHORT));
-
-  
-
-    // setShortAssetList(shortAssetList_);
-
-  },[assetsList]);
+        (a: IAsset, b: IAsset) => Number(isRecommended(b, AssetType.SHORT)) - Number(isRecommended(a, AssetType.SHORT))
+      );
+    setShortAssetList(shortAssetList_);
+  }, [selectedShortAsset, selectedLongAsset]);
 
   /* When the selected lever changes, make sure the selected assets match */
   useEffect(() => {
@@ -127,13 +138,15 @@ const LeverSelect = () => {
 
   /* Get the list of possible levers, based on the selected short/long asset pair selected */
   useEffect(() => {
-    const list = Array.from(levers.values());
-    const filteredLevers = list.filter(
-      (lever_: ILever) => lever_.baseId === selectedShortAsset?.id  // && lever_.ilkId === selectedLongAsset?.id
-    );
-    setPossibleLevers(filteredLevers);
-    /* Select the first on the list, of the list is blank deselect the strategy */
-    // filteredLevers.length > 0 ? inputActions.selectLever(filteredLevers[0]) : inputActions.selectLever(undefined);
+    const leverList = Array.from(levers.values());
+
+    /* filter the levers by those that have the same base */
+    const filteredLevers = leverList.filter((l: ILever) => l.baseId === selectedShortAsset?.id);
+
+    /* Check if the selected LONG Asset has an associated lever, if not set empty */ 
+    leverList.some((l: ILever) => l.ilkId === selectedLongAsset?.id)
+      ? setPossibleLevers(filteredLevers)
+      : setPossibleLevers([]);
 
   }, [selectedShortAsset, selectedLongAsset, levers]);
 
@@ -147,27 +160,37 @@ const LeverSelect = () => {
    * based on the lever pairs, what are the possible (long/short) assets to choose if x is selected as the s(hort/long) asset.
    * */
   const isRecommended = (asset: IAsset, assetType: AssetType) => {
-    const list = Array.from(levers.values());
+    const leverList = Array.from(levers.values());
     return assetType === AssetType.SHORT
-      ? !!list.find((l: ILever) => l.ilkId === selectedLongAsset?.id && l.baseId === asset.id)
-      : !!list.find((l: ILever) => l.baseId === selectedShortAsset?.id && l.ilkId === asset.id);
+      ? !!leverList.find((l: ILever) => l.ilkId === selectedLongAsset?.id && l.baseId === asset.id)
+      : !!leverList.find((l: ILever) => l.baseId === selectedShortAsset?.id && l.ilkId === asset.id);
   };
 
   const handleSelectLong = (asset: IAsset) => {
-    setSelectedLongAsset(asset)
-  }
+    /* first set the long asset to the selected one */
+    setSelectedLongAsset(asset);
+    /* then set the short asset to an applicatble one */
+    const leverList = Array.from(levers.values());
+    const firstShortId = leverList.find((l: ILever) => l.ilkId === asset.id)?.baseId;
+    firstShortId && setSelectedShortAsset(assets.get(firstShortId));
+  };
 
   const handleSelectShort = (asset: IAsset) => {
-    setSelectedShortAsset(asset)
-  }
+    /* first set the short  asset to the selected one */
+    setSelectedShortAsset(asset);
+    /* then set the long asset to an applicatble one */
+    const leverList = Array.from(levers.values());
+    const firstLongId = leverList.find((l: ILever) => l.baseId === asset.id)?.ilkId;
+    firstLongId && setSelectedLongAsset(assets.get(firstLongId));
+  };
 
   const handleSelectLever = (lever: ILever) => {
     inputActions.selectLever(lever);
-  }
+  };
 
   return (
     <>
-      <LeverSelectModal  />
+      <LeverSelectModal />
       <div className="space-y-4">
         <div className="flex space-x-4 ">
           <ClickableContainer>
@@ -175,18 +198,10 @@ const LeverSelect = () => {
               <div className="flex text-xs text-slate-500 text-start ">Long</div>
               <ArrowTrendingUpIcon className="h-4 w-4 text-slate-500" />
             </TopRow>
-            <Listbox value={selectedLongAsset} onChange={(x: IAsset) => handleSelectLong(x)}>
+            <Listbox value={selectedLongAsset} onChange={(a: IAsset) => handleSelectLong(a)}>
               <SelectedAssetStyled asset={selectedLongAsset!} assetType={AssetType.LONG} />
               <ListOptionsStyled>
-                {assetsList
-                  .filter((a: IAsset) => a.id !== selectedShortAsset?.id)
-                  .filter((a: IAsset) => a.id !== selectedLongAsset?.id)
-                  .sort((a: IAsset, b: IAsset) => Number(b.isLongAsset) - Number(a.isLongAsset))
-                  .sort(
-                    (a: IAsset, b: IAsset) =>
-                      Number(isRecommended(b, AssetType.LONG)) - Number(isRecommended(a, AssetType.LONG))
-                  )
-                  .map((a: IAsset) => assetOption(a, isRecommended(a, AssetType.LONG), AssetType.LONG))}
+                {longAssetList.map((a: IAsset) => assetOption(a, isRecommended(a, AssetType.LONG), AssetType.LONG))}
               </ListOptionsStyled>
             </Listbox>
           </ClickableContainer>
@@ -209,17 +224,10 @@ const LeverSelect = () => {
               <div className="flex   text-xs text-slate-500 text-start ">Short</div>
               <ArrowTrendingDownIcon className="h-4 w-4 text-slate-500" />
             </TopRow>
-            <Listbox value={selectedShortAsset} onChange={(x: IAsset) => handleSelectShort(x)}>
+            <Listbox value={selectedShortAsset} onChange={(a: IAsset) => handleSelectShort(a)}>
               <SelectedAssetStyled asset={selectedShortAsset!} assetType={AssetType.SHORT} />
               <ListOptionsStyled>
-                {assetsList
-                  .filter((a: IAsset) => a.isBaseAsset)
-                  .sort((a: IAsset, b: IAsset) => Number(b.isBaseAsset) - Number(a.isBaseAsset))
-                  .sort(
-                    (a: IAsset, b: IAsset) =>
-                      Number(isRecommended(b, AssetType.SHORT)) - Number(isRecommended(a, AssetType.SHORT))
-                  )
-                  .map((a: IAsset) => assetOption(a, isRecommended(a, AssetType.SHORT), AssetType.SHORT))}
+                {shortAssetList.map((a: IAsset) => assetOption(a, isRecommended(a, AssetType.SHORT), AssetType.SHORT))}
               </ListOptionsStyled>
             </Listbox>
           </ClickableContainer>
@@ -285,7 +293,7 @@ const LeverSelect = () => {
         <div className="flex justify-end">
           <button
             className="flex text-xs text-slate-500 justify-end hover:text-white"
-            onClick={() => setShowAllLevers(true)}
+            // onClick={() => setShowAllLevers(true)}
           >
             see all available levers
           </button>
