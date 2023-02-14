@@ -94,15 +94,15 @@ const InputProvider = ({ children }: any) => {
 
   /* Set the initial selected lever if there is no lever selected */
   useEffect(() => {
-    if (levers.size && selectedLever === undefined) {
+    if (levers.size) {
       updateState({
         type: 'SELECT_LEVER',
-        payload: levers.get('STETH_02') || levers.get('FETH_2303'), //   Array.from(leverState.levers.values())[0], // Take the first lever as default
+        payload: levers.get('STETH_02') || levers.get('FETH_2303'),
       });
-      console.log('Initial lever selected'); // Array.from(leverState.levers.values()).[0]);
+      console.log('Initial lever selected'); 
     }
-  }, [levers, selectedLever]);
-
+  }, [levers]);
+  
   /* ACTIONS TO CHANGE CONTEXT */
   const inputActions = {
     setInput: (input: number, nativeToken: boolean = false) =>

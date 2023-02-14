@@ -85,7 +85,8 @@ const LeverSelect = () => {
   const { levers, assets } = leverState as ILeverContextState;
 
   const [inputState, inputActions] = useContext(InputContext);
-  const { selectedLever } = inputState as IInputContextState;
+  const { selectedLever } = inputState;
+  const { selectLever } = inputActions;
 
   const [possibleLevers, setPossibleLevers] = useState<ILever[]>([]);
   const [requestedPairs, setRequestedPair] = useState<string[]>([]);
@@ -136,20 +137,24 @@ const LeverSelect = () => {
     }
   }, [selectedLever]);
 
-  /* Get the list of possible levers, based on the selected short/long asset pair selected */
+  /**
+   *  Get the list of possible levers,
+   *  based on the selected short/long asset pair selected,
+   * and select the first one
+   * */
   useEffect(() => {
     const leverList = Array.from(levers.values());
-
     /* filter the levers by those that have the same base */
     const filteredLevers = leverList.filter((l: ILever) => l.baseId === selectedShortAsset?.id);
-
-    /* Check if the selected LONG Asset has an associated lever, if not set empty */ 
-    leverList.some((l: ILever) => l.ilkId === selectedLongAsset?.id)
-      ? setPossibleLevers(filteredLevers)
-      : setPossibleLevers([]);
-
+    /* Check if the selected LONG Asset has an associated lever, if not set empty */
+    const matchedLevers = leverList.some((l: ILever) => l.ilkId === selectedLongAsset?.id) ? filteredLevers : [];
+    setPossibleLevers(matchedLevers);
   }, [selectedShortAsset, selectedLongAsset, levers]);
 
+  /**
+   * fn: handlePairRequest
+   *
+   */
   const handlePairRequest = () => {
     toast.info('Trading pair requested.');
     setRequestedPair([...requestedPairs, `${selectedShortAsset?.symbol}${selectedLongAsset?.symbol}`]);
@@ -166,26 +171,28 @@ const LeverSelect = () => {
       : !!leverList.find((l: ILever) => l.baseId === selectedShortAsset?.id && l.ilkId === asset.id);
   };
 
-  const handleSelectLong = (asset: IAsset) => {
-    /* first set the long asset to the selected one */
-    setSelectedLongAsset(asset);
-    /* then set the short asset to an applicatble one */
-    const leverList = Array.from(levers.values());
-    const firstShortId = leverList.find((l: ILever) => l.ilkId === asset.id)?.baseId;
-    firstShortId && setSelectedShortAsset(assets.get(firstShortId));
-  };
-
-  const handleSelectShort = (asset: IAsset) => {
+  /**
+   * ‘Select’ an asset, and set the other asset to an appropriate one.
+   * @param asset 
+   * @param isSelectingShort 
+   */
+  const handleSelectAsset = (asset: IAsset, assetType: AssetType) => {
+    
     /* first set the short  asset to the selected one */
-    setSelectedShortAsset(asset);
-    /* then set the long asset to an applicatble one */
+    if (assetType === AssetType.SHORT) setSelectedShortAsset(asset);
+    if (assetType === AssetType.LONG) setSelectedLongAsset(asset);
+    
+    /* then set the asset to an applicatble one */
     const leverList = Array.from(levers.values());
-    const firstLongId = leverList.find((l: ILever) => l.baseId === asset.id)?.ilkId;
-    firstLongId && setSelectedLongAsset(assets.get(firstLongId));
-  };
+    const firstLever = leverList.find((l: ILever) => (assetType === AssetType.SHORT ? l.baseId : l.ilkId) === asset.id);
+    if (firstLever) {
+      assetType === AssetType.SHORT && setSelectedLongAsset(assets.get(firstLever.ilkId));
+      assetType === AssetType.LONG && setSelectedShortAsset(assets.get(firstLever.baseId));
+    } 
 
-  const handleSelectLever = (lever: ILever) => {
-    inputActions.selectLever(lever);
+    /* Also select the first lever in the list, or set the selected lever to undefined */
+    selectLever(firstLever)
+
   };
 
   return (
@@ -198,7 +205,7 @@ const LeverSelect = () => {
               <div className="flex text-xs text-slate-500 text-start ">Long</div>
               <ArrowTrendingUpIcon className="h-4 w-4 text-slate-500" />
             </TopRow>
-            <Listbox value={selectedLongAsset} onChange={(a: IAsset) => handleSelectLong(a)}>
+            <Listbox value={selectedLongAsset} onChange={(a: IAsset) => handleSelectAsset(a, AssetType.LONG)}>
               <SelectedAssetStyled asset={selectedLongAsset!} assetType={AssetType.LONG} />
               <ListOptionsStyled>
                 {longAssetList.map((a: IAsset) => assetOption(a, isRecommended(a, AssetType.LONG), AssetType.LONG))}
@@ -224,7 +231,7 @@ const LeverSelect = () => {
               <div className="flex   text-xs text-slate-500 text-start ">Short</div>
               <ArrowTrendingDownIcon className="h-4 w-4 text-slate-500" />
             </TopRow>
-            <Listbox value={selectedShortAsset} onChange={(a: IAsset) => handleSelectShort(a)}>
+            <Listbox value={selectedShortAsset} onChange={(a: IAsset) => handleSelectAsset(a, AssetType.SHORT)}>
               <SelectedAssetStyled asset={selectedShortAsset!} assetType={AssetType.SHORT} />
               <ListOptionsStyled>
                 {shortAssetList.map((a: IAsset) => assetOption(a, isRecommended(a, AssetType.SHORT), AssetType.SHORT))}
@@ -242,7 +249,7 @@ const LeverSelect = () => {
                   className={`flex p-4 justify-between rounded ${
                     selectedLever?.id === l.id ? 'bg-primary-600 bg-opacity-25' : 'opacity-50'
                   }`}
-                  onClick={() => handleSelectLever(l)}
+                  onClick={() => selectLever(l)}
                 >
                   <div className="flex   gap-2">
                     <StackedLogos size={6} logos={[assets.get(l.ilkId)!.image!, assets.get(l.baseId)!.image!]} />
@@ -273,7 +280,7 @@ const LeverSelect = () => {
                         className="flex   text-xs text-slate-500 gap-4 rounded "
                         onClick={() => handlePairRequest()}
                       >
-                        Are you are interested in adding this pair?
+                        Are you are interested in having us add this pair?
                         {selectedShortAsset &&
                         selectedLongAsset &&
                         requestedPairs.includes(`${selectedShortAsset.symbol}${selectedLongAsset.symbol}`) ? (
