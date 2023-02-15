@@ -1,8 +1,6 @@
 import { Simulator } from '../hooks/useLever';
-import { TokenType } from '../lib/types';
+import { TokenType, TradePlatforms } from '../lib/types';
 import { DAI, FDAI2303, FDAI2306, FETH2303, FETH2306, FUSDC2303, FUSDC2306, USDC, WETH, WSTETH } from './assets';
-
-
 import { STETH_LEVER, YIELD_STRATEGY_LEVER, NOTIONAL_LEVER } from './contracts';
 
 /* import the simulators */
@@ -28,11 +26,6 @@ export interface ILeverRoot extends ILeverCommon{
   baseId: string;
 }
 
-export enum TradePlatforms {
-  CURVE = 'CURVE',
-  YIELD = 'YIELD',
-  NOTIONAL= 'NOTIONAL'
-}
 
 const stEthLeverCommon_: ILeverCommon = {
   leverAddress : STETH_LEVER,
@@ -75,6 +68,7 @@ LEVERS.set('STETH_2303', {
   seriesId: '0x303030390000',
   ilkId: WSTETH,
   baseId: WETH,
+
 });
 
 LEVERS.set('STETH_2306', {
@@ -109,7 +103,6 @@ LEVERS.set('FDAI_2303', {
   ilkId: FDAI2303,
   baseId: DAI,
 });
-
 
 LEVERS.set('FUSDC_2303', {
   ...notionalLeverCommon_,

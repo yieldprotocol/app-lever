@@ -18,6 +18,7 @@ import {
   YFIMark,
   YieldMark,
 } from '../components/logos';
+import { TradePlatforms } from '../lib/types';
 
 const logoMap = new Map([
   ['DAI', <DaiMark key="dai" />],
@@ -25,7 +26,6 @@ const logoMap = new Map([
   ['WBTC', <WBTCMark key="wbtc" />],
   ['TST', <TSTMark key="tst" />],
   ['ETH', <EthMark key="eth" />],
-  // ['WETH', <WethMark key="weth" />],
   ['USDT', <USDTMark key="usdt" />],
   ['LINK', <LinkMark key="link" />],
   ['wstETH', <StEthMark key="wsteth" />],
@@ -34,11 +34,25 @@ const logoMap = new Map([
   ['UNI', <UNIMark key="uni" />],
   ['MKR', <MakerMark key="mkr" />],
   ['FRAX', <FRAXMark key="frax" />],
-  ['NOTIONAL', <NotionalMark key="ntl" />],
+
   ['YEARN', <YFIMark key="yrn" />],
-  ['CURVE', <CRVMark key="crv" />],
+
   [
-    'YIELD',
+    'WETH',
+    <WethMark key="weth" />,
+    // <div>
+    //   <div className="p-0.5 bg-white rounded-full">
+    //     <div className="p-0.5 rounded-full border-black border border-dashed">
+    //       <EthMark key="weth" />
+    //     </div>
+    //   </div>
+    //   </div>,
+  ],
+
+  [TradePlatforms.NOTIONAL, <NotionalMark key="ntl" />],
+  [TradePlatforms.CURVE, <CRVMark key="crv" />],
+  [
+    TradePlatforms.YIELD,
     <LogoWrap
       outerTwStyle=""
       innerTwStyle=""
@@ -49,16 +63,6 @@ const logoMap = new Map([
         />
       }
     />,
-  ],
-  [
-    'WETH',  <WethMark key="weth"/>
-    // <div>
-    //   <div className="p-0.5 bg-white rounded-full">
-    //     <div className="p-0.5 rounded-full border-black border border-dashed">
-    //       <EthMark key="weth" />
-    //     </div>
-    //   </div>
-    //   </div>,
   ],
 
   // [

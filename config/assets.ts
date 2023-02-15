@@ -1,4 +1,4 @@
-import { TokenType } from '../lib/types';
+import { TokenType, TradePlatforms } from '../lib/types';
 
 export interface IAssetRoot {
   id: string;
@@ -264,9 +264,10 @@ ASSETS.set( YSDAI6MJD, {
   showToken: true,
   displayDigits: 2,
   tokenType: TokenType.ERC20_DAI_PERMIT,
-  chartId: 'YIELD',
-  imageId: 'YIELD',
-  groupingId: 'Yield Tokens'
+  
+  chartId: TradePlatforms.YIELD,
+  imageId: TradePlatforms.YIELD,
+  groupingId: TradePlatforms.YIELD
 });
 
 export const YSUSDC6MJD = '0x333300000000'
@@ -281,9 +282,9 @@ ASSETS.set( YSUSDC6MJD, {
   showToken: true,
   displayDigits: 2,
   tokenType: TokenType.ERC20_PERMIT,
-  chartId: 'YIELD',
-  imageId: 'YIELD',
-  groupingId: 'Yield Tokens'
+  chartId: TradePlatforms.YIELD,
+  imageId: TradePlatforms.YIELD,
+  groupingId: TradePlatforms.YIELD
 });
 
 export const YSETH6MJD = "0x333500000000"
@@ -298,9 +299,9 @@ ASSETS.set( YSETH6MJD, {
   showToken: true,
   displayDigits: 2,
   tokenType: TokenType.ERC20_PERMIT,
-  chartId: 'YIELD',
-  imageId: 'YIELD',
-  groupingId: 'Yield Tokens'
+  chartId: TradePlatforms.YIELD,
+  imageId: TradePlatforms.YIELD,
+  groupingId:  TradePlatforms.YIELD
 });
 
 /* NOTIONAL ASSETS */
@@ -318,9 +319,9 @@ ASSETS.set(FUSDC2303, {
   tokenType: TokenType.ERC1155,
   tokenIdentifier: 844854911827969,
   // limitToSeries: ['0x303230390000'],
-  chartId: 'FCASH',
-  imageId: 'NOTIONAL',
-  groupingId: 'Notional USDC'
+  chartId: TradePlatforms.NOTIONAL,
+  imageId: TradePlatforms.NOTIONAL,
+  groupingId: TradePlatforms.NOTIONAL,
 });
 
 export const FETH2303 = '0x323900000000';
@@ -337,9 +338,9 @@ ASSETS.set(FETH2303, {
   tokenType: TokenType.ERC1155,
   tokenIdentifier: 281904958406657,
   // limitToSeries: ['0x303030390000'],
-  chartId: 'FCASH',
-  imageId: 'NOTIONAL',
-  groupingId: 'Notional ETH'
+  chartId: TradePlatforms.NOTIONAL,
+  imageId: TradePlatforms.NOTIONAL,
+  groupingId: TradePlatforms.NOTIONAL
 });
 
 export const FDAI2303 = '0x323500000000';
@@ -356,9 +357,9 @@ ASSETS.set(FDAI2303, {
   tokenType: TokenType.ERC1155,
   tokenIdentifier: 563379935117313,
   // limitToSeries: ['0x303130390000'],
-  chartId: 'FCASH',
-  imageId: 'NOTIONAL',
-  groupingId: 'Notional DAI'
+  chartId: TradePlatforms.NOTIONAL,
+  imageId: TradePlatforms.NOTIONAL,
+  groupingId: TradePlatforms.NOTIONAL
 });
 
 export const FDAI2306 = '0x40311200028b';
@@ -375,9 +376,9 @@ ASSETS.set(FDAI2306, {
   tokenType: TokenType.ERC1155,
   tokenIdentifier: 563381925773313,
   // limitToSeries: ['0x0031FF00028B'],
-  chartId: 'FCASH',
-  imageId: 'NOTIONAL',
-  groupingId: 'Notional DAI'
+  chartId: TradePlatforms.NOTIONAL,
+  imageId: TradePlatforms.NOTIONAL,
+  groupingId: TradePlatforms.NOTIONAL
 });
 
 export const FUSDC2306 = '0x40321200028b'; 
@@ -394,9 +395,9 @@ ASSETS.set(FUSDC2306, {
   tokenType: TokenType.ERC1155,
   tokenIdentifier: 844856902483969,
   // limitToSeries: ['0x0032FF00028B'],
-  chartId: 'FCASH',
-  imageId: 'NOTIONAL',
-  groupingId: 'Notional USDC'
+  chartId: TradePlatforms.NOTIONAL,
+  imageId: TradePlatforms.NOTIONAL,
+  groupingId: TradePlatforms.NOTIONAL
 });
 
 export const FETH2306 = '0x40301200028b';
@@ -413,7 +414,7 @@ ASSETS.set(FETH2306, {
   tokenType: TokenType.ERC1155,
   tokenIdentifier: 281906949062657,  
   // limitToSeries: ['0x0030FF00028B'],
-  chartId: 'FCASH',
-  imageId: 'NOTIONAL',
-  groupingId: 'Notional ETH'
+  chartId: TradePlatforms.NOTIONAL,
+  imageId: TradePlatforms.NOTIONAL,
+  groupingId: TradePlatforms.NOTIONAL
 });

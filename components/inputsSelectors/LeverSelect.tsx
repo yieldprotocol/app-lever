@@ -104,7 +104,7 @@ const LeverSelect = () => {
   useEffect(() => {
     /* Filter all the assets with a unique groupingId ( or undefined groupId ) */
     const assetsSet = new Set();
-    const assetsList = Array.from(assets.values())
+    const assetGroupsList = Array.from(assets.values())
       .filter((a: IAsset) => a.showToken)
       .filter((asset: IAsset) => {
         if (asset.groupingId != undefined && assetsSet.has(asset.groupingId)) {
@@ -114,7 +114,7 @@ const LeverSelect = () => {
         return true;
       });
 
-    const longAssetList_ = assetsList
+    const longAssetList_ = assetGroupsList
       .filter((a: IAsset) => a.id !== selectedShortAsset?.id)
       .filter((a: IAsset) => a.id !== selectedLongAsset?.id)
       .sort((a: IAsset, b: IAsset) => Number(b.isLongAsset) - Number(a.isLongAsset))
@@ -123,7 +123,7 @@ const LeverSelect = () => {
       );
     setLongAssetList(longAssetList_);
 
-    const shortAssetList_ = assetsList
+    const shortAssetList_ = assetGroupsList
       .filter((a: IAsset) => a.isBaseAsset)
       .sort((a: IAsset, b: IAsset) => Number(b.isBaseAsset) - Number(a.isBaseAsset))
       .sort(
@@ -147,11 +147,19 @@ const LeverSelect = () => {
    * */
   useEffect(() => {
     const leverList = Array.from(levers.values());
+    const longGroupingId = selectedLongAsset?.groupingId;
+
     /* filter the levers by those that have the same base */
-    const filteredLevers = leverList.filter((l: ILever) => l.baseId === selectedShortAsset?.id);
-    /* Check if the selected LONG Asset has an associated lever, if not set empty */
-    const matchedLevers = leverList.some((l: ILever) => l.ilkId === selectedLongAsset?.id) ? filteredLevers : [];
-    setPossibleLevers(matchedLevers);
+    const filteredLevers = leverList
+      .filter((l: ILever) => l.baseId === selectedShortAsset?.id)
+      /* filter by group ( or by ilkId if no group ) */
+      .filter((l: ILever) =>
+        longGroupingId ? l.tradePlatform === longGroupingId : l.ilkId === selectedLongAsset?.id
+      )
+
+    /* Set those levers as the possibilites */
+    setPossibleLevers( filteredLevers )
+
   }, [selectedShortAsset, selectedLongAsset, levers]);
 
   /**
@@ -176,26 +184,24 @@ const LeverSelect = () => {
 
   /**
    * ‘Select’ an asset, and set the other asset to an appropriate one.
-   * @param asset 
-   * @param isSelectingShort 
+   * @param asset
+   * @param isSelectingShort
    */
   const handleSelectAsset = (asset: IAsset, assetType: AssetType) => {
-    
     /* first set the short  asset to the selected one */
     if (assetType === AssetType.SHORT) setSelectedShortAsset(asset);
     if (assetType === AssetType.LONG) setSelectedLongAsset(asset);
-    
+
     /* then set the asset to an applicatble one */
     const leverList = Array.from(levers.values());
     const firstLever = leverList.find((l: ILever) => (assetType === AssetType.SHORT ? l.baseId : l.ilkId) === asset.id);
     if (firstLever) {
       assetType === AssetType.SHORT && setSelectedLongAsset(assets.get(firstLever.ilkId));
       assetType === AssetType.LONG && setSelectedShortAsset(assets.get(firstLever.baseId));
-    } 
+    }
 
     /* Also select the first lever in the list, or set the selected lever to undefined */
-    selectLever(firstLever)
-
+    selectLever(firstLever);
   };
 
   return (
@@ -245,7 +251,6 @@ const LeverSelect = () => {
         </div>
 
         <div>
-
           {levers.size === 0 && <Spinner />}
           <div className="space-y-1">
             {possibleLevers.map((l: ILever) => (

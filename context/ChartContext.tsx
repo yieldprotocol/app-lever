@@ -3,6 +3,7 @@ import { ILeverContextState, LeverContext } from './LeverContext';
 import CoinGecko from 'coingecko-api';
 import { ApolloClient, gql, InMemoryCache } from '@apollo/client';
 import { IInputContextState, InputContext } from './InputContext';
+import { TradePlatforms } from '../lib/types';
 
 export interface IChartState {
   prices: any[];
@@ -66,7 +67,7 @@ const ChartProvider = ({ children }: any) => {
 
   const getPricesPerUsd = async (chartId: string) => {
 
-    if (chartId === 'FCASH') {
+    if (chartId === TradePlatforms.NOTIONAL) {
       console.log('Fetching fCASH price data for: ', chartId);
       updateState({ type: 'UPDATE_AVAILABILITY', payload: false });
       const response_ = await client.query({

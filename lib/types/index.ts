@@ -22,7 +22,14 @@ export enum TokenType {
   ERC1155,
   FYTOKEN,
   YIELD_POOL,
-  ORACLE
+  ORACLE,
+}
+
+export enum TradePlatforms {
+  CURVE = 'Curve',
+  YIELD = 'Yield',
+  NOTIONAL = 'Notional',
+  EULER = 'Euler',
 }
 
 export enum NotificationType {
@@ -40,5 +47,5 @@ export enum Operation {
   BORROW,
   REPAY,
   CLOSE,
-  REDEEM
+  REDEEM,
 }
