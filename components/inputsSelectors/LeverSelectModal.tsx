@@ -31,35 +31,56 @@ const LeverSelectModal = (props: any) => {
 
   const [allLevers, setAllLevers] = useState<ILever[]>([]);
 
+  /**
+   *  Get the list of all the  levers,
+   * */
+  useEffect(() => {
+    const leverList = Array.from(levers.values());
+    setAllLevers(leverList);
+  }, [levers]);
+
+  const leverEntry = (lever: ILever) => {
+
+    const longAsset = assets.get(lever.ilkId);
+    const shortAsset = assets.get(lever.baseId);
+
+    return (
+      <ClickableContainer key={lever.id}>
+        <div
+          className={`flex p-4 justify-between rounded ${
+            selectedLever?.id === lever.id ? 'bg-primary-600 bg-opacity-25' : 'opacity-50'
+          }`}
+          onClick={() => selectLever(lever)}
+        >
+          <div className="flex gap-8">
+            <StackedLogos size={6} logos={[longAsset?.image!, shortAsset?.image!]} />
+
+            <div className="text-start">
+              <div className="font-normal">{`${longAsset?.symbol} | ${ shortAsset?.symbol} `}</div>
+              <div className="text-xs font-thin">{formatDate(lever.maturityDate)}</div>
+            </div>
+          </div>
+
+          {/* <div className="text-xs" >{formatDate(l.maturityDate)}</div> */}
+          <div>
+            <InformationCircleIcon className="w-6 h-6 text-gray-500" onClick={() => console.log('eomtignd')} />
+          </div>
+        </div>
+      </ClickableContainer>
+    );
+  };
+
   return (
     <Modal isOpen={props.showModal} setIsOpen={props.setShowModal}>
-      <Section className={selectedLever ? 'opacity-100' : 'opacity-25'}>
+      <Section className="space-y-8">
         <SectionHead>
           <div className="flex justify-between">
             <div> All Yield Levers </div>
             <XCircleIcon className="w-6 h-6 text-gray-500" onClick={() => props.setShowModal(false)} />
           </div>
         </SectionHead>
-        <div className="space-y-1">
-          {allLevers.map((l: ILever) => (
-            <ClickableContainer key={l.id}>
-              <div
-                className={`flex p-4 justify-between rounded ${
-                  selectedLever?.id === l.id ? 'bg-primary-600 bg-opacity-25' : 'opacity-50'
-                }`}
-                onClick={() => leverActions.selectLever(l)}
-              >
-                <div className="flex   gap-2">
-                  <StackedLogos size={6} logos={[assets.get(l.ilkId)!.image!, assets.get(l.baseId)!.image!]} />
-                </div>
-                <div>{formatDate(l.maturityDate)}</div>
-                <div>
-                  <InformationCircleIcon className="w-6 h-6 text-gray-500" onClick={() => console.log('eomtignd')} />
-                </div>
-              </div>
-            </ClickableContainer>
-          ))}
-        </div>
+
+        <div className="space-y-1">{allLevers.map((lever: ILever) => leverEntry(lever))}</div>
       </Section>
     </Modal>
   );

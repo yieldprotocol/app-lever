@@ -6,6 +6,12 @@ html {
   font-variant-numeric: slashed-zero;
 }
 
+@layer base {
+  html {
+      font-weight: 200;
+  }
+}
+
 body {
   margin: 0;
   height: 200vh;
