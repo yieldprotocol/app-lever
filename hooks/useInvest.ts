@@ -51,7 +51,7 @@ const useInvest= (
     functionName: 'invest',
     args: txArgs,
     overrides,
-    enabled: true, // txnEnabled,
+    enabled: txnEnabled, // txnEnabled,
     cacheTime: 0,
   });
 

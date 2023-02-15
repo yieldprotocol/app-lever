@@ -69,7 +69,6 @@ const ChartProvider = ({ children }: any) => {
     if (chartId === 'FCASH') {
       console.log('Fetching fCASH price data for: ', chartId);
       updateState({ type: 'UPDATE_AVAILABILITY', payload: false });
-
       const response_ = await client.query({
         query: gql`
         query getHistRate{
@@ -79,9 +78,7 @@ const ChartProvider = ({ children }: any) => {
           }
         }
       `});
-
       const response = response_.data.assetExchangeRateHistoricalDatas.map((p:any) => [p.timestamp, p.value]);
-      console.log( response );
       return response;
     }
 
@@ -111,17 +108,20 @@ const ChartProvider = ({ children }: any) => {
         const longPerUsd = priceMap.get(longChartId) || (await getPricesPerUsd(longChartId));
         shortPerUsd.length && longPerUsd.length && updateState({ type: 'UPDATE_AVAILABILITY', payload: true });
 
-        console.log( longPerUsd );
+        console.log(longPerUsd )
 
         /* Calculate a short/long price */
-        const shortLongPrice_ = longPerUsd.map((p:any, index:number) => [
+        const shortPerLong = longPerUsd.map((p:any, index:number) => [
           p[0],
           shortPerUsd[index] ? p[1] / shortPerUsd[index][1] : undefined,
         ]);
 
+        console.log( shortPerLong  );
+
         /* remove any undefined value pairs */
-        const shortLongPrice = shortLongPrice_.filter((v:any) => v[0] !== undefined && v[1] !== undefined);
+        const shortLongPrice = shortPerLong.filter((v:any) => v[0] !== undefined && v[1] !== undefined);
         updateState({ type: 'UPDATE_DATA', payload: shortLongPrice });
+     
       })();
 
   }, [longChartId, shortChartId]);
