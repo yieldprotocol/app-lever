@@ -108,7 +108,9 @@ const ChartProvider = ({ children }: any) => {
         const longPerUsd = priceMap.get(longChartId) || (await getPricesPerUsd(longChartId));
         shortPerUsd.length && longPerUsd.length && updateState({ type: 'UPDATE_AVAILABILITY', payload: true });
 
-        console.log(longPerUsd )
+        console.log(longPerUsd[12] )
+
+        console.log(shortPerUsd[12] )
 
         /* Calculate a short/long price */
         const shortPerLong = longPerUsd.map((p:any, index:number) => [
@@ -116,7 +118,7 @@ const ChartProvider = ({ children }: any) => {
           shortPerUsd[index] ? p[1] / shortPerUsd[index][1] : undefined,
         ]);
 
-        console.log( shortPerLong  );
+        console.log( shortPerLong [12] );
 
         /* remove any undefined value pairs */
         const shortLongPrice = shortPerLong.filter((v:any) => v[0] !== undefined && v[1] !== undefined);
