@@ -79,7 +79,8 @@ const getNotionalInfo = async (symbol: NotionalSymbols, maturity: number): Promi
   return [investApy, investFee, notionalMaturity];
 };
 
-const getNotionalAssetCode = (symbol: NotionalSymbols): number => {
+
+export const getNotionalAssetCode = (symbol: NotionalSymbols|string): number => {
   if (symbol === NotionalSymbols.ETH) return 1;
   if (symbol === NotionalSymbols.WETH) return 1;
   if (symbol === NotionalSymbols.DAI) return 2;

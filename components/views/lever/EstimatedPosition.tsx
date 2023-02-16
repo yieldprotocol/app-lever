@@ -190,7 +190,7 @@ const EstimatedPosition = (props: any) => {
                   <div className="w-5">
                     <MinusCircleIcon />
                   </div>
-                  Fixed debt
+                  Fixed Yield debt
                 </div>
               </div>
               <div />

@@ -192,7 +192,7 @@ export const ChartWidget = (props: HighchartsReact.Props) => {
                   <div className="flex  gap-2">
                     <div className="w-8 h-8">{longAsset?.image}</div>
                     <div className="text-2xl">
-                      {prices.length ? Math.round(parseFloat(prices[prices.length - 1][1]) * 1000) / 1000 : '...'}
+                      {prices.length ? Math.round(parseFloat(prices[prices.length - 1][1]) * 1000000) / 1000000 : '...'}
                     </div>
                     <div className="text-2xl">{longAsset?.displaySymbol}</div>
                   </div>
@@ -204,7 +204,7 @@ export const ChartWidget = (props: HighchartsReact.Props) => {
                     <div className="flex gap-2">
                       <Button onClick={() => handleRangeChange(604800)}> 1w </Button>
                       <Button onClick={() => handleRangeChange(2628288)}> 1m </Button>
-                      <Button onClick={() => handleRangeChange(7890000)}> 3m </Button>
+                      {/* <Button onClick={() => handleRangeChange(7890000)}> 3m </Button> */}
                     </div>
                     {/* <div className="w-5"><MagnifyingGlassMinusIcon  className='text-white' onClick={()=>setForceChart(false)} /> </div> */}
                     {/* <div className="w-5"><MagnifyingGlassPlusIcon  className='text-white' onClick={()=>setForceChart(true)} /> </div> */}

@@ -1,9 +1,11 @@
 import React, { useContext, useEffect, useReducer, useState } from 'react';
-import { ILeverContextState, LeverContext } from './LeverContext';
+import { IAsset, ILeverContextState, LeverContext } from './LeverContext';
 import CoinGecko from 'coingecko-api';
 import { ApolloClient, gql, InMemoryCache } from '@apollo/client';
 import { IInputContextState, InputContext } from './InputContext';
 import { TradePlatforms } from '../lib/types';
+import { ethers } from 'ethers';
+import { getNotionalAssetCode } from '../leverSimulators/notionalSim';
 
 export interface IChartState {
   prices: any[];
@@ -21,12 +23,12 @@ const chartReducer = (state: IChartState, action: any) => {
         prices: action.payload,
         // total_volumes: action.payload.total_volumes,
       };
-      case 'UPDATE_AVAILABILITY':
-        return {
-          ...state,
-          pricesAvailable: action.payload,
-          // total_volumes: action.payload.total_volumes,
-        };
+    case 'UPDATE_AVAILABILITY':
+      return {
+        ...state,
+        pricesAvailable: action.payload,
+        // total_volumes: action.payload.total_volumes,
+      };
     default:
       return state;
   }
@@ -46,88 +48,90 @@ const ChartProvider = ({ children }: any) => {
   const [chartState, updateState] = useReducer(chartReducer, { prices: [], pricesAvailable: true });
   const [priceMap, setPriceMap] = useState<Map<string, any[]>>(new Map([]));
 
-  const [longChartId, setLongChartId] = useState<string>();
-  const [shortChartId, setShortChartId] = useState<string>();
+  // const [longChartId, setLongChartId] = useState<string>();
+  // const [shortChartId, setShortChartId] = useState<string>();
+  const [longAsset, setLongAsset] = useState<IAsset>();
+  const [shortAsset, setShortAsset] = useState<IAsset>();
 
   /* STATE from other contexts */
-  const [ leverState ] = useContext(LeverContext);
-  const { assetRoots } =  leverState;
-  
+  const [leverState] = useContext(LeverContext);
+  const { assetRoots } = leverState;
+
   const [inputState] = useContext(InputContext);
   const { selectedLever } = inputState as IInputContextState;
 
-  useEffect(()=>{
+  useEffect(() => {
     if (selectedLever?.baseId && selectedLever?.ilkId) {
       const shortAsset = assetRoots.get(selectedLever.baseId);
       const longAsset = assetRoots.get(selectedLever.ilkId);
-      setLongChartId(longAsset?.chartId);
-      setShortChartId(shortAsset?.chartId);
+      setLongAsset(longAsset);
+      setShortAsset(shortAsset);
     }
-  },[selectedLever, assetRoots])
-
-  const getPricesPerUsd = async (chartId: string) => {
-
-    if (chartId === TradePlatforms.NOTIONAL) {
-      console.log('Fetching fCASH price data for: ', chartId);
-      updateState({ type: 'UPDATE_AVAILABILITY', payload: false });
+  }, [selectedLever, assetRoots]);
+ 
+  const getAssetPairPrice = async (shortAsset: IAsset, longAsset: IAsset) : Promise<Number[][]> => {
+    /* Notional case */
+    if (longAsset.chartId === TradePlatforms.NOTIONAL) {
+      const notionalAsset = getNotionalAssetCode(shortAsset.symbol).toString();
       const response_ = await client.query({
         query: gql`
-        query getHistRate{
-          assetExchangeRateHistoricalDatas(first:1000, where: {currency: "3"}, orderDirection: desc) {
-            timestamp
-            value
+          query getHistRate($id: String = "${notionalAsset.toString()}") {
+            assetExchangeRateHistoricalDatas(first: 724, orderBy: timestamp, where: { currency: $id }, orderDirection: desc) {
+              timestamp
+              value
+            }
           }
-        }
-      `});
-      const response = response_.data.assetExchangeRateHistoricalDatas.map((p:any) => [p.timestamp, p.value]);
-      return response;
+        `,
+      });
+      const response = response_.data.assetExchangeRateHistoricalDatas;
+      const rates = response.map((p: any) => {
+        return [p.timestamp * 1000, 1 + parseFloat(ethers.utils.formatUnits(p.value, shortAsset.decimals + 12))];
+      });
+
+      if (rates.length) {
+        updateState({ type: 'UPDATE_AVAILABILITY', payload: true });
+        updateState({ type: 'UPDATE_DATA', payload: rates });
+      }
+      console.log(rates)
+      return rates;
     }
 
-    console.log('Fetching price data for : ', chartId);
+    /**
+     *
+     * Coingecko case
+     *
+     * */
 
-    try {
-      const prices = (await CoinGeckoClient.coins.fetchMarketChart(chartId, { vs_currency: 'usd', days: '90' })).data.prices;
-      const pricesPerUsd = prices.map((p) => [p[0], 1 / p[1]]);
-      setPriceMap(priceMap.set(chartId, pricesPerUsd));
-      return pricesPerUsd.flat();
+    const shortResponse = await CoinGeckoClient.coins.fetchMarketChart(shortAsset?.chartId!, { vs_currency: 'usd', days: '30' });
+    const longResponse = await CoinGeckoClient.coins.fetchMarketChart(longAsset?.chartId!, { vs_currency: 'usd', days: '30' });
 
-    } catch {
-      
-      console.log( 'Error fetching price data.' );
-      updateState({ type: 'UPDATE_AVAILABILITY', payload: false });
-      return [];
+    const shortPerUsd = priceMap.get(shortAsset?.chartId!) || shortResponse.data.prices.map((p) => [p[0], 1 / p[1]]);
+    const longPerUsd = priceMap.get(longAsset?.chartId!) || longResponse.data.prices.map((p) => [p[0], 1 / p[1]]);
+
+    /* Some rudimentary caching while component is mounted */
+    setPriceMap(priceMap.set(shortAsset?.chartId!, shortPerUsd));
+    setPriceMap(priceMap.set(longAsset?.chartId!, longPerUsd));
+
+    /* Calculate a short/long price */
+    const shortPerLong = longPerUsd.map((p: any, index: number) => [
+      p[0],
+      shortPerUsd[index] ? p[1] / shortPerUsd[index][1] : undefined,
+    ]);
+
+    const rates = shortPerLong.filter((v: any) => v[0] !== undefined && v[1] !== undefined);
+    if (rates.length) {
+      updateState({ type: 'UPDATE_AVAILABILITY', payload: true });
+      updateState({ type: 'UPDATE_DATA', payload: rates });
     }
+    console.log( rates )
+    return rates;
   };
+
 
   /* calculate the price per asset based on usd */
   useEffect(() => {
-    longChartId &&
-    shortChartId &&
-      (async () => {
-        /* get the prices from eithe map or fetched */
-        const shortPerUsd = priceMap.get(shortChartId) || (await getPricesPerUsd(shortChartId));
-        const longPerUsd = priceMap.get(longChartId) || (await getPricesPerUsd(longChartId));
-        shortPerUsd.length && longPerUsd.length && updateState({ type: 'UPDATE_AVAILABILITY', payload: true });
-
-        console.log(longPerUsd[12] )
-
-        console.log(shortPerUsd[12] )
-
-        /* Calculate a short/long price */
-        const shortPerLong = longPerUsd.map((p:any, index:number) => [
-          p[0],
-          shortPerUsd[index] ? p[1] / shortPerUsd[index][1] : undefined,
-        ]);
-
-        console.log( shortPerLong [12] );
-
-        /* remove any undefined value pairs */
-        const shortLongPrice = shortPerLong.filter((v:any) => v[0] !== undefined && v[1] !== undefined);
-        updateState({ type: 'UPDATE_DATA', payload: shortLongPrice });
-     
-      })();
-
-  }, [longChartId, shortChartId]);
+    longAsset && shortAsset && getAssetPairPrice(shortAsset, longAsset);
+  }, [longAsset, shortAsset]);
 
   /* ACTIONS TO CHANGE CONTEXT */
   const chartActions = {

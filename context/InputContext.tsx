@@ -94,12 +94,12 @@ const InputProvider = ({ children }: any) => {
 
   /* Set the initial selected lever if there is no lever selected */
   useEffect(() => {
-    if (levers.size) {
+    if (levers.size === 1) {
       updateState({
         type: 'SELECT_LEVER',
-        payload: levers.get('STETH_02') || levers.get('FETH_2303'),
+        payload: levers.get(process.env.DEFAULT_LEVER_ID) || levers.values().next().value,
       });
-      console.log('Initial lever selected'); 
+      console.log('Initial lever selected:' ); 
     }
   }, [levers]);
   
