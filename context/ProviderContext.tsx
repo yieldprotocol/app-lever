@@ -81,7 +81,7 @@ const ProviderContext = ({ children }: { children: ReactNode }) => {
     </Text>
   );
 
-  // const CustomAvatar: AvatarComponent = ({ address }) => <YieldAvatar address={address} size={2} noBorder />;
+  const CustomAvatar: AvatarComponent = ({ address }) => <YieldAvatar address={address} size={2} noBorder />;
 
   return (
     <WagmiConfig client={client}>
@@ -94,7 +94,7 @@ const ProviderContext = ({ children }: { children: ReactNode }) => {
         showRecentTransactions={true}
         modalSize="compact"
         coolMode
-        // avatar={CustomAvatar}
+        avatar={CustomAvatar}
         theme= {myDarkTheme} // { colorTheme === 'dark' ? myDarkTheme : myLightTheme }
       >
         {children}

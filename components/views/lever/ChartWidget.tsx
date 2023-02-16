@@ -147,7 +147,7 @@ export const ChartWidget = (props: HighchartsReact.Props) => {
         type: 'area',
         threshold: null,
         tooltip: {
-          valueDecimals: 4,
+          valueDecimals: 9,
         },
         dataGrouping: { forced: true, units: [['day', [1]]] },
       },

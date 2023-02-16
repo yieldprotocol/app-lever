@@ -1,8 +1,9 @@
 // import styled from 'styled-components';
 // import multiavatar from '@multiavatar/multiavatar';
+import { useEnsAvatar } from 'wagmi';
 
 // import { useColorScheme } from '../hooks/useColorScheme';
-// import { useEns } from '../hooks/useEns';
+
 
 // const StyledBox = styled(Box)`
 //   -webkit-transition: transform 0.3s ease-in-out;
@@ -15,25 +16,16 @@
 
 function YieldAvatar(props: any) {
   // const colorScheme = useColorScheme();
-  // const { ensAvatarUrl } = useEns();
+  // const { ensAvatarUrl } = useEnsAvatar();
   // const _avatar = multiavatar(props.address.concat(21));
   const _size = props.size.toString().concat('em');
 
-  return <div />
-    // <StyledBox>
-    //   <Avatar border={{ color: colorScheme === 'dark' ? '#FFF' : '#000' }} size={_size || '2em'}>
-    //     <Box width="100%" height="100%" pad={ensAvatarUrl ? undefined : '2px'}>
-    //       {
-    //         // eslint-disable-next-line react/no-danger
-    //         ensAvatarUrl ? (
-    //           <Image src={ensAvatarUrl} alt="ens-avatar" />
-    //         ) : (
-    //           <span dangerouslySetInnerHTML={{ __html: _avatar }} />
-    //         )
-    //       }
-    //     </Box>
-    //   </Avatar>
-    // </StyledBox>
+  return (
+
+    <div>
+      <img className="rounded-full w-96 h-96" src="/docs/images/examples/image-4@2x.jpg" alt="image description" />
+    </div>
+  )
 }
 
 export default YieldAvatar;
