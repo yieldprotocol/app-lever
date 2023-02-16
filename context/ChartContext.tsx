@@ -68,8 +68,8 @@ const ChartProvider = ({ children }: any) => {
       setShortAsset(shortAsset);
     }
   }, [selectedLever, assetRoots]);
- 
-  const getAssetPairPrice = async (shortAsset: IAsset, longAsset: IAsset) : Promise<Number[][]> => {
+
+  const getAssetPairPrice = async (shortAsset: IAsset, longAsset: IAsset): Promise<Number[][]> => {
     /* Notional case */
     if (longAsset.chartId === TradePlatforms.NOTIONAL) {
       const notionalAsset = getNotionalAssetCode(shortAsset.symbol).toString();
@@ -92,7 +92,7 @@ const ChartProvider = ({ children }: any) => {
         updateState({ type: 'UPDATE_AVAILABILITY', payload: true });
         updateState({ type: 'UPDATE_DATA', payload: rates });
       }
-      console.log(rates)
+      console.log(rates);
       return rates;
     }
 
@@ -102,8 +102,14 @@ const ChartProvider = ({ children }: any) => {
      *
      * */
 
-    const shortResponse = await CoinGeckoClient.coins.fetchMarketChart(shortAsset?.chartId!, { vs_currency: 'usd', days: '30' });
-    const longResponse = await CoinGeckoClient.coins.fetchMarketChart(longAsset?.chartId!, { vs_currency: 'usd', days: '30' });
+    const shortResponse = await CoinGeckoClient.coins.fetchMarketChart(shortAsset?.chartId!, {
+      vs_currency: 'usd',
+      days: '30',
+    });
+    const longResponse = await CoinGeckoClient.coins.fetchMarketChart(longAsset?.chartId!, {
+      vs_currency: 'usd',
+      days: '30',
+    });
 
     const shortPerUsd = priceMap.get(shortAsset?.chartId!) || shortResponse.data.prices.map((p) => [p[0], 1 / p[1]]);
     const longPerUsd = priceMap.get(longAsset?.chartId!) || longResponse.data.prices.map((p) => [p[0], 1 / p[1]]);
@@ -123,10 +129,9 @@ const ChartProvider = ({ children }: any) => {
       updateState({ type: 'UPDATE_AVAILABILITY', payload: true });
       updateState({ type: 'UPDATE_DATA', payload: rates });
     }
-    console.log( rates )
+    console.log(rates);
     return rates;
   };
-
 
   /* calculate the price per asset based on usd */
   useEffect(() => {
