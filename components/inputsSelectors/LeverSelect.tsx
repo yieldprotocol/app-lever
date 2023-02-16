@@ -258,7 +258,7 @@ const LeverSelect = () => {
               <ClickableContainer key={l.id}>
                 <div
                   className={`flex p-4 justify-between rounded ${
-                    selectedLever?.id === l.id ? 'bg-primary-600 bg-opacity-25' : 'opacity-50'
+                    selectedLever?.id === l.id ? 'bg-primary-600 bg-opacity-25 ring-primary-600 ring-1' : 'opacity-50'
                   }`}
                   onClick={() => selectLever(l)}
                 >

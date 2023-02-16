@@ -26,8 +26,8 @@ const LinksWrap = tw.div`p-1 flex gap-2 justify-between bg-black bg-opacity-50 r
 //   rounded-lg p-2 hover:text-primary-400 dark:hover:text-primary-600 dark:hover:bg-gray-800 bg-opacity-100 `;
 const LinkItem = tw.div<LinkItemProps>`${(p) =>
   p.$current
-    ? 'bg-primary-600 bg-opacity-50 '
-    : ''} rounded-lg py-2 px-6 `;
+    ? 'bg-primary-600 bg-opacity-50 ring-primary-600 ring-1'
+    : ''} rounded-lg py-2 px-6`;
 
 const Navigation = () => {
   const router = useRouter();

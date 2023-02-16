@@ -54,8 +54,8 @@ const Positions = () => {
           flex  
           items-center 
           justify-between 
-          ${isActive || isSelected ? 'opacity-100' : 'opacity-50'} 
-          ${isSelected ? 'bg-primary-600 bg-opacity-50 opacity-100' : ''}   
+          ${isActive || isSelected ? 'opacity-100 ' : 'opacity-50'} 
+          ${isSelected ? 'bg-primary-600 bg-opacity-50 opacity-100 ring-primary-600 ring-1' : ''}   
         `}
         >
           <div className="flex gap-4">
