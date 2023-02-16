@@ -20,6 +20,7 @@
     "@ethersproject/providers": "^5.5.3",
     "@headlessui/react": "^1.4.3",
     "@heroicons/react": "^2.0.12",
+    "@multiavatar/multiavatar": "^1.0.7",
     "@rainbow-me/rainbowkit": "^0.8.0",
     "@walletconnect/ethereum-provider": "^1.7.1",
     "@yield-protocol/ui-contracts": "^1.0.4",

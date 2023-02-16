@@ -76,7 +76,7 @@ const ListOptionsStyled = ({ children }: { children: any[] }) => (
       leaveTo="opacity-0"
       className="absolute shadow-lg bg-slate-900 rounded-lg z-50"
     >
-      <Listbox.Options className="overflow-auto max-h-80 flex flex-col">{children}</Listbox.Options>
+      <Listbox.Options className="overflow-auto max-h-80 flex flex-col bg-gray-900 w-56">{children}</Listbox.Options>
     </Transition>
   </BorderWrap>
 );

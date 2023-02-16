@@ -1,5 +1,5 @@
 // import styled from 'styled-components';
-// import multiavatar from '@multiavatar/multiavatar';
+import multiavatar from '@multiavatar/multiavatar';
 import { useEnsAvatar } from 'wagmi';
 
 // import { useColorScheme } from '../hooks/useColorScheme';
@@ -16,14 +16,13 @@ import { useEnsAvatar } from 'wagmi';
 
 function YieldAvatar(props: any) {
   // const colorScheme = useColorScheme();
-  // const { ensAvatarUrl } = useEnsAvatar();
-  // const _avatar = multiavatar(props.address.concat(21));
-  const _size = props.size.toString().concat('em');
+  const { data } = useEnsAvatar();
+  const avatar = multiavatar(props.address.concat(21));
+  const size = props.size.toString().concat('em');
 
   return (
-
-    <div>
-      <img className="rounded-full w-96 h-96" src="/docs/images/examples/image-4@2x.jpg" alt="image description" />
+    <div className="rounded-full w-24 h-24">   
+        <span dangerouslySetInnerHTML={{ __html: avatar }} />
     </div>
   )
 }
