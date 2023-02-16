@@ -151,16 +151,16 @@ export const ChartWidget = (props: HighchartsReact.Props) => {
         },
         dataGrouping: { forced: true, units: [['day', [1]]] },
       },
-      {
-        name: `Trend`,
-        regression: true,
-        data: prices,
-        threshold: null,
-        tooltip: {
-          valueDecimals: 4,
-        },
-        dataGrouping: { forced: true, units: [['day', [1]]] },
-      },
+      // {
+      //   name: `Trend`,
+      //   regression: true,
+      //   data: prices,
+      //   threshold: null,
+      //   tooltip: {
+      //     valueDecimals: 4,
+      //   },
+      //   dataGrouping: { forced: true, units: [['day', [1]]] },
+      // },
     ],
   };
 

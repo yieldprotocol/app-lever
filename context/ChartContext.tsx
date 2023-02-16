@@ -70,7 +70,12 @@ const ChartProvider = ({ children }: any) => {
   }, [selectedLever, assetRoots]);
 
   const getAssetPairPrice = async (shortAsset: IAsset, longAsset: IAsset): Promise<Number[][]> => {
-    /* Notional case */
+       
+    /** 
+     * 
+     * Notional case 
+     * 
+     * */
     if (longAsset.chartId === TradePlatforms.NOTIONAL) {
       const notionalAsset = getNotionalAssetCode(shortAsset.symbol).toString();
       const response_ = await client.query({
@@ -86,19 +91,18 @@ const ChartProvider = ({ children }: any) => {
       const response = response_.data.assetExchangeRateHistoricalDatas;
       const rates = response.map((p: any) => {
         return [p.timestamp * 1000, 1 + parseFloat(ethers.utils.formatUnits(p.value, shortAsset.decimals + 12))];
-      });
+      }).reverse();
 
       if (rates.length) {
         updateState({ type: 'UPDATE_AVAILABILITY', payload: true });
         updateState({ type: 'UPDATE_DATA', payload: rates });
       }
-      console.log(rates);
       return rates;
     }
 
     /**
      *
-     * Coingecko case
+     * Coingecko case (General use for common coins listed on coin gecko)
      *
      * */
 
@@ -129,7 +133,6 @@ const ChartProvider = ({ children }: any) => {
       updateState({ type: 'UPDATE_AVAILABILITY', payload: true });
       updateState({ type: 'UPDATE_DATA', payload: rates });
     }
-    console.log(rates);
     return rates;
   };
 
