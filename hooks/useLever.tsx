@@ -147,7 +147,7 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
     const inp_ltv = input?.dsp > 0 ? input.dsp * selectedLever!.loanToValue : 0;
     const maxLeverage_ = inp_rat / (inp_rat - inp_ltv); // input*rate / input*rate - input*LTV
     console.log( maxLeverage_ )
-    setMaxLeverage( Math.round(maxLeverage_, 2) );
+    setMaxLeverage( Math.round((maxLeverage_ + Number.EPSILON) * 1000) / 1000  );
 
     const borrowLimitUsed_ =
       (sim.debtAtMaturity.dsp! / (sim.longAssetObtained.dsp! * selectedLever!.loanToValue)) * 100;
