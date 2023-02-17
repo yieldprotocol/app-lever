@@ -23,14 +23,8 @@ const Account = () => {
   const { data: ethBalance } = useBalance({ address: account });
 
   return (
-    <LinksWrap onClick={() => !!openAccountModal && openAccountModal()}>
-      {account && (
-        <ClickableContainer>
-          <div > {cleanValue(ethBalance?.formatted, 2) } <div className='w-8 max-h-2'> <EthMark /></div></div>
-        </ClickableContainer>
-      )}
-      {!account && <Button action={() => !!openConnectModal && openConnectModal()}> Connect Wallet </Button>}
-      {/* <ConnectButton /> */}
+    <LinksWrap >
+      <ConnectButton /> 
     </LinksWrap>
   );
 };

@@ -7,9 +7,7 @@ export interface IModal {
   children: ReactNode;
 }
 
-const Modal: FC<IModal> = ({ isOpen, setIsOpen, children }) => {
-
-  return (
+const Modal: FC<IModal> = ({ isOpen, setIsOpen, children }) => (
     <Transition appear show={isOpen} as={Fragment}>
 
       <Dialog open={isOpen} as="div" className="fixed inset-0 z-10 overflow-y-auto" onClose={() => setIsOpen(false)}>
@@ -47,6 +45,5 @@ const Modal: FC<IModal> = ({ isOpen, setIsOpen, children }) => {
       </Dialog>
     </Transition>
   );
-};
 
 export default Modal;
