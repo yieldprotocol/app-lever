@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import tw from 'tailwind-styled-components';
 import Button from '../../common/Button';
 
@@ -13,6 +13,7 @@ import { ILeverSimulation } from '../../../hooks/useLever';
 import { BorderWrap, TopRow, Inner, Section, SectionHead } from '../../styled';
 import { InputContext } from '../../../context/InputContext';
 import { useAccount } from 'wagmi';
+import { useDebounce } from '../../../hooks/generalHooks';
 
 const ClearButton = tw.button`text-sm`;
 
@@ -28,6 +29,17 @@ const LeverWidget = (props: any) => {
   const { address: account } = useAccount();
 
   const { invest, isSimulating, maxLeverage }: ILeverSimulation = props.lever;
+
+  /* handle input validation with a debouce to make it feel less restrictive */
+  const debouncedInput = useDebounce(inputState.input, 500);
+  const [ inputOutOfBounds, setInputOutOfBounds ] = useState<boolean>(false);
+  useEffect(()=>{
+    if (selectedLever) {
+      debouncedInput.dsp >= selectedLever.minDebt.dsp ||
+      debouncedInput.dsp == '0'
+      ? setInputOutOfBounds(false) : setInputOutOfBounds(true)
+    }
+   },[debouncedInput])
 
   return (
     <BorderWrap className="h-full pb-4">
@@ -55,18 +67,18 @@ const LeverWidget = (props: any) => {
             <div className="flex justify-between">
               <div> Investment </div>
               {selectedLever && shortAsset && (
-                <button className="text-xs text-slate-500" onClick={()=> inputActions.setInput(selectedLever.minDebt.dsp) }>
+                <button className={`text-xs text-slate-500 ${inputOutOfBounds ? 'text-white text-md animate-pulse': ''} `} onClick={()=> inputActions.setInput(selectedLever.minDebt.dsp) }>
                   Min: {selectedLever.minDebt.dsp} {shortAsset.displaySymbol}{' '}
                 </button>
               )}
             </div>
           </SectionHead>
-          <ValueInput />
+          <ValueInput inputOutOfBounds={inputOutOfBounds} />
         </Section>
 
         <Section className={ selectedLever ? 'opacity-100' : 'opacity-25'}>
           <SectionHead> Leverage </SectionHead>
-          <LeverageSelect max={maxLeverage} />
+          <LeverageSelect max={ maxLeverage } />
         </Section>
       </Inner>
 
@@ -75,7 +87,9 @@ const LeverWidget = (props: any) => {
           action={() => invest()}
           disabled={
             !account ||
-            !selectedLever 
+            !selectedLever ||
+            inputState.input.dsp == '0' ||
+            inputOutOfBounds
           } // add in isTransacting check
           loading={isSimulating}
         >

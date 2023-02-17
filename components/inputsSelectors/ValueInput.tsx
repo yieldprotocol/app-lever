@@ -16,26 +16,43 @@ const Container = tw.div<DivProps>`${(p) =>
   p.$unFocused
     ? 'opacity-60'
     : ''}  flex rounded-md justify-between p-1 w-full gap-5 align-middle hover:border border hover:border-primary-400 dark:hover:border-primary-600 dark:border-gray-800 dark:bg-gray-800 bg-gray-300 border-gray-300 dark:bg-opacity-25 bg-opacity-25`;
-const Input = tw.input<any>`rounded-lg h-full text-2xl appearance-none w-full dark:bg-black dark:bg-opacity-0 bg-opacity-0 dark:focus:text-gray-50 focus:text-gray-800 dark:text-gray-300 text-gray-800 py-1 px-2 leading-tight focus:outline-none `;
 const Button = tw.button`flex items-center gap-1 my-[1px] text-xs mr-2 dark:text-gray-300 text-gray-700 hover:text-gray-600 dark:hover:text-gray-400`;
 
-export const ValueInput = () => {
+const Input = tw.input<any>`
+rounded-lg 
+h-full 
+text-2xl 
+appearance-none 
+w-full 
+dark:bg-black 
+dark:bg-opacity-0 
+bg-opacity-0
+py-1 px-2 
+leading-tight 
+focus:outline-none
+
+${(p) => !p.error ? 
+  'dark:text-white text-black' :
+  'text-red-500 dark:text-red-500 dark:focus:text-red-500 focus:text-red-500'
+  }
+`;
+
+export const ValueInput = ( { inputOutOfBounds }: {inputOutOfBounds: boolean}) => {
   const { address } = useAccount();
 
-  const { data:balance } = useBalance({address});
+  const { data: balance } = useBalance({ address });
 
   const [inputState, inputActions] = useContext(InputContext);
-  const {selectedLever} = inputState; 
+  const { selectedLever } = inputState;
 
   const [leverState] = useContext(LeverContext);
   const { assets } = leverState;
   const shortAsset = assets.get(selectedLever?.baseId!);
 
-  const [useNative, setUseNative] = useState<boolean>( ); // if WETH default to native else 
-
-  useEffect(()=>{
-    shortAsset?.id === WETH ?  setUseNative(true) : setUseNative(false)
-  },[ shortAsset ])
+  const [useNative, setUseNative] = useState<boolean>(); // if WETH default to native else
+  useEffect(() => {
+    shortAsset?.id === WETH ? setUseNative(true) : setUseNative(false);
+  }, [shortAsset]);
 
   return (
     <Container>
@@ -53,6 +70,7 @@ export const ValueInput = () => {
             // onFocus={() => setFocus(true)}
             // onBlur={() => setFocus(false)}
             disabled={!selectedLever}
+            error={  inputOutOfBounds }
           />
         </div>
 
@@ -79,10 +97,10 @@ export const ValueInput = () => {
         </div>
 
         <div className="col-span-2 text-start">
-          {( inputState?.input?.hStr !== shortAsset?.balance.hStr || inputState?.input.dsp ===0 )  && (
+          {(inputState?.input?.hStr !== shortAsset?.balance.hStr || inputState?.input.dsp === 0) && (
             <Button onClick={() => inputActions.setInput(useNative ? balance?.formatted : shortAsset?.balance.hStr)}>
               <div> Use max balance: </div>
-              <div> { useNative ? balance?.formatted.substring(0,6) : shortAsset?.balance.dsp} </div>
+              <div> {useNative ? balance?.formatted.substring(0, 6) : shortAsset?.balance.dsp} </div>
             </Button>
           )}
           {inputState?.input?.hStr === shortAsset?.balance.hStr && shortAsset?.balance.big.gt(ZERO_BN) && (

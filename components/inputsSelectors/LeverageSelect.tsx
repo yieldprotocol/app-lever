@@ -76,7 +76,7 @@ const LeverageSelect = ({ max }: { max: number }) => {
           onChange={(e: any) => inputActions.setLeverage(e.target.value)}
           name="leverage_text"
           min={1.1}
-          max={max || 5}
+          max={ max || 10}
         />
       </div>
 
