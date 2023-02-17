@@ -48,7 +48,7 @@ const LeverSelectModal = (props: any) => {
       <ClickableContainer key={lever.id}>
         <div
           className={`flex p-4 justify-between rounded ${
-            selectedLever?.id === lever.id ? 'bg-primary-600 bg-opacity-25 ring-primary-600 ring-1' : 'opacity-50'
+            selectedLever?.id === lever.id ? 'bg-primary-600 bg-opacity-25 ring-primary-600 ring-1' : 'opacity-100'
           }`}
           onClick={() => selectLever(lever)}
         >
@@ -60,7 +60,6 @@ const LeverSelectModal = (props: any) => {
               <div className="text-xs font-thin">{formatDate(lever.maturityDate)}</div>
             </div>
           </div>
-
           {/* <div className="text-xs" >{formatDate(l.maturityDate)}</div> */}
           <div>
             <InformationCircleIcon className="w-6 h-6 text-gray-500" onClick={() => console.log('eomtignd')} />

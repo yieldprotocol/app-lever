@@ -42,29 +42,25 @@ const ThumbStyled = tw.div<any>`
 `;
 
 const TrackStyled = tw.div<any>`
- ${ (props) => getBackgroundColor(props.leverage, props.max)  }
- h-[10px]
- rounded-full 
-`;
-
-const getBackgroundColor = (val: number, max: number) => {
-  const percent = (val / max) * 100;
-  if (max) {
-    if (percent < 33) return 'bg-slate-800';
+${(props) => {
+  const percent = (props.leverage / props.max) * 100;
+  if (props.max) {
+    console.log('perecnt' ,  percent )
+    // if (percent < 33) return 'bg-slate-800';
+    // if (percent < 33) return 'bg-slate-800';
     if (percent < 50) return 'bg-emerald-600';
     if (percent < 75) return 'bg-orange-600';
     return 'bg-red-600';
   }
-  return 'bg-slate-800'
-};
-
-const Track = ({props, children }: {
-  props: any;
-  children: ReactNode;
-}) => <TrackStyled leverage={props.leverage} max={props.max} >{children}</TrackStyled>;
+  return 'bg-slate-800';
+}}
+h-[10px]
+rounded-full
+`;
 
 const LeverageSelect = ({ max }: { max: number }) => {
   const [inputState, inputActions] = useContext(InputContext);
+
   return (
     <Container className=" align-middle">
       <div className="w-1/4 flex flex-grow min-w-[120px] ">
@@ -76,7 +72,7 @@ const LeverageSelect = ({ max }: { max: number }) => {
           onChange={(e: any) => inputActions.setLeverage(e.target.value)}
           name="leverage_text"
           min={1.1}
-          max={ max || 10}
+          max={max || 10}
         />
       </div>
 
@@ -89,7 +85,9 @@ const LeverageSelect = ({ max }: { max: number }) => {
             values={[inputState.leverage?.dsp || '']}
             onChange={(value) => inputActions.setLeverage(value)}
             renderTrack={({ props, children }) => (
-                <TrackStyled {...props} leverage={inputState.leverage?.dsp} max={max} >{children}</TrackStyled>  
+              <TrackStyled {...props} leverage={inputState.leverage?.dsp} max={max}>
+                {children}
+              </TrackStyled>
             )}
             renderMark={({ props }) => (
               <div
@@ -103,9 +101,9 @@ const LeverageSelect = ({ max }: { max: number }) => {
               />
             )}
             renderThumb={({ props }) => (
-                <ThumbStyled {...props}>
-                  <EllipsisVerticalIcon className="h-6 w-6 text-gray-200" />
-                </ThumbStyled>
+              <ThumbStyled {...props}>
+                <EllipsisVerticalIcon className="h-6 w-6 text-gray-200" />
+              </ThumbStyled>
             )}
           />
         </div>
