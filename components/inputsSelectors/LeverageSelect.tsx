@@ -45,7 +45,6 @@ const TrackStyled = tw.div<any>`
 ${(props) => {
   const percent = (props.leverage / props.max) * 100;
   if (props.max) {
-    console.log('perecnt' ,  percent )
     // if (percent < 33) return 'bg-slate-800';
     // if (percent < 33) return 'bg-slate-800';
     if (percent < 50) return 'bg-emerald-600';
