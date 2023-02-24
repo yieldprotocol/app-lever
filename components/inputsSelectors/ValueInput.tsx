@@ -6,6 +6,7 @@ import { WETH } from '../../config/assets';
 import logoMap from '../../config/logos';
 import { InputContext } from '../../context/InputContext';
 import { LeverContext } from '../../context/LeverContext';
+import { MarketContext } from '../../context/MarketContext';
 import { TokenType } from '../../lib/types';
 
 type DivProps = {
@@ -44,9 +45,10 @@ export const ValueInput = ( { inputOutOfBounds }: {inputOutOfBounds: boolean}) =
 
   const [inputState, inputActions] = useContext(InputContext);
   const { selectedLever } = inputState;
-
+  
   const [leverState] = useContext(LeverContext);
   const { assets } = leverState;
+
   const shortAsset = assets.get(selectedLever?.baseId!);
 
   const [useNative, setUseNative] = useState<boolean>(); // if WETH default to native else

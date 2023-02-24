@@ -45,6 +45,7 @@ const useInvest= (
   const overrides = inputNativeToken ? { value: input?.big!, gasLimit: ethers.BigNumber.from('2000000') } : { gasLimit: ethers.BigNumber.from('2000000') };
   // const overrides = { gasLimit: ethers.BigNumber.from('2000000') };
 
+  console.log( txArgs )
   const { config, error } = usePrepareContractWrite({
     address: selectedLever?.leverAddress,
     abi: notional_abi,

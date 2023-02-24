@@ -174,7 +174,7 @@ export const stEthSimulator: Simulator = async (
      * */
     output.investArgs =
       selectedLever && input?.big.gt(ZERO_BN) && output.shortAssetBorrowed?.big.gt(ZERO_BN)
-        ? [input.big, selectedLever.seriesId, input.big, output.shortAssetBorrowed.big, ZERO_BN]
+        ? [input.big, selectedLever.seriesId, ZERO_BN, output.shortAssetBorrowed.big, ZERO_BN]
         : [];
 
     console.log('INVEST OUTPUT', output);

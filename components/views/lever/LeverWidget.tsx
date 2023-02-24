@@ -14,6 +14,8 @@ import { BorderWrap, TopRow, Inner, Section, SectionHead } from '../../styled';
 import { InputContext } from '../../../context/InputContext';
 import { useAccount } from 'wagmi';
 import { useDebounce } from '../../../hooks/generalHooks';
+import { MarketContext } from '../../../context/MarketContext';
+import { convertToW3bNumber } from '../../../lib/utils';
 
 const ClearButton = tw.button`text-sm`;
 
@@ -21,10 +23,15 @@ const LeverWidget = (props: any) => {
   /* Bring in lever context - instead of passing them as props */
   const [leverState] = useContext(LeverContext);
   const { assets } = leverState as ILeverContextState;
- /* bring in input actions */
-  const [inputState,inputActions] = useContext(InputContext);
-  const { selectedLever } = inputState
+  /* bring in input actions */
+  const [inputState, inputActions] = useContext(InputContext);
+  const { selectedLever } = inputState;
   
+  /* get market state */
+  const [marketState] = useContext(MarketContext);
+  const { sharesReserves, decimals } = marketState;
+
+  // console.log(sharesReserves.toString());
   const shortAsset = assets.get(selectedLever?.baseId!);
   const { address: account } = useAccount();
 
@@ -32,14 +39,15 @@ const LeverWidget = (props: any) => {
 
   /* handle input validation with a debouce to make it feel less restrictive */
   const debouncedInput = useDebounce(inputState.input, 500);
-  const [ inputOutOfBounds, setInputOutOfBounds ] = useState<boolean>(false);
-  useEffect(()=>{
+  const [inputOutOfBounds, setInputOutOfBounds] = useState<boolean>(false);
+  
+  useEffect(() => {
     if (selectedLever) {
-      debouncedInput.dsp >= selectedLever.minDebt.dsp ||
-      debouncedInput.dsp == '0'
-      ? setInputOutOfBounds(false) : setInputOutOfBounds(true)
+      debouncedInput.dsp >= selectedLever.minDebt.dsp || debouncedInput.dsp == '0'
+        ? setInputOutOfBounds(false)
+        : setInputOutOfBounds(true);
     }
-   },[debouncedInput])
+  }, [debouncedInput]);
 
   return (
     <BorderWrap className="h-full pb-4">
@@ -51,23 +59,26 @@ const LeverWidget = (props: any) => {
       </TopRow>
       <Inner>
         <Section>
-          <SectionHead>              
-             <div className="flex justify-between">
+          <SectionHead>
+            <div className="flex justify-between">
               <div> Lever Strategy </div>
               {/* <button className="text-xs text-slate-500" onClick={()=> console.log( 'sdfsd') }>
                   See all available levers
                 </button> */}
             </div>
-            </SectionHead>
+          </SectionHead>
           <LeverSelect />
         </Section>
 
-        <Section className={ selectedLever ? 'opacity-100' : 'opacity-25'} >
+        <Section className={selectedLever ? 'opacity-100' : 'opacity-25'}>
           <SectionHead>
             <div className="flex justify-between">
               <div> Investment </div>
               {selectedLever && shortAsset && (
-                <button className={`text-xs text-slate-500 ${inputOutOfBounds ? 'text-red-600 text-md animate-pulse': ''} `} onClick={()=> inputActions.setInput(selectedLever.minDebt.dsp) }>
+                <button
+                  className={`text-xs text-slate-500 ${inputOutOfBounds ? 'text-red-600 text-md animate-pulse' : ''} `}
+                  onClick={() => inputActions.setInput(selectedLever.minDebt.dsp)}
+                >
                   Min: {selectedLever.minDebt.dsp} {shortAsset.displaySymbol}{' '}
                 </button>
               )}
@@ -76,21 +87,16 @@ const LeverWidget = (props: any) => {
           <ValueInput inputOutOfBounds={inputOutOfBounds} />
         </Section>
 
-        <Section className={ selectedLever ? 'opacity-100' : 'opacity-25'}>
+        <Section className={selectedLever ? 'opacity-100' : 'opacity-25'}>
           <SectionHead> Leverage </SectionHead>
-          <LeverageSelect max={ maxLeverage } />
+          <LeverageSelect max={maxLeverage} />
         </Section>
       </Inner>
 
       <div className="p-8 text-center">
         <Button
           action={() => invest()}
-          disabled={
-            !account ||
-            !selectedLever ||
-            inputState.input.dsp == '0' ||
-            inputOutOfBounds
-          } // add in isTransacting check
+          disabled={!account || !selectedLever || inputState.input.dsp == '0' || inputOutOfBounds} // add in isTransacting check
           loading={isSimulating}
         >
           {!account ? 'Connect Wallet' : 'Trade'}

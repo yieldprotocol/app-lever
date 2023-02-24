@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { InputContext } from '../../../context/InputContext';
 import { BorderWrap, Divider, InfoBlock, Inner, Label, Section, TopRow, Value } from '../../styled';
 import { LeverContext } from '../../../context/LeverContext';
@@ -8,6 +8,8 @@ import { MinusCircleIcon, PlusCircleIcon } from '@heroicons/react/20/solid';
 import StackedLogos from '../../common/StackedLogos';
 import { ZERO_BN } from '@yield-protocol/ui-math';
 import WrapWithLogo from '../../common/WrapWithLogo';
+import { MarketContext } from '../../../context/MarketContext';
+import { convertToW3bNumber } from '../../../lib/utils';
 
 const EstimatedPosition = (props: any) => {
   const [inputState] = useContext(InputContext);
@@ -69,7 +71,7 @@ const EstimatedPosition = (props: any) => {
       </TopRow>
 
       {selectedLever && notification && <div> {notification.msg} </div>}
-
+      
       {/* { input?.dsp === 0 && ( <div> Enter an amount to get started. </div> ) } */}
 
       {!notification && selectedLever && input?.dsp > 0 && (
