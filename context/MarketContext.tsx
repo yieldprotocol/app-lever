@@ -106,7 +106,7 @@ const MarketProvider = ({ children }: any) => {
       c,
       mu,
     };
-    // console.log( market_ );
+
     /* always update market state on any getMarketInfo() call */
     updateState({ type: 'UPDATE_MARKET', payload: market_ }); // always update state on any market call
     return market_;

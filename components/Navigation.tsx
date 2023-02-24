@@ -1,8 +1,8 @@
 import tw from 'tailwind-styled-components';
 import Link from 'next/link';
-import Account from './Account';
 import { useRouter } from 'next/router';
 import { ClickableContainer, Inner } from './styled';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 // TODO add in 'sticky'
 const NavContainer = tw.div`
@@ -47,9 +47,9 @@ const Navigation = () => {
               </ClickableContainer>
             </Link>
           ))}
+          
         </LinksWrap>
-
-        <Account />
+        <ConnectButton />
       </InnerContainer>
     </NavContainer>
   );

@@ -110,8 +110,6 @@ const PositionProvider = ({ children }: any) => {
           contract_.queryFilter(divestedFilter_, parseInt(process.env.FORKED_ENV_FIRST_BLOCK!.toString()), 'latest'),
         ]);
 
-        console.log( divestedEvents )
-
         await Promise.all(
           investedEvents.map( async (invEvnt: Event ): Promise<any> => {
             
@@ -201,7 +199,7 @@ const PositionProvider = ({ children }: any) => {
 
   /* ACTIONS TO CHANGE CONTEXT */
   const positionActions = {
-    updatePositions: () => updatePositions([]),
+    updatePositions: () => updatePositions(),
     selectPosition: (position: any) => updateState({ type: 'SELECT_POSITION', payload: position })
   };
 

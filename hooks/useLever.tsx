@@ -150,7 +150,7 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
     setBorrowAPR(borrowAPR); // console.log('borrowAPR: ', borrowAPR);
 
     const netAPR = leverage.dsp * investAPR - (leverage.dsp - 1) * borrowAPR;
-    setNetAPR(netAPR); // console.log('nettAPR: ', netAPR);
+    setNetAPR(netAPR); 
 
     /**
      * Calculate:
@@ -184,7 +184,6 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
       (debouncedInput.big.gt(ZERO_BN) || positionState.selectedPosition)
     ) {
       (async () => {
-        console.log('asdasds');
         /**
          * Simulate investment and set parameters locally
          * */
