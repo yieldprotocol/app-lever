@@ -22,7 +22,7 @@ const useApprove = (
   const [hasApproval, setHasApproval] = useState<boolean>(false);
 
   const { data: allowance } = useContractRead({
-    address: asset?.address,
+    address: asset?.address as `0x${string}`,
     abi: asset?.assetContract.interface as any,
     functionName: 'allowance',
     args: [account, spenderAddress],
@@ -33,7 +33,7 @@ const useApprove = (
   });
 
   const { config } = usePrepareContractWrite({
-    address: asset?.address,
+    address: asset?.address as `0x${string}`,
     abi: asset?.assetContract.interface as any,
     functionName: 'approve',
     args: [spenderAddress, amountToApprove],

@@ -1,5 +1,5 @@
 import { ZERO_BN } from '@yield-protocol/ui-math';
-import { BigNumber, ethers } from 'ethers';
+import { ethers } from 'ethers';
 import { useContext, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
@@ -46,7 +46,7 @@ const useInvest= (
   // const overrides = { gasLimit: ethers.BigNumber.from('2000000') };
 
   const { config, error } = usePrepareContractWrite({
-    address: selectedLever?.leverAddress,
+    address: selectedLever?.leverAddress as `0x${string}`,
     abi: notional_abi,
     functionName: 'invest',
     args: txArgs,

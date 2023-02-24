@@ -80,8 +80,9 @@ export const ValueInput = ( { inputOutOfBounds }: {inputOutOfBounds: boolean}) =
         <div className="col-span-2 text-start flex justify-between">
           {shortAsset?.id === WETH && (
             <div
+             
               onClick={() => setUseNative(true)}
-              className={`flex items-center gap-2 ${useNative ? ' text-white' : 'text-gray-500'}`}
+              className={`flex items-center gap-2 ${useNative ? ' text-white font-normal' : 'text-gray-500'}`}
             >
               <div className="w-4">{logoMap.get('ETH')}</div>
               <button>ETH </button>
@@ -89,7 +90,8 @@ export const ValueInput = ( { inputOutOfBounds }: {inputOutOfBounds: boolean}) =
           )}
 
           <div
-            className={`flex items-center gap-2 ${useNative ? 'text-gray-500' : ' text-white'}`}
+          
+            className={`flex items-center gap-2 ${useNative ? 'text-gray-500' : ' text-white font-normal '}`}
             onClick={() => setUseNative(false)}
           >
             <div className=" w-4"> {shortAsset?.image} </div>

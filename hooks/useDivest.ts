@@ -18,7 +18,7 @@ const useDivest = (txArgs: any[], enabled: boolean = false) => {
   }, [ txArgs, enabled ]);
 
   const { config } = usePrepareContractWrite({
-    address: selectedPosition?.leverAddress,
+    address: selectedPosition?.leverAddress as `0x${string}`,
     abi: selectedPosition?.leverContract.interface as any, // selectedLever?.leverContract.interface as any,
     functionName: 'divest',
     args: txArgs,
