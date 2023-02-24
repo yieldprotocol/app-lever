@@ -75,7 +75,7 @@ const _abi = [
     stateMutability: "view",
     type: "function",
   },
-];
+] as const;
 
 export class IOracle__factory {
   static readonly abi = _abi;

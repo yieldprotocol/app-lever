@@ -343,7 +343,7 @@ const _abi = [
     stateMutability: "pure",
     type: "function",
   },
-];
+] as const;
 
 export class ERC20Permit__factory {
   static readonly abi = _abi;

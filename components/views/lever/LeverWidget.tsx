@@ -67,7 +67,7 @@ const LeverWidget = (props: any) => {
             <div className="flex justify-between">
               <div> Investment </div>
               {selectedLever && shortAsset && (
-                <button className={`text-xs text-slate-500 ${inputOutOfBounds ? 'text-white text-md animate-pulse': ''} `} onClick={()=> inputActions.setInput(selectedLever.minDebt.dsp) }>
+                <button className={`text-xs text-slate-500 ${inputOutOfBounds ? 'text-red-600 text-md animate-pulse': ''} `} onClick={()=> inputActions.setInput(selectedLever.minDebt.dsp) }>
                   Min: {selectedLever.minDebt.dsp} {shortAsset.displaySymbol}{' '}
                 </button>
               )}

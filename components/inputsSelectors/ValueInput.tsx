@@ -62,6 +62,7 @@ export const ValueInput = ( { inputOutOfBounds }: {inputOutOfBounds: boolean}) =
             name="invest_amount"
             type="number"
             inputMode="decimal"
+            placeholder="0.0"
             value={inputState.input?.dsp || ''}
             onChange={(el: ChangeEvent<HTMLInputElement>) => inputActions.setInput(el.target.value, useNative)}
             onWheelCapture={(e: ChangeEvent<HTMLInputElement>) => {

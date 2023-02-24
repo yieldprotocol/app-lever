@@ -1010,7 +1010,7 @@ const _abi = [
     stateMutability: "pure",
     type: "function",
   },
-];
+] as const;
 
 export class Pool__factory {
   static readonly abi = _abi;
