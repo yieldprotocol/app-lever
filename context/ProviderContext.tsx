@@ -34,14 +34,14 @@ const ProviderContext = ({ children }: { children: ReactNode }) => {
   const { chains, provider } = configureChains(
     [chain.mainnet], // [chain.mainnet, chain.arbitrum, chain.localhost, chain.foundry],
     [
-      // jsonRpcProvider({
-      //   rpc: (chain_) => ({
-      //     http: process.env.FORKED_ENV_RPC || '',
-      //   }),
-      // }),
-      alchemyProvider({
-        apiKey: process.env.ALCHEMY_MAINNET_KEY||'',
+      jsonRpcProvider({
+        rpc: (chain_) => ({
+          http: process.env.FORKED_ENV_RPC || '',
+        }),
       }),
+      // alchemyProvider({
+      //   apiKey: process.env.ALCHEMY_MAINNET_KEY||'',
+      // }),
     ]
   );
 
