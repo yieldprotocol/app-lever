@@ -115,11 +115,9 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
   const { sharesReserves, decimals } = marketState;
   const [notification, setNotification] = useState<Notification | undefined>(undefined);
   useEffect(() => {
-    if (selectedLever) {
+    if (selectedLever && input.dsp > 0 ) {
       const maxBorrow = convertToW3bNumber(sharesReserves, decimals);
-
-      input.dsp * leverage.dsp >= maxBorrow.dsp && console.log( 'input too big')
-      input.dsp * leverage.dsp >= maxBorrow.dsp && input.dsp > 0
+      input.dsp * leverage.dsp >= maxBorrow.dsp 
         ? setNotification({ type: NotificationType.ERROR, msg: 'Not enough Liquidity in the protocol just yet! :(' })
         : setNotification(undefined);
     }

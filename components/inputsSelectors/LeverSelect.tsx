@@ -17,10 +17,8 @@ import { Listbox, Transition } from '@headlessui/react';
 import { formatDate } from '../../utils/appUtils';
 import { toast } from 'react-toastify';
 import StackedLogos from '../common/StackedLogos';
-import Modal from '../common/Modal';
 import LeverSelectModal from './LeverSelectModal';
 import { IInputContextState, InputContext } from '../../context/InputContext';
-import Loader from '../common/Loader';
 
 enum AssetType {
   SHORT,
@@ -43,10 +41,11 @@ const assetOption = (asset: IAsset, recommended: boolean, assetType: AssetType) 
   if (asset)
     return (
       <Listbox.Option as={Fragment} key={asset.id} value={asset}>
-        <Selectable className={` ${!isOption && 'opacity-50'} hover:border hover:border-primary-600 `}>
+        <Selectable className={` ${!isOption && 'opacity-50'} hover:border hover:border-primary-600  `}>
           <div className="w-6">{asset.image}</div>
           <div>{asset.groupingId ? asset.groupingId : asset.displaySymbol}</div>
           {recommended && <CheckBadgeIcon className="w-4 text-emerald-600" />}
+          {!isOption && <div className="text-[6px] border p-1 "> Coming soon </div>}
         </Selectable>
       </Listbox.Option>
     );
@@ -175,7 +174,7 @@ const LeverSelect = () => {
    * fn : Find corresponding assets available from all the levers.
    * based on the lever pairs, what are the possible (long/short) assets to choose if x is selected as the s(hort/long) asset.
    * */
-  const isRecommended = (asset: IAsset, assetType: AssetType) => {
+  const isRecommended = (asset: IAsset, assetType: AssetType): boolean => {
     const leverList = Array.from(levers.values());
     return assetType === AssetType.SHORT
       ? !!leverList.find((l: ILever) => l.ilkId === selectedLongAsset?.id && l.baseId === asset.id)
@@ -213,13 +212,16 @@ const LeverSelect = () => {
         <div className="flex space-x-4 ">
           <ClickableContainer>
             <TopRow className="p-1 gap-2 justify-start">
-              <div className="flex text-xs text-slate-500 text-start ">Long</div>
+              <div className="flex text-xs text-slate-500 text-start ">Long asset class</div>
               <ArrowTrendingUpIcon className="h-4 w-4 text-slate-500" />
             </TopRow>
             <Listbox value={selectedLongAsset} onChange={(a: IAsset) => handleSelectAsset(a, AssetType.LONG)}>
               <SelectedAssetStyled asset={selectedLongAsset!} assetType={AssetType.LONG} />
               <ListOptionsStyled>
-                {longAssetList.map((a: IAsset) => assetOption(a, isRecommended(a, AssetType.LONG), AssetType.LONG))}
+                {longAssetList
+                // .filter((a: IAsset) => isRecommended(a, AssetType.LONG))
+                .map((a: IAsset) => assetOption(a, isRecommended(a, AssetType.LONG), AssetType.LONG))
+                }
               </ListOptionsStyled>
             </Listbox>
           </ClickableContainer>
@@ -308,12 +310,12 @@ const LeverSelect = () => {
           </div>
         </div>
 
-        <div className="flex justify-end">
+        <div className="flex justify-center">
           <button
-            className="flex text-xs text-slate-500 justify-end hover:text-white"
+            className="flex text-xs text-slate-300 justify-end hover:text-white"
             onClick={() => setShowModal(true)}
           >
-            See all available levers
+             See all available levers
           </button>
         </div>
       </div>
