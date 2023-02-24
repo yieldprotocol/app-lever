@@ -80,7 +80,7 @@ const LeverageSelect = ({ max }: { max: number }) => {
           <Range
             step={0.1}
             min={1.1}
-            max={max || 5}
+            max={max || 10}
             values={[inputState.leverage?.dsp || '']}
             onChange={(value) => inputActions.setLeverage(value)}
             renderTrack={({ props, children }) => (
