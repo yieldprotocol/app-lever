@@ -21,7 +21,7 @@
     "@headlessui/react": "^1.4.3",
     "@heroicons/react": "^2.0.12",
     "@multiavatar/multiavatar": "^1.0.7",
-    "@rainbow-me/rainbowkit": "^0.8.0",
+    "@rainbow-me/rainbowkit": "^0.11.0",
     "@walletconnect/ethereum-provider": "^1.7.1",
     "@yield-protocol/ui-contracts": "^1.0.4",
     "@yield-protocol/ui-math": "^1.0.3",
@@ -47,7 +47,7 @@
     "unique-names-generator": "^4.7.1",
     "use-sync-external-store": "^1.0.0-beta-96ca8d915-20211115",
     "uuid": "^8.3.2",
-    "wagmi": "^0.8.5"
+    "wagmi": "^0.11.7"
   },
   "devDependencies": {
     "@typechain/ethers-v5": "^10.1.1",

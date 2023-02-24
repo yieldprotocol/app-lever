@@ -1,5 +1,5 @@
 import { ArrowRightOnRectangleIcon, ArrowTrendingUpIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
-import { etherscanBlockExplorers, useNetwork } from 'wagmi';
+import { mainnet, useNetwork } from 'wagmi';
 import { FC, useContext, useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 import { IPositionContextState, PositionContext, PositionStatus } from '../../../context/PositionContext';
@@ -14,7 +14,7 @@ import WrapWithLogo from '../../common/WrapWithLogo';
 
 const TxInfo = (props: { label: string; date: Date | undefined; txHash: string | undefined }) => {
   const { chain } = useNetwork();
-  const { url: baseUrl } = chain?.id === 1 ? etherscanBlockExplorers.mainnet : etherscanBlockExplorers.arbitrum;
+  const { url: baseUrl } = mainnet.blockExplorers.default;
   const url = `${baseUrl}/tx/${props.txHash}`;
   return (
     <div className={`flex justify-between bg-slate-900 bg-opacity-20 py-2 mb-2`}>

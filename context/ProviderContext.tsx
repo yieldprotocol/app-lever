@@ -1,4 +1,4 @@
-import { chain, WagmiConfig, createClient, configureChains } from 'wagmi';
+import { mainnet, WagmiConfig, createClient, configureChains } from 'wagmi';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { ReactNode} from 'react';
@@ -32,7 +32,7 @@ const ProviderContext = ({ children }: { children: ReactNode }) => {
 
   // Two popular providers are Alchemy (alchemy.com) and Infura (infura.io)
   const { chains, provider } = configureChains(
-    [chain.mainnet], // [chain.mainnet, chain.arbitrum, chain.localhost, chain.foundry],
+    [mainnet], // [chain.mainnet, chain.arbitrum, chain.localhost, chain.foundry],
     [
       jsonRpcProvider({
         rpc: (chain_) => ({
