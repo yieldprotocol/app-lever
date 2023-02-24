@@ -8,12 +8,13 @@ import { calculateAPR } from '@yield-protocol/ui-math';
 import { IMarketContextState, MarketContext } from '../context/MarketContext';
 import { IPositionContextState, PositionContext } from '../context/PositionContext';
 import { useProvider } from 'wagmi';
-import { Provider, W3bNumber, Notification, Operation } from '../lib/types';
+import { Provider, W3bNumber, Notification, NotificationType, Operation } from '../lib/types';
 import { useRouter } from 'next/router';
 import useDivest from './useDivest';
 import useInvest from './useInvest';
 import { BigNumber } from 'ethers';
 import { toast } from 'react-toastify';
+import { convertToW3bNumber } from '../lib/utils';
 
 export type Simulator = (
   inputState: IInputContextState,
@@ -109,6 +110,22 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
   const divest = useDivest(simulation?.divestArgs || [], pathname === '/positions');
 
   /**
+   * Set a notification if input out of bounds : not enough liquidity
+   * */
+  const { sharesReserves, decimals } = marketState;
+  const [notification, setNotification] = useState<Notification | undefined>(undefined);
+  useEffect(() => {
+    if (selectedLever) {
+      const maxBorrow = convertToW3bNumber(sharesReserves, decimals);
+
+      input.dsp * leverage.dsp >= maxBorrow.dsp && console.log( 'input too big')
+      input.dsp * leverage.dsp >= maxBorrow.dsp && input.dsp > 0
+        ? setNotification({ type: NotificationType.ERROR, msg: 'Not enough Liquidity in the protocol just yet! :(' })
+        : setNotification(undefined);
+    }
+  }, [input, leverage]);
+
+  /**
    * Calculate the APR's based on the simulation
    **/
   const calcAPRs = (sim: SimulatorOutput) => {
@@ -146,8 +163,8 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
     const inp_rat = input?.dsp > 0 ? input.dsp * selectedLever!.bestRate.dsp : 0;
     const inp_ltv = input?.dsp > 0 ? input.dsp * selectedLever!.loanToValue : 0;
     const maxLeverage_ = inp_rat / (inp_rat - inp_ltv); // input*rate / input*rate - input*LTV
-    console.log( maxLeverage_ )
-    setMaxLeverage( Math.round((maxLeverage_ + Number.EPSILON) * 1000) / 1000  );
+    console.log(maxLeverage_);
+    setMaxLeverage(Math.round((maxLeverage_ + Number.EPSILON) * 1000) / 1000);
 
     const borrowLimitUsed_ =
       (sim.debtAtMaturity.dsp! / (sim.longAssetObtained.dsp! * selectedLever!.loanToValue)) * 100;
@@ -162,7 +179,6 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
   /* Use the simulator on each leverage/input change */
   useEffect(() => {
     const positionView = pathname === '/positions';
-
     if (
       selectedLever &&
       debouncedLeverage &&
@@ -178,7 +194,7 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
         const simulated = await simulator(inputState, leverState, marketState, positionState, provider, positionView);
         // simulated && setSimulation(simulated);
         simulated && calcAPRs(simulated);
-        
+
         setIsSimulating(false);
         console.log('ok,...simulated');
       })();
@@ -201,5 +217,6 @@ export const useLever = (simulator: Simulator): ILeverSimulation => {
     maxLeverage,
 
     isSimulating,
+    notification,
   };
 };
