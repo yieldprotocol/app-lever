@@ -76,7 +76,7 @@ const LeverWidget = (props: any) => {
               <div> Investment </div>
               {selectedLever && shortAsset && (
                 <button
-                  className={`text-xs text-slate-500 ${inputOutOfBounds ? 'text-red-600 text-md animate-pulse' : ''} `}
+                  className={`text-xs ${inputOutOfBounds ? 'text-red-600 text-md animate-pulse' : 'text-slate-500'} `}
                   onClick={() => inputActions.setInput(selectedLever.minDebt.dsp)}
                 >
                   Min: {selectedLever.minDebt.dsp} {shortAsset.displaySymbol}{' '}
