@@ -70,8 +70,13 @@ const EstimatedPosition = (props: any) => {
         </div>
       </TopRow>
 
-      {selectedLever && notification && <div> {notification.msg} </div>}
-      
+      {selectedLever && notification && (
+        <div className='py-4'>
+          <iframe src="https://giphy.com/embed/ZFHJ3T6wsG20sYguEa" width="100%" height="100%"></iframe>
+          <div className="p-8">{notification.msg}</div>
+        </div>
+      )}
+
       {/* { input?.dsp === 0 && ( <div> Enter an amount to get started. </div> ) } */}
 
       {!notification && selectedLever && input?.dsp > 0 && (
@@ -161,7 +166,6 @@ const EstimatedPosition = (props: any) => {
 
           {showExtra && (
             <InfoBlock>
-
               <div className="text-sm text-start mt-4">
                 <div className="flex gap-2 text-sm">
                   <div className="w-5">
