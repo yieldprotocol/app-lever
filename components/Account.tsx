@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { useAccount, useBalance, useEnsName } from 'wagmi';
+import { useAccount, useBalance} from 'wagmi';
 import { useConnectModal, ConnectButton, useAccountModal } from '@rainbow-me/rainbowkit';
 import tw from 'tailwind-styled-components';
 

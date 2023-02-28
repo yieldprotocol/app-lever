@@ -242,7 +242,7 @@ export const notionalSimulator: Simulator = async (
     const returnsLessFees = returns.sub(investFee);
 
     // const stEthPlusReturns = boughtStEth.mul(returns)
-    output.investmentAtMaturity = convertToW3bNumber(returnsLessFees, longAsset?.decimals, longAsset?.displayDigits);
+    output.investmentAtMaturity = selectedPosition.longAssetObtained // convertToW3bNumber(returnsLessFees, longAsset?.decimals, longAsset?.displayDigits);
 
     /**
      * Calculate how much will be returned if divesting now

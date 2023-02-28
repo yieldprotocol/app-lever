@@ -6,9 +6,7 @@ const TenderlyView = () => {
 
   /* lever is abstracted up here in the top level to save a few re-renders/calcs */
   const { fillEther, balance, loading } = useTestFunctions();
-
-  // const { chain } = useNetwork()
-  // const { chains, error, isLoading, pendingChainId, switchNetwork } =useSwitchNetwork()
+  const { chains, error, isLoading, pendingChainId, switchNetwork } =useSwitchNetwork()
   
   return (
     <div className="p-32 gap-2 text-white">
@@ -16,7 +14,9 @@ const TenderlyView = () => {
       <div className="flex   gap-8">
         <Button action={() => void fillEther()} disabled={ balance > 10 || loading }> Fund Eth </Button>
         <div>{process.env.FORKED_ENV_RPC}</div>
+        {/* <Button action={() => switchNetwork && switchNetwork(5)} > Switch Network </Button> */}
       </div>
+      
     </div>
   );
 };
