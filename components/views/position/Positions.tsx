@@ -81,7 +81,7 @@ const Positions = () => {
   return (
     <BorderWrap>
       <TopRow>
-        <div className="text-lg">My Levered Positions </div>
+        <div className="text-lg">My Positions </div>
         {/* <ClearButton onClick={() => console.log('actually, this might not do anything? settings?')}>
           [filter]
         </ClearButton> */}

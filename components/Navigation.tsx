@@ -32,7 +32,7 @@ const LinkItem = tw.div<LinkItemProps>`${(p) =>
 const Navigation = () => {
   const router = useRouter();
   const navigation = [
-    { name: 'New Levered Position', href: '/lever' },
+    { name: 'Open a New Position', href: '/lever' },
     { name: 'My Positions', href: '/positions' },
   ];
 
