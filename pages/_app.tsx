@@ -11,6 +11,8 @@ import ChartProvider from '../context/ChartContext';
 import InputProvider from '../context/InputContext';
 import ProviderContext from '../context/ProviderContext';
 import PositionProvider from '../context/PositionContext';
+import IpChecker from '../components/IpBlocker';
+import IpBlocker from '../components/IpBlocker';
 
 const DynamicLayout = dynamic(() => import('../components/Layout'), { ssr: false });
 
@@ -18,6 +20,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
   const { theme } = useColorTheme();
 
   return (
+    <IpBlocker>
     <ProviderContext>
       <LeverProvider>
       <InputProvider>
@@ -42,6 +45,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
           </InputProvider>
       </LeverProvider>
     </ProviderContext>
+    </IpBlocker>
   );
 };
 
