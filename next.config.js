@@ -13,7 +13,9 @@ const nextConfig = {
     FORKED_ENV_RPC: process.env.FORKED_ENV_RPC,
     FORKED_ENV_FIRST_BLOCK: process.env.FORKED_ENV_FIRST_BLOCK,
 
-    DEFAULT_LEVER_ID: process.env.DEFAULT_LEVER_ID
+    DEFAULT_LEVER_ID: process.env.DEFAULT_LEVER_ID,
+
+    IPIFY_KEY: process.env.IPIFY_KEY
     
   },
   async redirects() {
